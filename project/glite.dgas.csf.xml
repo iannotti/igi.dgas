@@ -15,14 +15,17 @@
 	GLite DGAS Configuration Specification File
 	
 	Authors: Giuseppe Patania <patania@to.infn.it>		
-	Version info: $Id: glite.dgas.csf.xml,v 1.2 2004/07/15 17:17:27 gpatania Exp $
+	Version info: $Id: glite.dgas.csf.xml,v 1.3 2004/07/16 16:25:43 flammer Exp $
 	Release: $Name:  $
 
 	Revision history:
 	$Log: glite.dgas.csf.xml,v $
+	Revision 1.3  2004/07/16 16:25:43  flammer
+	Added tags for automated adding of components.
+
 	Revision 1.2  2004/07/15 17:17:27  gpatania
 	added pa-clients and hlr-service targets
-
+	
 
 -->
 
@@ -70,7 +73,7 @@
 		 Evaluate CVS tags
 		 =============================================== -->
 
-    <target name="evaluate.cvs.tags" description="Figure out if we need tagged CVS checkout">
+    	<target name="evaluate.cvs.tags" description="Figure out if we need tagged CVS checkout">
 		<condition property="glite.head">
 			<and>
 				<equals arg1="${org.glite.version}" arg2="HEAD" />
@@ -110,6 +113,8 @@
 			</and>
 		</condition>
 	
+		<!-- condition property tag = do not remove = -->
+
 		<condition property="common.head">
 			<equals arg1="${org.glite.dgas.common.version}" arg2="HEAD" />
 		</condition>
@@ -128,9 +133,9 @@
 
 	</target>
 
-    <presetdef name="cvs-co">
+    	<presetdef name="cvs-co">
 		<cvs command="checkout" dest="${workspace.dir}" />
-    </presetdef>
+    	</presetdef>
 
 	<!-- =====================================================
 		 Self-update if required
@@ -181,13 +186,9 @@
 	<!-- =====================================================
 		 GLite DGAS modules
 		 ===================================================== -->
-	
-	<!-- All project modules -->
- 	<target name="project" depends="common,
-  				        hlr-clients,
-					pa-clients,
-					hlr-service" />
 
+	<!-- component targets tag = do not remove = -->
+	
 	<!-- Common -->
  	<target name="common" depends="globus, mysql, get.common.head, get.common.tag"/>
 	<target name="get.common.head" if="common.head">
@@ -229,6 +230,13 @@
                 <cvs-co package="org.glite.dgas.hlr-service"
                         tag="${org.glite.dgas.hlr-service.version}" />
         </target>
+
+
+	<!-- All project modules -->
+ 	<target name="project" depends="common,
+  				        hlr-clients,
+					pa-clients,
+					hlr-service" />
 
       
 	<!-- ====================================================

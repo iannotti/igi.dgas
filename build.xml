@@ -15,14 +15,17 @@
 	Build file for the GLite DGAS Subsystem
 	
 	Author: Giuseppe Patania <patania@to.infn.it>
-	Version info: $Id: build.xml,v 1.2 2004/07/15 17:01:53 gpatania Exp $
+	Version info: $Id: build.xml,v 1.3 2004/07/16 16:25:43 flammer Exp $
 	Release: $Name:  $
 
 	Revision history:
 	$Log: build.xml,v $
+	Revision 1.3  2004/07/16 16:25:43  flammer
+	Added tags for automated adding of components.
+
 	Revision 1.2  2004/07/15 17:01:53  gpatania
 	added pa-clients and hlr-service target names
-
+	
 -->
 
 <project name="dgas" default="dist">
@@ -212,6 +215,8 @@
 	<!-- ===============================================
 		 Modules proxy targets
 	     =============================================== -->
+
+	<!-- component targets definitions tag = do not remove = -->
 
 	<target name="common" unless="setenvonly" depends="globus,mysql">
 		<ant dir="${workspace.dir}/${subsystem.name}.common"
