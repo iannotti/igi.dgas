@@ -15,13 +15,13 @@
 	Build file for the GLite DGAS Subsystem
 	
 	Author: Giuseppe Patania <patania@to.infn.it>
-	Version info: $Id: build.xml,v 1.1 2004/07/09 14:04:01 gpatania Exp $
+	Version info: $Id: build.xml,v 1.2 2004/07/15 17:01:53 gpatania Exp $
 	Release: $Name:  $
 
 	Revision history:
 	$Log: build.xml,v $
-	Revision 1.1  2004/07/09 14:04:01  gpatania
-	Initial revision
+	Revision 1.2  2004/07/15 17:01:53  gpatania
+	added pa-clients and hlr-service target names
 
 -->
 
@@ -225,8 +225,25 @@
                      inheritall="false" />
         </target>
 
-	<!-- Main proxy -->
+
+
+	<target name="pa-clients" unless="setenvonly" depends="globus, mysql, common">
+		<ant dir="${workspace.dir}/${subsystem.name}.pa-clients"
+		     target="${target}"
+                     inheritall="false" />
+	</target>
+
+
+	<target name="hlr-service" unless="setenvonly" depends="globus, mysql, common, pa-clients">
+		<ant dir="${workspace.dir}/${subsystem.name}.hlr-service"
+		     target="${target}"
+                     inheritall="false" />
+	</target>
+
+<!-- Main proxy -->
 	<target name="buildmodules" depends="common,
-					     hlr-clients" />
-		
+					     hlr-clients,
+					     pa-clients,
+					     hlr-service" />
+
 </project>
