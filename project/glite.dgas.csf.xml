@@ -14,15 +14,28 @@
 
 	GLite DGAS Configuration Specification File
 	
-	Authors: Giuseppe Patania <patania@to.infn.it>		
-	Version info: $Id: glite.dgas.csf.xml,v 1.3 2004/07/16 16:25:43 flammer Exp $
+	Authors: Giuseppe Patania <patania@to.infn.it> ,
+		 Andrea Guarise <guarise@to.infn.it>		
+	Version info: $Id: glite.dgas.csf.xml,v 1.6.14.1 2007/02/01 08:53:02 aguarise Exp $
 	Release: $Name:  $
 
 	Revision history:
 	$Log: glite.dgas.csf.xml,v $
+	Revision 1.6.14.1  2007/02/01 08:53:02  aguarise
+	added dependency over unixodbc
+
+	Revision 1.6  2004/10/18 22:53:04  dimeglio
+	Added oscheck to various targets
+
+	Revision 1.5  2004/10/15 15:03:37  gpatania
+	added pa-service
+	
+	Revision 1.4  2004/07/30 14:01:45  aguarise
+	Added dependency toward cppunit
+	
 	Revision 1.3  2004/07/16 16:25:43  flammer
 	Added tags for automated adding of components.
-
+	
 	Revision 1.2  2004/07/15 17:17:27  gpatania
 	added pa-clients and hlr-service targets
 	
@@ -130,6 +143,10 @@
  		<condition property="hlr-service.head">
 			<equals arg1="${org.glite.dgas.hlr-service.version}" arg2="HEAD" />
                 </condition>
+              
+                <condition property="pa-service.head">
+                        <equals arg1="${org.glite.dgas.pa-service.version}" arg2="HEAD" />
+                </condition>
 
 	</target>
 
@@ -168,12 +185,14 @@
 	<!-- *****************************************************-->
 	
 	<!-- All development tools -->
- 	<target name="devtools" depends="junitcheck,
+ 	<target name="devtools" depends="oscheck,
+ 					 				 junitcheck,
 					 				 junit,
  									 chkstyle,
  									 jalopy,
  									 ant-contrib,
  									 cpptasks,
+									 cppunit,
  									 egee-ant-ext"/>		
 	
 	<!-- =====================================================
@@ -181,7 +200,7 @@
 		 ===================================================== -->
 	
 	<!--  All external libraries -->
- 	<target name="external" depends="log4j"/>
+ 	<target name="external" depends="oscheck, log4j"/>
  	
 	<!-- =====================================================
 		 GLite DGAS modules
@@ -190,7 +209,7 @@
 	<!-- component targets tag = do not remove = -->
 	
 	<!-- Common -->
- 	<target name="common" depends="globus, mysql, get.common.head, get.common.tag"/>
+ 	<target name="common" depends="globus, mysql, unixodbc, get.common.head, get.common.tag"/>
 	<target name="get.common.head" if="common.head">
 		<cvs-co package="org.glite.dgas.common" />
 	</target>
@@ -232,11 +251,25 @@
         </target>
 
 
+        <!-- Pa service -->
+        <target name="pa-service" depends="globus, mysql, common, get.pa-service.head, get.pa-service.tag"/>
+        <target name="get.pa-service.head" if="pa-service.head">
+                <cvs-co package="org.glite.dgas.pa-service" />
+        </target>
+        <target name="get.pa-service.tag" unless="pa-service.head">
+                <cvs-co package="org.glite.dgas.pa-service"
+                        tag="${org.glite.dgas.pa-service.version}" />
+        </target>
+
+
+
+
 	<!-- All project modules -->
  	<target name="project" depends="common,
   				        hlr-clients,
 					pa-clients,
-					hlr-service" />
+					hlr-service,
+                                        pa-service" />
 
       
 	<!-- ====================================================
@@ -244,7 +277,7 @@
 		 ==================================================== -->
 	
 	<!-- All libraries -->
- 	<target name="all" depends="evaluate.cvs.tags,defaultenvchecks,org.glite,org.glite.dgas,devtools,external,project" />		
+ 	<target name="all" depends="oscheck,evaluate.cvs.tags,defaultenvchecks,org.glite,org.glite.dgas,devtools,external,project" />		
 
 	<!-- ====================================================
 		 Print dependecies to console
