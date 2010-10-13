@@ -1,0 +1,384 @@
+#DGAS test suite
+#setting ENV variables:0:.:./test.conf
+
+#Check environment
+Check environment:2:v:true
+Check GLITE_LOCATION:1::[ -n "$GLITE_LOCATION" ]
+
+#Check host certificate
+Check host certificate:2:v:true
+host certificate file exists:1::[ -e $HOSTCERT ]
+host certificate file is a valid certifcate:1::openssl x509 -in $HOSTCERT
+host cert has enough validity time:1::openssl x509 -in $HOSTCERT -checkend $CERT_VALIDITY_TIME
+
+#startup collector daemon
+start up collector jobToProcess=all:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
+clean LRMS accounting dir:0::rm -rf $TESTBASE/tests/lrms-acct/
+clean grid-jobmap accounting dir:0::rm -rf $TESTBASE/tests/grid-jobmap/
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf &
+
+
+check LRMS_TYPE on PBS:1::grep "LRMS_TYPE=pbs" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check LRMS_JOBID on PBS:1::grep "LRMS_JOBID=280876.t2-ce-01.to.infn.it" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check LRMS_EVENTTIME on PBS:1::grep "LRMS_EVENTTIME=1232913182" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check LRMS_SUBMTIME on PBS:1::grep "LRMS_SUBMTIME=1232914373" `grep -l 280878.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check USER_DN on PBS:1::grep "USER_DN=/O=GRID-FR/C=FR/O=CNRS/OU=CREATIS/CN=Tristan Glatard" `grep -l 280878.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check USER_FQAN on PBS:1::grep "USER_FQAN=/biomed/Role=NULL/Capability=NULL;/biomed/lcg1/Role=NULL/Capability=NULL" `grep -l 280878.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check CE_ID on PBS:1::grep "CE_ID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-biomed" `grep -l 280878.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check timeZone on PBS:1::grep -P "timeZone=[+-]\d{4}" `grep -l 280878.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check jobType=grid:1::grep "JOB_TYPE=grid" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check GRID_JOBID, grid job, on PBS:1::grep "https://wms201.cern.ch:9000/fl_K71zmOZYz2T_QniyWtw" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check jobType=local on PBS:1::grep "JOB_TYPE=local" `grep -l 280879.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+check GRID_JOBID (glideIn) on PBS:1::grep "GRID_JOBID=GRID:280880.t2-ce-01.to.infn.it:1232914510" `grep -l 280880.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
+
+
+Stop collector daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+ls URBox:0::cat $TESTBASE/tests/dgasURBox/*
+cat log:0::cat $TESTBASE/dgas_collector.log
+Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.lock`
+
+
+
+start up collector jobToProcess=local:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
+cleanup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
+Set jobsToProcess=local:0::( sed -e 's/jobsToProcess = \"all\"/jobsToProcess=\"local\"/' $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.local )
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.local &
+
+check grid job not accounted:1:!(1):grep "JOB_TYPE=grid"  ${TESTBASE}/tests/dgasURBox/*
+check local job accounted:1::grep "JOB_TYPE=local" ${TESTBASE}/tests/dgasURBox/*
+
+
+start up collector jobToProcess=grid:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
+cleanup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
+Set jobsToProcess=local:0::( sed -e "s/jobsToProcess = \"all\"/jobsToProcess=\"grid\"/" $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.grid )
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.grid &
+
+check grid accounted:1::grep "JOB_TYPE=grid"  ${TESTBASE}/tests/dgasURBox/*
+check local job not accounted:1:!(1):grep "JOB_TYPE=local" ${TESTBASE}/tests/dgasURBox/*
+
+
+#startup collector daemon LSF
+start up collector LSF jobToProcess=all:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf
+clean up URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+setup logs:1::$TESTBASE/tests/createLSFRecords.sh
+create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | gzip --to-stdout > $TESTBASE/tests/lrms-acct/lsb.acct.1.gz )
+create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
+Set lrmsType = "lsf":0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
+
+check LRMS_TYPE on LSF:1::grep "LRMS_TYPE=lsf" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check LRMS_JOBID on LSF:1::grep "LRMS_JOBID=4530990" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check LRMS_EVENTTIME on LSF:1::grep -P 'LRMS_EVENTTIME=(\d{10})$' ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check LRMS_SUBMTIME on LSF:1::grep -P 'LRMS_SUBMTIME=(\d{10})$' ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check USER_DN on LSF:1::grep "USER_DN=/C=IT/O=INFN/OU=Personal Certificate/L=Trieste/CN=stefano belforte" ${TESTBASE}/tests/dgasURBox/lsf_4530990_* 
+check USER_FQAN on LSF:1::grep "USER_FQAN=/cms/Role=production/Capability=NULL\;/cms/Role=NULL/Capability=NULL\;/cms/itcms/Role=NULL/Capability=NULL" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check CE_ID on LSF:1::grep "ce05-lcg.cr.cnaf.infn.it:2119/jobmanager-lcglsf-cms" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check timeZone on LSF:1::grep -P "timeZone=[+-]\d{4}" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check jobType=grid on LSF:1::grep "JOB_TYPE=grid" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
+check GRID_JOBID=grid on LSF (all) :1::grep "GRID_JOBID=https://wms218.cern.ch:9000/E_vOh2Dz0ZZI4A0b2EM2yw" ${TESTBASE}/tests/dgasURBox/lsf_4530990_* 
+
+
+Stop collector LSF daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+ls URBox:0::cp -r $TESTBASE/tests/dgasURBox/ /tmp/
+cat URBox:0::cat $TESTBASE/tests/dgasURBox/*
+rm URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.lock`
+
+
+#startup collector daemon LSF
+start up collector LSF jobToProcess=all:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf
+clean up URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean LRMS accounting dir:0::rm -f $TESTBASE/tests/lrms-acct/
+clean grid-jobmap accounting dir:0::rm -f $TESTBASE/tests/grid-jobmap/
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+setup logs:1::$TESTBASE/tests/createLSFRecords.sh
+create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | gzip --to-stdout > $TESTBASE/tests/lrms-acct/lsb.acct.1.gz )
+create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
+Create dgas_sensors.conf:0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.ldif.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
+
+
+check GlueHostBenchmarkSI00 on LSF:1::grep "GlueHostBenchmarkSI00=1371" ${TESTBASE}/tests/dgasURBox/lsf_4535228_*
+check GlueHostBenchmarkSI00 on LSF:1::grep "GlueHostBenchmarkSF00=1268" ${TESTBASE}/tests/dgasURBox/lsf_4535228_*
+
+Stop collector LSF daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+ls URBox:1::cp -r $TESTBASE/tests/dgasURBox/ /tmp/
+ls URBox:1::cat $TESTBASE/tests/dgasURBox/*
+rm URBox:1::rm -f $TESTBASE/tests/dgasURBox/*
+Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.lock`
+
+
+
+
+#Start up daemon
+Start up pushd on PBS:2:v:true
+clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-dgas-pushd.pl ${GLITE_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+
+Check grid + FQAN job:2:v:true
+clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+
+create record:0::$TESTBASE/tests/putURindgasURBox.sh gridJobFQAN.sed gridFQAN 
+ls record directory:0::ls -l $TESTBASE/tests/dgasURBox/
+check record:0::cat $TESTBASE/tests/dgasURBox/*
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log
+check userVo:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "\"userVo=testvo\""
+check queue:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "QUEUE=testqueue"
+check unixuser:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "USER=guarise"
+check FQAN:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "fqan=/testvo/Role=NULL/Capability=NULL"
+check voOrigin:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "voOrigin=fqan"
+check unixgroup:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "group=testunixgroup"
+check userCert:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "usrcert \"/C=IT/O=INFN/OU=Personal Certificate/L=Torino/CN=Andrea Guarise\""
+check cpuTime:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "CPU_TIME=201"
+check wallTime:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "WALL_TIME=14601"
+check si2k:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "si2k=1495"
+check sf2k:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "sf2k=1268"
+check execHost:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQAN | grep "execHost=t2-wnU-16.to.infn.it/1"
+Check grid glideIn job:2:v:true
+clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+
+create record:0::$TESTBASE/tests/putURindgasURBox.sh gridJobGlideIn.sed gridGlideIn 
+ls record directory:0::ls -l $TESTBASE/tests/dgasURBox/
+check record:0::cat $TESTBASE/tests/dgasURBox/*
+check grid JobId:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "GRID:280880.t2-ce-01.to.infn.it:1232914510"
+
+# Check grid + pool job
+Check grid + pool (alice001) job:2:v:true
+
+clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/alice001/;s/\$jobID/gridPOOLdigit/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLdigit
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLdigit
+check userVo=alice:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLdigit | grep "\"userVo=alice\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLdigit | grep "\"voOrigin=pool\""
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (atlassgm) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/atlassgm/;s/\$jobID/gridPOOLsgm1/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLsgm1
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLsgm1
+check userVo=atlas:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgm1 | grep "\"userVo=atlas\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgm1 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (atlassgm030) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/atlassgm030/;s/\$jobID/gridPOOLsgmdigit1/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLsgmdigit1
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLsgmdigit1
+check userVo=atlas:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgmdigit1 | grep "\"userVo=atlas\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgmdigit1 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (cmsprd) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/cmsprd/;s/\$jobID/gridPOOLprd1/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLprd1
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLprd1
+check userVo=cms:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprd1 | grep "\"userVo=cms\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprd1 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (cmsprd040) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/cmsprd040/;s/\$jobID/gridPOOLprddigit1/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLprddigit1
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLprddigit1
+check userVo=cms:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprddigit1 | grep "\"userVo=cms\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprddigit1 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (sgmlhcb) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/sgmlhcb/;s/\$jobID/gridPOOLsgm2/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLsgm2
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLsgm2
+check userVo=lhcb:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgm2 | grep "\"userVo=lhcb\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgm2 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (sgmlhcb020) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/sgmlhcb020/;s/\$jobID/gridPOOLsgmdigit2/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLsgmdigit2
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLsgmdigit2
+check userVo=lhcb:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgmdigit2 | grep "\"userVo=lhcb\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLsgmdigit2 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (prdlhcb) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/prdlhcb/;s/\$jobID/gridPOOLprd2/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLprd2
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLprd2
+check userVo=lhcb:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprd2 | grep "\"userVo=lhcb\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprd2 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+# Check grid + pool job
+Check grid + pool (prdlhcb010) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/prdlhcb010/;s/\$jobID/gridPOOLprddigit2/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLprddigit2
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLprddigit2
+check userVo=lhcb:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprddigit2 | grep "\"userVo=lhcb\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLprddigit2 | grep "voOrigin=pool"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+
+# Check local + map job
+Check local + map (guarise) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/localuserbuff/guarise/;s/\$jobID/localMapguarise1/" $TESTBASE/tests/localJobmap.sed > $TESTBASE/tests/localJobmap.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh localJobmap.sed.buff localMapguarise1
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep localMapguarise1
+check userVo=testVo1:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep localMapguarise1 | grep "\"userVo=testVo1\""
+check voOrigin=map:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep localMapguarise1 | grep "voOrigin=map"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/localJobmap.sed.buff
+
+
+# Check local + map job (Postponed - uses groups command...needs a workaround)
+#Check local + map (guarise) job:2:v:true
+#
+#clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+#create record step 1:1:v:( sed -e "s/localgroupbuff/localgroup/;s/\$jobID/localMapgroup1/" $TESTBASE/tests/localJobmap.sed > $TESTBASE/tests/localJobmap.sed.buff ) 
+#create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh localJobmap.sed.buff localMapgroup1
+#atmClient line in the log:1:v:grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep localMapgroup1
+#check userVo=testVo2:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep localMapgroup1 | grep "\"userVo=testVo2\""
+#check voOrigin=map:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep localMapgroup | grep "voOrigin=map"
+#clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+#clean up sed buffer:0::rm -f $TESTBASE/tests/localJobmap.sed.buff
+
+Stop daemon and cleanup:2:v:true
+#Stop the daemon
+Stop Pushd:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+#clenup log:1::rm -f $TESTBASE/dgas_ce_pushd.log
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+
+
+#Start up daemon
+Start up pushd on PBS (poolAccountPattern):2:v:true
+clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-dgas-pushd.pl ${GLITE_LOCATION}/libexec/dgastests/tests/dgas_sensors_test_poolPatterns.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+
+
+# Check grid + pool job
+Check grid + pool (prdlhcb010) job:2:v:true
+
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+create record step 1:0::( sed -e "s/pooluserbuff/prdlhcb010/;s/\$jobID/gridPOOLPATTprddigit2/" $TESTBASE/tests/gridJobpool.sed > $TESTBASE/tests/gridJobpool.sed.buff ) 
+create record step 2:0::$TESTBASE/tests/putURindgasURBox.sh gridJobpool.sed.buff gridPOOLPATTprddigit2
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log| grep gridPOOLprddigit2
+check userVo is determined:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLPATTprddigit2 | grep "\"userVo=pluto\""
+check voOrigin=pool:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridPOOLPATTprddigit2 | grep "voOrigin=pool"
+check poolAccountPatternFile presence in the log:1::grep poolAccountPatternFile $TESTBASE/dgas_ce_pushd.log 
+log:0::cat $TESTBASE/dgas_ce_pushd.log
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
+
+
+Stop daemon and cleanup:2:v:true
+#Stop the daemon
+Stop Pushd:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+#clenup log:1::rm -f $TESTBASE/dgas_ce_pushd.log
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+
+
+#Start up daemon
+Start up pushd on LSF:2:v:true
+clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
+start up daemon:1::perl  ${GLITE_LOCATION}/sbin/glite-dgas-pushd.pl ${GLITE_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+
+Check grid + FQAN job:2:v:true
+clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+
+create record:0::$TESTBASE/tests/putLSFURindgasURBox.sh gridJobFQAN.lsf.sed gridFQANlsf 
+check record:1::ls -l $TESTBASE/tests/dgasURBox/
+
+
+# Check grid + pool LSF job
+Check grid + pool LSF job:2:v:true
+
+atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQANlsf
+check SiteName=TEST-SITE:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQANlsf | grep "SiteName=TEST-SITE"
+check GlueCEInfoTotalCPUs=176:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQANlsf | grep "GlueCEInfoTotalCPUs=176"
+check execHost:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQANlsf | grep "execHost=wn-103-05-11-13-a"
+clenup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+clean up sed buffer:0::rm -f $TESTBASE/tests/localJobmap.sed.buff
+
+Stop daemon and cleanup:2:v:true
+#Stop the daemon
+Stop Pushd:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+#clenup log:1::rm -f $TESTBASE/dgas_ce_pushd.log
+clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*

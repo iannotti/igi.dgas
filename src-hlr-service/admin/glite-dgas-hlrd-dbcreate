@@ -1,0 +1,130 @@
+#!/bin/bash
+#
+# Init file for DGAS HLR database
+#
+
+PRIVILEGES="ALL PRIVILEGES"
+PRIV_TABLES="Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Alter_priv,Drop_priv"
+
+EXIT_OK=0
+ERROR_ENV=1
+ERROR_ROOTPWD=2
+ERROR_FILE=3
+ERROR_USERPWD=4
+
+PREFIX=${GLITE_LOCATION}
+
+if [ -z ${GLITE_LOCATION} ]
+then
+	echo "Please set the GLITE_LOCATION environment variable. Trying with /opt/glite/"
+	PREFIX=/opt/glite/
+fi
+
+
+ROOT_PWD=$1
+
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+        echo "Usage: $0 <MySQL_root_password>"
+        exit $EXIT_OK
+fi
+
+
+CONFFILE=$PREFIX/etc/dgas_hlr.conf
+DBSPECFILE=$PREFIX/etc/dgas_hlr.sql
+DBTMPSPECFILE=$PREFIX/etc/dgas_hlr_tmp.sql
+
+if [ ! -f $CONFFILE ]; then
+    echo "Configuration file $CONFFILE does not exist."
+    exit $ERROR_FILE
+fi
+
+if [ ! -f $DBSPECFILE ]; then
+    echo "SQL script $DBSPECFILE does not exist."
+    exit $ERROR_FILE
+fi
+
+if [ ! -f $DBTMPSPECFILE ]; then
+    echo "SQL script $DBTMPSPECFILE does not exist."
+    exit $ERROR_FILE
+fi
+
+
+DB_SERVER=`grep hlr_sql_server $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_server\s*=\s*\"\(.*\)\"/\1/"`
+DB_NAME=`grep hlr_sql_dbname $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_dbname\s*=\s*\"\(.*\)\"/\1/"`
+DB_TMP_NAME=`grep hlr_tmp_sql_dbname $CONFFILE | grep "^#" -v | sed -e "s/hlr_tmp_sql_dbname\s*=\s*\"\(.*\)\"/\1/"`
+DB_USER=`grep hlr_sql_user $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_user\s*=\s*\"\(.*\)\"/\1/"`
+DB_PASSWORD=`grep hlr_sql_password $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_password\s*=\s*\"\(.*\)\"/\1/"`
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+
+# testing root password:
+eval 'mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "" &> /dev/null'
+
+if [ "$?" -ne "0" ]; then
+    echo "Wrong MySQL root password, cannot authenticate to the server!"
+    echo "Usage: $0 <MySQL_root_password>"
+    exit $ERROR_ROOTPWD
+fi
+
+
+
+# first we crate the databases:
+
+# creating main HLR database, if it doesn't exist:
+eval 'mysql --host=$DB_SERVER -u root --password=$ROOT_PWD $DB_NAME -e "" &> /dev/null'
+if [ "$?" -ne "0" ]; then
+    echo "Database $DB_NAME doesn't exist, creating it ..." ;
+    mysqladmin --host=$DB_SERVER -u root --password=$ROOT_PWD create $DB_NAME ;
+    mysql --host=$DB_SERVER -u root --password=$ROOT_PWD $DB_NAME < $DBSPECFILE ;
+else
+    echo "Database $DB_NAME exists, nothing to do." ;
+fi
+
+# creating transaction queue database, if it doesn't exist:
+eval 'mysql --host=$DB_SERVER -u root --password=$ROOT_PWD $DB_TMP_NAME -e "" &> /dev/null'
+if [ "$?" -ne "0" ]; then
+    echo "Database $DB_TMP_NAME doesn't exist, creating it ..." ;
+    mysqladmin --host=$DB_SERVER -u root --password=$ROOT_PWD create $DB_TMP_NAME ;
+    mysql --host=$DB_SERVER -u root --password=$ROOT_PWD $DB_TMP_NAME < $DBTMPSPECFILE ;
+else
+    echo "Database $DB_TMP_NAME exists, nothing to do." ;
+fi
+
+
+# set user privileges (doesn't interfere with eventual other privileges
+# of an already existing user), but only if the password is correct
+
+# checking user and privileges
+user_privileges=`mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "SELECT User,$PRIV_TABLES FROM user WHERE User='$DB_USER' AND Host='localhost';" | grep $DB_USER | sed -e "s/$DB_USER//g; s/\t//g; s/|//g"`
+#db_privileges=`mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "SELECT User,$PRIV_TABLES FROM db WHERE User='$DB_USER' AND Db='$DB_NAME' AND Host='localhost';" | grep $DB_USER | sed -e "s/$DB_USER//g; s/\t//g; s/|//g"`
+#db_tmp_privileges=`mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "SELECT User,$PRIV_TABLES FROM db WHERE User='$DB_USER' AND Db='$DB_NAME' AND Host='localhost';" | grep $DB_USER | sed -e "s/$DB_USER//g; s/\t//g; s/|//g"`
+
+if [ "$user_privileges" != "" ]; then
+    # the user exists, check password:
+    eval 'mysql --host=$DB_SERVER -u $DB_USER --password=$DB_PASSWORD -e "" &> /dev/null'
+    if [ "$?" -ne "0" ]; then
+	echo "Wrong MySQL user password specified in $CONFFILE"
+	echo "The HLR server cannot authenticate to the MySQL server!"
+	exit $ERROR_USERPWD
+    fi
+fi
+
+
+# if the user doesn'exist or exists and has the right password, make sure
+# the proper access privileges are set. This will not affect already existing
+# further privileges of the user (but it would change it's password, that's
+# why we first checked if it is the same):
+
+if [ "$DB_USER" != "root" ]; then
+    # do this only if it really is a user different from root:
+
+    echo "Creating MySQL user and/or granting necessary privileges ..."
+
+    mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "GRANT $PRIVILEGES ON $DB_NAME.* TO $DB_USER@localhost IDENTIFIED BY '$DB_PASSWORD';"
+    mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "GRANT $PRIVILEGES ON $DB_NAME.* TO $DB_USER@'%' IDENTIFIED BY '$DB_PASSWORD';"
+    mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "GRANT $PRIVILEGES ON $DB_TMP_NAME.* TO $DB_USER@localhost IDENTIFIED BY '$DB_PASSWORD';"
+    mysql --host=$DB_SERVER -u root --password=$ROOT_PWD mysql -e "GRANT $PRIVILEGES ON $DB_TMP_NAME.* TO $DB_USER@'%' IDENTIFIED BY '$DB_PASSWORD';"
+
+fi

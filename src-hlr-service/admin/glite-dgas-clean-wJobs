@@ -1,0 +1,285 @@
+#!/usr/bin/perl  
+###################################
+##  Script: dgas-clean-wJobs.pl  ##
+##  Author: Giuseppe Patania     ##
+###################################
+
+use strict;
+use warnings;
+use DBI;                     ## for connection to the mysql database
+use Data::Dumper;            ## for debugging 
+use IO::Handle;              ## used by autoflush 
+use File::Temp qw(tempfile); ## for lock file generation
+use POSIX qw(strftime);
+
+
+## Variable declarations
+my $conf_file="/opt/glite/etc/dgas_clean_wJobs.conf";
+my %conf_val = 
+    (
+     sql_server_name => "localhost",
+     sql_user        => "root",
+     sql_password    => "",
+     sql_database    => "hlr",
+     clean_wJobs_var_path     => "/opt/glite/var/dgas/",
+     clean_wJobs_var_log_path => "/opt/glite/var/dgas/log/",
+     clean_wJobs_buffer       => "clean_wJobs.buf",
+     clean_wJobs_lock         => "clean_wJobs",
+     clean_wJobs_log          => "clean_wJobs.log"
+     );                           
+
+
+##  parse conf file
+&parse_conf($conf_file);
+
+## setup logfile 
+my $logfile = $conf_val{clean_wJobs_var_log_path}.$conf_val{clean_wJobs_log};
+open(LOGFILE, ">> $logfile") || die "Can't open file $logfile:  $! \n"; 
+my $standard_fh =select(LOGFILE);   ## switch to LOGFILE prints
+LOGFILE->autoflush(1); ## writes log entries immediately
+
+## manage lock file
+&manage_lock();
+print strftime "%Y-%m-%d %X:", localtime;
+print " starting process $$ ... \n";
+
+##  make connection to database
+print "Connecting to database: \"$conf_val{sql_database}\"\n"; 
+my $connectionInfo="dbi:mysql:$conf_val{sql_database};$conf_val{sql_server_name}";
+my $dbh = DBI->connect($connectionInfo,$conf_val{sql_user},$conf_val{sql_password},{RaiseError => 1, AutoCommit => 1});
+
+print "STEP 0: \n";
+## get IDs to set the best id query range
+my $query = &compose_select_query('ID_RANGE','NULL','NULL');
+print strftime "%Y-%m-%d %X: ", localtime;
+print "execute ID_RANGE query: #", $query , "#\n";
+my @row = $dbh->selectrow_array($query);
+print strftime "%Y-%m-%d %X:", localtime;
+print "... query done. \n";
+
+my $min_id=$row[1];
+my $max_id=$row[0];
+my $last_id= &read_buffer($conf_val{clean_wJobs_var_path}.$conf_val{clean_wJobs_buffer},$min_id);
+
+print "STEP 1: \n";
+## compose select query 
+$query = &compose_select_query('LOCAL_ONLY',$last_id,$max_id);
+print strftime "%Y-%m-%d %X: ", localtime;
+print "execute LOCAL_ONLY query: #", $query , "#\n";
+my $local_id=$dbh->selectcol_arrayref($query);
+print strftime "%Y-%m-%d %X: ", localtime;
+print "... query done. \n";
+
+$query = &compose_select_query('GRID_ONLY',$last_id, $max_id);
+print strftime "%Y-%m-%d %X: ", localtime;
+print "execute GRID_ONLY query: #", $query , "#\n";
+my $grid_id=$dbh->selectcol_arrayref($query);
+print strftime "%Y-%m-%d %X: ", localtime;
+print "... query done. \n";
+
+## Concatenate GRID_ONLY and LOCAL_ONLY arrays 
+my @type_only_id=(@$local_id, @$grid_id);
+
+## Free memory
+splice(@$local_id);
+splice(@$grid_id);
+
+
+## deleting type_only duplicated records
+if(@type_only_id)
+{
+    print "Found \'", scalar(@type_only_id),"\' TYPE_ONLY duplicated records !! \n";
+    print strftime "%Y-%m-%d %X: ", localtime;
+    print "Starting TYPE_ONLY delete records: \n";
+
+    for (@type_only_id)
+    {
+	$query = &compose_delete_query('TYPE_ONLY',$_);
+	$dbh->do($query); 
+    }
+    print strftime "%Y-%m-%d %X: ", localtime;
+    print "... delete records done. \n";
+## Free memory
+    splice(@type_only_id);
+}
+else  {print "No \'TYPE ONLY\' records found. \n";}
+
+print "STEP 2: \n";
+
+### LOCAL_GRID SELECT QUERY
+$query = &compose_select_query('LOCAL_GRID',$last_id, $max_id);
+print strftime "%Y-%m-%d %X: ", localtime;
+print "execute LOCAL_GRID query: #", $query , "#\n";
+my $fields = $dbh->selectall_arrayref($query);
+print strftime "%Y-%m-%d %X: ", localtime;
+print "... query done. \n";
+
+
+#print Dumper($fields);
+if(@$fields) 
+{
+    ##  writes into buffer file, date of most recent duplicated record found
+    my $records = @$fields;
+    print "Found $records TYPE LOCAL_GRID duplicated records! \n"; 
+    print strftime "%Y-%m-%d %X: ", localtime;
+    print "Starting TYPE GRID_LOCAL delete records ... \n";
+    ## foreach duplicated record/lrmsid found, composes delete query;
+    
+    foreach  my $values (@$fields) 
+    {
+        my $M_id = @$values[0]; 
+	my $m_id = @$values[1];
+	
+	$query = &compose_delete_query('LOCAL_GRID',$M_id);
+	$dbh->do($query); 
+#	print "Executed query: $query \n";
+	$query = &compose_delete_query('LOCAL_GRID',$m_id);
+	$dbh->do($query); 	
+#	print "Executed query: $query \n";
+    }
+    print strftime "%Y-%m-%d %X: ", localtime;
+    print "... delete records done. \n";
+}
+else { print "No \'TYPE LOCAL_GRID\' duplicated records found. \n";}
+
+
+print "Updating date buffer with max id: \"$max_id\" \n";
+&write_buffer($conf_val{clean_wJobs_var_path}.$conf_val{clean_wJobs_buffer},$max_id);
+
+print "disconnecting from database. \n";
+$dbh->disconnect;             
+
+print "Terminated process $$. Exiting ... \n";
+print "-----------------------------------\n";
+
+close(LOGFILE);
+
+exit 0;
+
+
+##################
+## Sub routines ##
+##################
+
+sub parse_conf
+{
+    my $file= $_[0];
+    open(FILE, "$file") || die "Can't open file $_[0]:  $! \n";
+    while(<FILE>)
+    {
+	if(/^sql_server_name\s*=\s*\"(.*)\"$/){$conf_val{sql_server_name}=$1;}
+	if(/^sql_user\s*=\s*\"(.*)\"$/){$conf_val{sql_user}=$1;}
+	if(/^sql_password\s*=\s*\"(.*)\"$/){$conf_val{sql_password}=$1;}
+	if(/^sql_database\s*=\s*\"(.*)\"$/){$conf_val{sql_database}=$1;}
+	if(/^clean_wJobs_var_path\s*=\s*\"(.*)\"$/){$conf_val{clean_wJobs_var_path}=$1;} 
+	if(/^clean_wJobs_var_log_path\s*=\s*\"(.*)\"$/){$conf_val{clean_wJobs_var_log_path}=$1;} 
+	if(/^clean_wJobs_buffer\s*=\s*\"(.*)\"$/){$conf_val{clean_wJobs_buffer}=$1;} 
+        if(/^clean_wJobs_lock\s*=\s*\"(.*)\"$/){$conf_val{clean_wJobs_lock}=$1;}
+        if(/^clean_wJobs_log\s*=\s*\"(.*)\"$/){$conf_val{clean_wJobs_log}=$1;}
+    }
+    close(FILE);
+}
+
+
+
+
+sub compose_select_query()  ## parameters: ( job_type , stored_id, max(id) ) ,  job_type can be: LOCAL_ONLY, GRID_ONLY, LOCAL_GRID
+{
+    
+    my $query = "SELECT MAX(id) ";
+    
+    if($_[0] eq 'LOCAL_GRID' || $_[0] eq 'ID_RANGE') { $query .= ", MIN(id) ";}  
+    
+    $query .= "FROM " . $conf_val{sql_database} . ".jobTransSummary ";
+    
+    if($_[0] eq 'GRID_ONLY' || $_[0] eq 'LOCAL_ONLY')
+    { 
+	$query   .= "WHERE dgJobId ";
+	if($_[0] eq 'LOCAL_ONLY'){ $query.= "NOT ";}
+	$query   .= "LIKE \"https://%\" ";
+	$query   .= "AND id >= \'" .$_[1] ."\' ";
+    }
+    
+    if($_[0] eq 'LOCAL_GRID'){$query   .= "WHERE id >= \'" .$_[1] ."\' ";}   
+    
+    if($_[0] ne 'ID_RANGE')
+    {
+	$query   .= "AND id <  \'" .$_[2] ."\' ";
+	$query   .= "GROUP BY lrmsid, date, siteName "; 
+	$query   .= "HAVING COUNT(dgJobId) > 1 ";
+    }   
+
+    return $query;
+}
+
+
+sub compose_delete_query()
+{
+    my $query = "DELETE FROM ".$conf_val{sql_database}.".jobTransSummary ";
+    $query   .= "WHERE id =\'". $_[1] ."\' ";
+    if($_[0] eq 'LOCAL_GRID') {$query   .= "AND dgJobId NOT LIKE \"https://%\"";}
+
+    return $query;
+}
+
+sub manage_lock()
+{
+    opendir(DIR, $conf_val{clean_wJobs_var_path}) or die "can't opendir $conf_val{clean_wJobs_var_path}: $!";
+    while (defined(my $file = readdir(DIR)))
+    {
+	next if $file =~ /^\.\.?$/;
+	if ($file =~ /^clean_wJobs\.([0-9]{1,5})\.([0-9a-zA-Z]{4})\.lock$/)
+	{
+	    my $msg = "Error: another process is running or a lock file is pending. \n";
+	    $msg .= "Please remove $conf_val{clean_wJobs_var_path}.$file. \nExiting \n";
+	    die  "$msg: $!" ;
+	} 
+    }
+    closedir(DIR); 
+    
+    ## write lock file    
+    my $lockfile = $conf_val{clean_wJobs_var_path}.$conf_val{clean_wJobs_lock};
+    (my $fh, my $filename)=tempfile("$lockfile.$$.XXXX", SUFFIX => ".lock", UNLINK => 1);               
+    print "------------------------\n";
+    print "Created lock file :", $filename, "\n";
+    return 0;
+}
+
+
+sub read_buffer()
+{
+    my $msg = "Warning: can't read file $_[0] or file not found \n";
+    my $line= $_[1];
+    
+    if(open(IN, "< $_[0]")) {            
+	while (defined($line = <IN>)) {     
+	    chomp $line;
+	    if ($line) { 
+		print "Reading id  from file_buffer $_[0]: \"$line\" \n"; 
+		return $line;
+	    }
+	}
+	close(IN);    
+    }
+    else { 
+	print $msg; 
+    }
+    return $line;   
+}
+
+
+sub write_buffer()
+{
+    my $msg = "Error: can't open $_[0] file, $! \n";
+    open(OUT, "> $_[0]") || print $msg;
+    print OUT $_[1];
+    close(OUT);
+    
+    return 0;
+}
+
+
+__END__
+
+###=begin  comment block
+##=cut comment block

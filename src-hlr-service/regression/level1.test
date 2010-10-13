@@ -1,0 +1,36 @@
+#DGAS test suite
+#setting ENV variables:0:.:./test.conf
+
+#Check environment
+Check environment:2:v:true
+Check GLITE_LOCATION:1::[ -n "$GLITE_LOCATION" ]
+
+#Check host certificate
+Check host certificate:2:v:true
+host certificate file exists:1::[ -e $HOSTCERT ]
+host certificate file is a valid certifcate:1::openssl x509 -in $HOSTCERT
+host cert has enough validity time:1::openssl x509 -in $HOSTCERT -checkend $CERT_VALIDITY_TIME
+
+#Check MySQL daemon
+Check MySQL daemon:2:v:true
+MySQL daemon status is OK:1::$TESTBASE/tests/mysqldStatus.sh
+MySQL daemon is alive:1::$TESTBASE/tests/mysqldPing.sh
+
+#Check HLR daemon
+Check HLR daemon:2:v:true
+hlr conf file exists:1::[ -e $HLRD_CONF ]
+hlr database exists:1::$TESTBASE/tests/hlrDBExists.sh
+hlr_tmp database exists:1::$TESTBASE/tests/hlr_tmpDBExists.sh
+glite-dgas-hlrd status:1::/opt/glite/sbin/glite-dgas-hlrd status
+crontab runs translateDb:1::crontab -l| grep -v "#" | grep hlr-translatedb
+hlrServer daemon is alive:1::$TESTBASE/tests/hlrServerdIsAlive.sh
+hlrTqd daemon is alive:1::$TESTBASE/tests/hlrQmgrIsAlive.sh
+hlrHAD daemon is alive:1::$TESTBASE/tests/hlrHADIsAlive.sh
+glite-dgas-hlrd in /etc/rc.d/init.d/:1:w:[ -e /etc/rc.d/init.d/glite-dgas-hlrd ]
+glite-dgas-hlrd in chkconfig:1:w:chkconfig --list | grep  glite-dgas-hlrd 
+glite-dgas-hlrd service compatiblity:1:w:service glite-dgas-hlrd status  
+
+#Check client-server communication
+Check client-server communication:2:v:true
+HLR answers to pingClient:1::$GLITE_LOCATION/bin/glite-dgas-ping -s "$HOSTNAME:$HLR_PORT:" -t 1
+

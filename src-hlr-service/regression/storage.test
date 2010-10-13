@@ -1,0 +1,46 @@
+#DGAS test suite
+#setting ENV variables:0:.:./test.conf
+
+#Check environment
+Check environment:2:v:true
+Check GLITE_LOCATION:1::[ -n "$GLITE_LOCATION" ]
+
+#Check host certificate
+Check host certificate:2:v:true
+host certificate file exists:1::[ -e $HOSTCERT ]
+host certificate file is a valid certifcate:1::openssl x509 -in $HOSTCERT
+host cert has enough validity time:1::openssl x509 -in $HOSTCERT -checkend $CERT_VALIDITY_TIME
+
+
+#Check HLR daemon
+Check HLR daemon:2:v:true
+hlr conf file exists:1::[ -e $HLRD_CONF ]
+hlr database exists:1::$TESTBASE/tests/hlrDBExists.sh
+hlr_tmp database exists:1::$TESTBASE/tests/hlr_tmpDBExists.sh
+glite-dgas-hlrd status:1::/opt/glite/sbin/glite-dgas-hlrd status
+crontab runs translateDb:1::crontab -l| grep -v "#" | grep hlr-translatedb
+hlrServer daemon is alive:1::$TESTBASE/tests/hlrServerdIsAlive.sh
+glite-dgas-hlrd in /etc/rc.d/init.d/:1:w:[ -e /etc/rc.d/init.d/glite-dgas-hlrd ]
+glite-dgas-hlrd in chkconfig:1:w:chkconfig --list | grep  glite-dgas-hlrd 
+
+#Check client-server communication
+Check sendRecord <-> getRecord communication:2:v:true
+HLR denies unauthorized sendRecord:1:!(61):$GLITE_LOCATION/libexec/glite-dgas-sendRecord -s "$HOSTNAME:$HLR_PORT:" -t voStorageRecords "vo=alice" "voDefSubClass=sgm" "storage=t2-se-01" "storageDefSubClass=primary" "usedBytes=4000000" "freeBytes=100000000000" 
+Authorize recordSource:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin -S -a "$CERT_DN"
+Query specific recordSource:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryadmin -S -A "$CERT_DN" | grep "recordSource" | grep "$CERT_DN"
+Query all recordSource:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryadmin -a 
+voStorageRecord reports uniqueChecksum:1::$GLITE_LOCATION/libexec/glite-dgas-sendRecord -s "$HOSTNAME:$HLR_PORT:" -t voStorageRecords "timestamp=123456789" "vo=alice" "voDefSubClass=sgm" "storage=test" "storageDefSubClass=primary" "usedBytes=4000000" "freeBytes=100000000000" "siteName=testSite" | grep 8a22be5af39eea95faab866dfa2d08fe 
+voStorageRecordTest:1::$GLITE_LOCATION/libexec/glite-dgas-sendRecord -s "$HOSTNAME:$HLR_PORT:" -t voStorageRecords "vo=alice" "voDefSubClass=sgm" "storage=test" "storageDefSubClass=primary" "usedBytes=4000000" "freeBytes=100000000000" "siteName=testSite"
+create sysDefprova1:1::mysql -uroot -pzibibbo hlrTorino -e "CREATE TABLE sysDefProva1 ( prova1 int(10), prova2 int(10), prova3 varchar(255), PRIMARY KEY (prova2)) ENGINE=MyISAM"
+sysDef* test:1::$GLITE_LOCATION/libexec/glite-dgas-sendRecord -s "$HOSTNAME:$HLR_PORT:" -t sysDefProva1 "prova1=`date +%s`" "prova2=2" "prova3=string1"  
+check voStorageRecords:1::mysql -uroot -pzibibbo hlrTorino -e "SELECT * from voStorageRecords"
+check sysDef:1:v:mysql -uroot -pzibibbo hlrTorino -e "SELECT * from sysDefProva1"
+remove recordSource:1:v:$GLITE_LOCATION/sbin/glite-dgas-hlr-deladmin -S -a "$CERT_DN"
+
+Authorize hlrAdmin:1:v:$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin  -a "$CERT_DN"
+Delete hlrAdmin:1:v:$GLITE_LOCATION/sbin/glite-dgas-hlr-deladmin  -a "$CERT_DN"
+#cleanup
+cleanup voStorageRecords:1:v:mysql -uroot -pzibibbo hlrTorino -e "DELETE from voStorageRecords WHERE storage = \"test\""
+cleanup sysDef:1:v:mysql -uroot -pzibibbo hlrTorino -e "DROP TABLE sysDefProva1"
+
+
