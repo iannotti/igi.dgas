@@ -1,0 +1,8 @@
+#! /bin/bash
+
+echo "Server certificate:"
+echo
+
+openssl x509 -in /etc/grid-security/hostcert.pem -text
+
+

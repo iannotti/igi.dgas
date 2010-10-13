@@ -1,0 +1,104 @@
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-alice,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-alice2,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-atlas,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-cms,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-lhcb,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-short,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 60
+GlueCEPolicyMaxWallClockTime: 240
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-cert,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 120
+GlueCEPolicyMaxWallClockTime: 240
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-compassit,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-zeus,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-na48,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-biomed,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-grid,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+
+dn: GlueCEUniqueID=t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-tps,mds-vo-name=resource,o=grid
+GlueCEInfoLRMSVersion: 2.1.9
+GlueCEInfoTotalCPUs: 176
+GlueCEStateFreeCPUs: 8
+GlueCEPolicyMaxCPUTime: 2880
+GlueCEPolicyMaxWallClockTime: 4320
+GlueCEStateStatus: Production
+

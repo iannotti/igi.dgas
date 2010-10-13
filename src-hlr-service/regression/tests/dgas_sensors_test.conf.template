@@ -1,0 +1,242 @@
+# This is the configuration file for the dgas_ce_pushd daemon, part of
+# gLite DGAS, DataGrid Accounting System.
+# Author: A.Guarise -- andrea.guarise@to.infn.it
+# Author: R.M.Piro -- piro@to.infn.it
+# Author: G.Patania -- patania@to.infn.it
+
+#
+#You should modify the following parameters according to your needs.
+#
+
+##GLITE_URCOLLECTOR SECTION##
+
+# This is the location of the directory where gianduia puts the files
+# with the usage records. It must be the same as dgasURDir specified in
+# the dgas_atmClient.conf file 
+dgasURBox = "${TESTBASE}/tests/dgasURBox/"
+
+# the lock files for glite-urcollector.pl and HAD
+collectorLockFileName = "${TESTBASE}/dgas_collector.lock"
+collectorHADLockFileName = "/opt/glite/var/dgas_gianduia_urCollector_HAD.lock"
+
+# the log file for glite-urcollector.pl
+collectorLogFileName = "${TESTBASE}/dgas_collector.log"
+
+# the lock file for out of band jobs:
+oobLockFileName = "${TESTBASE}/dgasOOB.lock"
+
+# the buffer file that keeps track of the last processed LRMS job_id and file:
+# for dgasOutOfBand_(pbs/lsf).pl
+bufferFileName = "${TESTBASE}/dgasOOBuffer"
+
+# the buffer file that keeps track of the last processed LRMS job_id and
+# log timestamp for glite-urcollector.pl:
+# (Note: the LRMS type specified in lrmsType will automatically be appended
+#  as suffix, for example: "/opt/glite/var/dgasCollectorBuffer.pbs")
+collectorBufferFileName = "${TESTBASE}/dgasCollectorBuffer"
+
+# chocolate Box parse interval (if all jobs have been processed: seconds to wait before looking for new jobs in chocolateBox):
+mainPollInterval = "60"
+
+# if still jobs to process: number of jobs to process at each processing step
+# (several steps per mainPollInterval, depending on the number of jobs found
+# in chocolateBox):
+jobPerTimeInterval = "10"
+
+# time in seconds to sleep after each processing step (if there are still
+# jobs to process, otherwise start a new mainPollInterval):
+timeInterval = "5"
+
+# garbage clean-up interval in seconds
+queuePollInterval = "600"
+
+#siteName parameter can be used to assign to the UsageRecord a tag identifying
+# the site. Example: "INFN-TORINO".
+siteName = "TEST-SITE"
+
+#the "systemLogLevel" parameter defines the log verbosity from 0(no logging) to
+# 9(maximum Verbosity)
+systemLogLevel = "9"
+
+#Following two parameters limit the maximum nmber of records files that can
+#be written into the "gianduiottiBox" directory. The "maxNumFiles" variable defines the maximum number of files, the "waitFor" variable the number of seconds the daemon must stop writing new records before checking the number of files again.
+#waitFor = "5"
+#maxNumFiles = "10000"    
+
+# This defines whether to use the name of the host on which the sensors run
+# as the host name of the CE (in case of local jobs), default is "no":
+localHostNameAsCEHostName = "no"
+
+# This parameter specifies the LRMS type and _has to be set_. Possible values:
+# "pbs", "lsf".
+lrmsType = "$lrmsType"
+
+# This is the location of the directory where PBS accounting logs are stored.
+pbsAcctLogDir = "${TESTBASE}/tests/lrms-acct/"
+
+# This is the location of the directory where LSF accounting logs are stored.
+lsfAcctLogDir = "$lsfAcctLogDir"
+
+# The following option defines whether urcollector shall consider
+# a) "grid": ONLY grid jobs, recognized by their presence in the CE's job map
+#            log file (this REQUIRES useCEJobMap = "yes" and ceJobMapLog to be
+#            set!)
+# b) "local": ONLY local jobs, recognized by their absence in the CE's job map
+#             log file (this also REQUIRES useCEJobMap = "yes" and ceJobMapLog
+#             to be set!)
+# c) "all": [default] all jobs; grid-related information (apart from the VO)
+#           is determined only if useCEJobMap = "yes" and ceJobMapLog are set!
+#           (and of course only for jobs that have such information in the
+#            CE's log)
+jobsToProcess = "$jobsToProcess"
+
+# The following option allows to prevent very old jobs from being considered
+# by the urcollector. The argument has to be a date in SQL format (YYYY-MM-DD).
+# Jobs whose usage has been logged before 0:00 am (UTC!) of the specified day
+# are not considered (that is, only jobs logged on or after the specified date
+# are considered).
+# IMPORTANT: If not specified, a default value of "2008-01-01", will be used,
+# hence for accounting jobs before 2006 you have to explicity set this
+# parameter!
+#
+#ignoreJobsLoggedBefore = "2008-01-01"
+
+# This is the location of the CE's grid user/grid job -> local job ID map.
+# It has to be specified _either_ as a directory (containing file names such as
+# "20050307" or "2005-03-07") _or_ as a file name prefix (including path)
+#
+# Examples for matching log file names:
+#
+# "<ceJobMapLog>20060309(.gz)" (one file per day; as prefix)
+# "<ceJobMapLog>(- or _)20060309(.gz)" (one file per day; as prefix)
+# "<ceJobMapLog>/20060309(.gz)" (one file per day: in dir)
+#
+# "<ceJobMapLog>2006-03-09(.gz)" (one file per day; as prefix)
+# "<ceJobMapLog>(- or _)2006-03-09(.gz)" (one file per day; as prefix)
+# "<ceJobMapLog>/2006-03-09(.gz)" (one file per day; in dir)
+#
+# "<ceJobMapLog>(.gz)" (single file; as prefix)
+# "<ceJobMapLog>.1(.gz)" (single file rotated; as prefix)
+#
+# IMPORTANT NOTE: The CE's job log file will be used only if
+# useCEJobMap is set to "yes" (default!), otherwise no grid-related
+# information (user DN, user FQAN, grid job ID, etc) will be added
+# (jobs considered to be local jobs).
+useCEJobMap = "yes"
+ceJobMapLog = "${TESTBASE}/tests/grid-jobmap/grid-jobmap"
+
+keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
+
+keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00,GlueHostProcessorOtherDescription"
+useUrKeyDefFile = "$useUrKeyDefFile"
+urKeyDefFile = "${TESTBASE}/tests/dgas_sensors_test.conf.lsf"
+UR:GlueHostBenchmarkSF00=GlueHostBenchmarkSF00;^\s*(.*)$
+UR:GlueHostBenchmarkSI00=GlueHostBenchmarkSI00;^\s*(.*)$
+UR:hepSpec2006=GlueHostProcessorOtherDescription;^\s*Cores=4,Benchmark=(.*)-HEP-SPEC06$
+
+
+#glueLdifFile = "/opt/glite/etc/glite-ce-ce-plugin/out.ldif"
+glueLdifFile = "$glueLdifFile"
+
+
+##
+##GLITE_DGAS_PUSHD SECTION##
+##
+
+#The following parameters are needed by the glite_dgas_ce_pushd daemon.
+#The daemon is recovers the UR of the job and asyncronously comunicates
+#them to the User HLR vie the glite_dgas_atmClient api.
+#
+dgasURDir = "${TESTBASE}/tests/dgasURBox/"
+dgasErrDir = "${TESTBASE}/tests/ERR/"
+qDepth = "4"
+qMult = "3"
+pushdLockFileName = "${TESTBASE}/dgas_ce_pushd.lock"
+pushdLogFileName = "${TESTBASE}/dgas_ce_pushd.log"
+mainPollInterval = "10"
+queuePollInterval = "50"
+
+
+# The following option can be used to specify a configuration file that
+# contains a mapping between local users/groups and VOs in case some local
+# users can submit jobs to the LRMS but are considered members of a specific
+# VO of the grid.
+#
+# Each line of the file should have one of the following formats:
+#
+# group <local_unix_group> <VOname>
+# user <local_unix_username> <VOname>
+#
+# where the <local_unix_username> must not be the numeric uid, but the
+# user's login name, <local_unix_group> must not be the numeric gid, but the
+# group's name, and <VOname> must be case-sensitive! The field separator
+# can be either _one_ space or _one_ tab.
+#
+# In case a user has a mapping for both user name and group, the specific
+# user mapping takes precedences. In case a user has more than one group
+# mapping the first one that can be retrieved by the command
+# "groups <local_unix_username>" will be taken.
+#
+localUserGroup2VOMap = "${TESTBASE}/tests/testJobMap.conf"
+
+# The following paremeter specifies in which temporary (dynamic) CE LDIF files
+# to look for the total number of CPUs of the resource (GlueCEInfoTotalCPUs)
+#
+#gipDynamicTmpCEFiles = "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*"
+
+# The following parameter can be used to specify whether the CE uses pool
+# accounts or not. This may be important for determining the VO to which
+# to associate a job. If havePoolAccounts is "yes" (default), the VO is
+# determined in the following way:
+# 1) If the job is associated to a UserFQAN (determined by the urcollector):
+#    => The VO is determined from the FQAN
+# 2) Otherwise: The VO is determined from the unix login of the executing user
+#    if the login can be interpreted as pool account (i.e. is of form
+#    "<voname>NNN", "<voname>sgm" or "<voname>prd")
+#    2a) if poolAccountPatternFile is also specified, then the VO patterns
+#        are taken from there to determine the VO
+#    2b) if poolAccountPatternFile is not specified a list of built in
+#        standard patterns is used.
+# 3) Otherwise: the VO is determined from the unix login or group if an
+#    appropriate mapping in the localUserGroup2VOMap can be found.
+# 4) Otherwise: the job will not be associated to any VO.
+# For CEs that don't use pool accounts it is wise to deactivate step 2 by
+# setting havePoolAccounts = "no".
+#
+#havePoolAccounts = "yes"
+#poolAccountPatternFile = "/opt/glite/etc/glite-dgas-poolAccountPatterns.conf"
+
+#siteName parameter can be used to assign to the UsageRecord a tag identifying
+# the site. Example: "INFN-TORINO".
+#siteName = ""
+
+# This defines whether to use the name of the host on which the sensors run
+# as the host name of the CE (in case of local jobs), default is "no".
+# Note: This is an alternative to the parameter useCEHostName described below!
+localHostNameAsCEHostName = "no"
+
+# This parameter can be used to explicitly specify a host name that has to be
+# used as the CE hostname. This is most useful for assigning out-of-band jobs
+# (local jobs and grid jobs for which the CE ID couldn't be determined) to
+# specific HLR accounts.
+# Using this option the HLR account will be determined as
+# "<specifiedHostname>:<LRMSqueue>", e.g. "myCEhostname.org:short".
+# IMPORTANT:
+# 1) Use a fully quallified hostname, including the domain name!
+# 2) If this parameter is specified, localHostNameAsCEHostName will set to "no"
+# 3) For grid jobs as well, the HLR account will be determined as
+#    "<specifiedHostname>:<LRMSqueue>"! This means the specified hostname
+#    will be applied to ALL jobs!
+#
+#useCEHostName = ""
+
+##ATM CLIENT SECTION##
+
+# resource PA: in the form host:port:X509_certSubject (OPTIONAL)
+res_acct_PA_id = "hostname:portnumber:X509CertSubject"
+# resource HLR: in the form host:port:X509_certSubject (MANDATORY)
+res_acct_bank_id = "hostname:portnumber:X509CertSubject"
+# specify if we need economic accounting or not.
+economicAccounting = "no"
+
+

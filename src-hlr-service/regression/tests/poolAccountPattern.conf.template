@@ -1,0 +1,11 @@
+s/lhcb/pippo/g
+s/pippo/pluto/g
+^(.*)sgm$
+^(.*)prd$
+^(.*)sgm\d{3}$
+^(.*)prd\d{3}$
+^sgm(.*)\d{3}$
+^prd(.*)\d{3}$
+^sgm(.*)$
+^prd(.*)$
+^(.*)\d{3}$

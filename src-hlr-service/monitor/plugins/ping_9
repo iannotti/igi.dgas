@@ -1,0 +1,3 @@
+#! /bin/bash
+
+cd /opt/glite/libexec/dgastests/ ; ./glite-dgas-testrun.pl --conf ./test.conf --logdir /tmp/ full.test

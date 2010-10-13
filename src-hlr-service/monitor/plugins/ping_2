@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Output of ps auxw | grep dgas command:"
+echo
+ps auxw | grep dgas
+echo "Output of rpm -qa | grep dgas command:"
+echo
+rpm -qa | grep dgas
