@@ -37,13 +37,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = config
+subdir = config-hlr-service
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/project/glite.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/project/dgas_mysql.m4 \
+	$(top_srcdir)/project/glite.m4 \
 	$(top_srcdir)/project/glite_dgas_common.m4 \
-	$(top_srcdir)/project/globus.m4 $(top_srcdir)/project/mysql.m4 \
-	$(top_srcdir)/project/optimize.m4 \
+	$(top_srcdir)/project/glite_dgas_pa_clients.m4 \
+	$(top_srcdir)/project/globus.m4 \
 	$(top_srcdir)/project/unixodbc.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -103,6 +104,7 @@ GLITE_DGAS_COMMON_LOCK_LIBS = @GLITE_DGAS_COMMON_LOCK_LIBS@
 GLITE_DGAS_COMMON_LOG_LIBS = @GLITE_DGAS_COMMON_LOG_LIBS@
 GLITE_DGAS_COMMON_TLS_LIBS = @GLITE_DGAS_COMMON_TLS_LIBS@
 GLITE_DGAS_COMMON_XMLUTIL_LIBS = @GLITE_DGAS_COMMON_XMLUTIL_LIBS@
+GLITE_DGAS_PACLIENTS_LIBS = @GLITE_DGAS_PACLIENTS_LIBS@
 GLITE_LDFLAGS = @GLITE_LDFLAGS@
 GLITE_LOCATION = @GLITE_LOCATION@
 GLOBUS_COMMON_NOTHR_LIBS = @GLOBUS_COMMON_NOTHR_LIBS@
@@ -147,7 +149,6 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PMYSQL = @PMYSQL@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -227,9 +228,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  config/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  config-hlr-service/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  config/Makefile
+	  $(AUTOMAKE) --foreign  config-hlr-service/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

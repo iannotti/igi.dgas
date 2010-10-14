@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/db.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.2 $])
+AC_REVISION([$Revision: 1.1.2.3 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -128,6 +128,7 @@ AC_CONFIG_FILES([src-hlr-clients/base/Makefile])
 AC_CONFIG_FILES([interface-pa-clients/Makefile])
 AC_CONFIG_FILES([src-pa-clients/Makefile])
 AC_CONFIG_FILES([src-pa-clients/pa-query/Makefile])
+AC_CONFIG_FILES([config-hlr-service/Makefile])
 AC_CONFIG_FILES([interface-hlr-service/Makefile])
 AC_CONFIG_FILES([src-hlr-service/Makefile])
 AC_CONFIG_FILES([src-hlr-service/base/Makefile])
