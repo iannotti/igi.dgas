@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-	Copyright (c) 2004 on behalf of the EU EGEE Project: 
+i	Copyright (c) 2004 on behalf of the EU EGEE Project: 
 	The European Organization for Nuclear Research (CERN), 
 	Istituto Nazionale di Fisica Nucleare (INFN), Italy
 	Datamat Spa, Italy
@@ -16,11 +16,14 @@
 	
 	Authors: Giuseppe Patania <patania@to.infn.it> ,
 		 Andrea Guarise <guarise@to.infn.it>		
-	Version info: $Id: glite.dgas.csf.xml,v 1.6.14.1 2007/02/01 08:53:02 aguarise Exp $
+	Version info: $Id: glite.dgas.csf.xml,v 1.6.14.2 2010/10/14 12:44:01 aguarise Exp $
 	Release: $Name:  $
 
 	Revision history:
 	$Log: glite.dgas.csf.xml,v $
+	Revision 1.6.14.2  2010/10/14 12:44:01  aguarise
+	*** empty log message ***
+
 	Revision 1.6.14.1  2007/02/01 08:53:02  aguarise
 	added dependency over unixodbc
 
