@@ -1,0 +1,10 @@
+#order IS important, first match is taken!
+^(.*)sgm$
+^(.*)prd$
+^(.*)sgm\d{3}$
+^(.*)prd\d{3}$
+^sgm(.*)\d{3}$
+^prd(.*)\d{3}$
+^sgm(.*)$
+^prd(.*)$
+^(.*)\d{3}$
