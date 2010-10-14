@@ -1,0 +1,135 @@
+# This is the configuration file for the glite-dgas-hlrd daemon, 
+# part of 
+# the DGAS, Distributed Grid Accounting System.
+# Author: A.Guarise -- andrea.guarise@to.infn.it
+
+#
+#You should modify the following parameters according to your needs.
+#
+
+# next parameters set up the conection to the SQL database server
+
+hlr_sql_server = "localhost"
+hlr_sql_user = "root"
+hlr_sql_password = ""
+hlr_sql_dbname = "hlr"
+hlr_tmp_sql_dbname = "hlr_tmp"
+
+# gridmap file. 
+
+hostProxyFile = "/tmp/hlrHostProxyFile"
+
+# hlr user: user used to run the daemons
+
+hlr_user = "root"
+
+# default server listening port
+
+hlr_def_port = "56568"
+
+#directory for dgas log and locks
+
+dgas_var_dir = "/opt/glite/var/dgas"
+
+# default log file
+
+hlr_def_log = "/opt/glite/var/dgas/log/hlrd.log"
+hlr_qmgr_def_log = "/opt/glite/var/dgas/log/hlr_qmgrd.log"
+
+#default lock file
+
+hlr_def_lock = "/opt/glite/var/dgas/hlr.lock"
+hlr_qmgr_def_lock ="/opt/glite/var/dgas/hlr_qmgrd.lock"
+hlr_had_def_lock ="/opt/glite/var/dgas/hlr_had.lock"
+
+#log verbosity:
+# 0      - Critical messages
+# 1      - Error messages
+# 2      - Important warnings
+# 3      - Normal warnings
+# 4 to 7 - Server information.
+# 8,9    - Debug Messages. 
+
+systemLogLevel = "6"
+
+#configuration options for the transaction manager daemon.
+
+#expiration period (in second) for a tranasction in the queue,
+#after this time the priority of the transaction is lowered. DEFAULT 600
+hlr_qmgr_expPeriod = "600"
+
+#Number of levels in the queue. transactions enter the queue with
+#priority 0 and are increased when the system can't process it.
+#priority = hlr_qmgr_tPerIter. DEFAULT 10
+hlr_qmgr_tPerIter = "10"
+
+#Intervall between two groups of transactions
+hlr_qmgr_pollPeriod = "30"
+
+#strictAccountCheck, if set to "true" the HLR server will accept just
+#the UsageRecords belonging to an existent account.
+#strictAccountCheck = "true"
+
+#thread_number: max number of concurrent active threads in the listener pool.
+thread_number = "20"
+
+#threadUsecDelay: minimum duration (microseconds) for a single thread in the listener pool
+#threadUsecDelay = "50000"
+#threadPoolUsecDelay: Minimum duration (microseconds) for the listener thread pool.
+#threadPoolUsecDelay = "100000"
+
+
+#This parameter set the maximum number of rows retrieved via the 
+#glite-dgas-query command.
+maxItemsPerQuery = "5000"
+
+#This flag specifies whether a normal user can issue SQL queries to the database
+#using the glite-dgas-query command or not.
+authUserSqlQueries = "false"
+
+
+#If this parameter is set to true, records older than acceptRecordsStartDate 
+#will be automatically deleted from the jobTransSummary table. Default: false
+#autoDeleteOldRecords = "false"
+
+#Following parameters do affect just 2nd level HLR (concentrators) deployment.
+
+#following parameters set up the HLR as a 2nd level HLR (concentrator). That
+#is an HLR that concentrates records from other HLRs to give access to 
+#records collected separately on different sites. 
+
+#is2ndLevelHlr = "false"
+
+#Follwing two parameters define the Dates from wich and until wich records sent
+#by 1st level HLRs will be accepted. In the form YYYY-MM-DD
+
+
+#acceptRecordsStartDate = "2006-01-01"
+
+#acceptRecordsEndDate = "2007-01-01"
+
+#The following parameter defines the maximim number ofnumber of records that 
+#will be sent by the 1st level upon each message exchange.
+
+#recordsPerConnection = "2000"
+
+
+#Following parameters are used by the daemon responsible to forward 
+#usage records to 2nd level (concentrators) HLRs
+
+# this is the name of the lock file.
+#urForwardLock="/opt/glite/var/dgas/glite-dgas-ur-forward.lock"
+
+#this is the name of the daemon log file.
+#urForwardLog="/opt/glite/var/dgas/log/glite-dgas-ur-forward.log"
+
+#This is the time (in seconds) that the ur-forward daemon waits
+#before sending new information to the 2nd level HLR.
+#forwardPeriod="3600"
+
+#this is the name of the file that contains the hostnames of the
+#2nd level HLRs to wich usage records must be forwarded. If this
+#parameters is set AND the corresponding file is created and configured,
+#the glite-dgas-ur-forward daemon will be started.
+#serversFile="/opt/glite/etc/glite-dgas-2l-servers.conf"
+

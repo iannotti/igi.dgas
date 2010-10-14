@@ -1,0 +1,394 @@
+#!/bin/bash
+#
+# Init file for DGAS HLR server daemon
+#
+# description: DGAS HLR server daemon
+#
+# processname: hlr_serverd
+# config: $PREFIX/etc/hlr.conf
+# chkconfig: 35 70 80 
+
+
+[ ! -z $GLITE_LOCATION ]  || export GLITE_LOCATION=/opt/glite/
+[ ! -z $GLOBUS_LOCATION ] || export GLOBUS_LOCATION=/opt/globus/
+
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GLITE_LOCATION}/lib/:${GLOBUS_LOCATION}/lib/"
+
+
+PREFIX=$GLITE_LOCATION
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+
+RETVAL=0
+prog="HLR listener"
+prog1="Batch Transaction manager"
+if [ -z $2 ]
+then
+ HLRD_CONF=$PREFIX/etc/dgas_hlr.conf
+else
+ HLRD_CONF=$2
+fi
+
+eval DGAS_VAR_DIR=`grep dgas_var_dir $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval HLR_USER=`grep hlr_user $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval HLHLR=`grep is2ndLevelHlr $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+
+if [ -z $HLHLR ]
+then
+	HLHLR="false"
+fi
+
+[ -d $PREFIX/var ] || mkdir $PREFIX/var
+[ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+[ -d $DGAS_VAR_DIR ] || mkdir $DGAS_VAR_DIR
+[ -d $DGAS_VAR_DIR/log ] || mkdir $DGAS_VAR_DIR/log
+
+[ -d $DGAS_VAR_DIR ] && chown $HLR_USER:$HLR_USER $DGAS_VAR_DIR
+[ -d $DGAS_VAR_DIR/log ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log
+
+# Some functions to make the below more readable
+HLRD=$PREFIX/sbin/glite-dgas-hlr-listener
+eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+HLRD_OPTIONS="-c $HLRD_CONF"
+
+if [ -e /etc/rc.d/init.d/glite-dgas-hlrd ]
+then
+	STARTUP_SCRIPT="/etc/rc.d/init.d/glite-dgas-hlrd"
+else
+	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-hlrd"
+fi
+
+# this is the script used to check and renew the host cert proxy:
+HOSTPROXY_SCRIPT="$PREFIX/libexec/glite-dgas-hlr-checkHostCertProxy.sh"
+
+
+TRS_MGR=$PREFIX/sbin/glite-dgas-hlr-qmgr
+eval TRS_MGR_LOG=`grep hlr_qmgr_def_log $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+eval TRS_MGR_LOCK=`grep hlr_qmgr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+TRS_MGR_OPTIONS="-l $TRS_MGR_LOG -c $HLRD_CONF"
+
+eval HAD_LOCK=`grep hlr_had_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+
+UR_FORWARD=$PREFIX/libexec/glite-dgas-hlr-urforward
+eval serversFile=`grep serversFile $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+
+eval urForward_LOCK=`grep urForwardLock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+
+startMain()
+{
+	echo -n $"Initializing DGAS HLR...."
+	$PREFIX/sbin/glite-dgas-hlr-translatedb -M
+        RETVAL=0
+	echo -n $"Starting $prog:"
+	[ -e $HLRD_LOCK ] && HLRD_PID=`cat $HLRD_LOCK` && ps auxw | grep $HLRD_PID | grep dgas &> /dev/null
+        if [ "$?" -eq 0 ]
+        then
+                echo -n " already running (pid $HLRD_PID)."
+                failure $"$base startup"
+                RETVAL=1
+        else
+                if [ -e $HLRD_LOCK ]
+                then
+                #        echo -n " Found pending lock file, removing it."
+                        rm -f $HLRD_LOCK
+                fi
+		$HLRD $HLRD_OPTIONS 2>/dev/null & 
+		RETVAL=$?
+		[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+        fi
+	echo
+
+	if [ $HLHLR == "false" ];
+	then
+		echo -n $"Starting $prog1:"
+		[ -e $TRS_MGR_LOCK ] && TRS_MGR_PID=`cat $TRS_MGR_LOCK` && ps auxw | grep $TRS_MGR_PID | grep dgas &> /dev/null
+	        if [ "$?" -eq 0 ]
+	        then
+	                echo -n " already running (pid $TRS_MGR_PID)."
+        	        failure $"$base startup"
+	                RETVAL=1
+        	else
+	                if [ -e $TRS_MGR_LOCK ]
+                	then
+        	        #        echo " Found pending lock file, removing it."
+                        rm -f $TRS_MGR_LOCK
+	                fi
+			$TRS_MGR $TRS_MGR_OPTIONS 2>/dev/null  &
+			if [ "$RETVAL" -eq "0" ]; then
+			    # only if previously no error occurred, otherwise keep
+			    # the return value (error)
+			    RETVAL=$?
+			fi
+			[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+        	fi
+		echo
+	fi
+
+  if [ -e "$serversFile" ]
+  then
+	echo -n $"Starting urForward:"
+	[ -e $urForward_LOCK ] && urForward_PID=`cat $urForward_LOCK` && ps auxw | grep $urForward_PID | grep dgas &> /dev/null
+	if [ "$?" -eq 0 ]
+	then
+		echo -n " already running (pid $urForward_PID)."
+		failure $"$base startup"
+		RETVAL=1
+	else
+		if [ -e $urForward_LOCK ]
+		then
+			rm -f $urForward_LOCK
+		fi
+		$UR_FORWARD -c $HLRD_CONF -d  2>/dev/null  &
+		if [ "$RETVAL" -eq "0" ]; then
+			RETVAL=$?
+		fi
+		[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+		echo
+	fi
+  fi
+}
+
+stopMain()
+{
+        RETVAL=0
+	echo -n $"Stopping $prog:"
+        PID0=`cat $HLRD_LOCK 2> /dev/null`
+	if [ "$?" -eq 0 ]; then
+	    # lock file exists, stop process
+	    echo -n "$HLRD_LOCK (pid $PID0)"
+	    kill $PID0 &> /dev/null
+	    RETVAL=$?
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	else
+	    # lock file doesn't exist, nothing to stop:
+	    echo -n " already stopped"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+	echo
+
+	if [ $HLHLR == "false" ]; then
+		echo -n $"Stopping $prog1:"
+        	PID1=`cat $TRS_MGR_LOCK 2> /dev/null`
+		if [ "$?" -eq 0 ]; then
+		    # lock file exists, stop process
+		    echo -n "$TRS_MGR_LOCK (pid $PID1)"
+		    kill $PID1 &> /dev/null
+		    if [ "$RETVAL" -eq "0" ]; then
+			    # only if previously no error occurred, otherwise keep
+			    # the return value (error)
+			RETVAL=$?
+		    fi
+		    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+		else
+		    # lock file doesn't exist, nothing to stop:
+		    echo -n " already stopped"
+		    RETVAL=1
+		    failure $"$base startup"
+		fi
+		echo
+	fi
+
+  if [ -e "$serversFile" ]
+  then
+	echo -n $"Stopping urForward:"
+	PID2=`cat $urForward_LOCK 2> /dev/null`
+	if [ "$?" -eq 0 ]; then
+		# lock file exists, stop process
+		echo -n "$urForward_LOCK (pid $PID2)"
+		kill $PID2 &> /dev/null
+		if [ "$RETVAL" -eq "0" ]; then
+			RETVAL=$?
+		fi
+		[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	else
+		# lock file doesn't exist, nothing to stop:
+		echo -n " already stopped"
+		RETVAL=1
+		failure $"$base startup"
+	fi
+	echo
+  fi
+
+	
+}
+
+status()
+{
+        RETVAL=0
+
+	echo $HLRD_LOCK
+	PID0=`cat $HLRD_LOCK 2> /dev/null`
+	echo "Process $prog: $PID0"
+	[ -e $HLRD_LOCK ] && ps auxw | grep $PID0 | grep dgas 2> /dev/null
+	if [ "$?" -eq 0 ] 
+	then
+		echo "The process is running."
+	else
+		echo "The process is not running."
+		if [ -e $HLRD_LOCK ]
+		then
+			echo "Found pending lock file, removing it."
+			rm -f $HLRD_LOCK
+		fi
+		RETVAL=1
+	fi
+
+	
+	if [ $HLHLR == "false" ]; then
+		echo $TRS_MGR_LOCK
+		PID1=`cat $TRS_MGR_LOCK 2> /dev/null`
+		echo "Process $prog1: $PID1"
+		[ -e $TRS_MGR_LOCK ] && ps auxw | grep $PID1 | grep dgas 2> /dev/null
+		if [ "$?" -eq 0 ] 
+		then
+			echo "The process is running."
+  			#Try ping here
+			GLITE_PING_COMMAND=$PREFIX/bin/glite-dgas-ping
+			if [ -e $GLITE_PING_COMMAND ]
+			then 
+				#Check if ping is successfull
+				RESULT=`${GLITE_PING_COMMAND} -s "${HOSTNAME}" -t 0`
+				if [ $? == 0 ] ; then
+					echo $RESULT
+					echo "listener answers to ping"
+	  			else
+					echo "listener seems'to be frozen"
+					RETVAL=2
+				fi
+			fi
+		  	# end ping
+		else
+			echo "The process is not running."
+			if [ -e $TRS_MGR_LOCK ]
+			then
+				echo "Found pending lock file, removing it."
+				rm -f $TRS_MGR_LOCK
+			fi
+			RETVAL=1
+		fi
+	fi
+
+  if [ -e "$serversFile" ]
+  then
+	echo $urForward_LOCK
+	PID2=`cat $urForward_LOCK 2> /dev/null`
+	echo "Process urForward: $PID2"
+	[ -e $urForward_LOCK ] && ps auxw | grep $PID2 | grep dgas 2> /dev/null
+	if [ "$?" -eq 0 ]
+	then
+		echo "The process is running."
+	else
+		echo "The process is not running."
+		if [ -e $urForward_LOCK ]
+		then
+			echo "Found pending lock file, removing it."
+			rm -f $urForward_LOCK
+		fi
+		RETVAL=1
+	fi
+
+  fi
+}
+
+startHad()
+{
+	echo -n "Starting DGAS HAD..."
+	# checking whether HAD is already running ... (e.g. if specifying
+        # "start" twice in a row ...)
+        [ -e $HAD_LOCK ] && HADPID=`cat $HAD_LOCK` && DUMMY=`ps aux | grep dgas | grep $HADPID`
+	if [ "$?" != "0" ]; then
+	    # starting HAD only if it is not yet running
+	    #echo "$HADPID; $?; starting HAD ..."
+	    $PREFIX/sbin/glite-dgas-hlr-had.pl $STARTUP_SCRIPT $HOSTPROXY_SCRIPT &>/dev/null &
+	    RETVAL=$?
+	    HADPID=$!
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	    [ "$?" -eq 0 ] && echo $HADPID > $HAD_LOCK
+	else
+	    # if already running, nothing to run:
+	    echo -n " already running (pid $HADPID)"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+	echo
+}
+
+stopHad()
+{
+	echo -n "Stopping HAD..."
+	[ -e $HAD_LOCK ] && HADPID=`cat $HAD_LOCK` && DUMMY=`ps aux | grep dgas | grep $HADPID`
+	if [ "$?" -eq 0 ]; then
+	    # lock file exists, stop process
+	    kill  $HADPID &> /dev/null
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	    [ "$?" -eq 0 ] && rm -f $HAD_LOCK
+	else
+	    # lock file doesn't exist, nothing to stop:
+	    echo -n " already stopped"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+	echo
+	sleep 3
+}
+
+
+EXITSTATUS=0
+
+case "$1" in
+	start)
+		startMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		startHad
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	stop)
+		stopHad
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		stopMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	restart)
+		stopHad
+		stopMain
+		# we don't consider stopHad and stopMain for the exit status!
+		sleep 3
+		startMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		startHad
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	restartMain)
+		stopMain
+		# we don't consider stopMain for the exit status!
+		startMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	status)
+		status 
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		EXITSTATUS=1
+esac
+exit $EXITSTATUS

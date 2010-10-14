@@ -28,7 +28,7 @@ SUBDIRS = \
 	src-common interface-common\
 	config-hlr-clients src-hlr-clients interface-hlr-clients \
 	src-pa-clients interface-pa-clients \
-	src-hlr-service interface-hlr-service
+	config-hlr-service src-hlr-service interface-hlr-service
 
 ## Default flags to run aclocal
 ACLOCAL_AMFLAGS = -I project

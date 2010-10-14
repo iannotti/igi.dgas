@@ -1,0 +1,137 @@
+#
+# Configuration file for insertion of summary records (SumCPU) in GOC DB
+#
+
+#
+# Database for summary accounting information.
+# This is the database where the SumCPU records are written.
+#
+GOC_DB_SERVER="localhost"
+GOC_DB_PORT="3306"
+GOC_DB_NAME="dgas2goc"
+GOC_DB_SUMCPU_TABLE="SumCPU"
+GOC_DB_USER="root"
+GOC_DB_PASSWORD=""
+
+
+#
+# DGAS HLR database (source of accounting information)
+# This is the database where the original HLR accounting information is taken
+# from.
+#
+HLR_DB_SERVER="localhost"
+HLR_DB_PORT="3306"
+HLR_DB_NAME="hlr"
+HLR_DB_USER="root"
+HLR_DB_PASSWORD=""
+
+
+#
+# The following specifies a location (local file or file that can be fetched
+# via http) that contains a simple list of VOs for which usage records shall be
+# aggregated (one VO name per line). If specified only URs for these VOs will
+# be processed, others will be ignored. If the specified location is not
+# available or is emtpy no aggregation at all will be done and the program
+# quits with an error message.
+#
+# The specified VO names must NOT contain wildcards (*)!
+#
+#VO_LIST_LOCATION="<vo_list_file_or_webpage>"
+
+
+#
+# The following specifies a location (local file or file that can be fetched
+# via http) that contains a list of resource IDs for which usage records shall
+# be aggregated (one ID per line). If specified only URs for these CEs will
+# be processed, others will be ignored. If the specified location is not
+# available or is emtpy no aggregation at all will be done and the program
+# quits with an error message.
+# Examples for valid IDs are:
+#
+#  ce02-lcg.cr.cnaf.infn.it:2119/jobmanager-lcglsf-cdf  (for grid accounts)
+#  ce02-lcg.cr.cnaf.infn.it:cdf                         (for local accounts)
+#
+# The specified IDs may also contain wildcards (*), examples:
+#
+#  ce02-lcg.cr.cnaf.infn.it:*   (for all resources associated to that hostname)
+#  *.cnaf.infn.it:*cdf          (for all cdf-queues at cnaf.infn.it)
+#RESOURCE_LIST_LOCATION="<resource_list_file_or_webpage>"
+
+
+#
+# The following specifies a location (local file or file that can be fetched
+# via http) that contains a list of site names for which usage records shall
+# be aggregated (one site per line). If specified only URs for these sites will
+# be processed, others will be ignored. If the specified location is not
+# available or is emtpy no aggregation at all will be done and the program
+# quits with an error message.
+#
+# The specified site names must NOT contain wildcards (*)!
+#
+#SITE_LIST_LOCATION="<site_list_file_or_webpage>"
+
+#
+# The following parameter can be used to limit the jobs that will be processed
+# to those that have finished execution ON OR AFTER a specific date
+# (i.e. older usage records still in the HLR database will not be considered).
+# If not specified, all jobs will be considered for aggregation, independent
+# of when they executed.
+# IMPORTANT: The date has to be specified in MySQL date format "YYYY-MM-DD"
+# For comparison with the date the UTC timestamps of job start and end will
+# be used, so some few jobs may be processed even if their local end time
+# was before the specified date.
+#
+# IMPORTANT: Be sure that this is what you want! Older jobs that have been
+# ignored will still be considered as _processed_ on subsequent runs.
+#
+# NOTE: Since records are aggregated per month this parameter should always
+# be set to the beginning of a month (e.g. "2008-09-01").
+#
+PROCESS_FROM_JOB_ENDTIME=""
+
+
+#
+# The following parameter can be used to limit the jobs that will be processed
+# to those that have finished execution BEFORE a specific date
+# (i.e. more recent usage records in the HLR database will not be considered).
+# If not specified, all jobs will be considered for aggregation, independent
+# of when they executed.
+# IMPORTANT: The date has to be specified in MySQL date format "YYYY-MM-DD"
+# For comparison with the date the UTC timestamps of job start and end will
+# be used, so some few jobs may be processed even if their local end time
+# was after the specified date.
+#
+# NOTE: Since records are aggregated per month this parameter should always
+# be set to the beginning of a month (e.g. "2008-10-01").
+#
+PROCESS_BEFORE_JOB_ENDTIME=""
+
+
+#
+# This parameter specifies whether local jobs have to be processed
+# as well (default: no). Grid jobs are recognized by having been associated to
+# a specific VO either by means of the User FQAN (voOrigin = "fqan") or
+# by having been executed on a pool account (voOrigin = "pool").
+# If PROCESS_LOCAL_JOBS="yes" then also local jobs associated by means of
+# a user login/group to VO mapping will be considered (voOrigin = "map").
+#
+PROCESS_LOCAL_JOBS="no"
+
+#
+# This parameter can be set to "yes" if all old summary records (beginning
+# from PROCESS_FROM_JOB_ENDTIME, which should be set to the beginning of a
+# month, as described above) should be checked for changes when the tool
+# is run. This may, for example, be used once to fill holes in older data, or
+# after normalization procedures have changed and all old data has to be
+# republished with the new normalized usage metrics.
+# If set to "no" (recommended for the normal case) only the last three existing
+# records at GOC will be checked for changes, older records will be ignored,
+# but all new records not yet at GOC that are newer than at least one of the
+# two lastest records at GOC will be correctly inserted.
+#
+CHECK_ALL_GOC_DATA="no"
+
+# The systemLogLevel parameter defines the log verbosity from 0 (no logging) to
+# 9 (maximum verbosity).
+#
+#systemLogLevel="7"
