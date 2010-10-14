@@ -92,13 +92,23 @@ pa-clients-interface-install:
 pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
 
 
+hlr-service-config:
+	cd ./config-hlr-service ; $(MAKE) $(AM_MAKEFLAGS)
+
+hlr-service-config-install:
+	cd ./config-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) install
+
 hlr-service-src: 
 	cd ./src-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) 
 
 hlr-service-interface: 
 	cd ./interface-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) 
 
-hlr-service: common pa-clients hlr-service-src hlr-service-interface
+hlr-service: common\
+	pa-clients\
+	hlr-service-src\
+	hlr-service-interface\
+	hlr-service-config
 
 hlr-service-src-install: 
 	cd ./src-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) install 
@@ -106,7 +116,11 @@ hlr-service-src-install:
 hlr-service-interface-install: 
 	cd ./interface-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) install
 
-hlr-service-install: common-install pa-clients-install hlr-service-src-install hlr-service-interface-install
+hlr-service-install: common-install\
+	pa-clients-install\
+	hlr-service-src-install\
+	hlr-service-interface-install\
+	hlr-service-config-install
 
 
 stage:
