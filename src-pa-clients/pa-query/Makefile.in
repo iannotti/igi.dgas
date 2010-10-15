@@ -62,10 +62,7 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am__DEPENDENCIES_1 =
-libglite_dgas_paClient_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+libglite_dgas_paClient_la_LIBADD =
 am_libglite_dgas_paClient_la_OBJECTS = paClient.lo
 libglite_dgas_paClient_la_OBJECTS =  \
 	$(am_libglite_dgas_paClient_la_OBJECTS)
@@ -73,6 +70,7 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_glite_dgas_pa_info_OBJECTS = paInfoClient.$(OBJEXT)
 glite_dgas_pa_info_OBJECTS = $(am_glite_dgas_pa_info_OBJECTS)
+am__DEPENDENCIES_1 =
 glite_dgas_pa_info_DEPENDENCIES = libglite_dgas_paClient.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -239,14 +237,14 @@ lib_LTLIBRARIES = libglite_dgas_paClient.la
 libglite_dgas_paClient_la_SOURCES = \
 	paClient.cpp 
 
-libglite_dgas_paClient_la_LIBADD = \
-	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
-	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
-	$(GLITE_DGAS_COMMON_TLS_LIBS) \
-	-lglite_dgas_tls_gsisocket_pp \
-	$(GLOBUS_SSL_UTILS_LIBS) \
-	$(GLOBUS_GSS_THR_LIBS) 
 
+#libglite_dgas_paClient_la_LIBADD   = \
+#	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
+#	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
+#	$(GLITE_DGAS_COMMON_TLS_LIBS) \
+#	-lglite_dgas_tls_gsisocket_pp \
+#	$(GLOBUS_SSL_UTILS_LIBS) \
+#	$(GLOBUS_GSS_THR_LIBS) 
 glite_dgas_pa_info_SOURCES = \
 	paInfoClient.cpp
 
