@@ -1,0 +1,11 @@
+export GLITE_LOCATION=${GLITE_LOCATION:-/opt/glite}
+
+if [ -f $GLITE_LOCATION/sbin/glite-dgas-hlrd ]; then
+	if $GLITE_LOCATION/sbin/glite-dgas-hlrd status >/dev/null; then
+		echo "glite-dgas-hlrd running"
+		$GLITE_LOCATION/sbin/glite-dgas-hlrd stop
+	else echo "glite-dgas-hlrd not running"
+	fi
+else
+	echo "$GLITE_LOCATION/sbin/glite-dgas-hlrd: file not found"
+fi

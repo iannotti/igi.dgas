@@ -1,0 +1,25 @@
+export GLITE_LOCATION=${GLITE_LOCATION:-/opt/glite}
+
+
+if [ -f $GLITE_LOCATION/sbin/glite-dgas-pushd ]; then
+	if $GLITE_LOCATION/sbin/glite-dgas-pushd status >/dev/null; then
+		echo "glite-dgas-pushd running"
+		$GLITE_LOCATION/sbin/glite-dgas-pushd stop
+	else
+		echo "glite-dgas-pushd not running"
+	fi
+else
+	 echo "$GLITE_LOCATION/sbin/glite-dgas-pushd: file not found"
+fi
+
+
+if [ -f $GLITE_LOCATION/sbin/glite-dgas-urcollector ]; then
+	if $GLITE_LOCATION/sbin/glite-dgas-urcollector status >/dev/null; then
+		echo "glite-dgas-urcollector running"
+		$GLITE_LOCATION/sbin/glite-dgas-urcollector stop
+	else
+		echo "glite-dgas-urcollector not running"
+	fi
+else
+	 echo "$GLITE_LOCATION/sbin/glite-dgas-urcollector: file not found"
+fi
