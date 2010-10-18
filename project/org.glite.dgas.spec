@@ -4,7 +4,7 @@ Version: 3.4.0
 Release: 0.sl4
 License: Unknown
 Vendor: EGEE
-Group: System/Middleware
+Group: Unknown
 Packager: ETICS
 Prefix: /opt/glite
 BuildArch: i386
@@ -15,15 +15,15 @@ Source: org.glite.dgas-3.4.0-0.tar.gz
 %define debug_package %{nil}
 
 %description
- The dgas subsystem
+The dgas subsystem
 
 %prep
-  
+ 
 
 %setup -c
 
 %install
-  
+ 
 
 %clean
-  
+ 
