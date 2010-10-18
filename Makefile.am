@@ -50,6 +50,8 @@ common-interface-install: common-interface
 
 common-install: common-src-install common-interface-install
 
+common-install-etics: common-src-install common-interface-install
+
 hlr-clients-config:
 	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS)
 
@@ -75,6 +77,11 @@ hlr-clients-install: common-install\
 	hlr-clients-interface-install\
 	hlr-clients-config-install
 
+hlr-clients-install-etics: \
+ 	hlr-clients-src-install\
+	hlr-clients-interface-install\
+	hlr-clients-config-install
+
 pa-clients-src: 
 	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
@@ -90,6 +97,8 @@ pa-clients-interface-install:
 	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install
 
 pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
+
+pa-clients-install-etics: pa-clients-src-install pa-clients-interface-install
 
 
 hlr-service-config:
@@ -118,6 +127,11 @@ hlr-service-interface-install:
 
 hlr-service-install: common-install\
 	pa-clients-install\
+	hlr-service-src-install\
+	hlr-service-interface-install\
+	hlr-service-config-install
+
+hlr-service-install-etics: \
 	hlr-service-src-install\
 	hlr-service-interface-install\
 	hlr-service-config-install
