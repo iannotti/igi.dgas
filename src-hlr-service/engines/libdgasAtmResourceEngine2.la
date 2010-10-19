@@ -5,10 +5,10 @@
 # It is necessary for linking the library.
 
 # The name that we can dlopen(3).
-dlname=''
+dlname='libdgasAtmResourceEngine2.so.0'
 
 # Names of this library.
-library_names=''
+library_names='libdgasAtmResourceEngine2.so.0.0.0 libdgasAtmResourceEngine2.so.0 libdgasAtmResourceEngine2.so'
 
 # The name of the static archive.
 old_library='libdgasAtmResourceEngine2.a'
@@ -17,9 +17,9 @@ old_library='libdgasAtmResourceEngine2.a'
 dependency_libs=''
 
 # Version information for libdgasAtmResourceEngine2.
-current=
-age=
-revision=
+current=0
+age=0
+revision=0
 
 # Is this an already installed library?
 installed=no
@@ -32,4 +32,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir=''
+libdir='/home/guarise/glite-dgas_branch_3_4_1/org.glite.dgas.hlr-service/etics-tmp/lib'

@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine.cpp,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -18,10 +18,21 @@
 // ---------------------------------------------------------------------------
 //  Includes
 // ---------------------------------------------------------------------------
-#include "atmResourceEngine.h"
+#include "glite/dgas/hlr-service/engines/atmResourceEngine.h"
+
+#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/common/base/comm_struct.h"
+#include "glite/dgas/common/base/xmlUtil.h"
+#include "glite/dgas/common/base/int2string.h"
+#include "glite/dgas/common/base/libdgas_log.h"
+#include "glite/dgas/common/base/stringSplit.h"
+#include "glite/dgas/hlr-service/base/hlrTransaction.h"
+#include "glite/dgas/hlr-service/base/qTransaction.h"
+#include "glite/dgas/hlr-service/base/hlrResource.h"
 
 extern ofstream logStream;
 extern bool strictAccountCheck;
+extern bool lazyAccountCheck;
 
 extern const char * hlr_sql_server;
 extern const char * hlr_sql_user;
@@ -38,6 +49,12 @@ inline int urlSplit(char delim, string url_string , url_type *url_buff)
         url_buff->port=atoi((url_string.substr(pos+1,url_string.size()).c_str()));
 				                
         return 0;
+}
+
+bool authorize(string& contactString)
+{
+        roles rolesBuff(contactString, "recordSource" );
+        return rolesBuff.exists();
 }
 
 int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
@@ -331,6 +348,14 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					usage_info->ceHostName = buffer;
 					hlr_log(logBuff, &logStream, 7);
 				}
+				buffer = 
+					parseAttribute ("ceCertificateSubject", attributes);
+				if ( buffer != "")
+				{
+					logBuff = "ATMengine: found ceCertificateSubject=" + buffer;
+					usage_info->ceCertificateSubject = buffer;
+					hlr_log(logBuff, &logStream, 7);
+				}
 				buffer =
 					parseAttribute ("execCe", attributes);
 				if ( buffer != "")
@@ -467,6 +492,8 @@ string composeLogData(ATM_job_record  &usage_info)
 		urBuff += ",lrmsServer=" + usage_info.lrmsServer;
 	if ( usage_info.glueCEInfoTotalCPUs != "" )
 		urBuff += ",glueCEInfoTotalCPUs=" + usage_info.glueCEInfoTotalCPUs;
+	if ( usage_info.ceCertificateSubject != "" )
+		urBuff += ",ceCertificateSubject=" + usage_info.ceCertificateSubject;
 	urBuff += ",atmEngineVersion=";
 	urBuff += ATM_RESOURCE_ENGINE_VERSION;
 	urBuff += VERSION;
@@ -512,26 +539,48 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 	} 
 	else
 	{
+		hlr_log(usage_info.ceCertificateSubject,&logStream,9);
+		hlr_log(usage_info.res_grid_id,&logStream,9);
+		hlr_log(usage_info.execCe,&logStream,9);
+		hlr_log(usage_info.dgJobId,&logStream,9);
 		hlrResource r;
-		success = r.exists("resource",connectionInfo.contactString);
-		if ( !success )
+		if ( connectionInfo.contactString == "")
 		{
-			hlr_log ("ATM Engine: Operation not allowed, certificate DN isn't asociated to a valid resource in DB", &logStream,2);
-			code = atoi(E_STRICT_AUTH);
+			//this is important for AMQ based records
+			hlr_log ("using ceCertificateSubject from UR in connInfo",&logStream,4);
+			connectionInfo.contactString = usage_info.ceCertificateSubject;
+		}
+		if ( !lazyAccountCheck )
+		{
+			success = r.exists("resource",connectionInfo.contactString);
+			if ( !success )
+			{
+				hlr_log ("ATM Engine: Operation not allowed, certificate DN isn't asociated to a valid resource in DB", &logStream,2);
+				code = atoi(E_STRICT_AUTH);
+			}
+			else
+			{
+				if ( strictAccountCheck )
+				{
+					hlr_log ("ATM Engine: strictAccountCheck", &logStream,4);
+					hlrResource rBuff;
+       	 			        rBuff.ceId=usage_info.res_grid_id;
+   				       	success = rBuff.exists();
+					if ( !success )
+					{
+						code = atoi(E_STRICT_AUTH);
+					}
+				}
+			}
 		}
 		else
 		{
-			if ( strictAccountCheck )
-			{
-				hlr_log ("ATM Engine: strictAccountCheck", &logStream,4);
-				hlrResource rBuff;
-        		        rBuff.ceId=usage_info.res_grid_id;
-   			       	success = rBuff.exists();
-				if ( !success )
-				{
-					code = atoi(E_STRICT_AUTH);
-				}
-			}
+			//DN check here
+			if ( !authorize(connectionInfo.contactString) )
+        		{
+		                success = false;
+                		code = atoi(ATM_E_AUTH);
+        		}
 		}
 	}
 	hlrTransaction t;

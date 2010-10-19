@@ -12,7 +12,6 @@ bin_PROGRAMS = \
 glite_dgas_hlr_query_SOURCES = hlrAdvancedQueryClient.cpp
 
 LDADD  = \
-	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
         $(GLOBUS_GSS_THR_LIBS) \
         $(GLOBUS_SSL_UTILS_LIBS) \
@@ -20,9 +19,8 @@ LDADD  = \
         $(GLITE_DGAS_COMMON_XMLUTIL_LIBS)
 
 AM_CPPFLAGS = \
-        -I$(top_srcdir)/interface-common \
-        -I$(top_srcdir)/interface-hlr-clients \
-        -I$(top_srcdir)/src-hlr-clients \
+        -I$(top_srcdir)/interface \
+        -I$(top_srcdir)/src \
         $(GLITE_CFLAGS) \
         $(GLOBUS_THR_CFLAGS) \
         -DGSI

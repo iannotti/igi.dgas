@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1 2010/10/13 12:59:50 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -38,7 +38,8 @@
 #include "glite/dgas/hlr-service/base/qTransaction.h"
 #include "glite/dgas/hlr-service/base/hlrTransaction.h"
 #include "atmResBankClient.h"
-#include "engineCmnUtl.h"
+#include "atmResBankClient2.h"
+#include "glite/dgas/hlr-service/engines/engineCmnUtl.h"
 #include "glite/dgas/pa-clients/paClient.h"
 #include "glite/dgas/common/pa/libPA_comm.h"
 #include <setjmp.h>
@@ -72,6 +73,10 @@ int hlr_qmgr_pollPeriod = 20;
 int hlr_jobAuth_cleanup_interval = 10;
 string logBuff;
 bool priceIsMandatory = true;
+bool useATMVersion2 = false;
+bool strictAccountCheck = false;
+bool lazyAccountCheck = false;
+
 string formula = "";
 string qtransInsertLog;
 
@@ -351,7 +356,15 @@ void mainLoop( int hlr_qmgr_tPerIter )
                        	logBuff = "hlr_qMgr::mainLoop(): Processing: " + t.id;
                        	hlr_log( logBuff, &logStream, 4);
 			alarm(60);
-                       	int res = dgasResBankClient::bankClient( t );
+			int res = 0;
+			if ( useATMVersion2 )
+			{
+                       		res = dgasResBankClient::bankClient2( t );
+			}
+			else
+			{
+                       		res = dgasResBankClient::bankClient( t );
+			}
 			alarm(0);
                         if ( res != 0 )
                         {
@@ -531,6 +544,23 @@ int main ( int argc, char * argv[] )
 	if ( confMap["systemLogLevel"] != "" )
         {
                 system_log_level = atoi((confMap["systemLogLevel"]).c_str());
+        }
+	if ( confMap["accountCheckPolicy"] != "" )
+        {
+                if ( confMap["accountCheckPolicy"] == "strict")
+                {
+                        strictAccountCheck = true;
+                        lazyAccountCheck =false;
+                }
+                if ( confMap["accountCheckPolicy"] == "lazy")
+                {
+                        strictAccountCheck = false;
+                        lazyAccountCheck = true;
+                }
+        }
+	if ( confMap["useATMVersion2"] == "true" )
+        {
+                useATMVersion2 = true;
         }
         logBuff = "Log level:" + confMap["systemLogLevel"];
         hlr_log(logBuff,&logStream,4);

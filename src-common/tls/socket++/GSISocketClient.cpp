@@ -5,7 +5,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: GSISocketClient.cpp,v 1.1.2.1 2010/10/13 12:59:48 aguarise Exp $
+// $Id: GSISocketClient.cpp,v 1.1.2.1.4.1 2010/10/19 09:06:52 aguarise Exp $
 
 #include <errno.h>
 /** This class header file. */

@@ -1,6 +1,6 @@
 /* DGAS (DataGrid Accounting System)
  * definition of error codes.
-// $Id: hlr_prot_errcode.h,v 1.1.2.1 2010/10/13 12:59:48 aguarise Exp $
+// $Id: hlr_prot_errcode.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -31,9 +31,12 @@ using namespace std;
 #define CREDIT_ERROR 		"21"
 #define CREDIT_DUPL  		"22"
 #define E_NO_USER 		"23"
-#define E_DEBIT_ERROR 		"24"
+#define E_DEBIT_ERROR_A 	"24"
 #define E_BANK_PARSE_ID 	"25"
 #define E_NO_RES_BANK_ID 	"26"
+#define E_DEBIT_ERROR_B 	"27"
+#define E_DEBIT_ERROR_C 	"28"
+#define E_DEBIT_ERROR_D 	"29"
 /*generic 1* */
 #define E_MAXRETRY 		"11"
 #define E_PARSE_ERROR 		"12"
@@ -114,8 +117,17 @@ class hlrError {
 				E_NO_USER,
 				"bankEngine: the account doesn't exists in the database."));
 			error.insert(mval::value_type (
-				E_DEBIT_ERROR,
-				"bankEngine: Error debiting the account."));
+				E_DEBIT_ERROR_A,
+				"bankEngine: Error Inserting record. Error parsing record log data contained in trans_queue record."));
+			error.insert(mval::value_type (
+				E_DEBIT_ERROR_B,
+				"bankEngine: Error Inserting record. Error in hlrTransaction.process()"));
+			error.insert(mval::value_type (
+				E_DEBIT_ERROR_C,
+				"bankEngine: Error Inserting record. Error inseritng record in transInLog, trans_in rollback failed."));
+			error.insert(mval::value_type (
+				E_DEBIT_ERROR_D,
+				"bankEngine: Error Inserting record. Error inseritn record in transInLog, trans_in rollback succeded."));
 			error.insert(mval::value_type (
 				E_BANK_PARSE_ID,
 				"bankEngine: Error parsing the hlr location."));

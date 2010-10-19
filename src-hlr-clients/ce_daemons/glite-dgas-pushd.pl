@@ -1027,7 +1027,6 @@ sub callAtmClient
     }
 
     # building command:
-
     my $legacyCmd = "/opt/glite/libexec/glite_dgas_atmClient";
 
     $cmd = "";

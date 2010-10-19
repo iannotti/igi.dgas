@@ -7,6 +7,10 @@
 #include "glite/dgas/common/base/xmlUtil.h"     
 #include "glite/dgas/hlr-service/base/hlrTransaction.h"
 #include "glite/dgas/hlr-service/base/transInLog.h"
+#include "glite/dgas/hlr-service/base/hlrResource.h"
+#include"glite/dgas/hlr-service/base/hlrTransIn.h"
+#include"glite/dgas/common/base/libdgas_log.h"
+
 
 #define E_GET_TRANSIN 	1
 #define E_GET_RESOURCE 	2
@@ -26,6 +30,8 @@ extern const char * hlr_sql_password;
 extern const char * hlr_sql_dbname;
 
 extern ofstream logStream;
+
+extern bool lazyAccountCheck;
 
 hlrTransaction::hlrTransaction(
 			       int _tid,
@@ -52,7 +58,6 @@ hlrTransaction::hlrTransaction(
 	accountingProcedure=_accountingProcedure;
 }
 
-// friend
 // make a specific transaction obsolote
 int makeObsolete(string &jobId)
 {
@@ -100,7 +105,6 @@ int hlrTransaction::process()
 //Private methods
 
 
-//int hlrTransaction::getIn()
 int hlrTransaction::get()
 {
 	//retrieve rid and gid from toId
@@ -128,6 +132,11 @@ int hlrTransaction::get()
 	if ( TransInBuff.get() != 0 )
 	{
 		//there were errors retrieving the transaction
+		string logBuff = "hlrTransaction::get(): E_GET_TRANSIN,";
+		        logBuff += "Error retrieving resInfo for:";
+			logBuff += TransInBuff.tid;
+			logBuff += "uniqueChecksum:" + uniqueChecksum;
+        		hlr_log(logBuff,&logStream,7);
 		return E_GET_TRANSIN;
 	}
 	if ( gridResource == "" )
@@ -139,6 +148,10 @@ int hlrTransaction::get()
 							//infnforge
 		if ( rBuff.get() != 0 )
 		{
+			string logBuff = "hlrTransaction::get(): E_GET_RESOURCE,";
+		        logBuff += "Error retrieving resInfo for:";
+			logBuff += rBuff.rid;
+        		hlr_log(logBuff,&logStream,7);
 			return E_GET_RESOURCE;
 		}
 	}
@@ -186,22 +199,28 @@ int getJobId(string &uniqueChecksum, string &jobIdResult,
 			{
 				jobIdResult = result.getItem(0,0);	
 				accountingProcedureResult = result.getItem(0,1);
+        			hlr_log("query OK >0",&logStream,7);
 				return 0;
 			}	
 			else
 			{
+        			hlr_log("QUERY not OK <=0",&logStream,7);
 				return 1;
 			}
 		}
 		else
 		{
+        		hlr_log("QUERY NOT OK,ERROR",&logStream,7);
+			
 			return hlrDb.errNo;
 		}
 	}
 	else
 	{
+        	hlr_log("QUERY NOT OK,DB",&logStream,7);
 		return hlrDb.errNo;
 	}
+        hlr_log("QUERY NOT OK,END of funtction",&logStream,7);
 }
 
 //int hlrTransaction::putIn()
@@ -209,12 +228,20 @@ int hlrTransaction::put()
 {
 	//retrieve rid and gid of the resource (to item )from toId
 	hlrResource rBuff;
-	if ( gridResource != "" )
+	if ( lazyAccountCheck )
 	{
-		rBuff.ceId=gridResource;
-		if ( rBuff.get() != 0 ) //get the object containing
-		{			//the resource info
-			 return E_GET_RESOURCE;
+		rBuff.rid = gridResource;
+		rBuff.gid = "NONE";
+	}
+	else
+	{
+		if ( gridResource != "" )
+		{
+			rBuff.ceId=gridResource;
+			if ( rBuff.get() != 0 ) //get the object containing
+			{			//the resource info
+				 return E_GET_RESOURCE;
+			}
 		}
 	}
 	hlrTransIn transInBuff(0,

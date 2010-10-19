@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine2.cpp,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: atmResourceEngine2.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -18,7 +18,20 @@
 // ---------------------------------------------------------------------------
 //  Includes
 // ---------------------------------------------------------------------------
-#include "atmResourceEngine2.h"
+#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/common/base/comm_struct.h"
+#include "glite/dgas/common/base/xmlUtil.h"
+#include "glite/dgas/common/base/int2string.h"
+#include "glite/dgas/common/base/libdgas_log.h"
+#include "glite/dgas/common/base/stringSplit.h"
+
+#include "glite/dgas/hlr-service/base/hlrTransaction.h"
+#include "glite/dgas/hlr-service/base/qTransaction.h"
+#include "glite/dgas/hlr-service/base/hlrResource.h"
+
+#include "glite/dgas/hlr-service/engines/atmResourceEngine2.h"
+
+
 
 extern ofstream logStream;
 extern bool strictAccountCheck;
@@ -48,49 +61,49 @@ int ATMResource_parse_xml (string &doc, map<string,string> &fieldsValues)
         if ( tagBuff.status == 0 )
         {
         	fieldsValues["DG_JOBID"] = tagBuff.text;
-		logBuff = "ATMengine: found DG_JOBID=" + tagBuff.text;
+		logBuff = "ATMengine2: found DG_JOBID=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
         }
 	tagBuff = parse(&doc, "EDG_ECONOMIC_ACCOUNTING");
         if ( tagBuff.status == 0 )
         {
         	fieldsValues["EDG_ECONOMIC_ACCOUNTING"] = tagBuff.text;
-		logBuff = "ATMengine: found EDG_ECONOMIC_ACCOUNTING=" + tagBuff.text;
+		logBuff = "ATMengine2: found EDG_ECONOMIC_ACCOUNTING=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
         }
 	tagBuff = parse(&doc, "SUBMISSION_TIME");
         if ( tagBuff.status == 0 )
         {
         	fieldsValues["SUBMISSION_TIME"] = tagBuff.text;
-		logBuff = "ATMengine: found SUBMISSION_TIME=" + tagBuff.text;
+		logBuff = "ATMengine2: found SUBMISSION_TIME=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
         }
 	tagBuff = parse(&doc, "RES_ACCT_PA_ID");
 	if ( tagBuff.status == 0 )
 	{
         	fieldsValues["RES_ACCT_PA_ID"] = tagBuff.text;
-		logBuff = "ATMengine: found RES_ACCT_PA_ID=" + tagBuff.text;
+		logBuff = "ATMengine2: found RES_ACCT_PA_ID=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
 	}
 	tagBuff = parse(&doc, "RES_ACCT_BANK_ID");
 	if ( tagBuff.status == 0 )
 	{
         	fieldsValues["RES_ACCT_BANK_ID"] = tagBuff.text;
-		logBuff = "ATMengine: found RES_ACCT_BANK_ID=" + tagBuff.text;
+		logBuff = "ATMengine2: found RES_ACCT_BANK_ID=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
 	}
 	tagBuff = parse(&doc, "USER_CERT_SUBJECT");
 	if ( tagBuff.status == 0 )
 	{
         	fieldsValues["USER_CERT_SUBJECT"] = tagBuff.text;
-		logBuff = "ATMengine: found USER_CERT_SUBJECT=" + tagBuff.text;
+		logBuff = "ATMengine2: found USER_CERT_SUBJECT=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
 	}
         tagBuff = parse(&doc, "RES_GRID_ID");
 	if ( tagBuff.status == 0 )
 	{
         	fieldsValues["RES_GRID_ID"] = tagBuff.text;
-		logBuff = "ATMengine: found RES_GRID_ID=" + tagBuff.text;
+		logBuff = "ATMengine2: found RES_GRID_ID=" + tagBuff.text;
 		hlr_log(logBuff, &logStream, 7);
 	}
 	while ( 1 )
@@ -112,7 +125,7 @@ int ATMResource_parse_xml (string &doc, map<string,string> &fieldsValues)
 				string value = (*it).second;
 				if ( key != "" )
 				{
-					logBuff = "ATMengine: found " + key + "=" + value;
+					logBuff = "ATMengine2: found " + key + "=" + value;
 					fieldsValues.insert(pair<string,string>(key,value));
 					hlr_log(logBuff, &logStream, 7);
 				}
@@ -253,7 +266,7 @@ int ATM_compose_xml(map<string,string> &fieldsValues ,string status_msg, string 
 //get the xml object from the daemon, parse the information 
 int ATMResourceEngine2( string &input, connInfo &connectionInfo, string *output )
 {
-	hlr_log ("ATM to Resource Engine: Entering.", &logStream,4);
+	hlr_log ("ATM to Resource Engine v2: Entering.", &logStream,4);
 	hlrError e;
 	bool success = true;
 	int code = 0;

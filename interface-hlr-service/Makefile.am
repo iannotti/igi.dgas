@@ -9,6 +9,9 @@
 hlrcldir = $(includedir)
 
 nobase_hlrcl_HEADERS = \
+	glite/dgas/hlr-service/engines/atmResourceEngine2.h \
+	glite/dgas/hlr-service/engines/atmResourceEngine.h \
+	glite/dgas/hlr-service/engines/engineCmnUtl.h \
 	glite/dgas/hlr-service/base/hlrAdmin.h \
 	glite/dgas/hlr-service/base/hlrGenericQuery.h \
 	glite/dgas/hlr-service/base/hlrResource.h \

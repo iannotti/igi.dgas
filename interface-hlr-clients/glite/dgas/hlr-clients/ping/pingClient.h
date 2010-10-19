@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: pingClient.h,v 1.1.2.1 2010/10/13 14:44:41 aguarise Exp $
+// $Id: pingClient.h,v 1.1.2.1.4.1 2010/10/19 09:01:38 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.

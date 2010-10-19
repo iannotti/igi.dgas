@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Local security enforcement utilities
 // 
-// $Id: localSecurity.h,v 1.1.2.1 2010/10/13 12:59:48 aguarise Exp $
+// $Id: localSecurity.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
  /***************************************************************************

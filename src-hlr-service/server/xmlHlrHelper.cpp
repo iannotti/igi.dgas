@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: xmlHlrHelper.cpp,v 1.1.2.1 2010/10/13 12:59:50 aguarise Exp $
+// $Id: xmlHlrHelper.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -19,7 +19,8 @@
 //  Includes
 // ---------------------------------------------------------------------------
 #include "xmlHlrHelper.h"
-#include "atmResourceEngine.h"
+#include "glite/dgas/hlr-service/engines/atmResourceEngine.h"
+#include "glite/dgas/hlr-service/engines/atmResourceEngine2.h"
 #include "pingEngine.hpp"
 #include "advancedQueryEngine2.h"
 #include "urConcentratorEngine.h"
@@ -31,6 +32,7 @@
 extern statusInfo serverStatus;
 extern errorInfo errorStatus;
 extern bool is2ndLevelHlr;
+extern bool useATMVersion2;
 extern int authErrors;
 
 int parse_xml( string &xmlInput, connInfo &connectionInfo, listenerStatus &lStatus, string *output)
@@ -50,7 +52,15 @@ int parse_xml( string &xmlInput, connInfo &connectionInfo, listenerStatus &lStat
 			if ( attributes["type"] == "ATM_request_toResource" )
 			{
 				serverStatus.ATMRequests++;
-				int res = ATMResource::ATMResourceEngine ( Node.text, connectionInfo, output);
+				int res = 0;
+				if ( useATMVersion2 )
+				{
+					res = ATMResource::ATMResourceEngine2 ( Node.text, connectionInfo, output);
+				}
+				else
+				{
+					res = ATMResource::ATMResourceEngine ( Node.text, connectionInfo, output);
+				}
 				if ( res != 0 )
 					errorStatus.ATMErrors++;
 			}

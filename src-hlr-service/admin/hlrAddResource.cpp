@@ -1,4 +1,4 @@
-// $Id: hlrAddResource.cpp,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: hlrAddResource.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -45,6 +45,8 @@ string certSubject_buff = "";
 string gid_buff = "";
 string confFileName = DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
+
+bool lazyAccountCheck =false;
 
 ostream& operator << ( ostream& os, const hlrResource& r )
 {

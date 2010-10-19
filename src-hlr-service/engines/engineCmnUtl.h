@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: engineCmnUtl.h,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: engineCmnUtl.h,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -107,10 +107,18 @@ struct ATM_job_record
 };
 
 int cmnParseLog(string logString, cmnLogRecords& records);
+int cmnParseLog(string logString, map<string,string>& recordsMap);
 
 void makeUniqueChecksum(ATM_job_record&, std::string&);
+void makeUniqueChecksum(map<string,string>&, std::string&);
 
 int checkDuplicate(ATM_job_record& usage_info,
+	bool& success,
+	bool& possibleResubmission, 
+	string& previousJobId,
+	string& uniqueChecksum);
+
+int checkDuplicate(map<string,string>& usageMap,
 	bool& success,
 	bool& possibleResubmission, 
 	string& previousJobId,

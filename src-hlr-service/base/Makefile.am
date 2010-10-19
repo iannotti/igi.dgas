@@ -2,11 +2,11 @@ lib_LTLIBRARIES  = \
 	libglite_dgas_hlr.la \
 	libglite_dgas_hlrQTransaction.la \
 	libglite_dgas_hlrGenericQuery.la \
+	libglite_dgas_serviceCommonUtils.la \
 	libglite_dgas_hlrTransLog.la 
 
 noinst_LTLIBRARIES = \
-	libglite_dgas_dbWaitress.la \
-	libglite_dgas_serviceCommonUtils.la
+	libglite_dgas_dbWaitress.la
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
@@ -38,9 +38,8 @@ libglite_dgas_hlrTransLog_la_SOURCES = \
 	transInLog.cpp 
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface-hlr-service \
-	-I$(top_srcdir)/interface-common \
-	-I$(top_srcdir)/src-hlr-service \
+	-I$(top_srcdir)/interface \
+	-I$(top_srcdir)/src \
 	$(DBFLAGS) \
 	$(GLITE_CFLAGS) \
 	-DMERGE

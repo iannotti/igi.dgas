@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: atmResBankClient2.cpp,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: atmResBankClient2.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -24,6 +24,10 @@
 // ---------------------------------------------------------------------------
 #include "atmResBankClient2.h"
 #include "serviceCommonUtl.h"
+#include "glite/dgas/hlr-service/base/hlrTransaction.h"
+#include "glite/dgas/hlr-service/base/hlrResource.h"
+#include "glite/dgas/hlr-service/base/hlrTransIn.h"
+
 
 extern ofstream logStream;
 
@@ -67,9 +71,9 @@ int bankClient2(hlrTransaction &t)
 		map<string,string> recordsMap;
 		if ( cmnParseLog(t.logData, recordsMap) != 0)
 		{
-			string logBuff = "ERROR: dgas_bankClient: E_DEBIT_ERROR, can't parse logData";
+			string logBuff = "ERROR: dgas_bankClient: E_DEBIT_ERROR_A, can't parse logData";
 			hlr_log( logBuff, &logStream ,1);
-			returnCode = atoi(E_DEBIT_ERROR);
+			returnCode = atoi(E_DEBIT_ERROR_A);
 			processRecord = false;
 		}
 		//fill an ATM_resource_info instance with the info necessary
@@ -103,9 +107,9 @@ int bankClient2(hlrTransaction &t)
 			t.accountingProcedure=recordsMap["accountingProcedure"];
 			if ( t.process() != 0 )
         	        {
-				string logBuff = "ERROR: dgas_bankClient: E_DEBIT_ERROR";
+				string logBuff = "ERROR: dgas_bankClient: E_DEBIT_ERROR_B";
 				hlr_log( logBuff, &logStream ,1);
-				returnCode = atoi(E_DEBIT_ERROR);
+				returnCode = atoi(E_DEBIT_ERROR_B);
 			}
 			else
 			{
@@ -114,6 +118,19 @@ int bankClient2(hlrTransaction &t)
                 	        if ( transInLogBuff.put() != 0 )
 	                        {
         	                      hlr_log("resBankClient: Error inserting info in transInLog table.",&logStream,3);
+					hlrTransIn transInBuff;
+                                       transInBuff.tid = t.tid;
+                                       int res = transInBuff.del();
+                                       if ( res != 0 )
+                                       {
+                                               hlr_log("resBankClient: Error deleting trans_in.",&logStream,3);
+                                               returnCode = atoi(E_DEBIT_ERROR_C);          
+                                       }
+					else
+                                        {
+                                                hlr_log("resBankClient: deleted trans_in entry (rollback).",&logStream,5);
+                                                returnCode = atoi(E_DEBIT_ERROR_D);
+                                        }
                 	        }
 			}
 		}

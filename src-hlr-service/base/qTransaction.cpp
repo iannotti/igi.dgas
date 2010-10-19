@@ -4,6 +4,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/hlr-service/base/qTransaction.h"
+#include <fstream>
 
 extern const char * hlr_sql_server;
 extern const char * hlr_sql_user;

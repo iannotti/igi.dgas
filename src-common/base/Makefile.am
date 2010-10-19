@@ -34,7 +34,7 @@ DBFLAGS = $(MYSQL_CFLAGS)
 endif
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface-common \
+	-I$(top_srcdir)/interface \
 	$(DBFLAGS)
 
 MAINTAINERCLEANFILES = Makefile.in

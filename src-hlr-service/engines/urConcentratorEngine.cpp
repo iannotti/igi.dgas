@@ -417,11 +417,6 @@ int urConcentrator::xmlParser( string& requestType,
 					{
 						urBuff.glueCEInfoTotalCPUs = fieldNode.text;
 					}
-					fieldNode = parse (&urNode.text, "executingNodes" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.executingNodes = fieldNode.text;
-					}
 					fieldNode = parse (&urNode.text, "uniqueChecksum" );
 					if ( fieldNode.status == 0 )
 					{
@@ -675,9 +670,9 @@ int urConcentrator::insertRecord(jobTransSummary& r)
 	res = insertRecord.query();
 	if ( (res != 0) && ( res != 1 ) )
 	{
-		if ( isDuplicateEntry(r.dgJobId) )//duplicate entry
+		if ( isDuplicateEntry(r.dgJobId, c->hostName, r.transType ) )//duplicate entry
 		{
-			logBuff = "Duplicate dgJobId:" + r.dgJobId + ",MysqlError:" + int2string(res);
+			logBuff = "Duplicate entry:" + r.dgJobId + ":" + r.transType + ",MysqlError:" + int2string(res);
 			hlr_log(logBuff,&logStream,4);
 			hlr_log("going on anyway...",&logStream,3);
 			return 0;	
@@ -692,7 +687,7 @@ int urConcentrator::insertRecord(jobTransSummary& r)
 	}
 }
 
-bool urConcentrator::isDuplicateEntry(string& dgJobId )
+bool urConcentrator::isDuplicateEntry(string& dgJobId, string& hostName, string& transType )
 {
 	string queryString = "SELECT dgJobId FROM jobTransSummary WHERE";
 	queryString += " dgJobId=\"" + dgJobId + "\"";

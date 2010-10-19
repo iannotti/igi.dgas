@@ -31,8 +31,8 @@ socketppinclude_HEADERS = \
 	tokens.h \
 	errors.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/interface-common \
-	-I$(top_srcdir)/src-common \
+AM_CPPFLAGS = -I$(top_srcdir)/interface \
+	-I$(top_srcdir)/src \
 	$(GLITE_CFLAGS) \
 	$(GLOBUS_THR_CFLAGS) \
 	-DWITH_SOCKET_EXCEPTIONS \

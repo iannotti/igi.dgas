@@ -63,8 +63,10 @@ int authErrors=0;
 int threadUsecDelay=0;
 int threadPoolUsecDelay=0;
 bool strictAccountCheck = false;
+bool lazyAccountCheck = false;
 bool authUserSqlQueries = false;
 bool is2ndLevelHlr = false;
+bool useATMVersion2 = false;
 bool checkVo = false;
 bool useMergeTables = false;
 bool deleteOnReset = true;
@@ -253,12 +255,26 @@ int main ( int argc, char * argv[] )
 	string logBuff = "Number of threads for this server:";
 	logBuff += int2string(threadNumber);
 	hlr_log(logBuff,&logStream,5);
-	if ( confMap["strictAccountCheck"] != "" )
+	if ( confMap["strictAccountCheck"] != "" )//deprecated
 	{
 		string strictAccountCheckBuff = confMap["strictAccountCheck"];
 		if ( strictAccountCheckBuff == "true" )
 		{
 			strictAccountCheck = true;
+			lazyAccountCheck =false;
+		}
+	}
+	if ( confMap["accountCheckPolicy"] != "" )
+	{
+		if ( confMap["accountCheckPolicy"] == "strict")
+		{
+			strictAccountCheck = true;
+			lazyAccountCheck =false;
+		}
+		if ( confMap["accountCheckPolicy"] == "lazy")
+		{
+			strictAccountCheck = false;
+			lazyAccountCheck = true;
 		}
 	}
 	if ( confMap["defConnTimeOut"] != "" )
@@ -297,6 +313,10 @@ int main ( int argc, char * argv[] )
 	if ( confMap["mergeTablesDefinitions"] != "" )
 	{
 		mergeTablesDefinitions = confMap["mergeTablesDefinitions"];
+	}
+	if ( confMap["useATMVersion2"] == "true" )
+	{
+		useATMVersion2 = true;
 	}
 	if ( confMap["threadUsecDelay"] != ""  )
 	{

@@ -1,4 +1,4 @@
-// $Id: dbResult.cpp,v 1.1.2.1 2010/10/13 12:59:48 aguarise Exp $
+// $Id: dbResult.cpp,v 1.1.2.1.4.1 2010/10/19 09:06:52 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.

@@ -7,20 +7,20 @@
 ## *********************************************************************
 
 noinst_LTLIBRARIES = \
-	libdgasAtmResourceEngine.la \
 	libdgasGetRecordEngine.la \
 	libdgasPingEngine.la \
 	libdgasAdvancedQueryEngine2.la \
-	libdgasUrConcentratorEngine.la \
-	libdgasEngineCmnUtl.la
-
+	libdgasUrConcentratorEngine.la
 noinst_HEADERS = \
-	atmResourceEngine.h \
 	pingEngine.hpp \
 	advancedQueryEngine2.h 
 
 lib_LTLIBRARIES = \
-		libglite_dgas_atmResBankClient.la 
+		libdgasEngineCmnUtl.la \
+		libdgasAtmResourceEngine.la \
+		libdgasAtmResourceEngine2.la \
+		libglite_dgas_atmResBankClient.la \
+ 		libglite_dgas_atmResBankClient2.la 
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
@@ -38,6 +38,8 @@ libdgasPingEngine_la_SOURCES = pingEngine.cpp pingEngine.hpp
 
 libdgasAtmResourceEngine_la_SOURCES = atmResourceEngine.cpp atmResourceEngine.h
 
+libdgasAtmResourceEngine2_la_SOURCES = atmResourceEngine2.cpp atmResourceEngine2.h
+
 libdgasGetRecordEngine_la_SOURCES = getRecordEngine.cpp getRecordEngine.h
 
 libdgasUrConcentratorEngine_la_SOURCES = urConcentratorEngine.h urConcentratorEngine.cpp
@@ -48,14 +50,13 @@ libglite_dgas_atmResBankClient_la_SOURCES = \
 	atmResBankClient.h atmResBankClient.cpp
 libglite_dgas_atmResBankClient_la_LIBADD = libdgasEngineCmnUtl.la
 
-#libdgasTransInfoFactory_la_SOURCES = \
-#	transInfoFactory.h transInfoFactory.cpp
-
+libglite_dgas_atmResBankClient2_la_SOURCES = \
+	atmResBankClient2.h atmResBankClient2.cpp
+libglite_dgas_atmResBankClient_la_LIBADD = libdgasEngineCmnUtl.la
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface-hlr-service \
-	-I$(top_srcdir)/interface-common \
-	-I$(top_srcdir)/src-hlr-service \
-	-I$(top_srcdir)/src-hlr-service/base \
+	-I$(top_srcdir)/interface \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/base \
 	$(GLITE_CFLAGS) \
 	$(GLOBUS_THR_CFLAGS) \
 	$(DBFLAGS) \

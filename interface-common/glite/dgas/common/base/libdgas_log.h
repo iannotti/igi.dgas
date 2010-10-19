@@ -1,4 +1,4 @@
-// $Id: libdgas_log.h,v 1.1.2.1 2010/10/13 12:59:48 aguarise Exp $
+// $Id: libdgas_log.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.

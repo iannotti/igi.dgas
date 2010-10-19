@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -35,7 +35,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/libdgas_log.h"
 #include "serviceCommonUtl.h"
-#include "engineCmnUtl.h"
+#include "glite/dgas/hlr-service/engines/engineCmnUtl.h"
 #include "dbWaitress.h"
 
 using namespace std;
@@ -140,7 +140,7 @@ class urConcentrator {
 		int errorComposeXml(int errorCode);
 		int checkExistsOutOfBand(jobTransSummary& r, string& recordId);
 		int removeRecord(string &recordId);
-		bool isDuplicateEntry(string& dgJobId );	
+		bool isDuplicateEntry(string& dgJobId, string& hostName, string& transType );	
 
 };
 

@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: atmResBankClient.h,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+// $Id: atmResBankClient.h,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -35,15 +35,10 @@
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
-#include "engineCmnUtl.h"
+#include "glite/dgas/hlr-service/engines/engineCmnUtl.h"
 
-//#include "glite/dgas/common/ldap/LDAPSynchConnection.h"
-//#include "glite/dgas/common/ldap/LDAPQuery.h"
-//#include "glite/dgas/common/ldap/LDAPForwardIterator.h"
-//#include "glite/dgas/common/ldap/LDIFObject.h"
 
 #include "glite/dgas/hlr-service/base/hlrTransaction.h"
-//#include "glite/dgas/hlr-service/base/jobAuth.h"
 #include "glite/dgas/hlr-service/base/transInLog.h"
 
 #ifndef GSI

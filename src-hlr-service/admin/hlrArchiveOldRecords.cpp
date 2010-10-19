@@ -15,6 +15,8 @@
 
 using namespace std;
 
+bool lazyAccountCheck = false;//for buid FIXME
+
 const char * hlr_sql_server;
 const char * hlr_sql_user;
 const char * hlr_sql_password;

@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: paClient.cpp,v 1.1.2.1 2010/10/13 12:59:50 aguarise Exp $
+// $Id: paClient.cpp,v 1.1.2.1.4.1 2010/10/19 09:12:32 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.

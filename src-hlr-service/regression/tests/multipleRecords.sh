@@ -22,7 +22,7 @@ do
         fi
 	PROGRESSIVE=$i
 	JOBID="selfTestProgr$i"
-	${GLITE_LOCATION}/libexec/glite_dgas_atmClient -j "$JOBID" -t "$TIMESTAMP" -p "PA_LOCATION" -l "$HOSTNAME:$HLR_PORT:" -C "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue" -U "selfTestUserDN" -r "$HOSTNAME:$HLR_PORT:" CPU_TIME=$PROGRESSIVE WALL_TIME=$PROGRESSIVE PMEM=3k VMEM=4k "QUEUE=queue" "USER=selftest" "LRMSID=$PROGRESSIVE.selftest" "URCREATION=$DATE" "start=$TIMESTAMP" "end=$TIMESTAMP" "ctime=$TIMESTAMP" "qtime=$TIMESTAMP" "etime=$TIMESTAMP" "exitStatus=0" "si2k=1" "sf2k=1" "tz=+0200" userVo="selfTest" jobName="selfTest" $accountingProcedure
+	${GLITE_LOCATION}/libexec/glite_dgas_atmClient -j "$JOBID" -t "$TIMESTAMP" -p "PA_LOCATION" -l "$HOSTNAME:$HLR_PORT:" -C "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue" -U "selfTestUserDN" -r "$HOSTNAME:$HLR_PORT:" CPU_TIME=$PROGRESSIVE WALL_TIME=$PROGRESSIVE PMEM=3k VMEM=4k "QUEUE=queue" "USER=selftest" "LRMSID=$PROGRESSIVE.selftest" "URCREATION=$DATE" "start=$TIMESTAMP" "end=$TIMESTAMP" "ctime=$TIMESTAMP" "qtime=$TIMESTAMP" "etime=$TIMESTAMP" "exitStatus=0" "si2k=1" "sf2k=1" "tz=+0200" userVo="selfTest" jobName="selfTest" GlueCEInfoTotalCPUs="176" $accountingProcedure
 done
 
 

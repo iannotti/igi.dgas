@@ -74,7 +74,7 @@ eval MYSQLPWD=`grep hlr_sql_password $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 eval MYSQL_HLR=`grep hlr_sql_dbname $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 mysql -uroot -p$MYSQLPWD $MYSQL_HLR  -e "SELECT count(*) FROM  trans_in  WHERE dgJobId like '$JOBID%'"
 mysql -uroot -p$MYSQLPWD $MYSQL_HLR  -e "SELECT * FROM  trans_in  WHERE dgJobId like '$JOBID%'"
-$GLITE_LOCATION/sbin/glite-dgas-hlr-translatedb
+$GLITE_LOCATION/sbin/glite-dgas-hlr-translatedb -D
 mysql -uroot -p$MYSQLPWD $MYSQL_HLR  -e "SELECT * FROM  trans_in  WHERE dgJobId like '$JOBID%'"
 mysql -uroot -p$MYSQLPWD $MYSQL_HLR  -e "SELECT * FROM  jobTransSummary  WHERE dgJobId like '$JOBID%'"
 $GLITE_LOCATION/bin/glite-dgas-hlr-query -Q resourceAggregate -A 'count(dgJobId)' -j "$JOBID%" 

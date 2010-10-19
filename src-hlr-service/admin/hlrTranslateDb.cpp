@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1 2010/10/13 12:59:49 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -32,6 +32,7 @@
 
 using namespace std;
 
+bool lazyAccountCheck= false;//just for build FIXME
 
 const char * hlr_sql_server;
 const char * hlr_sql_user;
@@ -95,6 +96,7 @@ struct hlrLogRecords {
 	string voOrigin;//trans_{in,out} original tid.
 	string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
 	string executingNodes; //hostname of the executing nodes.
+	string ceCertificateSubject;
 };
 
 int options ( int argc, char **argv )
@@ -206,70 +208,6 @@ bool CFexists(string& fileName)
 	}
 }
 
-int upgrade_R_3_4_0_23()
-{
-	//put masterLock if not already specified
-	if ( !putMasterLock) MLcreate(masterLock);
-	int res = 0;
-	bool update = false;
-	string queryBuffer = "describe jobTransSummary uniqueChecksum";
-	hlrGenericQuery describe(queryBuffer);
-	res = describe.query();
-	if ( res != 0 )
-	{
-		cerr << "Error in query:" << queryBuffer << endl;
-	}
-	else
-	{
-		if ( describe.errNo == 0 )
-	        {
-	                vector<resultRow>::const_iterator it = (describe.queryResult).begin();
-	                while ( it != (describe.queryResult).end() )
-	                {
-				if ( (*it)[0] == "uniqueChecksum" )
-				{
-       		                 	if ( (*it)[3] != "PRI" ) 
-					{
-						update = true;
-					}
-				}
-                	        it++;
-                	}
-		}
-	}
-	if ( update )
-	{
-		cout << "Table jobTransSummary needs an index update" << endl;
-		cout << "Table jobTransSummary: dropping primary index..." << endl;
-		string queryBuffer = "alter table jobTransSummary drop primary key";
-		hlrGenericQuery dropQuery(queryBuffer);
-		res = dropQuery.query();
-		if ( res != 0 )
-		{
-			cerr << "Error in query:" << queryBuffer << endl;
-			if ( !putMasterLock) CFremove(masterLock);
-			return res;
-		}
-		else
-		{
-			cout << "Table jobTransSummary: creating new primary index..." << endl;
-	
-			string queryBuffer2 = "alter table jobTransSummary ADD primary key (dgJobId,uniqueChecksum)";
-			hlrGenericQuery addQuery(queryBuffer2);
-			res = addQuery.query();
-			if ( res != 0 )
-			{
-				cerr << "Error in query:" << queryBuffer2 << endl;
-				if ( !putMasterLock) CFremove(masterLock);
-				return res;
-			}
-		}
-		cout << "Table jobTransSummary: Index creation done." << endl;
-	}
-	if ( !putMasterLock) CFremove(masterLock);
-	return res;
-}
-
 int computeIterationsNo (int confIterations, int lastProcessedTid )
 {
 	string queryBuffer = "SELECT count(dgJobId) FROM trans_in WHERE tid > ";
@@ -306,9 +244,8 @@ int computeIterationsNo (int confIterations, int lastProcessedTid )
 string composeQuery(int first, int last)
 {
 	string queryBuff = "SELECT * FROM ";
-        queryBuff += "trans_in,transInLog,acctdesc";
-        queryBuff +=" where trans_in.dgJobId=transInLog.dgJobId "; 
-	queryBuff +=" AND trans_in.rid=acctdesc.id";
+        queryBuff += "trans_in,transInLog";
+        queryBuff +=" WHERE trans_in.dgJobId=transInLog.dgJobId "; 
 	queryBuff += " AND trans_in.tid >" +int2string(first);//do not use >=
 						//since 'first' is already 
 						//present in DB.
@@ -344,13 +281,27 @@ int parseLog(string logString, hlrLogRecords& records)
 	}
 	records.cpuTime = atoi(logMap["CPU_TIME"].c_str());
 	records.wallTime = atoi(logMap["WALL_TIME"].c_str());
-	records.ceId = logMap["CE_ID"];
+	if ( logMap["execCe"] != "" )
+	{
+		records.ceId = logMap["execCe"];
+	}
+	else
+	{
+		records.ceId = logMap["CE_ID"];
+	}
 	records.userVo = logMap["userVo"];
 	records.processors = logMap["processors"];
 	records.urCreation = logMap["urCreation"];
 	records.localUserId = logMap["localUserId"];
 	records.localGroupId = logMap["localGroup"];
-	records.lrmsId = logMap["lrmsId"];
+	if ( logMap["lrmsId"] != "" )
+	{
+		records.lrmsId = logMap["lrmsId"];
+	}
+	else if ( logMap["LRMSID"] != "")
+	{
+		records.lrmsId = logMap["LRMSID"];
+	}
 	records.jobName = logMap["jobName"];
 	records.accountingProcedure = logMap["accountingProcedure"];
 	if ( logMap["start"] != "" )
@@ -396,9 +347,19 @@ int parseLog(string logString, hlrLogRecords& records)
 		records.iBench = logMap["specInt2000"];
 		records.iBenchType = "si2k";
 	}
+	if ( logMap["si2k"] != "" )//backwardCompatibility
+	{
+		records.iBench = logMap["si2k"];
+		records.iBenchType = "si2k";
+	}
 	if ( logMap["specFloat2000"] != "" )//backwardCompatibility
 	{
 		records.fBench = logMap["specFloat2000"];
+		records.fBenchType = "sf2k";
+	}
+	if ( logMap["sf2k"] != "" )//backwardCompatibility
+	{
+		records.fBench = logMap["sf2k"];
 		records.fBenchType = "sf2k";
 	}
 	if ( logMap["iBench"] != "" )
@@ -445,6 +406,10 @@ int parseLog(string logString, hlrLogRecords& records)
 	{
 		records.mem = "0";
 	}
+	if ( logMap["ceCertificateSubject"] != "" )
+	{
+		records.ceCertificateSubject = logMap["ceCertificateSubject"];
+	}
 	return 0;
 }
 
@@ -490,12 +455,12 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 	{
 		currentTid = (*it)[0];
 		dgJobId = (*it)[6];
-		thisGridId = (*it)[14];
 		remoteGridId = (*it)[3];
-		acl = (*it)[15];
 		string gid = (*it)[2];
 		hlrLogRecords logBuff;
 		parseLog((*it)[10], logBuff);
+		acl = logBuff.ceCertificateSubject;
+		thisGridId = logBuff.ceId;
 		if ( logBuff.start != "" && logBuff.start != "0" )
 		{
 			// there is a start value in the LRMS record
@@ -596,7 +561,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		Split (':', thisGridId, &ceIdBuff);        
 		if (ceIdBuff.size() > 0)
 		{
-			valuesBuffer  = ceIdBuff[0];//FIXME can't we finde something else?
+			valuesBuffer  = ceIdBuff[0];//FIXME can't we find something else?
 		}
 		valuesBuffer += logBuff.lrmsId;
 		valuesBuffer += logBuff.start;
@@ -604,10 +569,6 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		valuesBuffer += cpuTime;
 		uniqueS = "";
 		makeUniqueString (valuesBuffer,uniqueS);
-		/*if ( debug )
-		{
-			cerr << uniqueS << "::" << valuesBuffer << endl;
-		}*/
 		queryBuffer = "";
 		queryBuffer += "SET uniqueChecksum='";
 		queryBuffer += uniqueS;
@@ -929,7 +890,7 @@ bool createJobTransSummaryTable()
 	queryString += "GlueCEInfoTotalCPUs smallint(5) unsigned, ";//! 3.1.10
 	queryString += "executingNodes varchar(255), ";//! 3.4.0
 	queryString += "uniqueChecksum char(32), ";//! 3.3.0
-	queryString += "primary key (dgJobId,uniqueChecksum), key (id))"; 
+	queryString += "primary key (dgJobId), key (id))"; 
 	if ( debug )
 	{
 		cerr << queryString << endl;
@@ -2027,7 +1988,6 @@ int main (int argc, char **argv)
 	if (checkTable("user_group_vo")) dropTable("user_group_vo");
 	if (checkTable("group_vo")) dropTable("group_vo");
 	if (checkTable("groupAdmin")) dropTable("groupAdmin");
-	upgrade_R_3_4_0_23();
 	if ( is2ndLevelHlr )
 	{
 		cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;

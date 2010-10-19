@@ -1,4 +1,4 @@
-// $Id: digests.cpp,v 1.1.2.1 2010/10/13 12:59:48 aguarise Exp $
+// $Id: digests.cpp,v 1.1.2.1.4.1 2010/10/19 09:06:52 aguarise Exp $
 
 #include "glite/dgas/common/base/digests.h"
 
