@@ -38,8 +38,9 @@ libglite_dgas_hlrTransLog_la_SOURCES = \
 	transInLog.cpp 
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface \
-	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/interface-hlr-service \
+	-I$(top_srcdir)/interface-common \
+	-I$(top_srcdir)/src-hlr-service \
 	$(DBFLAGS) \
 	$(GLITE_CFLAGS) \
 	-DMERGE

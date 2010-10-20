@@ -54,9 +54,10 @@ libglite_dgas_atmResBankClient2_la_SOURCES = \
 	atmResBankClient2.h atmResBankClient2.cpp
 libglite_dgas_atmResBankClient_la_LIBADD = libdgasEngineCmnUtl.la
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface \
-	-I$(top_srcdir)/src \
-	-I$(top_srcdir)/src/base \
+	-I$(top_srcdir)/interface-hlr-service \
+	-I$(top_srcdir)/interface-common \
+	-I$(top_srcdir)/src-hlr-service \
+	-I$(top_srcdir)/src-hlr-service/base \
 	$(GLITE_CFLAGS) \
 	$(GLOBUS_THR_CFLAGS) \
 	$(DBFLAGS) \
