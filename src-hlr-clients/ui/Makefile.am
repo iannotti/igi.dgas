@@ -12,6 +12,7 @@ bin_PROGRAMS = \
 glite_dgas_hlr_query_SOURCES = hlrAdvancedQueryClient.cpp
 
 LDADD  = \
+	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
         $(GLOBUS_GSS_THR_LIBS) \
         $(GLOBUS_SSL_UTILS_LIBS) \
