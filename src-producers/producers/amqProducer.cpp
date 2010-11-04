@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.1 2010/10/21 13:27:15 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.2 2010/11/04 13:36:54 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -49,7 +49,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
-#include "glite/dgas/hlr-activemq-producer/hlr-producer/hlrProducer.h"
+#include "glite/dgas/dgas-producers/producers/amqProducer.h"
 
 #define E_CONFIG 10
 #define E_BROKER_URI 11

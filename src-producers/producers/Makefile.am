@@ -19,7 +19,7 @@ libexec_SCRIPTS = \
 
 
 libglite_dgas_amqProducer_la_SOURCES = \
-	hlrProducer.cpp 
+	amqProducer.cpp 
 
 libglite_dgas_legacyProducer_la_SOURCES = \
 	legacyProducer.cpp 
@@ -27,7 +27,7 @@ libglite_dgas_legacyProducer_la_SOURCES = \
 libglite_dgas_legacyCpuComposer_la_SOURCES = \
 	recordComposer.cpp 
 
-glite_dgas_amqProducer_SOURCES = hlrProducerExe.cpp
+glite_dgas_amqProducer_SOURCES = amqProducerExe.cpp
 glite_dgas_amqProducer_LDADD   = \
 	./libglite_dgas_amqProducer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
@@ -52,8 +52,8 @@ glite_dgas_legacyCpuComposer_LDADD   = \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface \
-	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/interface-producers \
+	-I$(top_srcdir)/src-producers \
 	$(GLITE_CFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
 	-DVERSION=\"@VERSION@\"
