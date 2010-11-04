@@ -8,8 +8,8 @@
 
 hlrcldir = $(includedir)
 nobase_hlrcl_HEADERS = \
-	glite/dgas/hlr-activemq-producer/hlr-producer/amqProducer.h\
-	glite/dgas/hlr-activemq-producer/hlr-producer/legacyProducer.h\
-	glite/dgas/hlr-activemq-producer/hlr-producer/recordComposer.h
+	glite/dgas/dgas-producers/producers/amqProducer.h\
+	glite/dgas/dgas-producers/producers/legacyProducer.h\
+	glite/dgas/dgas-producers/producers/recordComposer.h
 
 MAINTAINERCLEANFILES = Makefile.in
