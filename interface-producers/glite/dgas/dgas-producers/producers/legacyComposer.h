@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: recordComposer.h,v 1.1.2.1 2010/10/21 11:56:48 aguarise Exp $
+// $Id: legacyComposer.h,v 1.1.2.1 2010/11/05 14:44:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.

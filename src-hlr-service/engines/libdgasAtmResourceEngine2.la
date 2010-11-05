@@ -32,4 +32,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/guarise/glite-dgas_branch_3_4_1/org.glite.dgas.hlr-service/etics-tmp/lib'
+libdir='/home/guarise/dgas_full_branch_4_0_0/etics-tmp/lib'

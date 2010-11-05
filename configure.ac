@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/db.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5 $])
+AC_REVISION([$Revision: 1.1.2.5.4.1 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -101,6 +101,9 @@ AC_GLITE_DGAS_PA_CLIENTS([], have_glite_dgas_pa_clients=yes, have_glite_dgas_pa_
 AC_GLITE_DGAS_COMMON([], have_glite_dgas_common=yes, have_glite_dgas_common=no)
 AC_MSG_RESULT(["GLITE_DGAS_COMMON found $have_glite_dgas_common"])
 
+AC_ACTIVEMQ_CPP_LIB([], have_activemq_cpp_lib=yes, have_activemq_cpp_lib=no)
+AC_MSG_RESULT(["ACTIVEMQ_CPP_LIB found $have_activemq_cpp_lib"])
+
 #CXXFLAGS="-g -Wall -O0 -pg -fprofile-arcs -ftest-coverage"
 #CFLAGS="-g -O0 -Wall -W -pg -fprofile-arcs -ftest-coverage"
 #LDFLAGS="-fprofile-arcs -ftest-coverage -lgcov"
@@ -139,5 +142,9 @@ AC_CONFIG_FILES([src-hlr-service/regression/Makefile])
 AC_CONFIG_FILES([src-hlr-service/regression/tests/Makefile])
 AC_CONFIG_FILES([src-hlr-service/monitor/Makefile])
 AC_CONFIG_FILES([src-hlr-service/monitor/plugins/Makefile])
+AC_CONFIG_FILES([config-producers/Makefile])
+AC_CONFIG_FILES([src-producers/Makefile])
+AC_CONFIG_FILES([src-producers/producers/Makefile])
+AC_CONFIG_FILES([interface-producers/Makefile])
 AC_OUTPUT
 

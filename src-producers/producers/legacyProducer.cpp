@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.2 2010/11/04 13:37:49 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.3 2010/11/05 14:44:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -43,32 +43,36 @@ catch_alarm (int sig)
 
 int  defConnTimeOut = 60;
 
-int ATM_client_toResource(string& input ,string *server_answer, string confFileName)
+int ATM_client_toResource(string& input ,string *server_answer, producerConfiguration& conf)
 {
+	if (conf.configFileName == "") conf.configFileName = GLITE_DGAS_DEF_CONF;
 	int returncode = 0;
 	string output_message;
 	vector<string> urlBuff;
+	string res_acct_PA_id = "";
+	string res_acct_bank_id = "";
+	string economicAccountingFlag = "";
 	//not specified, get them form a configuration file.
 	map <string,string> confMap;
-	if ( dgas_conf_read ( confFileName, &confMap ) == 0 )
+	if ( dgas_conf_read ( conf.configFileName, &confMap ) == 0 )
 	{
-		if ( job_data.res_acct_PA_id == "" )
+		if ( conf.paServer == "" )
 		{
-			job_data.res_acct_PA_id =(confMap["res_acct_PA_id"]).c_str();
+			conf.paServer =(confMap["res_acct_PA_id"]).c_str();
 		}	
-		if ( job_data.res_acct_bank_id == "" )
+		if ( res_acct_bank_id == "" )
 		{
-			job_data.res_acct_bank_id =(confMap["res_acct_bank_id"]).c_str();
+			conf.hlrServer =(confMap["res_acct_bank_id"]).c_str();
 		}	
 		//se if we need to do economic accounting
-		job_data.economicAccountingFlag = (confMap["economicAccounting"]).c_str();
+		conf.economicAccounting = (confMap["economicAccounting"]).c_str();
 	}
 	else
 	{
-		cerr << "WARNING: Error reading conf file: " << confFileName << endl;
+		cerr << "WARNING: Error reading conf file: " << conf.configFileName << endl;
 		cerr << "There can be problems processing the transaction" << endl;
 	}
-	Split(':',job_data.res_acct_bank_id, &urlBuff);
+	Split(':',conf.hlrServer, &urlBuff);
 	if ( urlBuff.size() != 3 )
 		return atoi(E_WRONG_RES_HLR);
 	string resBankHostname = urlBuff[0];
@@ -87,7 +91,7 @@ int ATM_client_toResource(string& input ,string *server_answer, string confFileN
 	}
 	else
 	{
-		if ( !(theClient->Send(input_message)))
+		if ( !(theClient->Send(input)))
 		{
 			 returncode = atoi(E_SEND_MESSAGE);
 		}

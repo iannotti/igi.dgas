@@ -14,7 +14,7 @@ library_names='libglite_dgas_atmResBankClient2.so.0.0.0 libglite_dgas_atmResBank
 old_library='libglite_dgas_atmResBankClient2.a'
 
 # Libraries that this one depends upon.
-dependency_libs=''
+dependency_libs=' /home/guarise/dgas_full_branch_4_0_0/org.glite.dgas/src-hlr-service/engines/libdgasEngineCmnUtl.la '
 
 # Version information for libglite_dgas_atmResBankClient2.
 current=0
@@ -32,4 +32,5 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/guarise/glite-dgas_branch_3_4_1/org.glite.dgas.hlr-service/etics-tmp/lib'
+libdir='/home/guarise/dgas_full_branch_4_0_0/etics-tmp/lib'
+relink_command="(cd /home/guarise/dgas_full_branch_4_0_0/org.glite.dgas/src-hlr-service/engines; /bin/sh ../../libtool  --tag=CXX --mode=relink g++ -g -O2 -o libglite_dgas_atmResBankClient2.la -rpath /home/guarise/dgas_full_branch_4_0_0/etics-tmp/lib atmResBankClient2.lo libdgasEngineCmnUtl.la @inst_prefix_dir@)"

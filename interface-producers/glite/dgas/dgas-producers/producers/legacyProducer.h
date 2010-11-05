@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.h,v 1.1.2.1 2010/10/21 11:56:48 aguarise Exp $
+// $Id: legacyProducer.h,v 1.1.2.2 2010/11/05 14:44:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -37,11 +37,18 @@ using namespace std;
 using namespace glite::wmsutils::tls::socket_pp;
 #endif
 
+struct producerConfiguration {
+	string configFileName;
+	string hlrServer;
+	string paServer;
+	string economicAccounting;
+};
+
 int ATM_client_toResource(
 		string& res_acct_bank_id,
 		string& input, 
 		string *server_answer,
-		string confFileName = GLITE_DGAS_DEF_CONF);
+		producerConfiguration& conf);
 
 
 //Parse the XML input, returns 0 if success >1 otherwise, differerntly from

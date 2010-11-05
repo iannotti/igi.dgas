@@ -7,7 +7,7 @@
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
-#include "glite/dgas/hlr-activemq-producer/hlr-producer/hlrProducer.h"
+#include "glite/dgas/dgas-producers/producers/amqProducer.h"
 
 #define OPTION_STRING "3hv:B:c:O:"
 
@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
 		help();
 		return 0;
 	}
-	int res = dgasHlrRecordProducer(configFile, brokerUri);
+	int res = dgasHlrRecordProducer(configFile, brokerUri, amqOptions);
 	if ( verbosity > 0 )
 	{
 		cout << "Return code:" << res << endl;

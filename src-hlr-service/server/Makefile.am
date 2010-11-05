@@ -126,6 +126,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src-hlr-service/engines \
 	-I$(top_srcdir)/src-hlr-service/base \
 	-I$(top_srcdir)/interface-hlr-service \
+	-I$(top_srcdir)/interface-pa-clients \
+	-I$(top_srcdir)/interface-common \
 	-I$(top_srcdir)/src-hlr-service \
 	$(DBFLAGS) \
 	$(GLITE_CFLAGS) \

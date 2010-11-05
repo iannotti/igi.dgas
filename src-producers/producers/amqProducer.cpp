@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.2 2010/11/04 13:36:54 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.3 2010/11/05 14:44:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -336,10 +336,9 @@ private:
 
 };
 
-int dgasHlrRecordProducer (string& confFileName, string amqBrokerUri, string amqOptions )
+int dgasHlrRecordProducer (string& confFileName, string amqBrokerUri,string dgasAMQTopic ,string amqOptions )
 {
 	int returncode = 0;
-	string dgasAMQTopic = "";
 	string output_message;
 	map <string,string> confMap;
 	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )	

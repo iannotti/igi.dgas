@@ -25,7 +25,7 @@ libglite_dgas_legacyProducer_la_SOURCES = \
 	legacyProducer.cpp 
 
 libglite_dgas_legacyCpuComposer_la_SOURCES = \
-	recordComposer.cpp 
+	legacyComposer.cpp 
 
 glite_dgas_amqProducer_SOURCES = amqProducerExe.cpp
 glite_dgas_amqProducer_LDADD   = \
@@ -44,7 +44,7 @@ glite_dgas_legacyProducer_LDADD   = \
         $(GLOBUS_GSS_THR_LIBS)
  
 
-glite_dgas_legacyCpuComposer_SOURCES = recordComposerExe.cpp
+glite_dgas_legacyCpuComposer_SOURCES = legacyComposerExe.cpp
 glite_dgas_legacyCpuComposer_LDADD   = \
 	./libglite_dgas_legacyCpuComposer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
@@ -53,8 +53,10 @@ glite_dgas_legacyCpuComposer_LDADD   = \
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-producers \
+	-I$(top_srcdir)/interface-common\
 	-I$(top_srcdir)/src-producers \
 	$(GLITE_CFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
+	$(GLOBUS_THR_CFLAGS) \
 	-DVERSION=\"@VERSION@\"
 MAINTAINERCLEANFILES = Makefile.in 
