@@ -39,6 +39,7 @@ glite_dgas_legacyProducer_LDADD   = \
 	./libglite_dgas_legacyProducer.la \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
+	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
         $(GLOBUS_SSL_UTILS_LIBS) \
         $(GLOBUS_GSS_THR_LIBS)

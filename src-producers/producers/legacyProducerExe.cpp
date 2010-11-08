@@ -7,7 +7,7 @@
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
-#include "glite/dgas/hlr-activemq-producer/hlr-producer/legacyProducer.h"
+#include "glite/dgas/dgas-producers/producers/legacyProducer.h"
 
 #define OPTION_STRING "hv:l:"
 
@@ -68,10 +68,19 @@ int main (int argc, char *argv[])
 	}
 
 	int res;
+	producerConfiguration pConf;
+	string input;
+	ostringstream buf;
+	char ch;
+	while ( buf && cin.get(ch) )
+                	buf.put(ch);
+	input = buf.str();
 	string output;
 	res = ATM_client_toResource(
+		res_acct_bank_id_buff,
 		input, 
-		&output  );
+		&output,
+		pConf  );
 	if ( verbosity > 2 )
 	{
 		cout << output << endl;
