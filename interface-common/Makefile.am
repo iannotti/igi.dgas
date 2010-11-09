@@ -9,8 +9,6 @@
 commondir = $(includedir)
 nobase_common_HEADERS = \
 	glite/dgas/common/base/comm_struct.h \
-	glite/dgas/common/base/db.h \
-	glite/dgas/common/base/dbResult.h \
 	glite/dgas/common/base/dgas_config.h \
 	glite/dgas/common/base/dgas_lock.h \
 	glite/dgas/common/base/dgasVersion.h \

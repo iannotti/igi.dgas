@@ -8,7 +8,6 @@
 
 lib_LTLIBRARIES = \
 	libglite_dgas_xmlutil.la \
-	libglite_dgas_dbhelper.la \
 	libglite_dgas_config.la \
 	libglite_dgas_log.la \
 	libglite_dgas_localSecurity.la \
@@ -17,8 +16,6 @@ lib_LTLIBRARIES = \
 libglite_dgas_config_la_SOURCES = dgas_config.cpp
 
 libglite_dgas_log_la_SOURCES = libdgas_log.cpp
-
-libglite_dgas_dbhelper_la_SOURCES = db.cpp dbResult.cpp digests.cpp
 
 libglite_dgas_xmlutil_la_SOURCES = xmlUtil.cpp
 
