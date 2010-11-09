@@ -1,0 +1,155 @@
+#!/bin/bash
+#
+# Start-up script for the Gianduia urCollector
+#
+# description: DGAS Gianduia urCollector daemon.
+#
+# processname: glite-urcollector.pl
+# config: $PREFIX/etc/dgas_gianduia.conf
+# chkconfig: 35 50 80
+
+PREFIX=$GLITE_LOCATION
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+if [ -z $GLITE_LOCATION ]; then
+	if [ -d /opt/glite ]; then
+		PREFIX=/opt/glite
+	fi
+fi
+
+[ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
+[ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+
+URCOLLECTOR_CONF=$PREFIX/etc/dgas_sensors.conf
+if [ -e $URCOLLECTOR_CONF ]
+then
+	eval URCOLLECTOR_LOCK=`grep collectorLockFileName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`
+	eval HAD_LOCK=`grep collectorHADLockFileName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`
+else
+	echo "$URCOLLECTOR_CONF not found."
+	exit 1;
+fi
+
+if [ -e /etc/rc.d/init.d/glite-dgas-urcollector ]
+then  
+	STARTUP_SCRIPT="/etc/rc.d/init.d/glite-dgas-urcollector"
+else
+	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-urcollector"
+fi
+
+RETVAL=0
+executable="glite-urcollector.pl"
+# Some functions to make the below more readable
+URCOLLECTOR=$PREFIX/sbin/$executable
+URCOLLECTOR_OPTIONS="$URCOLLECTOR_CONF"
+
+startMain()
+{
+        echo -n $"Starting $executable:"
+        $URCOLLECTOR $URCOLLECTOR_OPTIONS &>/dev/null &
+        [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+        echo
+}
+
+stopMain()
+{
+        echo -n $"Stopping $executable:"
+        kill `cat $URCOLLECTOR_LOCK` &>/dev/null
+        [ $? -eq 0 ] && echo_success || echo_failure
+        echo
+}
+
+status()
+{
+	URCOLLECTOR_PID=`cat $URCOLLECTOR_LOCK 2> /dev/null`
+	[ -e $URCOLLECTOR_LOCK ] && ps auxw | grep $URCOLLECTOR_PID | grep dgas 2> /dev/null
+	if [ "$?" -eq 0 ]
+	then
+		echo "The process is running."
+		exit 0
+	else
+		echo "The process is not running."
+		if [ -e $URCOLLECTOR_LOCK ]
+		then
+			rm -f $URCOLLECTOR_LOCK
+			exit 1
+		else
+			exit 2
+		fi
+	fi
+}
+
+startHad()
+{
+        echo -n "Starting urCollector HAD..."
+	# checking whether HAD is already running ... (e.g. if specifying
+        # "start" twice in a row ...)
+        [ -e $HAD_LOCK ] && HADPID=`cat $HAD_LOCK` && DUMMY=`ps aux | grep dgas | grep $HADPID`	
+	if [ "$?" != "0" ]; then
+	    # starting HAD only if it is not yet running
+	    $PREFIX/sbin/glite-dgas-ceServerd-had.pl $STARTUP_SCRIPT &>/dev/null &
+	    RETVAL=$?
+	    HADPID=$!
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	    [ "$?" -eq 0 ] && echo $HADPID > $HAD_LOCK
+	else
+	    # if already running, nothing to run:
+	    echo -n " HAD already running (pid $HADPID)"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+        echo
+}
+
+stopHad()
+{
+        echo -n "Stopping urCollector HAD..."
+	[ -e $HAD_LOCK ] && HADPID=`cat $HAD_LOCK` && DUMMY=`ps aux | grep dgas | grep $HADPID`
+	if [ "$?" -eq 0 ]; then
+	    # lock file exists, stop process
+	    kill  $HADPID  &> /dev/null
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	    [ "$?" -eq 0 ] && rm -f $HAD_LOCK
+	    # HAD daemon has a non interruptable cycle lasting 3 seconds. 
+	    # it is safer to wait 5 seconds before going on.
+	    sleep 5
+	else
+	    # lock file doesn't exist, nothing to stop:
+	    echo -n " already stopped"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+        echo
+}
+
+
+case "$1" in
+	start)
+		startMain
+		startHad
+		;;
+	stop)
+		stopHad
+		stopMain
+		;;
+	restart)
+		stopHad
+		stopMain
+		sleep 4
+		startMain
+		startHad
+		;;
+	restartMain)
+		stopMain
+		startMain
+		;;
+	status)
+		status
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		RETVAL=1
+esac
+exit $RETVAL

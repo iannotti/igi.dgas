@@ -1,0 +1,138 @@
+#!/bin/bash
+#
+# Init file for DGAS HLR server daemon
+#
+# description: DGAS CE pushd daemon, forwards Usage Records to the HLR.
+#
+# processname: dgas_ce_pushd.pl
+# config: $PREFIX/etc/dgas_ce_pushd.conf
+# chkconfig: 35 50 80
+
+if [ -z ${GLITE_LOCATION} ]; then
+	export GLITE_LOCATION=/opt/glite/
+fi
+
+PREFIX=$GLITE_LOCATION
+if [ -z ${ACTIVEMQLIB} ]; then
+	export ACTIVEMQLIB=/opt/activemq/lib/
+fi
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+[ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
+[ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLITE_LOCATION/lib/:$ACTIVEMQLIB
+
+PUSHD_CONF=$PREFIX/etc/dgas_sensors.conf
+
+
+RETVAL=0
+executable="glite-dgas-pushd.pl"
+PUSHD=$PREFIX/sbin/$executable
+PUSHD_OPTIONS="$PUSHD_CONF"
+if [ -e $PUSHD_CONF ]
+then
+	eval LOCKFILE=`grep pushdLockFileName $PUSHD_CONF | grep "^#" -v | cut -d'"' -f 2`
+else
+	echo "$PUSHD_CONF not found"
+	exit 1
+fi
+
+start()
+{
+        echo -n $"Starting $executable:"
+	[ -e $LOCKFILE ] && PUSHD_PID=`cat $LOCKFILE` && ps auxw | grep $PUSHD_PID | grep dgas &> /dev/null
+	if [ "$?" -eq 0 ]
+	then
+		echo -n " already running (pid $PUSHD_PID). "
+		failure $"$base startup"
+		echo
+		RETVAL=1
+	else
+                if [ -e $LOCKFILE ]
+		then
+			rm -f $LOCKFILE
+		fi
+	        $PUSHD $PUSHD_OPTIONS &>/dev/null &
+		RETVAL=$?
+		[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	fi
+        echo
+}
+
+stop()
+{
+        echo -n $"Stopping $executable:"
+	PUSHD_PID=`cat $LOCKFILE 2> /dev/null`
+	if [ "$?" -eq 0 ]; then
+	    # lock file exists, stop process
+	    echo -n "$LOCKFILE (pid $PUSHD_PID)"
+	    kill $PUSHD_PID &> /dev/null
+	    RETVAL=$?
+	    [ $? -eq 0 ] && echo_success || echo_failure
+	else
+	    # lock file doesn't exist, nothing to stop:
+	    echo -n " already stopped"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+        echo
+
+}
+
+status()
+{
+	PUSHD_PID=`cat $LOCKFILE 2> /dev/null`
+	echo "Process $executable: $PUSHD_PID"
+        [ -e $LOCKFILE ] && ps auxw | grep $PUSHD_PID | grep dgas 2> /dev/null
+        if [ "$?" -eq 0 ]
+        then
+                echo "The process is running."
+                exit 0
+        else
+                echo "The process is not running."
+                if [ -e $LOCKFILE ]
+                then
+                        rm -f $LOCKFILE
+                fi
+                RETVAL=1
+        fi
+}
+
+EXITSTATUS=0
+
+case "$1" in
+	start)
+		start
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	stop)
+		stop
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	restart)
+		stop
+		# we don't consider stop for the exit status!
+		sleep 5
+		start
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	status)
+		status
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		EXITSTATUS=1
+esac
+exit $EXITSTATUS
