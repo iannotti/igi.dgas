@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.2 $])
+AC_REVISION([$Revision: 1.1.2.5.4.3 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -87,13 +87,10 @@ AC_ARG_ENABLE(voms,
 AM_CONDITIONAL(VOMS, test x$have_voms = xyes)
 
 AC_GLOBUS([], have_globus=yes, have_globus=no)
-#AC_BOOST([1.32.0], have_boost=yes, have_boost=no)
 AC_MSG_RESULT(["GLOBUS found $have_globus"])
 AC_MSG_RESULT(["UNIXODBC found $have_unixodbc"])
 AC_MSG_RESULT(["MySQL found $have_mysql"])
 AC_MSG_RESULT(["uses VOMS = $have_voms"])
-#AC_MSG_RESULT(["BOOST found $have_boost"])
-
 
 AC_GLITE
 
@@ -120,7 +117,6 @@ AC_CONFIG_FILES([src-common/Makefile])
 AC_CONFIG_FILES([src-common/base/Makefile])
 AC_CONFIG_FILES([src-common/tls/Makefile])
 AC_CONFIG_FILES([src-common/tls/socket++/Makefile])
-AC_CONFIG_FILES([config-hlr-clients/Makefile])
 AC_CONFIG_FILES([interface-hlr-clients/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/atm/Makefile])
