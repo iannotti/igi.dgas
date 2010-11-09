@@ -27,6 +27,7 @@ doc_DATA = LICENSE
 SUBDIRS = \
 	src-common interface-common\
 	src-hlr-clients interface-hlr-clients \
+	config-sensors interface-sensors src-sensors \
 	src-pa-clients interface-pa-clients \
 	config-hlr-service src-hlr-service interface-hlr-service \
 	config-producers src-producers interface-producers
@@ -53,8 +54,8 @@ common-install: common-src-install common-interface-install
 
 common-install-etics: common-src-install common-interface-install
 
-hlr-clients-config:
-	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS)
+#hlr-clients-config:
+#	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS)
 
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
@@ -62,10 +63,10 @@ hlr-clients-src:
 hlr-clients-interface: 
 	cd ./interface-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
-hlr-clients: common hlr-clients-src hlr-clients-interface hlr-clients-config
+hlr-clients: common hlr-clients-src hlr-clients-interface
 
-hlr-clients-config-install:
-	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install
+#hlr-clients-config-install:
+#	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install
 
 hlr-clients-src-install: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
@@ -75,13 +76,41 @@ hlr-clients-interface-install:
 
 hlr-clients-install: common-install\
 	hlr-clients-src-install\
-	hlr-clients-interface-install\
-	hlr-clients-config-install
+	hlr-clients-interface-install
 
 hlr-clients-install-etics: \
  	hlr-clients-src-install\
-	hlr-clients-interface-install\
-	hlr-clients-config-install
+	hlr-clients-interface-install
+
+sensors-config:
+	cd ./config-sensors ; $(MAKE) $(AM_MAKEFLAGS)
+
+sensors-src: 
+	cd ./src-sensors ; $(MAKE) $(AM_MAKEFLAGS) 
+
+sensors-interface: 
+	cd ./interface-sensors ; $(MAKE) $(AM_MAKEFLAGS) 
+
+sensors: common sensors-src sensors-interface sensors-config
+
+sensors-config-install:
+	cd ./config-sensors ; $(MAKE) $(AM_MAKEFLAGS) install
+
+sensors-src-install: 
+	cd ./src-sensors ; $(MAKE) $(AM_MAKEFLAGS) install 
+
+sensors-interface-install: 
+	cd ./interface-sensors ; $(MAKE) $(AM_MAKEFLAGS) install
+
+sensors-install: common-install\
+	sensors-src-install\
+	sensors-interface-install \
+	sensors-config-install
+
+sensors-install-etics: \
+ 	sensors-src-install\
+	sensors-interface-install \
+	sensors-config-install
 
 pa-clients-src: 
 	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 

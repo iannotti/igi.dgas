@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.3 $])
+AC_REVISION([$Revision: 1.1.2.5.4.4 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -119,11 +119,13 @@ AC_CONFIG_FILES([src-common/tls/Makefile])
 AC_CONFIG_FILES([src-common/tls/socket++/Makefile])
 AC_CONFIG_FILES([interface-hlr-clients/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/Makefile])
-AC_CONFIG_FILES([src-hlr-clients/atm/Makefile])
-AC_CONFIG_FILES([src-hlr-clients/ce_daemons/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/ping/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/ui/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/base/Makefile])
+AC_CONFIG_FILES([src-sensors/Makefile])
+AC_CONFIG_FILES([src-sensors/base/Makefile])
+AC_CONFIG_FILES([src-sensors/atm/Makefile])
+AC_CONFIG_FILES([src-sensors/ce_daemons/Makefile])
 AC_CONFIG_FILES([interface-pa-clients/Makefile])
 AC_CONFIG_FILES([src-pa-clients/Makefile])
 AC_CONFIG_FILES([src-pa-clients/pa-query/Makefile])

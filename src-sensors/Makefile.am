@@ -7,5 +7,5 @@
 ## *********************************************************************
 
 ## Subdirectories list
-SUBDIRS = atm ping ui ce_daemons base 
+SUBDIRS = atm ce_daemons base 
 MAINTAINERCLEANFILES = Makefile.in 
