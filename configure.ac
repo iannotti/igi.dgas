@@ -17,13 +17,13 @@ AC_PREREQ(2.57)
 AC_INIT([DGAS], [3.4.0.b24])
 AC_CONFIG_AUX_DIR([./project])
 AM_INIT_AUTOMAKE([1.6.3 subdir-objects])
-AC_CONFIG_SRCDIR(src-common/base/db.cpp)
+AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 
 # Notices.
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.1 $])
+AC_REVISION([$Revision: 1.1.2.5.4.2 $])
 
 #Environment.
 WORKDIR=`pwd`
