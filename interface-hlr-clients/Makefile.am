@@ -8,7 +8,6 @@
 
 hlrcldir = $(includedir)
 nobase_hlrcl_HEADERS = \
-	glite/dgas/hlr-clients/atm/atmClient.h \
 	glite/dgas/hlr-clients/ping/pingClient.h \
 	glite/dgas/hlr-clients/base/dgasClientBase.h \
         glite/dgas/hlr-clients/base/dgasClientInterface.h
