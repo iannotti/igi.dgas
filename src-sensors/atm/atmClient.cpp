@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: atmClient.cpp,v 1.1.2.1 2010/11/09 09:23:46 aguarise Exp $
+// $Id: atmClient.cpp,v 1.1.2.2 2010/11/11 09:18:26 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -33,7 +33,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
-#include "glite/dgas/hlr-clients/atm/atmClient.h"
+#include "glite/dgas/hlr-sensors/atm/atmClient.h"
 
 void
 catch_alarm (int sig)

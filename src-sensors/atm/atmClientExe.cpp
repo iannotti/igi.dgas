@@ -7,7 +7,7 @@
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
-#include "glite/dgas/hlr-clients/atm/atmClient.h"
+#include "glite/dgas/hlr-sensors/atm/atmClient.h"
 
 #define OPTION_STRING "3hv:j:t:p:l:C:U:"
 

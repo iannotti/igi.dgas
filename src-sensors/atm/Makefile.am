@@ -32,8 +32,8 @@ glite_dgas_sendRecord_LDADD   = \
 	$(GLOBUS_GSS_THR_LIBS)
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface-hlr-clients \
-	-I$(top_srcdir)/src-hlr-clients \
+	-I$(top_srcdir)/interface-sensors \
+	-I$(top_srcdir)/src-sensors \
 	-I$(top_srcdir)/interface-common \
 	$(GLITE_CFLAGS) \
 	$(GLOBUS_THR_CFLAGS) \
