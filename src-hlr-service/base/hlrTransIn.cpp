@@ -1,4 +1,4 @@
-// $Id: hlrTransIn.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
+// $Id: hlrTransIn.cpp,v 1.1.2.1.4.2 2010/11/18 13:39:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -214,10 +214,14 @@ int makeTransInObsolete(string &jobId)
 		}
 		else
 		{
+			//DELETE from jobTransSummary removed. It caused troubles (see tkt 9056)
+                        //when the deleted record was the last in the table: autoincremet id was
+                        //diminishing. This triggered a record reset in case urForward was publishing
+                        //to second Level HLR before new records get inserted.
 			// now try to delete the corresponding entry in jobTransSummary
-			queryStr = "DELETE FROM jobTransSummary WHERE dgJobId='"+jobId;
-			queryStr += "'";
-			hlrDb.query(queryStr);
+			//queryStr = "DELETE FROM jobTransSummary WHERE dgJobId='"+jobId;
+			//queryStr += "'";
+			//hlrDb.query(queryStr);
 			// don't complain if anything goes wrong since the table might
 			// not exist or the record not yet created (done
 			// asynchronously)!
