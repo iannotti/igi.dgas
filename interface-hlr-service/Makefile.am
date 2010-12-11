@@ -19,6 +19,8 @@ nobase_hlrcl_HEADERS = \
 	glite/dgas/hlr-service/base/hlrTransIn.h \
 	glite/dgas/hlr-service/base/qTransaction.h \
 	glite/dgas/hlr-service/base/transInLog.h \
+	glite/dgas/hlr-service/base/db.h \
+	glite/dgas/hlr-service/base/dbResult.h \
 	glite/dgas/hlr-service/base/notFor2LHLR.h
 
 
