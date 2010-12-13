@@ -28,10 +28,10 @@ DBLIBS = $(MYSQL_LIBS)
 endif
 
 LDADD = \
-	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_LOG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlr.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrTransLog.la \
 	$(DBLIBS)
