@@ -1,5 +1,6 @@
 lib_LTLIBRARIES  = \
 	libglite_dgas_hlr.la \
+	libglite_dgas_dbhelper.la \
 	libglite_dgas_hlrQTransaction.la \
 	libglite_dgas_hlrGenericQuery.la \
 	libglite_dgas_serviceCommonUtils.la \
@@ -13,6 +14,10 @@ DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
 else
 DBFLAGS = $(MYSQL_CFLAGS)
 endif
+
+libglite_dgas_dbhelper_la_SOURCES = db.cpp \
+	 dbResult.cpp \
+	 digests.cpp
 
 libglite_dgas_dbWaitress_la_SOURCES = \
 	dbWaitress.h \
