@@ -1,4 +1,4 @@
-// $Id: db.h,v 1.1.2.1 2010/12/11 20:04:38 aguarise Exp $
+// $Id: db.h,v 1.1.2.2 2010/12/13 10:18:36 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -29,7 +29,7 @@
 
 #include <string>
 #include <iostream>
-#include "glite/dgas/common/base/dbResult.h"
+#include "glite/dgas/hlr-service/base/dbResult.h"
 
 using namespace std;
 

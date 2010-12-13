@@ -1,4 +1,4 @@
-#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/base/dgasVersion.h"
 #include "glite/dgas/common/base/int2string.h"

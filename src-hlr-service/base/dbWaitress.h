@@ -5,7 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <unistd.h>
-#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/libdgas_log.h"

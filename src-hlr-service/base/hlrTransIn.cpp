@@ -1,4 +1,4 @@
-// $Id: hlrTransIn.cpp,v 1.1.2.1.4.2 2010/11/18 13:39:14 aguarise Exp $
+// $Id: hlrTransIn.cpp,v 1.1.2.1.4.3 2010/12/13 10:18:36 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -15,7 +15,7 @@
 // This class doesn't manage directly the timestamp field,
 // it should be set up manually at higher levels!!
 
-#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/hlr-service/base/hlrTransIn.h"
 

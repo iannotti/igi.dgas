@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine2.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
+// $Id: atmResourceEngine2.cpp,v 1.1.2.1.4.2 2010/12/13 10:18:36 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------
 //  Includes
 // ---------------------------------------------------------------------------
-#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "glite/dgas/common/base/int2string.h"

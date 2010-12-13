@@ -42,13 +42,13 @@ glite_dgas_hlr_urforward_SOURCES = urForwardFactory.cpp urForwardFactory.h \
 	urForward.cpp 
 
 glite_dgas_hlr_urforward_LDADD = \
-	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
 	$(GLOBUS_THR_LIBS) \
 	$(GLOBUS_GSS_THR_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(GLITE_DGAS_COMMON_LOG_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrGenericQuery.la \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
@@ -63,7 +63,6 @@ glite_dgas_hlr_listener_LDADD =  \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
 	$(GLITE_DGAS_COMMON_LOG_LIBS) \
-	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
 	$(GLITE_DGAS_COMMON_TLS_LIBS)\
 	$(GLOBUS_THR_LIBS) \
 	$(GLOBUS_GSS_THR_LIBS) \
@@ -79,6 +78,7 @@ glite_dgas_hlr_listener_LDADD =  \
 	$(top_builddir)/src-hlr-service/engines/libdgasUrConcentratorEngine.la \
 	$(top_builddir)/src-hlr-service/engines/libdgasGetRecordEngine.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
 	$(GLITE_DGAS_PACLIENTS_LIBS) \
 	-lglite_dgas_paClient \
@@ -101,7 +101,6 @@ glite_dgas_hlr_qmgr_LDADD = \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
 	$(GLITE_DGAS_COMMON_LOG_LIBS) \
-	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	$(GLOBUS_THR_LIBS) \
 	$(GLOBUS_GSS_THR_LIBS) \
@@ -115,6 +114,7 @@ glite_dgas_hlr_qmgr_LDADD = \
 	$(top_builddir)/src-hlr-service/engines/libglite_dgas_atmResBankClient2.la \
 	$(top_builddir)/src-hlr-service/engines/libdgasEngineCmnUtl.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(DBLIBS)
 
 SERVICE_BASE_LIBS = \

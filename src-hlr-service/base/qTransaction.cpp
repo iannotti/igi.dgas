@@ -1,6 +1,6 @@
 #include <fstream>
 
-#include "glite/dgas/common/base/db.h"
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/hlr-service/base/qTransaction.h"
