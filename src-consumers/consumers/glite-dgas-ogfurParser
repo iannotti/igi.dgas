@@ -1,0 +1,347 @@
+#!/usr/bin/perl -w
+
+
+use strict;
+use XML::LibXML;
+use Term::ANSIColor qw(:constants);
+use HTTP::Date qw(str2time);
+use Date::Format;
+use Getopt::Long;
+
+sub iso8601Duration2Time
+{
+	my $iso8601 = $_[0];
+	my $s;
+	my ($Y,$M,$D,$H,$m,$S);
+	if ($iso8601 =~ /^P(.*)T(.*)$/ )
+	{
+		my $datePart = $1;
+		my $timePart = $2;
+		if (($Y,$M,$D) = ( $datePart =~ /^(\d*Y)?(\d*M)?(\d*D)?$/ ) )
+		{
+			if ( $Y ) { ($Y) = ( $Y =~ /(\d*)/ )};
+			if ( $M ) { ($M) = ( $M =~ /(\d*)/ )};
+			if ( $D ) { ($D) = ( $D =~ /(\d*)/ )};
+		}
+		if (($H,$m,$S) = ( $timePart =~ /^(\d*H)?(\d*M)?(\d*S)?$/ ) )
+		{
+			if ( $H ) { ($H) = ( $H =~ /(\d*)/ )};
+			if ( $m ) { ($m) = ( $m =~ /(\d*)/ )};
+			if ( $S ) { ($S) = ( $S =~ /(\d*)/ )};
+		}
+	} 
+	if ( $Y ) { $s += $Y*86400*365 };
+	if ( $M ) { $s += $M*86400*30 };
+	if ( $D ) { $s += $D*86400 };
+	if ( $H ) { $s += $H*3600 };
+	if ( $m ) { $s += $m*60 };
+	if ( $S ) { $s += $S };
+	return $s;
+}
+
+sub ogfurMem2KB 
+{
+	my $ogfurMem = $_[0];
+	my $kb;
+	if ( (my $value, my $unit ) = ( $ogfurMem =~ /^(\d*)([A-Za-z]{1,2})$/) )
+	{
+		if ( $unit eq "KB" ) { $kb = $value };
+		if ( $unit eq "MB" ) { $kb = $value*1024 };
+		if ( $unit eq "GB" ) { $kb = $value*1024*1024 };
+		if ( $unit eq "TB" ) { $kb = $value*1024*1024*1024 };
+		if ( $unit eq "PB" ) { $kb = $value*1024*1024*1024*1024 };
+		if ( $unit eq "EB" ) { $kb = $value*1024*1024*1024*1024*1024 };
+	}
+	return $kb;
+}
+
+my $file;
+my $outputType;
+
+my $schemaFile = '/opt/glite/etc/ogfur_v1.xsd.xml';
+
+GetOptions (
+        'file=s' => \$file,
+        'f=s' => \$file,
+	'schemaFile=s' => \$schemaFile,
+	's=s' => \$schemaFile,
+        'outputType=s' => \$outputType,
+        'o=s' => \$outputType
+);
+
+
+my $parser = XML::LibXML->new();
+my $doc = $parser->parse_file($file) or die;
+my $xmlschema = XML::LibXML::Schema->new( location => $schemaFile );
+eval {$xmlschema->validate( $doc );}; warn $@ if $@;
+my $root = $doc->documentElement;
+#print $root->toString,"\n";
+
+
+my %record = (
+        recordID => "",
+        createTime => "",
+        globalJobId => "",
+        localJobId => "",
+        localUserId => "",
+        globalUserName => "",
+        charge => "",
+        status => "",
+        queue => "",
+        group => "",
+        jobName => "",
+        ceCertificateSubject => "",
+        wallDuration => "",
+        cpuDuration => "",
+        endTime => "",
+        startTime => "",
+        machineName => "",
+        projectName => "",
+        ceHost => "",
+        execHost => "",
+        physicalMemory => "",
+        virtualMemory => "",
+        serviceLevelSi2K => "",
+        serviceLevelSf2K => "",
+        serviceLevelGlueCEInfoTotalCPUs => "",
+        timeInstantCTime => "",
+        timeInstantQTime => "",
+        timeInstantETime => "",
+        dgasAccountingProcedure => "",
+        vomsFqan => "",
+        execCe => "",
+        lrmsServer => "",
+        voOrigin => "",
+);
+
+my @records; 
+if (	@records = $doc->getElementsByTagName('urf:JobUsageRecord') )
+{
+	#go on
+}
+else
+{
+ 	@records = $doc->getElementsByTagName('JobUsageRecord') or die ("Can't Find JobUsageRecord");
+}
+ 
+
+
+
+foreach my $aRecord (@records) {
+# my $xc = XML::LibXML::XPathContext->new($aRecord);	
+	$record{recordID} = $aRecord->findvalue('urf:RecordIdentity/@urf:recordId');
+	$record{createTime} = HTTP::Date::str2time($aRecord->findvalue('urf:RecordIdentity/@urf:createTime'));
+		$record{createTime} =time2str("%a %b %e %T %Y", $record{createTime} ); 
+	$record{globalJobId} = $aRecord->findvalue('urf:JobIdentity/urf:GlobalJobId');
+	$record{localJobId} = $aRecord->find('urf:JobIdentity/urf:LocalJobId');
+	$record{localUserId} = $aRecord->find('urf:UserIdentity/urf:LocalUserId');
+	$record{globalUserName} = $aRecord->find('urf:UserIdentity/urf:GlobalUserName');
+	$record{jobName} = $aRecord->find('urf:JobName');
+	$record{wallDuration} = &iso8601Duration2Time($aRecord->find('urf:WallDuration'));
+	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('urf:CpuDuration'));
+	$record{projectName} = $aRecord->find('urf:ProjectName');
+	$record{machineName} = $aRecord->find('urf:MachineName');
+	$record{status} = $aRecord->findvalue('urf:Status');
+	if ( $record{status} eq "completed" )
+	{
+		$record{status} = 0;
+	}
+	else
+	{
+		$record{status} = 1;
+	}
+	$record{charge} = $aRecord->find('urf:Charge');
+	$record{startTime} = HTTP::Date::str2time($aRecord->find('urf:StartTime'));
+	$record{endTime} = HTTP::Date::str2time($aRecord->find('urf:EndTime'));
+	$record{queue} = $aRecord->findvalue('urf:Queue');
+	$record{ceCertificateSubject} = $aRecord->find('urf:RecordIdentity/ds:KeyInfo/ds:X509Data/ds:X509SubjectName');
+	$record{timeInstantETime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="etime"]'));
+	$record{timeInstantCTime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="ctime"]'));
+	$record{timeInstantQTime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="qtime"]'));
+	$record{serviceLevelSf2K} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="sf2k"]');
+	$record{serviceLevelSi2K} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="si2k"]');
+	$record{serviceLevelGlueCEInfoTotalCPUs} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="GlueCEInfoTotalCPUs"]');
+	$record{dgasAccountingProcedure} = $aRecord->findvalue('urf:Resource[@urf:description="DgasAccountingProcedure"]');
+	$record{group} = $aRecord->findvalue('urf:Resource[@urf:description="LocalGroupId"]');
+	$record{vomsFqan} = $aRecord->findvalue('urf:Resource[@urf:description="VomsFqan"]');
+	$record{lrmsServer} = $aRecord->findvalue('urf:Resource[@urf:description="LrmsServer"]');
+	$record{execCe} = $aRecord->findvalue('urf:Resource[@urf:description="ExecCe"]');
+	$record{voOrigin} = $aRecord->findvalue('urf:Resource[@urf:description="DgasVoOrigin"]');
+	$record{ceHost} = $aRecord->findvalue('urf:Host[@urf:primary="true"]');
+	my @hosts = $aRecord->getElementsByTagName('urf:Host');
+	my $count = 0;
+	foreach my $host ( @hosts )
+	{
+		my $isPrimary;
+		if ( !( $host->getAttribute('urf:primary')) )
+		{
+			if ( $count > "0" ) { $record{execHost} .= "+" }
+			$record{execHost} .= $host->string_value;
+			if ( my $wn  = ( $host->getAttribute('urf:description')) )
+			{
+				$wn =~ s/WorkerNodeProcessor//;
+				$record{execHost} .= "/" . $wn;
+			}
+			$count++;	
+		}
+	}
+	$record{physicalMemory} = $aRecord->find('urf:Memory[@urf:type="Physical"]');
+		$record{physicalMemory} .= $aRecord->findvalue('urf:Memory[@urf:type="Physical"]/@urf:storageUnit');
+		$record{physicalMemory} = &ogfurMem2KB($record{physicalMemory}) . "kb";
+	$record{virtualMemory} = $aRecord->find('urf:Memory[@urf:type="Virtual"]');
+		$record{virtualMemory} .= $aRecord->findvalue('urf:Memory[@urf:type="Virtual"]/@urf:storageUnit');
+		$record{virtualMemory} = &ogfurMem2KB($record{virtualMemory}) . "kb";
+}
+
+
+if ( $outputType eq "list" )
+{
+foreach my $item (keys %record) {
+	if ( $record{$item} )
+	{
+		print "$item=$record{$item}\n";
+	}
+	else
+	{
+		print BOLD, RED, "$item\n", RESET;
+	}
+}
+}
+
+if ( $outputType eq "commandLineArgs" )
+{
+
+	my $output = "";
+	$output .= "--jobid " . "\"$record{globalJobId}\"";
+	if ( $record{execCe} )
+	{
+		$output .= " --resgridid " . "\"$record{execCe}\"";
+	}
+	else
+	{
+		$output .= " --resgridid " . "\"$record{ceHost}:$record{queue}\"";
+	}
+	$output .= " --usrcert " . "\"$record{globalUserName}\"";
+	$output .= " \"si2k=$record{serviceLevelSi2K}\"";
+	$output .= " \"sf2k=$record{serviceLevelSf2K}\"";
+	$output .= " \"accountingProcedure=$record{dgasAccountingProcedure}\"";
+	$output .= " \"URCREATION=$record{createTime}\"";
+	$output .= " \"CPU_TIME=$record{cpuDuration}\"";
+	$output .= " \"WALL_TIME=$record{wallDuration}\"";
+	$output .= " \"PMEM=$record{physicalMemory}\"";
+	$output .= " \"VMEM=$record{virtualMemory}\"";
+	$output .= " \"QUEUE=$record{queue}\"";
+	$output .= " \"USER=$record{localUserId}\"";
+	$output .= " \"LRMSID=$record{localJobId}\"";
+	$output .= " \"group=$record{group}\"";
+	$output .= " \"jobName=$record{jobName}\"";
+	$output .= " \"start=$record{startTime}\"";
+	$output .= " \"end=$record{endTime}\"";
+	$output .= " \"ctime=$record{timeInstantCTime}\"";
+	$output .= " \"qtime=$record{timeInstantQTime}\"";
+	$output .= " \"etime=$record{timeInstantETime}\"";
+	$output .= " \"exitStatus=$record{status}\"";
+	$output .= " \"execHost=$record{execHost}\"";
+	$output .= " \"ceHostName=$record{ceHost}\"";
+	$output .= " \"execCe=$record{execCe}\"";
+	$output .= " \"lrmsServer=$record{lrmsServer}\"";
+	$output .= " \"fqan=$record{vomsFqan}\"";
+	$output .= " \"userVo=$record{projectName}\"";
+	$output .= " \"voOrigin=$record{voOrigin}\"";
+	$output .= " \"SiteName=$record{machineName}\"";
+	$output .= " \"ceCertificateSubject=$record{ceCertificateSubject}\"";
+	$output .= " \"GlueCEInfoTotalCPUs=$record{serviceLevelGlueCEInfoTotalCPUs}\"";
+
+	print $output;
+}
+
+if ( $outputType eq "dgasLegacy" )
+{
+
+my $res_grid_id;
+if ( $record{execCe} )
+{
+	$res_grid_id = "$record{execCe}";
+}
+else
+{
+	$res_grid_id = "$record{ceHost}:$record{queue}";
+}
+
+my $output = "<HLR type=\"ATM_request_toResource\">
+<BODY>
+<JOB_PAYMENT>
+<EDG_ECONOMIC_ACCOUNTING>
+no</EDG_ECONOMIC_ACCOUNTING>
+<DG_JOBID>
+$record{globalJobId}
+</DG_JOBID>
+<SUBMISSION_TIME>
+0
+</SUBMISSION_TIME>
+<RES_ACCT_PA_ID>
+
+</RES_ACCT_PA_ID>
+<RES_ACCT_BANK_ID>
+</RES_ACCT_BANK_ID>
+<USER_CERT_SUBJECT>
+$record{globalUserName}
+</USER_CERT_SUBJECT>
+<RES_GRID_ID>
+$res_grid_id
+</RES_GRID_ID>
+<forceResourceHlrOnly>
+yes
+</forceResourceHlrOnly>
+<JOB_INFO>
+<CPU_TIME>
+$record{cpuDuration}
+</CPU_TIME>
+<WALL_TIME>
+$record{wallDuration}
+</WALL_TIME>
+<MEM>
+$record{physicalMemory}
+</MEM>
+<VMEM>
+$record{virtualMemory}
+</VMEM>
+</JOB_INFO>
+</JOB_PAYMENT>
+<AdditionalUR>
+<dgas:item si2k=\"$record{serviceLevelSi2K}\"\\>
+<dgas:item sf2k=\"$record{serviceLevelSf2K}\"\\>
+<dgas:item accountingProcedure=\"$record{dgasAccountingProcedure}\"\\>
+<dgas:item URCREATION=\"$record{createTime}\"\\>
+<dgas:item CPU_TIME=\"$record{cpuDuration}\"\\>
+<dgas:item WALL_TIME=\"$record{wallDuration}\"\\>
+<dgas:item PMEM=\"$record{physicalMemory}\"\\>
+<dgas:item VMEM=\"$record{virtualMemory}\"\\>
+<dgas:item QUEUE=\"$record{queue}\"\\>
+<dgas:item USER=\"$record{localUserId}\"\\>
+<dgas:item LRMSID=\"$record{localJobId}\"\\>
+<dgas:item group=\"$record{group}\"\\>
+<dgas:item jobName=\"$record{jobName}\"\\>
+<dgas:item start=\"$record{startTime}\"\\>
+<dgas:item end=\"$record{endTime}\"\\>
+<dgas:item ctime=\"$record{timeInstantCTime}\"\\>
+<dgas:item qtime=\"$record{timeInstantQTime}\"\\>
+<dgas:item etime=\"$record{timeInstantETime}\"\\>
+<dgas:item exitStatus=\"$record{status}\"\\>
+<dgas:item execHost=\"$record{execHost}\"\\>
+<dgas:item ceHostName=\"$record{ceHost}\"\\>
+<dgas:item execCe=\"$record{execCe}\"\\>
+<dgas:item lrmsServer=\"$record{lrmsServer}\"\\>
+<dgas:item fqan=\"$record{vomsFqan}\"\\>
+<dgas:item userVo=\"$record{projectName}\"\\>
+<dgas:item voOrigin=\"$record{voOrigin}\"\\>
+<dgas:item SiteName=\"$record{machineName}\"\\>
+<dgas:item ceCertificateSubject=\"$record{ceCertificateSubject}\"\\>
+<dgas:item atmClientVersion=\"ogfur1.0_to_dgas3.4.0_v1\"\\>
+</AdditionalUR>
+</BODY>
+</HLR>";
+
+print $output;
+
+}
