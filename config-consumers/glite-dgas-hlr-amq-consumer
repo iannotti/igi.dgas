@@ -1,0 +1,203 @@
+#!/bin/bash
+#
+# Init file for DGAS HLR server daemon
+#
+# description: DGAS HLR server daemon
+#
+# processname: hlr_serverd
+# config: $PREFIX/etc/hlr.conf
+# chkconfig: 35 70 80 
+
+
+[ ! -z $GLITE_LOCATION ]  || export GLITE_LOCATION=/opt/glite/
+[ ! -z $AMQCPPLIB ] || export AMQCPPLIB=/usr/local/lib/
+[ ! -z $APRLIB ] || export APRLIB=/usr/local/apr/lib/
+
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GLITE_LOCATION}/lib/:$APRLIB:$AMQCPPLIB"
+
+
+PREFIX=$GLITE_LOCATION
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+
+RETVAL=0
+prog="HLR AMQ consumer"
+prog1="HLR Record Manager"
+if [ -z $2 ]
+then
+ HLRD_CONF=$PREFIX/etc/dgas-activemq-consumer.conf
+else
+ HLRD_CONF=$2
+fi
+
+eval DGAS_VAR_DIR=`grep dgas_var_dir $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval HLR_USER=`grep hlr_user $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+
+eval CONSUMER_LOCK=`grep lockFileName $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval MANAGER_LOCK=`grep managerLockFileName $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+
+[ -d $PREFIX/var ] || mkdir $PREFIX/var
+[ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+[ -d $DGAS_VAR_DIR ] || mkdir $DGAS_VAR_DIR
+[ -d $DGAS_VAR_DIR/log ] || mkdir $DGAS_VAR_DIR/log
+
+[ -d $DGAS_VAR_DIR ] && chown $HLR_USER:$HLR_USER $DGAS_VAR_DIR
+[ -d $DGAS_VAR_DIR/log ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log
+
+# Some functions to make the below more readable
+HLR_CONSUMER=$PREFIX/libexec/glite_dgas_AMQConsumer
+#eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
+CONSUMER_OPTIONS="-c $HLRD_CONF"
+
+if [ -e /etc/rc.d/init.d/glite-dgas-hlr-amq-consumer ]
+then
+	STARTUP_SCRIPT="/etc/rc.d/init.d/glite-dgas-hlr-amq-consumer"
+else
+	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-hlr-amq-consumer"
+fi
+
+REC_MGR=$PREFIX/libexec/glite_dgas_AMQRecordManager
+REC_MGR_OPTIONS="-c $HLRD_CONF"
+
+startMain()
+{
+	echo "Initializing DGAS HLR AMQ CONSUMER..."
+	echo "Starting $prog:"
+	[ -e $CONSUMER_LOCK ] && CONSUMER_PID=`cat $CONSUMER_LOCK` && ps auxw | grep $CONSUMER_PID | grep dgas &> /dev/null
+        if [ "$?" -eq 0 ]
+        then
+                echo " already running (pid $CONSUMER_PID)."
+                failure $"$base startup"
+                RETVAL=1
+        else
+                if [ -e $CONSUMER_LOCK ]
+                then
+                        rm -f $CONSUMER_LOCK
+                fi
+		$HLR_CONSUMER $CONSUMER_OPTIONS 2>&1 >/dev/null & 
+		#$HLR_CONSUMER $CONSUMER_OPTIONS & 
+		RETVAL=$?
+		[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+        fi
+	echo
+	echo  "Initializing DGAS HLR AMQ RECORD MANAGER..."
+	echo  "Starting $prog1:"
+	[ -e $MANAGER_LOCK ] && MANAGER_PID=`cat $MANAGER_LOCK` && ps auxw | grep $MANAGER_PID | grep dgas &> /dev/null
+        if [ "$?" -eq 0 ]
+        then
+                echo " already running (pid $MANAGER_PID)."
+                failure $"$base startup"
+                RETVAL=1
+        else
+                if [ -e $MANAGER_LOCK ]
+                then
+                        rm -f $MANAGER_LOCK
+                fi
+		$REC_MGR $REC_MGR_OPTIONS 2>&1 >/dev/null & 
+		#$REC_MGR $REC_MGR_OPTIONS & 
+		RETVAL=$?
+		[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+        fi
+	echo
+}
+
+stopMain()
+{
+        RETVAL=0
+	echo  "Stopping $prog:"
+        PID0=`cat $CONSUMER_LOCK 2> /dev/null`
+	if [ "$?" -eq 0 ]; then
+	    # lock file exists, stop process
+	    echo "$CONSUMER_LOCK (pid $PID0)"
+	    kill $PID0 &> /dev/null
+	    RETVAL=$?
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	else
+	    # lock file doesn't exist, nothing to stop:
+	    echo -n " already stopped"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+	echo  "Stopping $prog1:"
+        PID1=`cat $MANAGER_LOCK 2> /dev/null`
+	if [ "$?" -eq 0 ]; then
+	    # lock file exists, stop process
+	    echo "$MANEGER_LOCK (pid $PID1)"
+	    kill $PID1 &> /dev/null
+	    RETVAL=$?
+	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+	else
+	    # lock file doesn't exist, nothing to stop:
+	    echo -n " already stopped"
+	    RETVAL=1
+	    failure $"$base startup"
+	fi
+echo
+}
+
+status()
+{
+        RETVAL=0
+	echo $CONSUMER_LOCK
+	PID0=`cat $CONSUMER_LOCK 2> /dev/null`
+	echo "Process $prog: $PID0"
+	[ -e $CONSUMER_LOCK ] && ps auxw | grep $PID0 | grep dgas 2> /dev/null
+	if [ "$?" -eq 0 ] 
+	then
+		echo "The process is running."
+	else
+		echo "The process is not running."
+		if [ -e $CONSUMER_LOCK ]
+		then
+			echo "Found pending lock file, removing it."
+			rm -f $CONSUMER_LOCK
+		fi
+		RETVAL=1
+	fi
+}
+
+EXITSTATUS=0
+
+case "$1" in
+	start)
+		startMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	stop)
+		stopMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	restart)
+		stopMain
+		# we don't consider stopHad and stopMain for the exit status!
+		sleep 3
+		startMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	restartMain)
+		stopMain
+		# we don't consider stopMain for the exit status!
+		startMain
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	status)
+		status 
+		if [ "$RETVAL" != "0" ]; then
+		    EXITSTATUS=1
+		fi
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		EXITSTATUS=1
+esac
+exit $EXITSTATUS

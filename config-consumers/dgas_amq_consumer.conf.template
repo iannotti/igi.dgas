@@ -1,0 +1,21 @@
+#dgas_activemq-producer.conf.template
+
+lockFileName = "/opt/glite/var/dgas-hlr-amq-consumer.lock"
+amqBrokerUri = "tcp://hlr-test-29.to.infn.it:61616"
+recordsDir = "/tmp/dgasamq/"
+dgasAMQTopic = "DGAS.TEST"
+hlr_user = "root"
+dgas_var_dir = "/opt/glite/var/"
+
+
+managerLockFileName = "/opt/glite/var/dgas-hlr-amq-manager.lock"
+messageParsingCommand = "cat MESSAGEFILE"
+hlr_def_log = "/opt/glite/var/manager.log"
+AMQRecordsDir = "/tmp/dgasamq/"
+
+hlr_sql_server = "localhost"
+hlr_sql_user = "root"
+hlr_sql_password = ""
+hlr_sql_dbname = "hlr1_amq"
+hlr_tmp_sql_dbname = "hlr_amq_tmp"
+
