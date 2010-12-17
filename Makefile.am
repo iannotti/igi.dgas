@@ -30,7 +30,8 @@ SUBDIRS = \
 	config-sensors interface-sensors src-sensors \
 	src-pa-clients interface-pa-clients \
 	config-hlr-service src-hlr-service interface-hlr-service \
-	config-producers src-producers interface-producers
+	config-producers src-producers interface-producers \
+	config-consumers src-consumers interface-consumers
 
 ## Default flags to run aclocal
 ACLOCAL_AMFLAGS = -I project
@@ -165,6 +166,40 @@ hlr-service-install-etics: \
 	hlr-service-src-install\
 	hlr-service-interface-install\
 	hlr-service-config-install
+
+producers-config:
+	cd ./config-producers ; $(MAKE) $(AM_MAKEFLAGS)
+
+producers-config-install:
+	cd ./config-producers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+producers-src: 
+	cd ./src-producers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+producers-interface: 
+	cd ./interface-producers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+producers: common\
+	producers-src\
+	producers-interface\
+	producers-config
+
+producers-src-install: 
+	cd ./src-producers ; $(MAKE) $(AM_MAKEFLAGS) install 
+
+producers-interface-install: 
+	cd ./interface-producers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+producers-install: common-install\
+	producers-src-install\
+	producers-interface-install\
+	producers-config-install
+
+producers-install-etics: \
+	producers-src-install\
+	producers-interface-install\
+	producers-config-install
+
 
 
 stage:

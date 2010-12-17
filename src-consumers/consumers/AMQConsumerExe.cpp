@@ -7,7 +7,7 @@
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
-#include "glite/dgas/hlr-activemq-consumer/hlr-consumer/AMQConsumer.h"
+#include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
 #define OPTION_STRING "3hv:B:D:c:"
 

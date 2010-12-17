@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.h,v 1.1.2.1 2010/12/16 15:06:28 aguarise Exp $
+// $Id: legacyRecordManager.h,v 1.1.2.2 2010/12/17 09:35:44 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <vector>
 
-#define AMQ_CONSUMER_VERSION "protoA"
+#define AMQ_CONSUMER_VERSION "4.0.0_pre1"
 
 using namespace std;
 

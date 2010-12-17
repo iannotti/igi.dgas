@@ -7,13 +7,13 @@
 ## *********************************************************************
 
 lib_LTLIBRARIES  = libglite_dgas_AMQConsumer.la \
-		libglite_dgas_AMQRecordManager.la 
+		libglite_dgas_legacyRecordManager.la 
 
-libexec_PROGRAMS = glite_dgas_AMQConsumer \
-		glite_dgas_AMQRecordManager 
+libexec_PROGRAMS = glite-dgas-AMQConsumer \
+		glite-dgas-legacyRecordManager 
 
 libexec_SCRIPTS = \
-		glite_dgas_ogfurParser	
+		glite-dgas-ogfurParser	
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
@@ -35,19 +35,18 @@ glite_dgas_AMQConsumer_LDADD   = \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
 
-libglite_dgas_AMQRecordManager_la_SOURCES = \
-	AMQRecordManager.cpp 
+libglite_dgas_legacyRecordManager_la_SOURCES = \
+	legacyRecordManager.cpp 
 
-glite_dgas_AMQRecordManager_SOURCES = AMQRecordManagerExe.cpp
-glite_dgas_AMQRecordManager_LDADD   = \
-	./libglite_dgas_AMQRecordManager.la \
-	-ldgasAtmResourceEngine \
-	-lglite_dgas_hlr \
-	-lglite_dgas_hlrQTransaction \
-	-lglite_dgas_hlrTransLog \
-	-ldgasEngineCmnUtl \
-	-lglite_dgas_serviceCommonUtils \
-	$(ACTIVEMQ_CPP_LIBS) \
+glite_dgas_legacyRecordManager_SOURCES = legacyRecordManagerExe.cpp
+glite_dgas_legacyRecordManager_LDADD   = \
+	./libglite_dgas_legacyRecordManager.la \
+	$(top_builddir)/src-hlr-service/engines/libdgasAtmResourceEngine.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlr.la \
+	$(top_builddir)/src-hlr-service/engines/libdgasEngineCmnUtl.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrTransLog.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrQTransaction.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
 	$(GLITE_DGAS_COMMON_LOG_LIBS) \
 	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
@@ -56,8 +55,10 @@ glite_dgas_AMQRecordManager_LDADD   = \
 	$(DBLIBS) 
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/interface \
-	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/interface-common \
+	-I$(top_srcdir)/interface-consumers \
+	-I$(top_srcdir)/interface-hlr-service \
+	-I$(top_srcdir)/src-consumers \
 	$(GLITE_CFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
 	-DVERSION=\"@VERSION@\"

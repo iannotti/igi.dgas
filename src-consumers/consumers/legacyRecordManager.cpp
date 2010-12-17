@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.1 2010/12/16 13:22:19 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.2 2010/12/17 09:35:44 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -29,22 +29,6 @@
 #include <fstream>
 #include <map>
 
-#include <decaf/lang/Thread.h>
-#include <decaf/lang/Runnable.h>
-#include <decaf/util/concurrent/CountDownLatch.h>
-#include <decaf/lang/Long.h>
-#include <decaf/util/Date.h>
-#include <activemq/core/ActiveMQConnectionFactory.h>
-#include <activemq/util/Config.h>
-#include <activemq/library/ActiveMQCPP.h>
-#include <cms/Connection.h>
-#include <cms/Session.h>
-#include <cms/TextMessage.h>
-#include <cms/BytesMessage.h>
-#include <cms/MapMessage.h>
-#include <cms/ExceptionListener.h>
-#include <cms/MessageListener.h>
-
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/dgas_config.h"
@@ -52,8 +36,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
-#include "glite/dgas/hlr-activemq-consumer/hlr-consumer/AMQRecordManager.h"
-
+#include "glite/dgas/dgas-consumers/consumers/legacyRecordManager.h"
 #include "glite/dgas/hlr-service/engines/atmResourceEngine.h"
 
 #define E_CONFIG 10

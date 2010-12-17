@@ -8,7 +8,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/hlr-service/engines/atmResourceEngine.h"
-#include "glite/dgas/hlr-activemq-consumer/hlr-consumer/AMQRecordManager.h"
+#include "glite/dgas/dgas-consumers/consumers/legacyRecordManager.h"
 
 #define OPTION_STRING "3hv:P:D:c:Rs"
 
