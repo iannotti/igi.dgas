@@ -200,6 +200,40 @@ producers-install-etics: \
 	producers-interface-install\
 	producers-config-install
 
+consumers-config:
+	cd ./config-consumers ; $(MAKE) $(AM_MAKEFLAGS)
+
+consumers-config-install:
+	cd ./config-consumers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+consumers-src: 
+	cd ./src-consumers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+consumers-interface: 
+	cd ./interface-consumers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+consumers: common\
+	hlr-service\
+	consumers-src\
+	consumers-interface\
+	consumers-config
+
+consumers-src-install: 
+	cd ./src-consumers ; $(MAKE) $(AM_MAKEFLAGS) install 
+
+consumers-interface-install: 
+	cd ./interface-consumers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+consumers-install: common-install\
+	hlr-service-install\
+	consumers-src-install\
+	consumers-interface-install\
+	consumers-config-install
+
+consumers-install-etics: \
+	consumers-src-install\
+	consumers-interface-install\
+	consumers-config-install
 
 
 stage:
