@@ -80,6 +80,7 @@ hlr-clients-install: common-install\
 	hlr-clients-interface-install
 
 hlr-clients-install-etics: \
+	common \
  	hlr-clients-src-install\
 	hlr-clients-interface-install
 
