@@ -37,7 +37,7 @@
 //socketpp includes
   #include "glite/dgas/common/tls/GSISocketServer.h"
   #include "glite/dgas/common/tls/GSISocketAgent.h"
-#define DEFAULT_CONFIG "/opt/glite/etc/dgas_hlr.conf"
+#define DEFAULT_CONFIG "/etc/dgas_hlr.conf"
 #define OPTION_STRING "hp:l:L:c:"
 
 using namespace std;
@@ -52,7 +52,7 @@ const char * hlr_sql_user;
 const char * hlr_sql_password;
 const char * hlr_sql_dbname;
 const char * hlr_tmp_sql_dbname;
-string dgas_var_dir = "/opt/glite/var/dgas";
+string dgas_var_dir = dgasLocation() + "/var/dgas";
 int system_log_level = 7;
 int defConnTimeOut = 20;
 int help_flag = 0;
@@ -74,10 +74,10 @@ string maxItemsPerQuery = "1000";
 string acceptRecordsStartDate ="";
 string acceptRecordsEndDate = "";
 string recordsPerConnection = "2000";
-string mergeTablesDefinitions = "/opt/glite/etc/glite_dgas_merge.def";
+string mergeTablesDefinitions = dgasLocation() + "/etc/glite_dgas_merge.def";
 string logFileName = "";
 string lockFileName = "";
-string configFileName = DEFAULT_CONFIG;
+string configFileName = dgasLocation() + DEFAULT_CONFIG;
 string server_contact = "";
 string hlr_gridMapFile = "/etc/grid-security/grid-mapfile";
 string hlr_user = "";
@@ -110,7 +110,7 @@ int print_help(const char* progname)
 	cerr<< "-L  --Lock <lockFile>    Set the lock file name (overwrites the value defined" << endl;
         cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
-        cerr<< "                         from the default (/opt/glite/etc/dgas_hlr.conf)." << endl;
+        cerr<< "                         from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
 	cerr<< "-h  --help               Print this help message." << endl;
 	return 0;
 }//print_help()

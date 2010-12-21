@@ -35,15 +35,15 @@ my $actionInt=POSIX::SigAction->new("sigINT_handler",$sigset,&POSIX::SA_NODEFER)
 POSIX::sigaction(&POSIX::SIGHUP, $actionHUP);
 POSIX::sigaction(&POSIX::SIGINT, $actionInt);
 POSIX::sigaction(&POSIX::SIGTERM, $actionInt);
-my $configFilePath ="/opt/glite/etc/dgas_sensors.conf"; 
+my $configFilePath ="$ENV{DGAS_LOCATION}/etc/dgas_sensors.conf"; 
 my %configValues = (
-		    dgasURBox         =>  "/opt/glite/var/dgasURBox",
-		    dgasErrDir        =>  "/opt/glite/var/dgasURBox/ERR/",
+		    dgasURBox         =>  "$ENV{DGAS_LOCATION}/var/dgasURBox",
+		    dgasErrDir        =>  "$ENV{DGAS_LOCATION}/var/dgasURBox/ERR/",
 		    qDepth 	      => "2",
 		    qMult	      => "5",
 
-		    lockFileName      => "/opt/glite/var/glite-dgas-ce-pushd.lock",
-		    logFileName      => "/opt/glite/var/log/dgas_ce_pushd.log",
+		    lockFileName      => "$ENV{DGAS_LOCATION}/var/glite-dgas-ce-pushd.lock",
+		    logFileName      => "$ENV{DGAS_LOCATION}/var/log/dgas_ce_pushd.log",
 		    mainPollInterval  => "5",
 		    queuePollInterval =>"25",
 		    siteName	      =>"",
@@ -56,13 +56,13 @@ my %configValues = (
 		    maxThreadNumber           => "5",
 		    gipDynamicTmpCEFiles              => "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*",
 		    useUrKeyDefFile => "no",
-		    urKeyDefFile => "/opt/glite/etc/dgas_sensors.conf",
+		    urKeyDefFile => "$ENV{DGAS_LOCATION}/etc/dgas_sensors.conf",
 		    voToProcess => "",
 		    printAsciiLog => "no",
-		    asciiLogFilePath => "/opt/glite/var/log/pushdAscii.log",
+		    asciiLogFilePath => "$ENV{DGAS_LOCATION}/var/log/pushdAscii.log",
 		    transportLayer => "legacy",
-		    recordComposer => "/opt/glite/libexec/glite_dgas_recordComposer",
-		    amqProducer => "/opt/glite/libexec/glite_dgas_hlrProducer",
+		    recordComposer => "$ENV{DGAS_LOCATION}/libexec/glite_dgas_recordComposer",
+		    amqProducer => "$ENV{DGAS_LOCATION}/libexec/glite_dgas_hlrProducer",
 		    );
 
 my $systemLogLevel = 7;
@@ -1027,7 +1027,7 @@ sub callAtmClient
     }
 
     # building command:
-    my $legacyCmd = "/opt/glite/libexec/glite_dgas_atmClient";
+    my $legacyCmd = "$ENV{DGAS_LOCATION}/libexec/glite_dgas_atmClient";
 
     $cmd = "";
 
@@ -1595,7 +1595,7 @@ sub getVOFromConfiguredPoolAccountPatterns {
         my $uid = $_[0];
         my $userVo = "";
 
-	my $cmdline = "$ENV{GLITE_LOCATION}/libexec/glite-dgas-voFromPoolAccountPatterns.pl '$poolAccountPatternFile' '$uid'";
+	my $cmdline = "$ENV{DGAS_LOCATION}/libexec/glite-dgas-voFromPoolAccountPatterns.pl '$poolAccountPatternFile' '$uid'";
 
 	&printLog (9, "Executing: $cmdline");
 

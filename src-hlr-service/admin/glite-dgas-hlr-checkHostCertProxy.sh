@@ -3,10 +3,10 @@
 PROXY_TTL_HOURS=720      # 30 days
 PROXY_MIN_TTL_SEC=172800 # 2 days
 
-PREFIX=${GLITE_LOCATION}
+PREFIX=${DGAS_LOCATION}
 
-if [ -z ${GLITE_LOCATION} ]; then
-    echo "Please set the GLITE_LOCATION environment variable."
+if [ -z ${DGAS_LOCATION} ]; then
+    echo "Please set the DGAS_LOCATION environment variable."
     exit 1
 fi
 

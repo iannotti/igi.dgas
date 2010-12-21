@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.h,v 1.1.2.2 2010/11/05 14:44:35 aguarise Exp $
+// $Id: legacyProducer.h,v 1.1.2.3 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -29,8 +29,6 @@
 #include "glite/dgas/common/tls/GSISocketClient.h"
 
 #define ATM_CLIENT_VERSION "glite"
-
-#define GLITE_DGAS_DEF_CONF "/opt/glite/etc/dgas_sensors.conf"
 
 using namespace std;
 #ifndef GLITE_SOCKETPP

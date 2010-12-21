@@ -11,7 +11,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 
 #define OPTION_STRING "C:d:p:Dnhbi:"
-#define DGAS_DEF_CONF_FILE "/opt/glite/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
 
 using namespace std;
 
@@ -25,9 +25,9 @@ const char * hlr_sql_dbname;
 int system_log_level = 7;
 ofstream logStream;
 
-string confFileName = DGAS_DEF_CONF_FILE;
+string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
 string referenceDate;
-string prefix = "/opt/glite/var/dgas";
+string prefix = dgasLocation() + "/var/dgas";
 string hlr_logFileName;
 string inRecordsFile;
 

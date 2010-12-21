@@ -13,22 +13,22 @@
 # This is the location of the directory where gianduia puts the files
 # with the usage records. It must be the same as dgasURDir specified in
 # the dgas_atmClient.conf file 
-dgasURBox = "/opt/glite/var/dgasURBox/"
+dgasURBox = "${DGAS_LOCATION}/var/dgasURBox/"
 
 # the lock files for glite-urcollector.pl and HAD
-collectorLockFileName = "/opt/glite/var/dgas_gianduia_urCollector.lock"
-collectorHADLockFileName = "/opt/glite/var/dgas_gianduia_urCollector_HAD.lock"
+collectorLockFileName = "${DGAS_LOCATION}/var/dgas_gianduia_urCollector.lock"
+collectorHADLockFileName = "${DGAS_LOCATION}/var/dgas_gianduia_urCollector_HAD.lock"
 
 # the log file for glite-urcollector.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9
-collectorLogFileName = "/opt/glite/var/log/dgas_gianduia_urCollector.log"
+collectorLogFileName = "${DGAS_LOCATION}/var/log/dgas_gianduia_urCollector.log"
 
 # the buffer file that keeps track of the last processed LRMS job_id and
 # log timestamp for glite-urcollector.pl:
 # (Note: the LRMS type specified in lrmsType will automatically be appended
-#  as suffix, for example: "/opt/glite/var/dgasCollectorBuffer.pbs")
-collectorBufferFileName = "/opt/glite/var/dgasCollectorBuffer"
+#  as suffix, for example: "${DGAS_LOCATION}/var/dgasCollectorBuffer.pbs")
+collectorBufferFileName = "${DGAS_LOCATION}/var/dgasCollectorBuffer"
 
 # UR Box parse interval, that is if all jobs have been processed: 
 # seconds to wait before looking for new jobs in UR Box.
@@ -126,7 +126,7 @@ ceJobMapLog = ""
 
 keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
 
-glueLdifFile = "/opt/glite/etc/glite-ce-ce-plugin/out.ldif"
+glueLdifFile = "${DGAS_LOCATION}/etc/glite-ce-ce-plugin/out.ldif"
 
 ##
 ##GLITE_DGAS_PUSHD SECTION##
@@ -136,14 +136,14 @@ glueLdifFile = "/opt/glite/etc/glite-ce-ce-plugin/out.ldif"
 #The daemon is recovers the UR of the job and asyncronously comunicates
 #them to the User HLR vie the glite_dgas_atmClient api.
 #
-dgasErrDir = "/opt/glite/var/dgasURBox/ERR/"
+dgasErrDir = "${DGAS_LOCATION}/var/dgasURBox/ERR/"
 qMult = "5"
-pushdLockFileName = "/opt/glite/var/dgas_ce_pushd.lock"
+pushdLockFileName = "${DGAS_LOCATION}/var/dgas_ce_pushd.lock"
 
 # the log file name for glite-dgas-pushd.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9 
-pushdLogFileName = "/opt/glite/var/log/dgas_ce_pushd.log"
+pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_ce_pushd.log"
 queuePollInterval = "50"
 
 # The following option can be used to specify a configuration file that
@@ -166,7 +166,7 @@ queuePollInterval = "50"
 # mapping the first one that can be retrieved by the command
 # "groups <local_unix_username>" will be taken.
 #
-#localUserGroup2VOMap = "/opt/glite/etc/glite-urcollector_localUserGroup2VOMap.conf"
+#localUserGroup2VOMap = "${DGAS_LOCATION}/etc/glite-urcollector_localUserGroup2VOMap.conf"
 
 # The following paremeter specifies in which temporary (dynamic) CE LDIF files
 # to look for the total number of CPUs of the resource (GlueCEInfoTotalCPUs)
@@ -193,7 +193,7 @@ queuePollInterval = "50"
 # setting havePoolAccounts = "no".
 #
 #havePoolAccounts = "yes"
-#poolAccountPatternFile = "/opt/glite/etc/glite-dgas-poolAccountPatterns.conf"
+#poolAccountPatternFile = "${DGAS_LOCATION}/etc/glite-dgas-poolAccountPatterns.conf"
 
 # This parameter can be used to explicitly specify a host name that has to be
 # used as the CE hostname. This is most useful for assigning out-of-band jobs

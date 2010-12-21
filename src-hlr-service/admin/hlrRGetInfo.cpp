@@ -1,4 +1,4 @@
-// $Id: hlrRGetInfo.cpp,v 1.1.2.1.4.2 2010/12/13 10:07:56 aguarise Exp $
+// $Id: hlrRGetInfo.cpp,v 1.1.2.1.4.3 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -24,7 +24,7 @@
 #include "glite/dgas/hlr-service/base/notFor2LHLR.h"
 
 #define OPTION_STRING "aTRhr:c:C:g:o:"
-#define DGAS_DEF_CONF_FILE "/opt/glite/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
 
 using namespace std;
 
@@ -42,7 +42,7 @@ bool needs_help = false;
 string rid_buff = "";
 string gid_buff = "";
 string ceId = ""; 
-string confFileName = DGAS_DEF_CONF_FILE;
+string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
 string outputType = "list";
 
@@ -85,7 +85,7 @@ int help (const char *progname)
 	cerr << " usage: " << endl;
 	cerr << " " << progname << " [OPTIONS] " << endl;
         cerr << "-C --Conf <confFile>     HLR configuration file name, if different" << endl;
-        cerr << "                         from the default (/opt/glite/etc/dgas_hlr.conf)." << endl;
+        cerr << "                         from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
 //	cerr << "-a --all                 Display information for all resources." <<endl;
         cerr << "-r --rid <resID>         String that identifies the resource in the database."<<endl;
         cerr << "-g --gid <groupId>       String that identifies a group in the HLR database."<<endl;

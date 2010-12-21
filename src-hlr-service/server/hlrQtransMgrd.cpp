@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.3 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -98,7 +98,7 @@ print_help(const char* progname)
 	cerr<< "-L  --Lock <lockFile>    Set the lock file name (overwrites the value defined" << endl;
         cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
-        cerr<< "                         from the default (/opt/glite/etc/dgas_hlr.conf)." << endl;
+        cerr<< "                         from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
 	cerr<< "-e  --error              Process the transactions in fatal error state. (this can be obtained also by issuing a SIGHUP to the daemon process.)" << endl;
 	cerr<< "-h  --help               Print this help message." << endl;
 	return 0;
@@ -415,7 +415,7 @@ int processErrorTransactions(int i)
 	mainLoop(i); 
 	time_t currtime;
 	currtime = time(NULL);
-	string fileName = "/opt/glite/var/dgas/hlr_tmp_dump-";
+	string fileName = dgasLocation() + "/var/dgas/hlr_tmp_dump-";
 		fileName += int2string(currtime);
 		fileName += ".sqldump";
 	qTrans::archiveGreaterThan(i-1,fileName);

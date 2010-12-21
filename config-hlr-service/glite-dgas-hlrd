@@ -9,13 +9,13 @@
 # chkconfig: 35 70 80 
 
 
-[ ! -z $GLITE_LOCATION ]  || export GLITE_LOCATION=/opt/glite/
+[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/opt/glite/
 [ ! -z $GLOBUS_LOCATION ] || export GLOBUS_LOCATION=/opt/globus/
 
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GLITE_LOCATION}/lib/:${GLOBUS_LOCATION}/lib/"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DGAS_LOCATION}/lib/:${GLOBUS_LOCATION}/lib/"
 
 
-PREFIX=$GLITE_LOCATION
+PREFIX=$DGAS_LOCATION
 
 # source function library
 . /etc/rc.d/init.d/functions

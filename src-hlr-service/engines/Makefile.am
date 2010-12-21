@@ -48,11 +48,12 @@ libdgasAdvancedQueryEngine2_la_SOURCES = advancedQueryEngine2.h advancedQueryEng
 
 libglite_dgas_atmResBankClient_la_SOURCES = \
 	atmResBankClient.h atmResBankClient.cpp
-libglite_dgas_atmResBankClient_la_LIBADD = libdgasEngineCmnUtl.la
+#libglite_dgas_atmResBankClient_la_LIBADD = libdgasEngineCmnUtl.la
 
 libglite_dgas_atmResBankClient2_la_SOURCES = \
 	atmResBankClient2.h atmResBankClient2.cpp
-libglite_dgas_atmResBankClient2_la_LIBADD = libdgasEngineCmnUtl.la
+#libglite_dgas_atmResBankClient2_la_LIBADD = libdgasEngineCmnUtl.la
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-hlr-service \
 	-I$(top_srcdir)/interface-common \

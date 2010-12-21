@@ -8,12 +8,12 @@
 # config: $PREFIX/etc/dgas_gianduia.conf
 # chkconfig: 35 50 80
 
-PREFIX=$GLITE_LOCATION
+PREFIX=$DGAS_LOCATION
 
 # source function library
 . /etc/rc.d/init.d/functions
 
-if [ -z $GLITE_LOCATION ]; then
+if [ -z $DGAS_LOCATION ]; then
 	if [ -d /opt/glite ]; then
 		PREFIX=/opt/glite
 	fi

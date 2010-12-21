@@ -14,7 +14,7 @@ do
 		echo "Elapsed: $elapsed seconds"
                 exit 0;
         fi
-	${GLITE_LOCATION}/bin/glite-dgas-ping -s "$HOSTNAME:$HLR_PORT:" -t 1 
+	${DGAS_LOCATION}/bin/glite-dgas-ping -s "$HOSTNAME:$HLR_PORT:" -t 1 
 done
 
 

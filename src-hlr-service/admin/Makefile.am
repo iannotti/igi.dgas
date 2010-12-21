@@ -11,7 +11,6 @@ sbin_PROGRAMS = \
 	glite-dgas-hlr-archive
 
 sbin_SCRIPTS = \
-	glite-dgas-clean-wJobs \
 	glite-dgas-hlrd-dbcreate \
 	glite-dgas-hlr-bdiiresimport.pl \
 	glite-dgas-sumrecords2goc.pl

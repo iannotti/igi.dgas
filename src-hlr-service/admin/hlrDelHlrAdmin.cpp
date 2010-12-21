@@ -1,4 +1,4 @@
-// $Id: hlrDelHlrAdmin.cpp,v 1.1.2.1.4.2 2010/12/13 10:07:56 aguarise Exp $
+// $Id: hlrDelHlrAdmin.cpp,v 1.1.2.1.4.3 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -18,7 +18,7 @@
 #include "glite/dgas/hlr-service/base/hlrAdmin.h"
 
 #define OPTION_STRING "hHVLSAa:v:C:r:"
-#define DGAS_DEF_CONF_FILE "/opt/glite/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ bool needs_help = false;
 string admin_buff = "";
 string vo_buff = "";
 string vorole = "";
-string confFileName = DGAS_DEF_CONF_FILE;
+string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
 
 int options ( int argc, char **argv )
@@ -90,7 +90,7 @@ int help (const char *progname)
 	cerr << " usage: " << endl;
 	cerr << " " << progname << " [OPTIONS] " << endl;
         cerr << " -C --Conf <confFile>       HLR configuration file name, if different" << endl;
-        cerr << "                           from the default (/opt/glite/etc/dgas_hlr.conf)." << endl;
+        cerr << "                           from the default ($(DGAS_LOCATION)/etc/dgas_hlr.conf)." << endl;
         cerr << " -a --admin <cert_subject>  x509 certificate subject of the HLR admin." << endl;
         cerr << " -v --vo <vo ID>  name of the vo managed by the voAdmin" << endl;
 	cerr << " -r --vorole <vomsRole>	        Specifies the voms authorisation role to delete (must specify --vo too)" << endl;

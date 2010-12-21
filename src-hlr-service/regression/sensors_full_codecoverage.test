@@ -3,7 +3,7 @@
 
 #Check environment
 Check environment:2:v:true
-Check GLITE_LOCATION:1::[ -n "$GLITE_LOCATION" ]
+Check DGAS_LOCATION:1::[ -n "$DGAS_LOCATION" ]
 
 #Check host certificate
 Check host certificate:2:v:true
@@ -22,7 +22,7 @@ create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
 create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
 create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
 create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf &
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf &
 
 
 check LRMS_TYPE on PBS:1::grep "LRMS_TYPE=pbs" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
@@ -44,7 +44,7 @@ Stop collector daemon and cleanup:2:v:true
 Stop collector:0::sleep 30
 ls URBox:0::cat $TESTBASE/tests/dgasURBox/*
 cat log:0::cat $TESTBASE/dgas_collector.log
-Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.lock`
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
 
 
 
@@ -58,7 +58,7 @@ create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
 create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
 create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
 Set jobsToProcess=local:0::( sed -e 's/jobsToProcess = \"all\"/jobsToProcess=\"local\"/' $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.local )
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.local &
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.local &
 
 check grid job not accounted:1:!(1):grep "JOB_TYPE=grid"  ${TESTBASE}/tests/dgasURBox/*
 check local job accounted:1::grep "JOB_TYPE=local" ${TESTBASE}/tests/dgasURBox/*
@@ -74,7 +74,7 @@ create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
 create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
 create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
 Set jobsToProcess=local:0::( sed -e "s/jobsToProcess = \"all\"/jobsToProcess=\"grid\"/" $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.grid )
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.grid &
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.grid &
 
 check grid accounted:1::grep "JOB_TYPE=grid"  ${TESTBASE}/tests/dgasURBox/*
 check local job not accounted:1:!(1):grep "JOB_TYPE=local" ${TESTBASE}/tests/dgasURBox/*
@@ -93,7 +93,7 @@ create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | 
 create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
 create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
 Set lrmsType = "lsf":0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
 
 check LRMS_TYPE on LSF:1::grep "LRMS_TYPE=lsf" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
 check LRMS_JOBID on LSF:1::grep "LRMS_JOBID=4530990" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
@@ -113,7 +113,7 @@ Stop collector:0::sleep 30
 ls URBox:0::cp -r $TESTBASE/tests/dgasURBox/ /tmp/
 cat URBox:0::cat $TESTBASE/tests/dgasURBox/*
 rm URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
-Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.lock`
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
 
 
 #startup collector daemon LSF
@@ -131,7 +131,7 @@ create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | 
 create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
 create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
 Create dgas_sensors.conf:0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.ldif.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
 
 
 check GlueHostBenchmarkSI00 on LSF:1::grep "GlueHostBenchmarkSI00=1371" ${TESTBASE}/tests/dgasURBox/lsf_4535228_*
@@ -143,7 +143,7 @@ Stop collector:0::sleep 30
 ls URBox:1::cp -r $TESTBASE/tests/dgasURBox/ /tmp/
 ls URBox:1::cat $TESTBASE/tests/dgasURBox/*
 rm URBox:1::rm -f $TESTBASE/tests/dgasURBox/*
-Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.lock`
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
 
 
 
@@ -152,8 +152,8 @@ Stop collector:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_collector.l
 Start up pushd on PBS:2:v:true
 clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
 clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-dgas-pushd.pl ${GLITE_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
-check daemon:1::ps auxw | grep pushd | grep `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-dgas-pushd.pl ${DGAS_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 
 Check grid + FQAN job:2:v:true
 clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
@@ -318,7 +318,7 @@ clean up sed buffer:0::rm -f $TESTBASE/tests/localJobmap.sed.buff
 
 Stop daemon and cleanup:2:v:true
 #Stop the daemon
-Stop Pushd:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+Stop Pushd:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 #clenup log:1::rm -f $TESTBASE/dgas_ce_pushd.log
 clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
 
@@ -327,8 +327,8 @@ clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
 Start up pushd on PBS (poolAccountPattern):2:v:true
 clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
 clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-dgas-pushd.pl ${GLITE_LOCATION}/libexec/dgastests/tests/dgas_sensors_test_poolPatterns.conf &
-check daemon:1::ps auxw | grep pushd | grep `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-dgas-pushd.pl ${DGAS_LOCATION}/libexec/dgastests/tests/dgas_sensors_test_poolPatterns.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 
 
 # Check grid + pool job
@@ -348,7 +348,7 @@ clean up sed buffer:0::rm -f $TESTBASE/tests/gridJobpool.sed.buff
 
 Stop daemon and cleanup:2:v:true
 #Stop the daemon
-Stop Pushd:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+Stop Pushd:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 #clenup log:1::rm -f $TESTBASE/dgas_ce_pushd.log
 clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
 
@@ -357,8 +357,8 @@ clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
 Start up pushd on LSF:2:v:true
 clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
 clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
-start up daemon:1::perl -d:Coverage ${GLITE_LOCATION}/sbin/glite-dgas-pushd.pl ${GLITE_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
-check daemon:1::ps auxw | grep pushd | grep `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+start up daemon:1::perl -d:Coverage ${DGAS_LOCATION}/sbin/glite-dgas-pushd.pl ${DGAS_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 
 Check grid + FQAN job:2:v:true
 clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
@@ -379,6 +379,6 @@ clean up sed buffer:0::rm -f $TESTBASE/tests/localJobmap.sed.buff
 
 Stop daemon and cleanup:2:v:true
 #Stop the daemon
-Stop Pushd:1::kill `cat ${GLITE_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+Stop Pushd:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 #clenup log:1::rm -f $TESTBASE/dgas_ce_pushd.log
 clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*

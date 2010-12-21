@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.4 2010/11/08 13:37:57 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.5 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -35,6 +35,8 @@
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "glite/dgas/dgas-producers/producers/legacyProducer.h"
 
+#define GLITE_DGAS_DEF_CONF "/etc/dgas_sensors.conf"
+
 void
 catch_alarm (int sig)
 {
@@ -45,7 +47,7 @@ int  defConnTimeOut = 60;
 
 int ATM_client_toResource(string& server, string& input ,string *server_answer, producerConfiguration& conf)
 {
-	if (conf.configFileName == "") conf.configFileName = GLITE_DGAS_DEF_CONF;
+	if (conf.configFileName == "") conf.configFileName = dgasLocation() + GLITE_DGAS_DEF_CONF;
 	int returncode = 0;
 	string output_message;
 	vector<string> urlBuff;

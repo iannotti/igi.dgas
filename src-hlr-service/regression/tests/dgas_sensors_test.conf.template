@@ -17,7 +17,7 @@ dgasURBox = "${TESTBASE}/tests/dgasURBox/"
 
 # the lock files for glite-urcollector.pl and HAD
 collectorLockFileName = "${TESTBASE}/dgas_collector.lock"
-collectorHADLockFileName = "/opt/glite/var/dgas_gianduia_urCollector_HAD.lock"
+collectorHADLockFileName = "${DGAS_LOCATION}/var/dgas_gianduia_urCollector_HAD.lock"
 
 # the log file for glite-urcollector.pl
 collectorLogFileName = "${TESTBASE}/dgas_collector.log"
@@ -32,7 +32,7 @@ bufferFileName = "${TESTBASE}/dgasOOBuffer"
 # the buffer file that keeps track of the last processed LRMS job_id and
 # log timestamp for glite-urcollector.pl:
 # (Note: the LRMS type specified in lrmsType will automatically be appended
-#  as suffix, for example: "/opt/glite/var/dgasCollectorBuffer.pbs")
+#  as suffix, for example: "${DGAS_LOCATION}/var/dgasCollectorBuffer.pbs")
 collectorBufferFileName = "${TESTBASE}/dgasCollectorBuffer"
 
 # chocolate Box parse interval (if all jobs have been processed: seconds to wait before looking for new jobs in chocolateBox):
@@ -135,7 +135,7 @@ UR:GlueHostBenchmarkSI00=GlueHostBenchmarkSI00;^\s*(.*)$
 UR:hepSpec2006=GlueHostProcessorOtherDescription;^\s*Cores=4,Benchmark=(.*)-HEP-SPEC06$
 
 
-#glueLdifFile = "/opt/glite/etc/glite-ce-ce-plugin/out.ldif"
+#glueLdifFile = "${DGAS_LOCATION}/etc/glite-ce-ce-plugin/out.ldif"
 glueLdifFile = "$glueLdifFile"
 
 
@@ -204,7 +204,7 @@ localUserGroup2VOMap = "${TESTBASE}/tests/testJobMap.conf"
 # setting havePoolAccounts = "no".
 #
 #havePoolAccounts = "yes"
-#poolAccountPatternFile = "/opt/glite/etc/glite-dgas-poolAccountPatterns.conf"
+#poolAccountPatternFile = "${DGAS_LOCATION}/etc/glite-dgas-poolAccountPatterns.conf"
 
 #siteName parameter can be used to assign to the UsageRecord a tag identifying
 # the site. Example: "INFN-TORINO".

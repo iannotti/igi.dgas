@@ -19,13 +19,13 @@ my $systemLogLevel = 7;
 
 my $prgname = "glite-dgas-sumrecords2goc.pl";
 
-if ( !exists($ENV{GLITE_LOCATION}) || $ENV{GLITE_LOCATION} eq "" ) {
-        $ENV{GLITE_LOCATION}="/opt/glite/";
-	&printLog (3, "Environment variable GLITE_LOCATION not defined! Trying /opt/glite/ ...\n");
+if ( !exists($ENV{DGAS_LOCATION}) || $ENV{DGAS_LOCATION} eq "" ) {
+        $ENV{DGAS_LOCATION}="/opt/glite/";
+	&printLog (3, "Environment variable DGAS_LOCATION not defined! Trying /opt/glite/ ...\n");
 }
 
 my $cfname = "glite-dgas-sumrecords2goc.conf";
-my $conffile = "$ENV{GLITE_LOCATION}/etc/$cfname";
+my $conffile = "$ENV{DGAS_LOCATION}/etc/$cfname";
 
 
 my $useVOlist = 0;
@@ -555,7 +555,7 @@ sub printUsageInfo() {
     print "$prgname [OPTIONS]\n";
     print "\nWhere OPTIONS are:\n";
     print "-c <file>    Specifies the configuration file.\n";
-    print "             Default: \$GLITE_LOCATION/etc/$cfname\n";
+    print "             Default: \$DGAS_LOCATION/etc/$cfname\n";
     print "-v           Verbose log file: additional information of processing of the\n";
     print "             single SumCPU records will be printed to the standard output.\n";
     exit(1);

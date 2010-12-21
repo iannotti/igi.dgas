@@ -12,7 +12,7 @@
 
 
 
-#define DEFAULT_CONFIG "/opt/glite/etc/dgas_hlr.conf"
+#define DEFAULT_CONFIG "/etc/dgas_hlr.conf"
 
 
 
@@ -42,8 +42,8 @@ bool isDaemon = false;
 bool isReset = false;
 string logFileName = "";
 string lockFileName = "";
-string configFileName = DEFAULT_CONFIG;
-string serversFileName = DEFAULT_CONFIG;
+string configFileName = dgasLocation() + DEFAULT_CONFIG;
+string serversFileName = dgasLocation() + DEFAULT_CONFIG;
 
 
 int putLock(string lockFile)

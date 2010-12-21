@@ -3,7 +3,7 @@
 
 #Check environment
 Check environment:2:v:true
-Check GLITE_LOCATION:1::[ -n "$GLITE_LOCATION" ]
+Check DGAS_LOCATION:1::[ -n "$DGAS_LOCATION" ]
 
 #Check host certificate
 Check host certificate:2:v:true
@@ -21,7 +21,7 @@ Check HLR daemon:2:v:true
 hlr conf file exists:1::[ -e $HLRD_CONF ]
 hlr database exists:1::$TESTBASE/tests/hlrDBExists.sh
 hlr_tmp database exists:1::$TESTBASE/tests/hlr_tmpDBExists.sh
-glite-dgas-hlrd status:1::/opt/glite/sbin/glite-dgas-hlrd status
+glite-dgas-hlrd status:1::${DGAS_LOCATION}/sbin/glite-dgas-hlrd status
 crontab runs translateDb:1::crontab -l| grep -v "#" | grep hlr-translatedb
 hlrServer daemon is alive:1::$TESTBASE/tests/hlrServerdIsAlive.sh
 hlrTqd daemon is alive:1::$TESTBASE/tests/hlrQmgrIsAlive.sh
@@ -41,22 +41,22 @@ check trans_queue schema:1::$TESTBASE/tests/checkTable.sh hlr_tmp_sql_dbname tra
 
 #Check client-server communication
 Check client-server communication:2:v:true
-HLR answers to pingClient:1::$GLITE_LOCATION/bin/glite-dgas-ping -s "$HOSTNAME:$HLR_PORT:" -t 1
+HLR answers to pingClient:1::$DGAS_LOCATION/bin/glite-dgas-ping -s "$HOSTNAME:$HLR_PORT:" -t 1
 
 #Check account management
 Check account management:2:v:true
-Add resource:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
-Fail to add duplicate resource:1:!(3):$GLITE_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
-Query resource by rid:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource
-Query resource by ceId:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue 
-Check rid:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestResource
-Check gid:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestGroup
-Check email:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep root@localhost
-Check descr:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestResource
-Check ceId:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestResource.self.test.domain:2119/jobmanager-selftest-queue
-Delete resource:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
-Fail to delete not existent resource:1:!(3):$GLITE_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
-Fail to query non existent resource:1:!(1):$GLITE_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource
+Add resource:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
+Fail to add duplicate resource:1:!(3):$DGAS_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
+Query resource by rid:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource
+Query resource by ceId:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue 
+Check rid:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestResource
+Check gid:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestGroup
+Check email:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep root@localhost
+Check descr:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestResource
+Check ceId:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource | grep selfTestResource.self.test.domain:2119/jobmanager-selftest-queue
+Delete resource:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
+Fail to delete not existent resource:1:!(3):$DGAS_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
+Fail to query non existent resource:1:!(1):$DGAS_LOCATION/sbin/glite-dgas-hlr-queryresource -R -r selfTestResource
 
 #test ATM CLient - ENGINE communication
 Check ATM client- ENGINE communication:2:v:true
@@ -67,30 +67,30 @@ Call ATM Client Ex-Route 2:1::$TESTBASE/tests/atmClient.sh `cat $TESTBASE/jobId.
 Call ATM Client on duplicate job (69):1:!(69):$TESTBASE/tests/atmClient.sh `cat $TESTBASE/jobId.tmp` 3
 Insert Job with cpuTime < 0, start = 0:1::$TESTBASE/tests/wrongcputjob.sh `cat $TESTBASE/jobId.tmp` 3 
 Insert Job with userV0!=fqan, start = 0:1::$TESTBASE/tests/voproblemjob.sh `cat $TESTBASE/jobId.tmp` 2 
-Check that route 3 job is in trans_queue:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-checkqueue | grep `cat $TESTBASE/jobId.tmp`_3
-Check that route 2 job is in trans_queue:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-checkqueue | grep `cat $TESTBASE/jobId.tmp`_2
+Check that route 3 job is in trans_queue:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-checkqueue | grep `cat $TESTBASE/jobId.tmp`_3
+Check that route 2 job is in trans_queue:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-checkqueue | grep `cat $TESTBASE/jobId.tmp`_2
 
 #test hlr_tmp, qMgrd - HLR communication
 test qMgrd - HLR communication (can take several minutes):2:v:true
-Add resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
+Add resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
 Wait for route 3 job to be accountd:1::$TESTBASE/tests/waitForJob.sh 3
 Wait for EX route 2 job to be accountd:1::$TESTBASE/tests/waitForJob.sh 2
-Running hlrTranslateDb:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-translatedb -D
+Running hlrTranslateDb:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-translatedb -D
 Call ATM Client on duplicate job (70):1:!(70):$TESTBASE/tests/atmClient.sh `cat $TESTBASE/jobId.tmp`_oob 3 outOfBand
 Call ATM Client on duplicate job (71):1:!(71):$TESTBASE/tests/atmClient.sh `cat $TESTBASE/jobId.tmp` 3 grid
-Delete resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
+Delete resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
 
 #turnaround times
-Add resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
+Add resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
 Loop over grid records:1::$TESTBASE/tests/multiplePing.sh 50
 Loop over grid records:1::$TESTBASE/tests/multipleRecords.sh `cat $TESTBASE/jobId.tmp` grid 50
-Delete resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
+Delete resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
 
 #test resourceQuery and userQuery
-Add hlrAdmin:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
+Add hlrAdmin:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
 test hlrQueryResource:2:v:true
-Add resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
-Add resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource2 -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
+Add resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:2119/jobmanager-selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
+Add resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-addresource -r selfTestResource2 -e root@localhost -d selfTestResource -c selfTestResource.self.test.domain:selftest-queue -S "$CERT_DN" -g selfTestGroup -f selfTestVO
 Call ATM Client to test resubmission:1::$TESTBASE/tests/testResubmission.sh
 Clean up resub job:1::$TESTBASE/tests/cleanResubJob.sh "https://$HOSTNAME:9000/resubmissionTest"
 Insert Job with start = 0, qtime = 0:1::$TESTBASE/tests/missingStartQtimeJob.sh
@@ -109,57 +109,57 @@ Check hlr-query -o option:1::$TESTBASE/tests/testMinus_o.sh
 Clean hlr-query -o job:1::$TESTBASE/tests/cleanResubJob.sh "https://testhostname:9000/minus_o_Test"
 Check hlr-query -a option:1::$TESTBASE/tests/testMinus_a.sh
 Clean hlr-query -a job:1::$TESTBASE/tests/cleanResubJob.sh "https://testhostname:9000/minus_a_Test"
-Delete resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
-Delete resource:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource2 -g selfTestGroup -f selfTestVO
-Delete resource VO metagroup:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-delvo -f selfTestVO
-Deleting hlrAdmin:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
+Delete resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource -g selfTestGroup -f selfTestVO
+Delete resource:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-delresource -rselfTestResource2 -g selfTestGroup -f selfTestVO
+Delete resource VO metagroup:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-delvo -f selfTestVO
+Deleting hlrAdmin:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
 
 #testQuery interface
 test hlrAdvancedQuery interface:2:v:true
-Add hlrAdmin:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
-Test sql query on route 3 job:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q sql -A "SELECT dgJobId FROM jobTransSummary WHERE dgJobId=\"`cat $TESTBASE/jobId.tmp`_3\"" | grep `cat $TESTBASE/jobId.tmp`_3
+Add hlrAdmin:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
+Test sql query on route 3 job:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q sql -A "SELECT dgJobId FROM jobTransSummary WHERE dgJobId=\"`cat $TESTBASE/jobId.tmp`_3\"" | grep `cat $TESTBASE/jobId.tmp`_3
  
-Test sqlCsv query on wrongcpu job:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q sqlCsv -A  " SELECT dgJobId,cpuTime FROM jobTransSummary WHERE dgJobId=\"`cat $TESTBASE/jobId.tmp`_3_wrongCpu\"" | grep "`cat $TESTBASE/jobId.tmp`_3i\|0\|" 
+Test sqlCsv query on wrongcpu job:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q sqlCsv -A  " SELECT dgJobId,cpuTime FROM jobTransSummary WHERE dgJobId=\"`cat $TESTBASE/jobId.tmp`_3_wrongCpu\"" | grep "`cat $TESTBASE/jobId.tmp`_3i\|0\|" 
 
-Test sql query on ex-route 2 job:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q sql -A "SELECT dgJobId FROM jobTransSummary WHERE dgJobId=\"`cat $TESTBASE/jobId.tmp`_2\"" | grep `cat $TESTBASE/jobId.tmp`_2 
+Test sql query on ex-route 2 job:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q sql -A "SELECT dgJobId FROM jobTransSummary WHERE dgJobId=\"`cat $TESTBASE/jobId.tmp`_2\"" | grep `cat $TESTBASE/jobId.tmp`_2 
 
 
-Test resourceAggregate for the log:0::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" 
-Test resourceAggregate:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
-Test fieldList for the log:0::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q fieldList
-Test fieldList:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q fieldList | wc | sed -r -e 's/\s+/;/g' | cut -d ";" -f 2 | grep 32
-Test showTables:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -Q showTables | grep jobTransSummary
+Test resourceAggregate for the log:0::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" 
+Test resourceAggregate:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
+Test fieldList for the log:0::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q fieldList
+Test fieldList:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q fieldList | wc | sed -r -e 's/\s+/;/g' | cut -d ";" -f 2 | grep 32
+Test showTables:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -Q showTables | grep jobTransSummary
 #cleanup forn next test-block
-Deleting hlrAdmin:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
+Deleting hlrAdmin:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
 
 #Test hlrAdmin
 Test hlrAdmin:2:v:true
-Add hlrAdmin:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
-Query hlrAdmin:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-queryadmin -A "$CERT_DN"
-Error adding already existent hlrAdmin:1:!(1):$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
-Deleting hlrAdmin:1::$GLITE_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
+Add hlrAdmin:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
+Query hlrAdmin:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-queryadmin -A "$CERT_DN"
+Error adding already existent hlrAdmin:1:!(1):$DGAS_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
+Deleting hlrAdmin:1::$DGAS_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
 
 #Test hlrAdvancedQueryClient
 Test hlrAdvancedQueryClient:2:v:true
-Test sql (no privileges):1:!(3):$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * from jobTransSummary" 
+Test sql (no privileges):1:!(3):$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * from jobTransSummary" 
  
-Add hlrAdmin:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
+Add hlrAdmin:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-addadmin -a "$CERT_DN"
 
-Test resourceAggregate:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
-Test resourceAggregate -r option:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -r "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue" -A 'count(dgJobId)' | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
-Test resourceAggregate -g option:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -g selfTestGroup -A 'count(dgJobId)' | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
-Test resourceAggregate -G option:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" -G "dgJobId" | grep selfTest | wc -l | grep 4
+Test resourceAggregate:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
+Test resourceAggregate -r option:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -r "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue" -A 'count(dgJobId)' | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
+Test resourceAggregate -g option:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -g selfTestGroup -A 'count(dgJobId)' | sed -e 's/\s//g' | cut -d "|" -f 3 | grep 4
+Test resourceAggregate -G option:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q resourceAggregate -A 'count(dgJobId)' -j "`cat $TESTBASE/jobId.tmp`%" -G "dgJobId" | grep selfTest | wc -l | grep 4
 
-Test sql JobList:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE dgJobId like \"`cat $TESTBASE/jobId.tmp`%\""| grep `cat $TESTBASE/jobId.tmp` | wc -l | grep 4
-Test sql JobList for the log:0::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE dgJobId like \"`cat $TESTBASE/jobId.tmp`%\"" 
+Test sql JobList:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE dgJobId like \"`cat $TESTBASE/jobId.tmp`%\""| grep `cat $TESTBASE/jobId.tmp` | wc -l | grep 4
+Test sql JobList for the log:0::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE dgJobId like \"`cat $TESTBASE/jobId.tmp`%\"" 
 
-Test sql JobList on lrmsId:1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE lrmsId like \"01010%\"" | grep "01010" | wc -l | grep 2
-Test sql JobList on lrmsId for the Log:0::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE lrmsId like \"01010%\"" 
+Test sql JobList on lrmsId:1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE lrmsId like \"01010%\"" | grep "01010" | wc -l | grep 2
+Test sql JobList on lrmsId for the Log:0::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM  jobTransSummary WHERE lrmsId like \"01010%\"" 
 
-Test sql JobList on resource id :1::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM jobTransSummary WHERE thisGridId =\"selfTestResource.self.test.domain:2119/jobmanager-selftest-queue\""| grep "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue" | wc -l | grep 4
-Test sql JobList on resource id for the log:0::$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM jobTransSummary WHERE gridResource =\"selfTestResource.self.test.domain:2119/jobmanager-selftest-queue\""| grep "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue"
-Check "unknown query type" :1:!(1):$GLITE_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q doNotMatch -j "`cat $TESTBASE/jobId.tmp`%" 
-Deleting hlrAdmin:0::$GLITE_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
+Test sql JobList on resource id :1::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM jobTransSummary WHERE thisGridId =\"selfTestResource.self.test.domain:2119/jobmanager-selftest-queue\""| grep "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue" | wc -l | grep 4
+Test sql JobList on resource id for the log:0::$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q sql -A "SELECT * FROM jobTransSummary WHERE gridResource =\"selfTestResource.self.test.domain:2119/jobmanager-selftest-queue\""| grep "selfTestResource.self.test.domain:2119/jobmanager-selftest-queue"
+Check "unknown query type" :1:!(1):$DGAS_LOCATION/bin/glite-dgas-hlr-query -H "$HOSTNAME:$HLR_PORT:" -Q doNotMatch -j "`cat $TESTBASE/jobId.tmp`%" 
+Deleting hlrAdmin:0::$DGAS_LOCATION/sbin/glite-dgas-hlr-deladmin -a "$CERT_DN"
 #cleanup
 Test clean up:2:v:true
 Clean up route jobs:1::$TESTBASE/tests/cleanUpJob.sh `cat $TESTBASE/jobId.tmp`

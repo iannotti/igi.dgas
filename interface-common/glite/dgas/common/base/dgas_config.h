@@ -1,4 +1,4 @@
-// $Id: dgas_config.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
+// $Id: dgas_config.h,v 1.1.2.1.4.2 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -28,6 +28,8 @@ getEnvValue(string envValue, string& gliteLocation );
 
 int
 dgas_conf_read( string confFileName, map<string,string> *confMap);
+
+string dgasLocation();
 
 #endif
 

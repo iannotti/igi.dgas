@@ -12,11 +12,11 @@ ERROR_ROOTPWD=2
 ERROR_FILE=3
 ERROR_USERPWD=4
 
-PREFIX=${GLITE_LOCATION}
+PREFIX=${DGAS_LOCATION}
 
-if [ -z ${GLITE_LOCATION} ]
+if [ -z ${DGAS_LOCATION} ]
 then
-	echo "Please set the GLITE_LOCATION environment variable. Trying with /opt/glite/"
+	echo "Please set the DGAS_LOCATION environment variable. Trying with /opt/glite/"
 	PREFIX=/opt/glite/
 fi
 

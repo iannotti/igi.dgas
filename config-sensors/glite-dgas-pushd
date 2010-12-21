@@ -8,11 +8,11 @@
 # config: $PREFIX/etc/dgas_ce_pushd.conf
 # chkconfig: 35 50 80
 
-if [ -z ${GLITE_LOCATION} ]; then
-	export GLITE_LOCATION=/opt/glite/
+if [ -z ${DGAS_LOCATION} ]; then
+	export DGAS_LOCATION=/opt/glite/
 fi
 
-PREFIX=$GLITE_LOCATION
+PREFIX=$DGAS_LOCATION
 if [ -z ${ACTIVEMQLIB} ]; then
 	export ACTIVEMQLIB=/opt/activemq/lib/
 fi
@@ -23,7 +23,7 @@ fi
 [ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLITE_LOCATION/lib/:$ACTIVEMQLIB
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$ACTIVEMQLIB
 
 PUSHD_CONF=$PREFIX/etc/dgas_sensors.conf
 

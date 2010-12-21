@@ -1,4 +1,4 @@
-// $Id: hlrHlrAdminGetInfo.cpp,v 1.1.2.1.4.2 2010/12/13 10:07:56 aguarise Exp $
+// $Id: hlrHlrAdminGetInfo.cpp,v 1.1.2.1.4.3 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -19,7 +19,7 @@
 #include "glite/dgas/hlr-service/base/hlrAdmin.h"
 
 #define OPTION_STRING "ahHVLSA:C:R:r:"
-#define DGAS_DEF_CONF_FILE "/opt/glite/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ bool isRecordSource = false;
 bool isVoms = false;
 bool needs_help = false;
 string admin_buff = "";
-string confFileName = DGAS_DEF_CONF_FILE;
+string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
 string vo_id = "";
 string vomsRole = "";
@@ -96,7 +96,7 @@ int help (const char *progname)
 	cerr << " usage: " << endl;
 	cerr << " " << progname << " [OPTIONS] " << endl;
         cerr << "-C --Conf <confFile>       HLR configuration file name, if different" << endl;
-        cerr << "                           from the default (/opt/glite/etc/dgas_hlr.conf)." << endl;
+        cerr << "                           from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
 	cerr << "-a --all	            Display the list of all admin roles."<<endl;
 	cerr << "-H --Hlr	            Display the list of all HLR admins."<<endl;
 	cerr << "-V --Vo	            Display the list of all Vo admins."<<endl;

@@ -42,8 +42,8 @@ my %opts = ();
 
 getopts('fhp:s:b:v:H:U:Nc:DC', \%opts);
 
-if ( $ENV{GLITE_LOCATION} eq "" ) {
-    $ENV{GLITE_LOCATION}="/opt/glite/";
+if ( $ENV{DGAS_LOCATION} eq "" ) {
+    $ENV{DGAS_LOCATION}="/opt/glite/";
 }
 
 
@@ -398,7 +398,7 @@ sub mySystem() {
 
 sub createGridAccount() {
     my %Info = %{$_[0]};
-    my $prefix = "$ENV{GLITE_LOCATION}/sbin/";
+    my $prefix = "$ENV{DGAS_LOCATION}/sbin/";
 
     if ( $forceAccountCreation eq "no" && &resourceExists($Info{ceId}) == 0 ) {
 	print "Warning: resource account exists for $Info{ceId} ... skipping!\n";
@@ -411,7 +411,7 @@ sub createGridAccount() {
 
 sub createLocalAccount() {
     my %Info = %{$_[0]};
-    my $prefix = "$ENV{GLITE_LOCATION}/sbin/";
+    my $prefix = "$ENV{DGAS_LOCATION}/sbin/";
 
     if ( $forceAccountCreation eq "no" && &resourceExists("$Info{ceHostname}:$Info{queue}") == 0 ) {
 	print "Warning: resource account (local) exists for $Info{ceHostname}:$Info{queue} ... skipping!\n";
@@ -424,7 +424,7 @@ sub createLocalAccount() {
 
 sub resourceExists {
     my $ceID = $_[0];
-    my $prefix ="$ENV{GLITE_LOCATION}/sbin/";
+    my $prefix ="$ENV{DGAS_LOCATION}/sbin/";
     my $cmd = "$prefix/glite-dgas-hlr-queryresource -R -c $ceID 2> /dev/null";
     my $ret = &mySystem($cmd);
     print "Checking: ceId '$ceID' exists in HLR database...";
@@ -442,7 +442,7 @@ sub resourceExists {
 
 sub resourceIDExists {
     my $rid = $_[0];
-    my $prefix ="$ENV{GLITE_LOCATION}/sbin/";
+    my $prefix ="$ENV{DGAS_LOCATION}/sbin/";
     my $cmd = "$prefix/glite-dgas-hlr-queryresource -R -r $rid 2> /dev/null";
     my $ret = &mySystem($cmd);
     print "Checking: rid '$rid' exists in HLR database...";

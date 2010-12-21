@@ -1,7 +1,7 @@
 i=0
 eval period=`grep hlr_qmgr_pollPeriod $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 while 
-	$GLITE_LOCATION/sbin/glite-dgas-hlr-checkqueue | grep `cat $TESTBASE/jobId.tmp`_$1;
+	$DGAS_LOCATION/sbin/glite-dgas-hlr-checkqueue | grep `cat $TESTBASE/jobId.tmp`_$1;
 do 
 	(( i = $i + 1 ))
 	echo -n "Iteration No:$i"

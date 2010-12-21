@@ -1,4 +1,4 @@
-// $Id: dgas_config.cpp,v 1.1.2.1.4.1 2010/10/19 09:06:52 aguarise Exp $
+// $Id: dgas_config.cpp,v 1.1.2.1.4.2 2010/12/21 14:34:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -53,6 +53,23 @@ int getEnvValue(string envName, string &envValue)
         }
 */
         return 0;
+}
+
+string dgasLocation()
+{
+	//Try to find the value of DGAS_LOCATION first, GLITE_LOCATION later. If none is found
+	// use /opt/glite/ value to ensure backward compatibility.
+	string dgasLocation;
+	getEnvValue("DGAS_LOCATION", dgasLocation);
+	if ( dgasLocation == "" )
+	{
+		getEnvValue("GLITE_LOCATION", dgasLocation);
+	}
+	if ( dgasLocation == "" )
+	{
+		dgasLocation = "/opt/glite/"; //use /opt/glite to ensure bacward compatibility.
+	}
+	return dgasLocation;
 }
 
 int
