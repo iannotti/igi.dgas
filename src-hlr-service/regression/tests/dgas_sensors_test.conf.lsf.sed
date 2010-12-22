@@ -1,3 +1,3 @@
 s/\$lrmsType/lsf/; 
 s/\$jobsToProcess/all/; 
-s/\$lsfAcctLogDir/\/opt\/glite\/libexec\/dgastests\/tests\/lrms-acct\//
+s/\$lsfAcctLogDir/\${DGAS_LOCATION}\/libexec\/dgastests\/tests\/lrms-acct\//

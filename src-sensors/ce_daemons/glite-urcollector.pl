@@ -40,7 +40,14 @@ my $actionInt =
 POSIX::sigaction(&POSIX::SIGHUP, $actionHUP);
 POSIX::sigaction(&POSIX::SIGINT, $actionInt);
 POSIX::sigaction(&POSIX::SIGTERM, $actionInt);
-my $configFilePath ="/opt/glite/etc/dgas_sensors.conf";
+
+my $dgasLocation = $ENV{DGAS_LOCATION};
+if ( $dgasLocation eq "" )
+{
+        $dgasLocation = "/opt/glite/";
+}
+
+my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf";
 my %configValues =
     (
      lrmsType              =>  "",
@@ -56,11 +63,11 @@ my %configValues =
      ldifDefaultFiles      => "",
      glueLdifFile          => "",
 
-     dgasURBox    =>  "/opt/glite/var/dgasURbox",
+     dgasURBox    =>  $dgasLocation . "/var/dgasURbox",
      
-     collectorLockFileName => "/opt/glite/var/dgas_gianduia_urCollector.lock",
-     collectorLogFileName => "/opt/glite/var/log/dgas_gianduia.log",
-     collectorBufferFileName => "/opt/glite/var/dgasCollectorBuffer",
+     collectorLockFileName => $dgasLocation . "/var/dgas_gianduia_urCollector.lock",
+     collectorLogFileName =>  $dgasLocation . "/var/log/dgas_gianduia.log",
+     collectorBufferFileName => $dgasLocation . "/var/dgasCollectorBuffer",
 
      mainPollInterval  => "5",
      timeInterval      =>"5",
@@ -71,7 +78,7 @@ my %configValues =
      waitFor => $DEF_WAITFOR,
      systemLogLevel => $DEF_SYSTEMLOGLEVEL,
      useUrKeyDefFile => "no",
-     urKeyDefFile => "/opt/glite/etc/dgas_sensors.conf",
+     urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
      );
 
 
