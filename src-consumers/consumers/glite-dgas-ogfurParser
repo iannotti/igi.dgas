@@ -58,7 +58,13 @@ sub ogfurMem2KB
 my $file;
 my $outputType;
 
-my $schemaFile = '/opt/glite/etc/ogfur_v1.xsd.xml';
+my $dgasLocation = $ENV{DGAS_LOCATION};
+if ( $dgasLocation eq "" )
+{
+        $dgasLocation = "/opt/glite/";
+}
+
+my $schemaFile = $dgasLocation . '/etc/ogfur_v1.xsd.xml';
 
 GetOptions (
         'file=s' => \$file,

@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.3 2010/11/05 14:44:35 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.4 2010/12/23 12:19:53 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -336,17 +336,21 @@ private:
 
 };
 
-int dgasHlrRecordProducer (string& confFileName, string amqBrokerUri,string dgasAMQTopic ,string amqOptions )
+int dgasHlrRecordProducer (string& confFileName, string amqBrokerUri, string amqTopic, string amqOptions)
 {
 	int returncode = 0;
 	string output_message;
 	map <string,string> confMap;
 	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )	
 	{
-		cerr << "WARNING: Error reading conf file: " << confFileName << 
+		cerr << "WARNING: Could not read conf file: " << confFileName << 
 endl;
 		cerr << "There can be problems processing the transaction" << endl;
-		return E_CONFIG;
+		if ( ( amqBrokerUri == "" ) || ( amqTopic == "" ) )
+		{
+			cerr << "Please specify amqBrokerUri and amqTopic." << endl;
+			return E_CONFIG;
+		}
 		
 	}
 
@@ -377,11 +381,11 @@ endl;
 			return E_BROKER_URI;
 		}
 	}
-	if ( dgasAMQTopic == "" )
+	if ( amqTopic == "" )
 	{
 		if ( confMap["dgasAMQTopic"] != "" )
 		{
-			dgasAMQTopic= confMap["dgasAMQTopic"];
+			amqTopic= confMap["dgasAMQTopic"];
 		}
 		else
 		{
@@ -406,7 +410,7 @@ endl;
 		//"&transport.tcpTracingEnabled=true"
 		//"&wireFormat.tightEncodingEnabled=true"
 		+ ")";
-	std::string destURI = dgasAMQTopic;
+	std::string destURI = amqTopic;
 	bool useTopics = false;
 	unsigned int numMessages = 1;
 	SimpleProducer producer( brokerURI, numMessages, destURI, useTopics );
