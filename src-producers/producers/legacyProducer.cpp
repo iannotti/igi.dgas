@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.5 2010/12/21 14:34:41 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.6 2010/12/23 13:53:44 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -52,17 +52,17 @@ int ATM_client_toResource(string& server, string& input ,string *server_answer, 
 	string output_message;
 	vector<string> urlBuff;
 	string res_acct_PA_id = "";
-	string res_acct_bank_id = "";
 	string economicAccountingFlag = "";
 	//not specified, get them form a configuration file.
 	map <string,string> confMap;
+	if ( server != "" ) conf.hlrServer =server;
 	if ( dgas_conf_read ( conf.configFileName, &confMap ) == 0 )
 	{
 		if ( conf.paServer == "" )
 		{
 			conf.paServer =(confMap["res_acct_PA_id"]).c_str();
 		}	
-		if ( res_acct_bank_id == "" )
+		if ( conf.hlrServer == "" )
 		{
 			conf.hlrServer =(confMap["res_acct_bank_id"]).c_str();
 		}	
