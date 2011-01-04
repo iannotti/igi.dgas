@@ -9,7 +9,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-producers/producers/legacyComposer.h"
 
-#define OPTION_STRING "3hv:j:t:p:l:C:U:"
+#define OPTION_STRING "3hv:j:t:p:l:C:U:E"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ bool needs_help = 0;
 string dgJobId_buff = "NULL"; // DgJobId of the current job
 string timeStamp_buff = "0"; // Submission time of the current job
 string res_acct_PA_id_buff = ""; // Price authority for this CE (URL)
-string res_acct_bank_id_buff = ""; // HLR for this CE (URL)
+string economicAccounting = ""; // HLR for this CE (URL)
 string resX509cert_buff = "NULL"; // X509 subject of this CE
 string usrX509cert_buff = ""; // X509 subject of the user owning the job
 int verbosity = 3;
@@ -36,13 +36,14 @@ void help()
 	cerr << "Author: Andrea Guarise <andrea.guarise@to.infn.it>" << endl;
 	cerr << "Version:" << ATM_CLIENT_VERSION << VERSION << endl;
 	cerr << "Usage:" << endl;
-	cerr << "ATM_client <OPTIONS> [USAGE RECORD LIST]" << endl;
+	cerr << "dgas-legacyCpuComposer <OPTIONS> [USAGE RECORD LIST]" << endl;
 	cerr << "Where options are:" << endl;
 	cerr << "-h  --help                       Display this help and exit." << endl;
 	cerr << "-v  --verbosity <verbosity>      (0-3) default 3 maximum verbosity" << endl;
 	cerr << "-j  --jobid <jobId>              Global job ID." << endl;
 	cerr << "-t  --time <timestamp>           Submission time of the job." << endl;
 	cerr << "-p  --paid <paID>                Contact string of the CE's Price authority." << endl;
+	cerr << "-E  --EconomicAccounting         Turn on economic accounting for this record" << endl;
 	cerr << "-l  --localbankid <HLR contact>  Contact string of the (local) Resource HLR." << endl;
 	cerr << "-C  --resgridid <ceID>           Global CE ID" << endl;
 	cerr << "-U  --usrcert <cert_subject>     User's X509 certificate subject" << endl;
@@ -89,9 +90,9 @@ int options ( int argc, char **argv )
 		{"jobid",1,0,'j'},
 		{"time",1,0,'t'},
 		{"paid",1,0,'p'},
-		{"localbankid",1,0,'l'},
 		{"resgridid",1,0,'C'},
 		{"usrcert",1,0,'U'},
+		{"EconomicAccounting",0,0,'E'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
 	};
@@ -103,9 +104,9 @@ int options ( int argc, char **argv )
 			case 'j': dgJobId_buff=optarg; break;
 			case 't': timeStamp_buff = optarg; break;
 			case 'p': res_acct_PA_id_buff = optarg; break;
-			case 'l': res_acct_bank_id_buff = optarg; break;
 			case 'C': resX509cert_buff = optarg; break;
 			case 'U': usrX509cert_buff = optarg; break;
+			case 'E': economicAccounting = "true"; break;		  
 			case 'h': needs_help =1; break;		  
 			default : break;
 		}
@@ -150,9 +151,10 @@ int main (int argc, char *argv[])
 		dgJobId_buff, //dgJobId
 		timeStamp_buff, //time
 		res_acct_PA_id_buff, //res_PA_url
-		res_acct_bank_id_buff, //res_HLR_url
+		"", //place holder for resource HLR. Not used in this context anymore.
 		usrX509cert_buff, // usr_cert_subj
-		resX509cert_buff //res_cert_subj
+		resX509cert_buff, //res_cert_subj
+		economicAccounting
 	};
 	vector <string>::iterator info_v_it = info_v.begin();
 	while (info_v_it != info_v.end())

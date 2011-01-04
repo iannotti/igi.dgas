@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.6 2010/12/23 13:53:44 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.7 2011/01/04 10:22:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -45,47 +45,41 @@ catch_alarm (int sig)
 
 int  defConnTimeOut = 60;
 
-int ATM_client_toResource(string& server, string& input ,string *server_answer, producerConfiguration& conf)
+int ATM_client_toResource(string& input ,string *server_answer, producerConfiguration& conf)
 {
 	if (conf.configFileName == "") conf.configFileName = dgasLocation() + GLITE_DGAS_DEF_CONF;
 	int returncode = 0;
 	string output_message;
-	vector<string> urlBuff;
-	string res_acct_PA_id = "";
-	string economicAccountingFlag = "";
 	//not specified, get them form a configuration file.
 	map <string,string> confMap;
-	if ( server != "" ) conf.hlrServer =server;
 	if ( dgas_conf_read ( conf.configFileName, &confMap ) == 0 )
 	{
-		if ( conf.paServer == "" )
-		{
-			conf.paServer =(confMap["res_acct_PA_id"]).c_str();
-		}	
 		if ( conf.hlrServer == "" )
 		{
 			conf.hlrServer =(confMap["res_acct_bank_id"]).c_str();
 		}	
-		//se if we need to do economic accounting
-		conf.economicAccounting = (confMap["economicAccounting"]).c_str();
 	}
+	int hlrPort = 56568;//default value
+        string hlrContact = "";
+        string hlrHostname;
+	vector<string> urlBuff;
+        Split(':', conf.hlrServer, &urlBuff);
+        if ( urlBuff.size() > 0 )
+        {
+                if ( urlBuff.size() > 0 ) hlrHostname = urlBuff[0];
+                if ( urlBuff.size() > 1 ) hlrPort = atoi((urlBuff[1]).c_str());
+                if ( urlBuff.size() > 2 ) hlrContact = urlBuff[2];
+        }
 	else
 	{
-		cerr << "WARNING: Error reading conf file: " << conf.configFileName << endl;
-		cerr << "There can be problems processing the transaction" << endl;
-	}
-	Split(':',conf.hlrServer, &urlBuff);
-	if ( urlBuff.size() != 3 )
 		return atoi(E_WRONG_RES_HLR);
-	string resBankHostname = urlBuff[0];
-	int resBankPort = atoi((urlBuff[1]).c_str());
-	string resBankContact = urlBuff[2];
+	}
 	//if the acct_PA_res_id and the acct_bank_res_id are
 	
 	signal (SIGALRM, catch_alarm);
 	alarm ( defConnTimeOut);
-	GSISocketClient *theClient = new GSISocketClient(resBankHostname, resBankPort);
-	theClient-> ServerContact(resBankContact);
+	GSISocketClient *theClient = new GSISocketClient(hlrHostname, hlrPort);
+	theClient-> ServerContact(hlrContact);
 	theClient->SetTimeout( defConnTimeOut );
 	if ( !(theClient->Open()))
 	{

@@ -6,15 +6,15 @@
 ## *
 ## *********************************************************************
 
-lib_LTLIBRARIES  = libglite_dgas_atmClient.la
-libexec_PROGRAMS = glite_dgas_atmClient glite-dgas-sendRecord
+lib_LTLIBRARIES  = libdgas_atmClient.la
+libexec_PROGRAMS = dgas-atmClient dgas-sendRecord
 
-libglite_dgas_atmClient_la_SOURCES = \
+libdgas_atmClient_la_SOURCES = \
 	atmClient.cpp 
 
-glite_dgas_atmClient_SOURCES = atmClientExe.cpp
-glite_dgas_atmClient_LDADD   = \
-	./libglite_dgas_atmClient.la \
+dgas_atmClient_SOURCES = atmClientExe.cpp
+dgas_atmClient_LDADD   = \
+	./libdgas_atmClient.la \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
@@ -22,8 +22,8 @@ glite_dgas_atmClient_LDADD   = \
 	$(GLOBUS_SSL_UTILS_LIBS) \
 	$(GLOBUS_GSS_THR_LIBS)
 
-glite_dgas_sendRecord_SOURCES = sendRecordExe.cpp
-glite_dgas_sendRecord_LDADD   = \
+dgas_sendRecord_SOURCES = sendRecordExe.cpp
+dgas_sendRecord_LDADD   = \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \

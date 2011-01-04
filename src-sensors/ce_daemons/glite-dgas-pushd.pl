@@ -1033,7 +1033,7 @@ sub callAtmClient
     }
 
     # building command:
-    my $legacyCmd = "$ENV{DGAS_LOCATION}/libexec/glite_dgas_atmClient";
+    my $legacyCmd = "$ENV{DGAS_LOCATION}/libexec/dgas-atmClient";
 
     $cmd = "";
 

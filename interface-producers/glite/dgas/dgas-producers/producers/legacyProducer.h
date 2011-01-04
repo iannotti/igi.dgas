@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.h,v 1.1.2.3 2010/12/21 14:34:41 aguarise Exp $
+// $Id: legacyProducer.h,v 1.1.2.4 2011/01/04 10:22:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -39,11 +39,10 @@ struct producerConfiguration {
 	string configFileName;
 	string hlrServer;
 	string paServer;
-	string economicAccounting;
+	bool economicAccounting;
 };
 
 int ATM_client_toResource(
-		string& res_acct_bank_id,
 		string& input, 
 		string *server_answer,
 		producerConfiguration& conf);

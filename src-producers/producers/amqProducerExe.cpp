@@ -25,6 +25,19 @@ string configFile = dgasLocation() + GLITE_DGAS_DEF_CONF;
 
 void help()
 {
+	cerr << "DGAS ActiveMQ Producer" << endl;
+        cerr << "Author: Andrea Guarise <andrea.guarise@to.infn.it>" << endl;
+        cerr << "Version:" << VERSION << endl;
+        cerr << "Usage:" << endl;
+        cerr << "dgas-amqProducer  <OPTIONS> [USAGE RECORD LIST]" << endl;
+        cerr << "Where options are:" << endl;
+        cerr << "-h  --help                       Display this help and exit." << endl;
+        cerr << "-v  --verbosity <verbosity>      (0-3) default 3 maximum verbosity" << endl;
+        cerr << "-B  --brokerUri <URI>  The complete URI for the AMQ broker." << endl;
+        cerr << "-O  --amqOptions <AMQ options>  Options for the AMQ broker." << endl;
+        cerr << "-T  --amqTopic <AMQ Topic>  topic for the messages." << endl;
+        cerr << "-c  --config <file>  config file name." << endl;
+        cerr << endl;
 }
 
 int options ( int argc, char **argv )

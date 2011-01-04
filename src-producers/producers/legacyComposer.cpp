@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyComposer.cpp,v 1.1.2.2 2010/11/05 14:44:35 aguarise Exp $
+// $Id: legacyComposer.cpp,v 1.1.2.3 2011/01/04 10:22:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -48,29 +48,16 @@ int ATM_client_toResource(ATM_job_data &job_data, ATM_usage_info &usage_info, ve
 	if ( dgas_conf_read ( confFileName, &confMap ) == 0 )
 	{
 		if ( job_data.res_acct_PA_id == "" )
-		{
-			job_data.res_acct_PA_id =(confMap["res_acct_PA_id"]).c_str();
-		}	
-		if ( job_data.res_acct_bank_id == "" )
-		{
-			job_data.res_acct_bank_id =(confMap["res_acct_bank_id"]).c_str();
-		}	
+                {
+                        job_data.res_acct_PA_id =(confMap["res_acct_PA_id"]).c_str();
+                }
+                //see if we need to do economic accounting
+                if (  job_data.economicAccountingFlag == "" )
+                {
+			job_data.economicAccountingFlag = (confMap["economicAccounting"]).c_str();
+                }
 		//se if we need to do economic accounting
-		job_data.economicAccountingFlag = (confMap["economicAccounting"]).c_str();
 	}
-	else
-	{
-		cerr << "WARNING: Error reading conf file: " << confFileName << endl;
-		cerr << "There can be problems processing the transaction" << endl;
-	}
-	//Split(':',job_data.res_acct_bank_id, &urlBuff);
-	//if ( urlBuff.size() != 3 )
-	//	return atoi(E_JA_PARSE_ID);
-	string resBankHostname;
-	int resBankPort;
-	string resBankContact;
-	//if the acct_PA_res_id and the acct_bank_res_id are
-	
 	//Now compose the XML ATM_request
 	ATMc_xml_compose("ATM_request_toResource", job_data, usage_info, info_v, &output_message);
 	cout << output_message << endl;
