@@ -210,6 +210,28 @@ queuePollInterval = "50"
 #
 #useCEHostName = ""
 
+#printAsciiLog enables the creation of a log file containing the composer/producer commands issued
+#by the pushd daemon. This can be useful to republish part of the records.
+#printAsciiLog = "yes"
+
+#asciiLogFilePath specifies the full path for the asciiLog file.
+#asciiLogFilePath = "${DGAS_LOCATION}/var/log/pushdAscii.log"
+
+# This section configures the composer/producer system that is used to publish information to the
+# HLR servers. 
+
+#transportLayer specifies the transport mechanisms that can be used (amq and transport1 are synonims)
+#legacy automatically set up the older, backward compatible mechanism adopted in earlier versions of DGAS.
+#transportLayer = "legacy;amq;transport1;transport2"
+
+#set of composer/producer commands used by the transport layers.
+#recordComposer1 = "${DGAS_LOCATION}/libexec/dgas-legacyCpuComposer"
+#recordProducer1 = "${DGAS_LOCATION}/libexec/dgas-amqProducer"
+#recordComposer2 = "${DGAS_LOCATION}/libexec/dgas-ogfurComposer"
+#recordProducer2 = "${DGAS_LOCATION}/libexec/dgas-amqProducer"
+
+ 
+
 ##ATM CLIENT SECTION##
 
 # resource PA: in the form host:port:X509_certSubject (OPTIONAL)
@@ -219,4 +241,11 @@ res_acct_bank_id = "hostname:portnumber:X509CertSubject"
 # specify if we need economic accounting or not.
 economicAccounting = "no"
 
+##AMQ PRODUCER SECTION##
+
+#amqBrokerUri specifies the complete URI for the activeMQ broker used by the amq producer
+#amqBrokerUri = "URI of the AMQ broker" 
+
+#dgasAMQTopic specifies the topic (a label) which is used to idetify DGAS records on an AMQ Broker.
+#dgasAMQTopic = "DGAS.TOPIC"
 
