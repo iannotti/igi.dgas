@@ -68,29 +68,6 @@ AC_DEFUN([AC_GLOBUS_EPEL],
     AC_MSG_RESULT(["GLOBUS_GSS_THR_LIBS=$GLOBUS_GSS_THR_LIBS"])
     AC_MSG_RESULT(["GLOBUS_GSS_NOTHR_LIBS=$GLOBUS_GSS_NOTHR_LIBS"])
 
-    dnl
-    dnl check whether globus in place, if not return error
-    dnl
-    AC_MSG_CHECKING([for globus version])
-    grep GLOBUS_VERSION= $with_globus_prefix/bin/globus-version | cut -d'"' -f2 >& globus.version
-    ac_globus_version=`cat globus.version`
-    ac_globus_point_version=`cut -d. -f3 globus.version`
-    ac_globus_minor_version=`cut -d. -f2 globus.version`
-    ac_globus_major_version=`cut -d. -f1 globus.version`
-
-    if test -n "$ac_globus_point_version" ; then
-        AC_MSG_RESULT([$ac_globus_version])
-    else
-        GLOBUS_NOTHR_CFLAGS=""
-        GLOBUS_THR_CFLAGS=""
-        GLOBUS_NOTHR_LIBS=""
-        GLOBUS_THR_LIBS=""
-        GLOBUS_SSL_NOTHR_LIBS=""
-        GLOBUS_SSL_THR_LIBS=""
-        echo ac_point_version $ac_globus_point_version
-        AC_MSG_ERROR([no])
-    fi
-
     AC_SUBST(GLOBUS_LOCATION)
     AC_SUBST(GLOBUS_NOTHR_CFLAGS)
     AC_SUBST(GLOBUS_THR_CFLAGS)
