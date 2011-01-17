@@ -1,4 +1,5 @@
 dnl Usage:
+dnl WARN! DEPRECATED use just for glite build
 dnl AC_GLOBUS(MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 dnl - GLOBUS_LOCATION
 dnl - GLOBUS_NOTHR_FLAVOR
@@ -24,7 +25,7 @@ dnl - GLOBUS_LDAP_THR_LIBS
 AC_DEFUN([AC_GLOBUS],
 [
     AC_ARG_WITH(globus_prefix,
-    [  --with-globus-prefix=PFX     prefix where GLOBUS is installed. (/opt/globus)],
+    [  --with-globus-prefix=PFX     DEPRECATED prefix where GLOBUS is installed. (/opt/globus)],
     [],
         with_globus_prefix=${GLOBUS_LOCATION:-/opt/globus})
 
