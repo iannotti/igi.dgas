@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.11 $])
+AC_REVISION([$Revision: 1.1.2.5.4.12 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -83,7 +83,6 @@ AC_ARG_ENABLE(voms,
 
 AM_CONDITIONAL(VOMS, test x$have_voms = xyes)
 
-AC_GLOBUS([], have_globus=yes, have_globus=no)
 AC_GLOBUS_EPEL([], have_globus=yes, have_globus=no)
 AC_MSG_RESULT(["GLOBUS found $have_globus"])
 AC_MSG_RESULT(["UNIXODBC found $have_unixodbc"])

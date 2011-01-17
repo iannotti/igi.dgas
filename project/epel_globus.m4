@@ -33,16 +33,40 @@ AC_DEFUN([AC_GLOBUS_EPEL],
         [],
         with_globus_lib=${GLOBUS_LIB:-/usr/lib64/})
 
+   AC_ARG_WITH(globus_thr_flavor,
+        [  --with-globus-thr-flavor=flavor [default=null]],
+        [],
+        with_globus_thr_flavor=${GLOBUS_NOTHR_FLAVOR:-})
+    
+   AC_ARG_WITH(globus_nothr_flavor,
+        [  --with-globus-nothr-flavor=flavor [default=null]],
+        [],
+        with_globus_nothr_flavor=${GLOBUS_THR_FLAVOR:-})
+    
+    AC_MSG_RESULT(["with_globus_nothr_flavor=$with_globus_nothr_flavor"])
+    AC_MSG_RESULT(["with_globus_thr_flavor=$with_globus_thr_flavor"])
+
     AC_MSG_RESULT(["GLOBUS lib is $with_globus_lib"])
 
     GLOBUS_NOTHR_CFLAGS="-I$with_globus_include/ -I$with_globus_lib/globus/include/"
     GLOBUS_THR_CFLAGS="-I$with_globus_include/ -I$with_globus_lib/globus/include/"
 
     ac_globus_ldlib="-L$with_globus_lib"
-
-    GLOBUS_GSS_NOTHR_LIBS="$ac_globus_ldlib -lglobus_gssapi_gsi -lglobus_gss_assist"
-    GLOBUS_GSS_THR_LIBS="$ac_globus_ldlib -lglobus_gssapi_gsi -lglobus_gss_assist"
-
+	
+    if test -n "$with_globus_nothr_flavor"; then
+	    GLOBUS_GSS_NOTHR_LIBS="$ac_globus_ldlib -lglobus_gssapi_gsi_$with_globus_nothr_flavor -lglobus_gss_assist_$with_globus_nothr_flavor"
+    else
+	    GLOBUS_GSS_NOTHR_LIBS="$ac_globus_ldlib -lglobus_gssapi_gsi -lglobus_gss_assist"
+    fi
+    
+    if test -n "$with_globus_thr_flavor"; then		
+	    GLOBUS_GSS_THR_LIBS="$ac_globus_ldlib -lglobus_gssapi_gsi_$with_globus_thr_flavor -lglobus_gss_assist_$with_globus_thr_flavor"
+    else
+	    GLOBUS_GSS_THR_LIBS="$ac_globus_ldlib -lglobus_gssapi_gsi -lglobus_gss_assist"
+    fi
+    
+    AC_MSG_RESULT(["GLOBUS_GSS_THR_LIBS=$GLOBUS_GSS_THR_LIBS"])
+    AC_MSG_RESULT(["GLOBUS_GSS_NOTHR_LIBS=$GLOBUS_GSS_NOTHR_LIBS"])
 
     dnl
     dnl check whether globus in place, if not return error
