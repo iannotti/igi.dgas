@@ -39,7 +39,11 @@ POSIX::sigaction(&POSIX::SIGTERM, $actionInt);
 my $dgasLocation = $ENV{DGAS_LOCATION};
 if ( $dgasLocation eq "" )
 {
-	$dgasLocation = "/opt/glite/";
+	$dgasLocation = $ENV{GLITE_LOCATION};
+	if ( $dgasLocation eq "" )
+	{
+		$dgasLocation = "/opt/glite/";
+	}
 }
 
 my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf"; 
@@ -65,10 +69,13 @@ my %configValues = (
 		    urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
 		    voToProcess => "",
 		    printAsciiLog => "no",
+		    useSQLite => "no",
 		    asciiLogFilePath => $dgasLocation . "/var/log/pushdAscii.log",
 		    transportLayer => "legacy",
-		    recordComposer => $dgasLocation . "/libexec/glite_dgas_recordComposer",
-		    amqProducer => $dgasLocation. "/libexec/glite_dgas_hlrProducer",
+		    recordComposer1 => $dgasLocation . "/libexec/dgas-legacyCpuComposer",
+		    recordProducer1 => $dgasLocation. "/libexec/dgas-amqProducer",
+		    recordComposer2 => $dgasLocation . "/libexec/ogfurComposer",
+		    recordProducer2 => $dgasLocation. "/libexec/dgas-amqProducer",
 		    );
 
 my $systemLogLevel = 7;
@@ -484,10 +491,13 @@ sub parseConf
 	if(/^urKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{urKeyDefFile}=$1;}
 	if(/^voToProcess\s*=\s*\"(.*)\"$/){$configValues{voToProcess}=$1;}
 	if(/^printAsciiLog\s*=\s*\"(.*)\"$/){$configValues{printAsciiLog}=$1;}
+	if(/^useSQLite\s*=\s*\"(.*)\"$/){$configValues{useSQLite}=$1;}
 	if(/^asciiLogFilePath\s*=\s*\"(.*)\"$/){$configValues{asciiLogFilePath}=$1;}
 	if(/^transportLayer\s*=\s*\"(.*)\"$/){$configValues{transportLayer}=$1;}
-	if(/^recordComposer\s*=\s*\"(.*)\"$/){$configValues{recordComposer}=$1;}
-	if(/^amqProducer\s*=\s*\"(.*)\"$/){$configValues{amqProducer}=$1;}
+	if(/^recordComposer1\s*=\s*\"(.*)\"$/){$configValues{recordComposer1}=$1;}
+	if(/^recordProducer1\s*=\s*\"(.*)\"$/){$configValues{recordProducer1}=$1;}
+	if(/^recordComposer2\s*=\s*\"(.*)\"$/){$configValues{recordComposer2}=$1;}
+	if(/^recordProducer2\s*=\s*\"(.*)\"$/){$configValues{recordProducer2}=$1;}
     }
     close(FILE);
 
@@ -1213,11 +1223,11 @@ sub callAtmClient
     }
 
     my $exe = "";
-    if ( $transportLayer =~ "amq" )
+    if ( ( $transportLayer =~ "amq" ) || ( $transportLayer =~ "transport1" ) )
     {
-	my $recordComposer = $configValues{recordComposer};
-	my $amqProducer = $configValues{amqProducer};
-	$exe = $recordComposer . " ". $cmd . " | ". $amqProducer;
+	my $recordComposer1 = $configValues{recordComposer1};
+	my $recordProducer1 = $configValues{recordProducer1};
+	$exe = $recordComposer1 . " ". $cmd . " | ". $recordProducer1;
 	&printLog ( 8, "Running: $exe");
 	$status = system("$exe");
 	 if ($? == -1) {
@@ -1229,13 +1239,39 @@ sub callAtmClient
 	    else {
 		$status = $? >> 8;
 	    }
-	    &printLog ( 4, "AMQ EXITSTATUS=$status" );
+	    &printLog ( 4, "TRANSPORT1 EXITSTATUS=$status" );
 
 	if ( $printAsciiLog == 1)
         {
-                print ASCIILOG "$exe $asciiLogLine;#AMQSTATUS=$status\n";
+                print ASCIILOG "$exe $asciiLogLine;#T1STATUS=$status\n";
         }
     }
+
+    $exe = "";
+    if ( $transportLayer =~ "transport2"  )
+    {
+	my $recordComposer2 = $configValues{recordComposer2};
+	my $recordProducer2 = $configValues{recordProducer2};
+	$exe = $recordComposer2 . " ". $cmd . " | ". $recordProducer2;
+	&printLog ( 8, "Running: $exe");
+	$status = system("$exe");
+	 if ($? == -1) {
+		&printLog ( 2, "failed to execute: $!");
+	    }
+	    elsif ($? & 127) {
+		$status = ($? & 127);
+	    }
+	    else {
+		$status = $? >> 8;
+	    }
+	    &printLog ( 4, "TRANSPORT2 EXITSTATUS=$status" );
+
+	if ( $printAsciiLog == 1)
+        {
+                print ASCIILOG "$exe $asciiLogLine;#T2STATUS=$status\n";
+        }
+    }
+
 
     $exe = "";
     if ( $transportLayer =~ "legacy" )

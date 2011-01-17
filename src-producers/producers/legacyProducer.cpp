@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.7 2011/01/04 10:22:12 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.8 2011/01/17 08:05:25 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -109,9 +109,7 @@ int ATM_client_toResource(string& input ,string *server_answer, producerConfigur
 
 
 
-//Parse the XML input, returns 0 if success >1 otherwise, differerntly from
-//the other client code, here we will not use Xerces since we want the code
-//to be very light and easily portable.
+//Parse the XML input, returns 0 if success >1 otherwise
 int ATMc_parse_xml(string input_message)
 {
 	//we only need the return code, the whole message can

@@ -90,7 +90,7 @@ int main (int argc, char *argv[])
 	}
 	if ( verbosity > 0 )
 	{
-		cout << "Return code:" << res << endl;
+		cout << "Protocol Return code:" << res << endl;
 	}
 	if ( res != 0 )
 	{
