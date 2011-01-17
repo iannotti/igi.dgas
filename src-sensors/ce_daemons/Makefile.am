@@ -2,7 +2,9 @@
 sbin_SCRIPTS= \
 	glite-dgas-pushd.pl\
 	glite-dgas-ceServerd-had.pl\
-	glite-urcollector.pl
+	glite-urcollector.pl\
+	dgas-pushd-SQLite.pl \
+	dgas-urcollector-SQLite.pl	
 
 libexec_SCRIPTS= \
         glite-dgas-voFromPoolAccountPatterns.pl
