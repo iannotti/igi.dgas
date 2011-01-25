@@ -49,7 +49,7 @@ POSIX::sigaction(&POSIX::SIGINT, $actionInt);
 POSIX::sigaction(&POSIX::SIGTERM, $actionInt);
 
 my $dgasLocation = $ENV{DGAS_LOCATION};
-if ( $dgasLocation eq "" )
+if ( !defined($dgasLocation) ||  $dgasLocation eq "" )
 {
 	$dgasLocation = $ENV{GLITE_LOCATION};
 	if ( $dgasLocation eq "" )
@@ -447,7 +447,6 @@ MAIN: while ($keepGoing) {
 		my $commitSuccesfull = 1;
 		while ( $commitSuccesfull == 1 )
 		{
-			print "CommitMain\n";
 			eval 
 			{
 				$dbh->commit;
@@ -1176,7 +1175,7 @@ sub callAtmClient
     }
 
     # building command:
-    my $legacyCmd = "$ENV{DGAS_LOCATION}/libexec/dgas-atmClient";
+    my $legacyCmd = "$dgasLocation/libexec/dgas-atmClient";
 
     $cmd = "";
 
@@ -1585,7 +1584,7 @@ sub sigINT_handler {
 
 sub error {
     if (scalar(@_) > 0) {
-	&printLog ("$_[0]",3);
+	&printLog (2, "$_[0]");
     }
     exit(1);
 }
@@ -1677,7 +1676,7 @@ sub getVOFromConfiguredPoolAccountPatterns {
         my $uid = $_[0];
         my $userVo = "";
 
-	my $cmdline = "$ENV{DGAS_LOCATION}/libexec/glite-dgas-voFromPoolAccountPatterns.pl '$poolAccountPatternFile' '$uid'";
+	my $cmdline = "$dgasLocation/libexec/glite-dgas-voFromPoolAccountPatterns.pl '$poolAccountPatternFile' '$uid'";
 
 	&printLog (9, "Executing: $cmdline");
 
@@ -2220,7 +2219,6 @@ sub processLrmsLogFile {
 				my $commitSuccesfull = 1;
 				while ( $keepGoing && $commitSuccesfull == 1 )
 				{
-					print "CommitA\n";
 					eval 
 					{
 						$dbh->commit;
@@ -2246,8 +2244,9 @@ sub processLrmsLogFile {
 				}
 	    			my $elapsed = tv_interval ($t1, [gettimeofday]);
 	    			my $jobs_min = ($mainRecordsCounter/$elapsed)*60;
+				$jobs_min = sprintf("%.2f", $jobs_min);
 	    			&printLog(4, "Processed: $mainRecordsCounter,Elapsed: $elapsed,Records/min:$jobs_min");
-				if ( $mainRecordsCounter == 1000 )
+				if ( $mainRecordsCounter >= 1000 )
 				{
 					$mainRecordsCounter = 0;
 					$t1 = [gettimeofday];
@@ -2264,7 +2263,6 @@ sub processLrmsLogFile {
 	&printLog (6,"Commit trailing.");
 	while ( $keepGoing && $commitSuccesfull == 1 )
 	{
-		print "CommitTrailingA\n";
 		eval 
 		{
 			$dbh->commit;

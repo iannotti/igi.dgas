@@ -26,7 +26,7 @@ POSIX::sigaction(&POSIX::SIGINT, $actionInt);
 POSIX::sigaction(&POSIX::SIGTERM, $actionInt);
 
 my $dgasLocation = $ENV{DGAS_LOCATION};
-if ( $dgasLocation eq "" )
+if ( !defined($dgasLocation) ||  $dgasLocation eq "" )
 {
 	$dgasLocation = $ENV{GLITE_LOCATION};
 	if ( $dgasLocation eq "" )
@@ -278,6 +278,9 @@ my $elapsed = tv_interval ($t0, [gettimeofday]);
 my $success_min = ($successRecords/$elapsed)*60;
 my $failure_min = ($failRecords/$elapsed)*60;
 my $total_min = (($failRecords+$successRecords)/$elapsed)*60;
+$success_min = sprintf("%.2f", $success_min);
+$failure_min = sprintf("%.2f", $failure_min);
+$total_min = sprintf("%.2f", $total_min);
 &printLog ( 4,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min");
 }
 &Exit();
@@ -425,6 +428,10 @@ sub execCommand
                 	$status = $? >> 8;
             	}
 	&printLog ( 4, "Executing:$protocol:$command EXIT_STATUS=$status" );
+	if ( $printAsciiLog == 1)
+        {
+                print ASCIILOG "$command;$protocol;#STATUS=$status\n";
+        }
 	$_[2] = $status;
 	return $status;
 }
@@ -497,7 +504,7 @@ sub sigINT_handler {
 
 sub error {
     if (scalar(@_) > 0) {
-	&printLog ("$_[0]",3);
+	&printLog (2, "$_[0]");
     }
     exit(1);
 }
