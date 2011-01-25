@@ -5,4 +5,6 @@ sysconf_DATA = \
 
 sbin_SCRIPTS= \
 	glite-dgas-pushd \
-	glite-dgas-urcollector
+	glite-dgas-urcollector \
+	dgas-pushd \
+	dgas-urcollector
