@@ -62,7 +62,6 @@ my $DEF_LDIF_VALIDITY = 86400; # assume the GLUE attributes taken from the LDIF 
 my $DEF_IGNORE_JOBS_LOGGED_BEFORE = "2009-01-01";
 my $DEF_WAITFOR=5;
 my $DEF_MAXNUMRECORDS=10000;
-my $DEF_SYSTEMLOGLEVEL=6;
 my $onlyOneIteration = 0; # default is run as daemon!
 my $useCElog = 1;   # default is use the CE's map: grid job <-> local job
 my $processGridJobs = 1; # default, changed through jobsToProcess
@@ -78,43 +77,35 @@ my %configValues = (
                     havePoolAccounts => "yes",
 		    poolAccountPatternFile => "",
 		    systemLogLevel	      => 7,
-		    maxThreadNumber           => "5",
 		    gipDynamicTmpCEFiles              => "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*",
 		    useUrKeyDefFile => "no",
 		    urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
 		    voToProcess => "",
-		    printAsciiLog => "no",
-		    asciiLogFilePath => $dgasLocation . "/var/log/pushdAscii.log",
 		    transportLayer => "legacy",
 		    recordComposer1 => $dgasLocation . "/libexec/dgas-legacyCpuComposer",
 		    recordProducer1 => $dgasLocation. "/libexec/dgas-amqProducer",
 		    recordComposer2 => $dgasLocation . "/libexec/ogfurComposer",
 		    recordProducer2 => $dgasLocation. "/libexec/dgas-amqProducer",
-     #EX condor
-		lrmsType              =>  "",
-     		pbsAcctLogDir         =>  "",
-     		lsfAcctLogDir         =>  "",
-     		sgeAcctLogDir         =>  "",
-     		condorHistoryCommand  =>  "",
-     		ceJobMapLog          =>  "",
-     		useCEJobMap          =>  "yes",
-     		jobsToProcess        =>  "all",
-     		keyList               => "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00",
-     		ldifDefaultFiles      => "",
-     		glueLdifFile          => "",
-     		collectorLockFileName => $dgasLocation . "/var/dgas_gianduia_urCollector.lock",
-     		collectorLogFileName =>  $dgasLocation . "/var/log/dgas_gianduia.log",
-     		collectorBufferFileName => $dgasLocation . "/var/dgasCollectorBuffer",
-     		mainPollInterval  => "5",
-     		timeInterval      =>"5",
-     		jobPerTimeInterval =>"10",
-     		ignoreJobsLoggedBefore => $DEF_IGNORE_JOBS_LOGGED_BEFORE,
+		    lrmsType              =>  "",
+     		    pbsAcctLogDir         =>  "",
+     		    lsfAcctLogDir         =>  "",
+     		    sgeAcctLogDir         =>  "",
+     		    condorHistoryCommand  =>  "",
+     		    ceJobMapLog          =>  "",
+     		    useCEJobMap          =>  "yes",
+     		    jobsToProcess        =>  "all",
+     		    keyList               => "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00",
+     		    ldifDefaultFiles      => "",
+     		    glueLdifFile          => "",
+     		    collectorLockFileName => $dgasLocation . "/var/dgas_gianduia_urCollector.lock",
+     		    collectorLogFileName =>  $dgasLocation . "/var/log/dgas_gianduia.log",
+     		    collectorBufferFileName => $dgasLocation . "/var/dgasCollectorBuffer",
+     		    mainPollInterval  => "2",
+     		    timeInterval      =>"0",
+     		    jobPerTimeInterval =>"100",
+     		    ignoreJobsLoggedBefore => $DEF_IGNORE_JOBS_LOGGED_BEFORE,
 		maxNumRecords	=> $DEF_MAXNUMRECORDS,
-     		waitFor => $DEF_WAITFOR,
-     		systemLogLevel => $DEF_SYSTEMLOGLEVEL,
-     		useUrKeyDefFile => "no",
-     		urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
-     		lrmsType              =>  "",
+     		limiterWaitFor => $DEF_WAITFOR,
      		dgasDB              =>  $dgasLocation . "/var/dgas.sqlite",
      );
 
@@ -138,7 +129,6 @@ while (@ARGV) {
 my $systemLogLevel = $configValues{systemLogLevel};
 my $logType = 0;
 my $LOGH;
-my $ASCIILOG;
 my $lastLog = "";
 my $logCounter = 0;
 &bootstrapLog($configValues{collectorLogFileName});
@@ -154,10 +144,8 @@ chomp($hostName);
 my %urGridInfo;
 my $UR;
 
-my $printAsciiLog = 0;
 my $localUserGroup2VOMap = $configValues{localUserGroup2VOMap};
 my $poolAccountPatternFile = $configValues{poolAccountPatternFile};
-my $asciiLogFilePath =$configValues{asciiLogFilePath};
 my $transportLayer = $configValues{transportLayer};
 
 # make sure we don't use the local hostname for the CE if another one is
@@ -222,7 +210,7 @@ my $mainPollInterval = $configValues{mainPollInterval};
 my $timeInterval = $configValues{timeInterval};
 my $jobPerTimeInterval = $configValues{jobPerTimeInterval};
 my $maxNumRecords = $configValues{maxNumRecords};
-my $waitFor = $configValues{waitFor};
+my $waitFor = $configValues{limiterWaitFor};
 
 # put lock
 if ( &putLock($collectorLockFileName) != 0 ) {
@@ -409,7 +397,7 @@ MAIN: while ($keepGoing) {
 
     if ( &numRecords() > $maxNumRecords )
     {
-        &printLog(3, "There are more than $maxNumRecords in databse, waiting $waitFor seconds.");
+        &printLog(3, "There are more than $maxNumRecords in database, waiting $waitFor seconds.");
 	my $secsWaited = 0;
 	while ($keepGoing && $secsWaited < $waitFor) {
 	    sleep 1;
@@ -1325,13 +1313,6 @@ sub callAtmClient
                 $cmd .= " \"ceCertificateSubject=$ceCertificateSubject\"";
             }
     }
-    my $asciiLogLine;
-
-    if ( $printAsciiLog == 1)
-    {
-        my $localtime = localtime();
-        $asciiLogLine = ";#$localtime;#$urGridInfo{userVo};#'$transportLayer'";
-    }
 
     # running the command: 
     if ( $voToProcess ne "" )
@@ -1730,8 +1711,8 @@ sub parseConf {
 	if(/^timeInterval\s*=\s*\"(.*)\"$/){$configValues{timeInterval}=$1;}
 	if(/^jobPerTimeInterval\s*=\s*\"(.*)\"$/){$configValues{jobPerTimeInterval}=$1;}
 	if(/^ignoreJobsLoggedBefore\s*=\s*\"(.*)\"$/){$configValues{ignoreJobsLoggedBefore}=$1;}
-	if(/^waitFor\s*=\s*\"(.*)\"$/){$configValues{waitFor}=$1;}
-	if(/^maxNumFiles\s*=\s*\"(.*)\"$/){$configValues{maxNumFiles}=$1;}
+	if(/^limiterWaitFor\s*=\s*\"(.*)\"$/){$configValues{limiterWaitFor}=$1;}
+	if(/^maxNumRecords\s*=\s*\"(.*)\"$/){$configValues{maxNumRecords}=$1;}
 	if(/^systemLogLevel\s*=\s*\"(.*)\"$/){$configValues{systemLogLevel}=$1;}
 	if(/^useUrKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{useUrKeyDefFile}=$1;}
 	if(/^urKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{urKeyDefFile}=$1;}
@@ -1752,12 +1733,9 @@ sub parseConf {
 	if(/^useCEHostName\s*=\s*\"(.*)\"$/){$configValues{useCEHostName}=$1;}
 	if(/^systemLogLevel\s*=\s*\"(.*)\"$/){$configValues{systemLogLevel}=$1;}
 	if(/^gipDynamicTmpCEFiles\s*=\s*\"(.*)\"$/){$configValues{gipDynamicTmpCEFiles}=$1;}
-	if(/^maxThreadNumber\s*=\s*\"(.*)\"$/){$configValues{maxThreadNumber}=$1;}
 	if(/^useUrKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{useUrKeyDefFile}=$1;}
 	if(/^urKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{urKeyDefFile}=$1;}
 	if(/^voToProcess\s*=\s*\"(.*)\"$/){$configValues{voToProcess}=$1;}
-	if(/^printAsciiLog\s*=\s*\"(.*)\"$/){$configValues{printAsciiLog}=$1;}
-	if(/^asciiLogFilePath\s*=\s*\"(.*)\"$/){$configValues{asciiLogFilePath}=$1;}
 	if(/^transportLayer\s*=\s*\"(.*)\"$/){$configValues{transportLayer}=$1;}
 	if(/^recordComposer1\s*=\s*\"(.*)\"$/){$configValues{recordComposer1}=$1;}
 	if(/^recordProducer1\s*=\s*\"(.*)\"$/){$configValues{recordProducer1}=$1;}
@@ -3193,6 +3171,13 @@ sub populateKeyDef
 
 
 sub numRecords {
-	#FIXME
-	return 0 
+	my $result = $dbh->selectall_arrayref( " SELECT count(*) FROM commands" );
+    $dbh->commit;
+    my $recordsNumber = 0;
+    if (@$result) {
+	my $buffer = pop (@$result);
+        my $recordsNumber = $$buffer[0];
+        };
+	&printLog (8,"Records in DB:=$recordsNumber");
+	return $recordsNumber; 
 }

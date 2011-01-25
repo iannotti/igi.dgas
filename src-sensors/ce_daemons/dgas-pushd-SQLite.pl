@@ -37,12 +37,9 @@ if ( !defined($dgasLocation) ||  $dgasLocation eq "" )
 
 my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf"; 
 my %configValues = (
-		    qDepth 	      => "2",
-		    qMult	      => "5",
 		    lockFileName      =>  $dgasLocation . "/var/glite-dgas-ce-pushd.lock",
 		    logFileName       =>  $dgasLocation . "/var/log/dgas_ce_pushd.log",
 		    mainPollInterval  => "5",
-		    queuePollInterval =>"25",
 		    systemLogLevel	      => 7,
 		    maxThreadNumber           => "5",
 		    printAsciiLog => "no",
@@ -73,8 +70,6 @@ if(exists $ARGV[0])
 
 
 my $maxThreadNumber = $configValues{maxThreadNumber};
-my $qDept = $configValues{qDepth};
-my $qMult = $configValues{qMult}; 
 my $lockFileName = $configValues{lockFileName};
 my $printAsciiLog = 0;
 my $asciiLogFilePath =$configValues{asciiLogFilePath};
