@@ -43,8 +43,9 @@ jobPerTimeInterval = "10"
 # jobs to process, otherwise start a new mainPollInterval):
 timeInterval = "5"
 
-# garbage clean-up interval in seconds
-queuePollInterval = "600"
+# garbage clean-up interval in seconds. This affects just old, non-SQLite version
+# of the pushd daemon.
+#queuePollInterval = "600"
 
 #siteName parameter can be used to assign to the UsageRecord a tag identifying
 # the site. Example: "INFN-TORINO".
@@ -56,8 +57,8 @@ queuePollInterval = "600"
 
 #Following two parameters limit the maximum nmber of records files that can
 #be written into the "dgasURBox" directory. The "maxNumFiles" variable defines the maximum number of files, the "waitFor" variable the number of seconds the daemon must stop writing new records before checking the number of files again.
-#waitFor = "5"
-#maxNumFiles = "10000"    
+#limiterWaitFor = "5"
+#maxNumRecords = "10000"    
 
 # This defines whether to use the name of the host on which the sensors run
 # as the host name of the CE (in case of local jobs), default is "no":
@@ -230,6 +231,12 @@ queuePollInterval = "50"
 #recordComposer2 = "${DGAS_LOCATION}/libexec/dgas-ogfurComposer"
 #recordProducer2 = "${DGAS_LOCATION}/libexec/dgas-amqProducer"
 
+#This is used by the SQLite version of the daemons. Ehen the record producer
+#exits with one of the specified exit status. the record is considered 
+#succesfully forwarded and can be expuged from the local record DB.
+#successLegacy = "64;65;68;69;70;71;73"
+#successTransport1 = "0"
+#successTransport2 = "0"
  
 
 ##ATM CLIENT SECTION##

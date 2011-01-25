@@ -74,8 +74,8 @@ my %configValues =
      jobPerTimeInterval =>"10",
 
      ignoreJobsLoggedBefore => $DEF_IGNORE_JOBS_LOGGED_BEFORE,
-     maxNumFiles => $DEF_MAXNUMFILES,
-     waitFor => $DEF_WAITFOR,
+     maxNumRecords => $DEF_MAXNUMFILES,
+     limiterWaitFor => $DEF_WAITFOR,
      systemLogLevel => $DEF_SYSTEMLOGLEVEL,
      useUrKeyDefFile => "no",
      urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
@@ -124,8 +124,8 @@ my $collectorBufferFileName = $configValues{collectorBufferFileName};
 my $mainPollInterval = $configValues{mainPollInterval};
 my $timeInterval = $configValues{timeInterval};
 my $jobPerTimeInterval = $configValues{jobPerTimeInterval};
-my $maxNumFiles = $configValues{maxNumFiles};
-my $waitFor = $configValues{waitFor};
+my $maxNumFiles = $configValues{maxNumRecords};
+my $waitFor = $configValues{limiterWaitFor};
 my $systemLogLevel = $configValues{systemLogLevel};
 
 # default: ignore jobs before 2008-01-01 00:00:00 UTC
@@ -427,8 +427,8 @@ sub parseConf {
 	if(/^timeInterval\s*=\s*\"(.*)\"$/){$configValues{timeInterval}=$1;}
 	if(/^jobPerTimeInterval\s*=\s*\"(.*)\"$/){$configValues{jobPerTimeInterval}=$1;}
 	if(/^ignoreJobsLoggedBefore\s*=\s*\"(.*)\"$/){$configValues{ignoreJobsLoggedBefore}=$1;}
-	if(/^waitFor\s*=\s*\"(.*)\"$/){$configValues{waitFor}=$1;}
-	if(/^maxNumFiles\s*=\s*\"(.*)\"$/){$configValues{maxNumFiles}=$1;}
+	if(/^limiterWaitFor\s*=\s*\"(.*)\"$/){$configValues{limiteriWaitFor}=$1;}
+	if(/^maxNumRecords\s*=\s*\"(.*)\"$/){$configValues{maxNumRecords}=$1;}
 	if(/^systemLogLevel\s*=\s*\"(.*)\"$/){$configValues{systemLogLevel}=$1;}
 	if(/^useUrKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{useUrKeyDefFile}=$1;}
 	if(/^urKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{urKeyDefFile}=$1;}
