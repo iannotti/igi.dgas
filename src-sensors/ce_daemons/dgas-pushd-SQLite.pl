@@ -189,12 +189,13 @@ while( $keepGoing )
 			##child
 			if ( $key[$threadNumber] )
 			{
-				&printLog ( 4, "Spawning new process:$threadNumber on record: $key[$threadNumber]" );
+				&printLog ( 5, "Spawning new process:$threadNumber on record: $key[$threadNumber]" );
 				$command[$threadNumber] = &getCommand($key[$threadNumber],$composer[$threadNumber],$args[$threadNumber],$producer[$threadNumber]);    
-				&printLog ( 4, "command:$threadNumber = $command[$threadNumber]" );
+				&printLog ( 8, "command:$threadNumber = $command[$threadNumber]" );
 					&execCommand($command[$threadNumber],
 						$protocol[$threadNumber],
-						$status[$threadNumber]);
+						$status[$threadNumber],
+						$key[$threadNumber]);
 			}
 			exit($status[$threadNumber]);
 		}
@@ -266,17 +267,19 @@ while( $keepGoing )
     }
 for (my $i = 0; $keepGoing && ( $i < $configValues{mainPollInterval} ); $i++)
 {
-	sleep 1;
+	usleep(1000);
 }
 my $elapsed = tv_interval ($t0, [gettimeofday]);
 &printLog ( 4,"ELAPSED:$elapsed");
 my $success_min = ($successRecords/$elapsed)*60;
 my $failure_min = ($failRecords/$elapsed)*60;
 my $total_min = (($failRecords+$successRecords)/$elapsed)*60;
+my $min_krecords = 1000.0/$total_min;
 $success_min = sprintf("%.2f", $success_min);
 $failure_min = sprintf("%.2f", $failure_min);
 $total_min = sprintf("%.2f", $total_min);
-&printLog ( 4,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min");
+$min_krecords = sprintf("%.1f", $min_krecords);
+&printLog ( 4,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min, min/KRec:$min_krecords");
 }
 &Exit();
 
@@ -412,6 +415,7 @@ sub execCommand
 {
 	my $command = $_[0];
 	my $protocol = $_[1];
+	my $key = $_[3];
 	$command =~ s/\\"/"/g;
         my $status = system("$command &>/dev/null");
 		if ($status & 127) 
@@ -422,7 +426,8 @@ sub execCommand
 		{
                 	$status = $? >> 8;
             	}
-	&printLog ( 4, "Executing:$protocol:$command EXIT_STATUS=$status" );
+	&printLog ( 9, "Executing:$protocol, key=$key :$command EXIT_STATUS=$status" );
+	&printLog ( 5, "Executing:$protocol, key=$key, EXIT_STATUS=$status" );
 	if ( $printAsciiLog == 1)
         {
                 print ASCIILOG "$command;$protocol;#STATUS=$status\n";
@@ -435,11 +440,11 @@ sub delCommand
 {
 	my $key = $_[0];
 	my $status = 0;
-	&printLog ( 4, "Deleting:$key" );
+	&printLog ( 5, "Deleting:$key" );
 	eval {
 		my $delString = "DELETE FROM commands WHERE key=$key";
     		my $res = $dbh->selectall_arrayref( $delString );
-		&printLog ( 4, "DELETE FROM commands WHERE key=$key" );
+		&printLog ( 8, "DELETE FROM commands WHERE key=$key" );
 	};
 	if ($@)
 	{
@@ -453,10 +458,10 @@ sub pushToQueue
 	my $key = $_[0];
 	my $commandStatus = $_[1];
 	my $status = 0;
-	&printLog ( 4, "Updating status:$key" );
+	&printLog ( 5, "Updating status:$key" );
 	eval {
     		my $res = $dbh->selectall_arrayref( "UPDATE commands SET commandStatus=$commandStatus-1 WHERE key=$key" );
-		&printLog ( 4, "UPDATE commands SET commandStatus=$commandStatus-1 WHERE key=$key" );
+		&printLog ( 8, "UPDATE commands SET commandStatus=$commandStatus-1 WHERE key=$key" );
 	};
 	if ($@)
 	{

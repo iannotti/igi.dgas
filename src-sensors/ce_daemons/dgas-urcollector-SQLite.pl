@@ -468,7 +468,7 @@ MAIN: while ($keepGoing) {
 	# print "".localtime().": Waiting for new jobs to finish. Sleeping for $mainPollInterval seconds.";
 	my $secsWaited = 0;
 	while ($keepGoing && $secsWaited < $mainPollInterval) {
-	    sleep 1;
+	    usleep(50000);
 	    $secsWaited++;
 	}
     }
@@ -657,7 +657,7 @@ sub parseRecord #WAS parseFile
     # empty these from the previous processed record:
     $UR = "";
     %urGridInfo = ();
-    &printLog ( 6 , "\nTrying to parse Record.");
+    &printLog ( 8 , "Trying to parse Record.");
     my @lines = split (/\n/, $recordString );
     foreach my $line ( @lines )
     {
@@ -698,7 +698,7 @@ sub parseRecord #WAS parseFile
     else 
     {
 	$urGridInfo{lrmsType} = $lrmsType;
-	&printLog ( 7 , "LRMS type: $lrmsType");
+	&printLog ( 9 , "LRMS type: $lrmsType");
     }
 
     &parseUR($lrmsType, $UR);
@@ -724,7 +724,7 @@ sub parseUR {
 sub parseUR_pbs
 {
 	my $URString = $_[0];
-	&printLog ( 8, "Got UR string:\n$URString");
+	&printLog ( 8, "UR string:\n$URString");
 
 	my @URArray = split ( ' ' , $URString );
 	my @tmpArray = split ( ';', $URArray[1] );
@@ -811,7 +811,7 @@ sub parseUR_pbs
 sub parseUR_lsf
 {
         my $URString = $_[0];
-	&printLog ( 8, "Got UR string:\n$URString");
+	&printLog ( 8, "UR string:\n$URString");
 
 	my @new = ();
 #	if (length($URString) <= $MAX_LSF_RECORDLENGTH_FOR_QUOTEWORDS) {
@@ -912,7 +912,7 @@ sub parseUR_sge
 sub parseUR_condor
 {
         my $URString = $_[0];
-        &printLog ("".localtime().": Got UR string:$URString",7);
+        &printLog ("".localtime().": UR string:$URString",7);
 
         my %classadItems = ();
 
@@ -1075,7 +1075,7 @@ sub callAtmClient
     # CE ID:
     if (exists($urGridInfo{CE_ID}) && $urGridInfo{CE_ID} ne "") {
 	$urGridInfo{resGridId} = $urGridInfo{"CE_ID"};
-	&printLog ( 6, "Got CE_ID from UR file: $urGridInfo{resGridId}");
+	&printLog ( 6, "CE_ID from UR file: $urGridInfo{resGridId}");
 
 	# get also ceHostName!
 	if ($urGridInfo{CE_ID} =~ /^([^:]*):.*/) {
@@ -1119,7 +1119,7 @@ sub callAtmClient
     my $userDN = "";
     if (exists($urGridInfo{USER_DN}) && $urGridInfo{USER_DN} ne "") {
 	$userDN = $urGridInfo{USER_DN};
-	&printLog ( 5,  "Got USER_DN from UR file: $userDN");
+	&printLog ( 8,  "USER_DN from UR file: $userDN");
     }
     else {
 	&printLog ( 3, "Couldn't determine USER_DN.");
@@ -1128,7 +1128,7 @@ sub callAtmClient
     # FQAN:
     if (exists($urGridInfo{USER_FQAN}) && $urGridInfo{USER_FQAN} ne "") {
 	$urGridInfo{fqan} = $urGridInfo{USER_FQAN};
-	&printLog ( 5, "Got USER_FQAN from UR file: $urGridInfo{fqan}");
+	&printLog ( 5, "USER_FQAN from UR file: $urGridInfo{fqan}");
     }
     else {
 	&printLog (3,"Couldn't determine USER_FQAN.");
@@ -1141,7 +1141,7 @@ sub callAtmClient
     my $gridJobId = "";
     if (exists($urGridInfo{GRID_JOBID}) && $urGridInfo{GRID_JOBID} ne "") {
 	$gridJobId = $urGridInfo{GRID_JOBID};
-	&printLog (5, "Got GRID_JOBID from UR file: $gridJobId");
+	&printLog (5, "GRID_JOBID from UR file: $gridJobId");
     }
     elsif (exists($urGridInfo{server}) && $urGridInfo{server} ne ""
 	   && exists($urGridInfo{lrmsId}) && $urGridInfo{lrmsId} ne ""
@@ -1365,38 +1365,10 @@ sub callAtmClient
 		else
 		{
 			$querySuccesfull = 0;
-			&printLog ( 4, "$sqlStatement" );
+			&printLog ( 9, "$sqlStatement" );
 		}
 		last if ( $queryCounter >= 10 );
 	} 
-	my $continue = 0;
-	my $i = 0;
-	while ( $continue != 1 )
-	{
-        	my $status = system("$sqliteCmd");
-		if ( $status != 0 )
-		{
-			$i += 1;
-			if ( $i >= 10 )
-			{ 
-				$continue = 1;
-        			&printLog ( 4, "Can't write record" );
-				return -1;
-			}
-			else
-			{
-        			&printLog ( 4, "Retrying in: $i" );
-				for ( my $j=0; $j < $i; $j++ )
-				{
-					sleep 1;
-				}
-			}
-		}
-		else
-		{
-			$continue = 1;
-		}
-	}
     }
 
     $exe = "";
@@ -1409,9 +1381,30 @@ sub callAtmClient
  	my $arguments = $cmd;
         $arguments =~ s/\"/\\\"/g;
         my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'transport2','$recordComposer2','$arguments','$recordProducer2','$urGridInfo{start}', '$urGridInfo{lrmsId}','')";
-        my $sqliteCmd = "/usr/bin/sqlite3 $configValues{dgasDB} \"$sqlStatement\"";
-        &printLog ( 4, "$sqliteCmd" );
-        my $status = system("$sqliteCmd");	
+    	my $querySuccesfull = 1;
+	my $queryCounter = 0;
+	while ($keepGoing && $querySuccesfull)
+	{
+		eval {
+        		my $res = $dbh->do( $sqlStatement );
+		};
+		if ( $@ )
+		{
+			&printLog ( 3, "WARN: ($queryCounter) $@" );
+			print "Retrying in $queryCounter\n";
+			for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+			{
+				sleep $i;
+			}
+			$queryCounter++;
+		}
+		else
+		{
+			$querySuccesfull = 0;
+			&printLog ( 9, "$sqlStatement" );
+		}
+		last if ( $queryCounter >= 10 );
+	} 
     }
 
     $exe = "";
@@ -1422,9 +1415,30 @@ sub callAtmClient
 		my $arguments = $cmd;
         	$arguments =~ s/\"/\\\"/g;
         my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'legacy','$legacyCmd','$arguments','','$urGridInfo{start}', '$urGridInfo{LRMSID}','')";
-        my $sqliteCmd = "/usr/bin/sqlite3 $configValues{dgasDB} \"$sqlStatement\"";
-        &printLog ( 4, "$sqliteCmd" );
-        my $status = system("$sqliteCmd");
+    	my $querySuccesfull = 1;
+	my $queryCounter = 0;
+	while ($keepGoing && $querySuccesfull)
+	{
+		eval {
+        		my $res = $dbh->do( $sqlStatement );
+		};
+		if ( $@ )
+		{
+			&printLog ( 3, "WARN: ($queryCounter) $@" );
+			print "Retrying in $queryCounter\n";
+			for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+			{
+				sleep $i;
+			}
+			$queryCounter++;
+		}
+		else
+		{
+			$querySuccesfull = 0;
+			&printLog ( 9, "$sqlStatement" );
+		}
+		last if ( $queryCounter >= 10 );
+	} 
     }
 }
 
@@ -2222,8 +2236,10 @@ sub processLrmsLogFile {
 				}
 	    			my $elapsed = tv_interval ($t1, [gettimeofday]);
 	    			my $jobs_min = ($mainRecordsCounter/$elapsed)*60;
+	    			my $min_krecords = 1000.0/$jobs_min; 
 				$jobs_min = sprintf("%.2f", $jobs_min);
-	    			&printLog(4, "Processed: $mainRecordsCounter,Elapsed: $elapsed,Records/min:$jobs_min");
+				$min_krecords = sprintf("%.1f", $min_krecords);
+	    			&printLog(4, "Processed: $mainRecordsCounter,Elapsed: $elapsed,Records/min:$jobs_min,min/KRec: $min_krecords");
 				if ( $mainRecordsCounter >= 1000 )
 				{
 					$mainRecordsCounter = 0;
@@ -2695,7 +2711,7 @@ sub parseCeUserMapLog {
 			# the timestamp from the CE log is within a day
 			# from the LRMS creation timestamp, accept it!
 
-			my $logBuff = "Accepting timestamp from CE log!\nParsing entry: ";
+			my $logBuff = "Accepting timestamp from CE log! Parsing entry: ";
 
 			# example: "timestamp=2006-03-08 12:45:01" "userDN=/C=IT/O=INFN/OU=Personal Certificate/L=Padova/CN=Alessio Gianelle/Email=alessio.gianelle@pd.infn.it" "userFQAN=/atlas/Role=NULL/Capability=NULL" "userFQAN=/atlas/production/Role=NULL/Capability=NULL" "ceID=grid012.ct.infn.it:2119/jobmanager-lcglsf-infinite" "jobID=https://scientific.civ.zcu.cz:9000/-QcMu-Pfv4qHlp2dFvaj9w" "lrmsID=3639.grid012.ct.infn.it"
 
@@ -2732,7 +2748,7 @@ sub parseCeUserMapLog {
 				}
 			    }
 			}
-			&printLog (6,"$logBuff");
+			&printLog (7,"$logBuff");
 
 			# check that we have the minimum info:
 			if ($ceID eq "") {
