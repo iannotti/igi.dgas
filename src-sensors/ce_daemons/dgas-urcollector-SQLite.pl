@@ -468,7 +468,7 @@ MAIN: while ($keepGoing) {
 	# print "".localtime().": Waiting for new jobs to finish. Sleeping for $mainPollInterval seconds.";
 	my $secsWaited = 0;
 	while ($keepGoing && $secsWaited < $mainPollInterval) {
-	    usleep(100000);
+	    usleep(10000);
 	    $secsWaited++;
 	}
     }
