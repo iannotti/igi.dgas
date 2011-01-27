@@ -468,7 +468,7 @@ MAIN: while ($keepGoing) {
 	# print "".localtime().": Waiting for new jobs to finish. Sleeping for $mainPollInterval seconds.";
 	my $secsWaited = 0;
 	while ($keepGoing && $secsWaited < $mainPollInterval) {
-	    usleep(50000);
+	    usleep(100000);
 	    $secsWaited++;
 	}
     }
@@ -1779,6 +1779,17 @@ sub delLock {
     return $status;
 }
 
+sub existsLock
+{
+    my $lockName = $_[0];
+    if ( open(IN,  "< $lockName") != 0 )
+    {
+        close(IN);
+        return 0;
+    }
+    return 1;
+}
+
 ##--------> routines for job processing buffer <---------##
 sub putBuffer {
     # arguments are: 0 = buffer name
@@ -2236,7 +2247,11 @@ sub processLrmsLogFile {
 				}
 	    			my $elapsed = tv_interval ($t1, [gettimeofday]);
 	    			my $jobs_min = ($mainRecordsCounter/$elapsed)*60;
-	    			my $min_krecords = 1000.0/$jobs_min; 
+	    			my $min_krecords = 0.0; 
+	    			if ( $jobs_min > 0 )
+				{	
+					$min_krecords = 1000.0/$jobs_min;
+				} 
 				$jobs_min = sprintf("%.2f", $jobs_min);
 				$min_krecords = sprintf("%.1f", $min_krecords);
 	    			&printLog(4, "Processed: $mainRecordsCounter,Elapsed: $elapsed,Records/min:$jobs_min,min/KRec: $min_krecords");

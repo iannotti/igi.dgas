@@ -106,17 +106,17 @@ else
 my @successLegacy;
 my @success1;
 my @success2;
-if ( $configValues{successLegacy} )
+if ( $configValues{successLegacy} ne "" )
 {
-        @success1 = split(';',$configValues{successLegacy});
+        @successLegacy = split(';',$configValues{successLegacy});
 }
 
-if ( $configValues{successTransport1} )
+if ( $configValues{successTransport1} ne "" )
 {
-        @success1 = split(';',$configValues{successTransport1});
+       	@success1 = split(';',$configValues{successTransport1});
 }
 
-if ( $configValues{successTransport2} )
+if ( $configValues{successTransport2} ne "" )
 {
         @success2 = split(';',$configValues{successTransport2});
 }
@@ -135,7 +135,8 @@ while ($keepGoing )
 } 
 
 
-my $limit = ($configValues{maxThreadNumber})*3; 
+my $limit = ($configValues{maxThreadNumber})*3;
+#my $counter =0; 
 while( $keepGoing )
 {
     my $t0 = [gettimeofday];
@@ -143,7 +144,7 @@ while( $keepGoing )
     my $failRecords = 0;       
     # first get all interesting keys from dgasDB.commands:
 	#FIXME Populate @commandKeys with DB query
-    my $commandKeys = $dbh->selectall_arrayref( " SELECT key,transport,composer,arguments,producer,commandStatus FROM commands ORDER by commandStatus,key DESC limit $limit" );
+    my $commandKeys = $dbh->selectall_arrayref( " SELECT key,transport,composer,arguments,producer,commandStatus FROM commands ORDER by key DESC limit $limit" );
     $dbh->commit;
     my $numOfRecords = 0;
     if (@$commandKeys) { 
@@ -189,7 +190,7 @@ while( $keepGoing )
 			##child
 			if ( $key[$threadNumber] )
 			{
-				&printLog ( 5, "Spawning new process:$threadNumber on record: $key[$threadNumber]" );
+				&printLog ( 8, "Spawning new process:$threadNumber on record: $key[$threadNumber]" );
 				$command[$threadNumber] = &getCommand($key[$threadNumber],$composer[$threadNumber],$args[$threadNumber],$producer[$threadNumber]);    
 				&printLog ( 8, "command:$threadNumber = $command[$threadNumber]" );
 					&execCommand($command[$threadNumber],
@@ -207,6 +208,7 @@ while( $keepGoing )
 	}
 	foreach (@childs)
 	{
+		#$counter++;
 		my $numChilds = @childs;
 		&printLog ( 7, "$numChilds threads");
 		my $result = 0;
@@ -221,14 +223,14 @@ while( $keepGoing )
             	}
 		&printLog (9,"thread pid:$_,ThreadNumber:$commandThreadNumber[$_],status:$result");
 		my $threadNumber = $commandThreadNumber[$_];
-		my $isSuccessfull = "1";
+		my $isSuccessfull = 1;
 		if ( $protocol[$threadNumber] eq "legacy" )
 		{
 			foreach my $successValue ( @successLegacy )
 			{
 				if ( $result == $successValue )
 				{
-					$isSuccessfull = "0";
+					$isSuccessfull = 0;
 				}
 			}
 		}
@@ -238,7 +240,7 @@ while( $keepGoing )
 			{
 				if ( $result == $successValue )
 				{
-					$isSuccessfull = "0";
+					$isSuccessfull = 0;
 				}
 			}
 		}
@@ -248,7 +250,7 @@ while( $keepGoing )
 			{
 				if ( $result == $successValue )
 				{
-					$isSuccessfull = "0";
+					$isSuccessfull = 0;
 				}
 			}
 		}
@@ -267,14 +269,18 @@ while( $keepGoing )
     }
 for (my $i = 0; $keepGoing && ( $i < $configValues{mainPollInterval} ); $i++)
 {
-	usleep(1000);
+	usleep(10000);
 }
 my $elapsed = tv_interval ($t0, [gettimeofday]);
 &printLog ( 4,"ELAPSED:$elapsed");
 my $success_min = ($successRecords/$elapsed)*60;
 my $failure_min = ($failRecords/$elapsed)*60;
 my $total_min = (($failRecords+$successRecords)/$elapsed)*60;
-my $min_krecords = 1000.0/$total_min;
+my $min_krecords = 0.0;
+if ( $total_min > 0 )
+{
+	$min_krecords = 1000.0/$total_min;
+}
 $success_min = sprintf("%.2f", $success_min);
 $failure_min = sprintf("%.2f", $failure_min);
 $total_min = sprintf("%.2f", $total_min);
@@ -441,14 +447,31 @@ sub delCommand
 	my $key = $_[0];
 	my $status = 0;
 	&printLog ( 5, "Deleting:$key" );
-	eval {
-		my $delString = "DELETE FROM commands WHERE key=$key";
-    		my $res = $dbh->selectall_arrayref( $delString );
-		&printLog ( 8, "DELETE FROM commands WHERE key=$key" );
-	};
-	if ($@)
-	{
-		&printLog ( 4, "Error:$@" );
+	my $delString = "DELETE FROM commands WHERE key=$key";
+	&printLog ( 8, "DELETE FROM commands WHERE key=$key" );
+	my $querySuccesfull = 1;
+        my $queryCounter = 0;
+        while ($keepGoing && $querySuccesfull)
+        {
+		eval {
+                        my $res = $dbh->do( $delString );
+                };
+                if ( $@ )
+                {
+                        &printLog ( 3, "WARN: ($queryCounter) $@" );
+                        print "Retrying in $queryCounter\n";
+                        for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+                        {
+                                sleep $i;
+                        }
+                        $queryCounter++;
+                }
+                else
+                {
+                        $querySuccesfull = 0;
+                        &printLog ( 9, "$delString" );
+                }
+                last if ( $queryCounter >= 10 );
 	}
 	return $status;
 }
@@ -480,6 +503,17 @@ sub putLock
     print OUT  $$;    ## writes pid   
     close(OUT);
     return 0;
+}
+
+sub existsLock
+{
+    my $lockName = $_[0];
+    if ( open(IN,  "< $lockName") != 0 )
+    {
+    	close(IN);
+	return 0;
+    }
+    return 1;
 }
 
 sub delLock
