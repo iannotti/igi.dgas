@@ -67,7 +67,6 @@ my $useCElog = 1;   # default is use the CE's map: grid job <-> local job
 my $processGridJobs = 1; # default, changed through jobsToProcess
 my $processLocalJobs = 1; # default, changed through jobsToProcess
 
-
 my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf"; 
 my %configValues = (
 		    siteName	      =>"",
@@ -165,15 +164,12 @@ if ( $ceCertificateSubject =~ /subject=\s(.*)/)
 
 my $havePoolAccounts = 1;  # default is "yes"!
 
-if ($configValues{havePoolAccounts} =~ /^yes$/i) {
-    &printLog ( 5, "Considering pool accounts for determining the VOs of out-of-band jobs.");
-}
-elsif ($configValues{havePoolAccounts} =~ /^no$/i) {
+if ($configValues{havePoolAccounts} =~ /^no$/i) {
     $havePoolAccounts = 0;
     &printLog ( 5, "NOT considering pool accounts determining the VOs of out-of-band jobs.");
 }
 else {
-    &printLog ( 3, "Warning: Unknown argument for havePoolAccounts in conf file.Using default: considering pool accounts determining the VOs of out-of-band jobs.");
+    &printLog ( 3, "Considering pool accounts determining the VOs of out-of-band jobs.");
 }
 
 my $voToProcess = $configValues{voToProcess};
@@ -376,6 +372,26 @@ if (!$have_less) {
 }
 
 # first get info on last job processed:
+#my $startJob = "";
+#my $startTimestamp = 0;
+#my $lastJob = "";
+#my $lastTimestamp = 0;
+#my $tmpBuffTstamp = 0;
+#if (&readBuffer($collectorBufferFileName, $startJob, $startTimestamp) != 0) {
+#    # we have no regular buffer containing the start Job
+#    # look for a temporary containing the last jobt + temporary timestamp!
+#    if (&readTmpBuffer($collectorBufferFileName, $lastJob, $lastTimestamp,
+#		       $tmpBuffTstamp) != 0) {
+#	# this is the very first run, not even a temporary buffer is written:
+#	$tmpBuffTstamp = -1;  # will later be set to first log event timestamp
+#	                     # encountered!
+#    }
+#}
+
+my $mainRecordsCounter = 0;
+MAIN: while ($keepGoing) {
+
+# first get info on last job processed:
 my $startJob = "";
 my $startTimestamp = 0;
 my $lastJob = "";
@@ -392,8 +408,6 @@ if (&readBuffer($collectorBufferFileName, $startJob, $startTimestamp) != 0) {
     }
 }
 
-my $mainRecordsCounter = 0;
-MAIN: while ($keepGoing) {
 
     if ( &numRecords() > $maxNumRecords )
     {
@@ -404,9 +418,6 @@ MAIN: while ($keepGoing) {
 	    $secsWaited++;
 	}
 	next MAIN;
-    }
-    if ($onlyOneIteration) {
-	print "".localtime().": Not run as a daemon. Executing a single iteration!";
     }
 
     # see whether the GLUE attributes are available and have changed
@@ -1824,7 +1835,7 @@ sub readBuffer {
 		chomp($tstamp); # remove eventual newline
 	}	
 	close(IN);
-	&printLog (5, "Reading buffer $buffname. First job to analyse: id=$line; log timestamp=$tstamp");
+	&printLog (8, "buffer: $buffname. First job: id=$line; timestamp=$tstamp");
 	$_[1] = $line;
 	$_[2] = $tstamp;
 	return 0;
@@ -1839,7 +1850,7 @@ sub putTmpBuffer {
     open(OUT, "> $buffName") || return 2;
     print OUT  "$_[1]:$_[2]:$_[3]";
     close(OUT);
-    &printLog (6,"Writing temporary buffer $buffName with '$_[1]:$_[2]:$_[3]'");
+    &printLog (6,"Writing tmp buffer $buffName with '$_[1]:$_[2]:$_[3]'");
     return 0;
 }
 
@@ -1927,7 +1938,7 @@ sub processLrmsLogs {
 	while ($keepGoing && $continueProcessing && @sortedLrmsLogFiles) {
 
 	    my $thisLogFile = shift (@sortedLrmsLogFiles);
-	    &printLog ( 5,"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}");
+	    &printLog ( 8,"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}");
 
 	    # if this is not the first (newest) log file we read in this
 	    # iteration ($currLogTimestamp != 0), make sure we will read only
@@ -2096,7 +2107,7 @@ sub processLrmsLogFile {
 	    # write this only if we have processed at least one job!
 	    # Otherwise it would be written on all empty iterations.
 	    if ( ($_[4] ne $startJob) || ($_[5] ne $startTimestamp)) {
-		&printLog (5,"Found already processed $targetJobId with log event time $lrmsEventTimeString (=$lrmsEventTimestamp) in log! Done with iteration!");
+		&printLog (7,"Found processed $targetJobId,event time $lrmsEventTimeString (=$lrmsEventTimestamp).End iteration!");
 	    }
 	    close LRMSLOGFILE;
 	    $_[10] = $allProcessed = 1;
@@ -2117,7 +2128,7 @@ sub processLrmsLogFile {
 		# this is the very first run, we don't even have a temporary 
 		# buffer; make sure we start writing temporary buffers until
 		# the first iteration is completed:
-		&printLog (7,"Very first record. Writing temp buffer, backward processing until completing first iteration.");
+		&printLog (7,"Very first record. Writing tmp buffer, backward processing until completing first iteration.");
 		$tmpBuffTstamp = $lrmsEventTimestamp;
 	    
 	    }
@@ -2136,11 +2147,11 @@ sub processLrmsLogFile {
 		$firstJobId = 0;
 		$_[1] = 0; # $newestF; next file (if any) isn't the newest
 
-		&printLog (6, "Most recent job to process: $targetJobId; LRMS log event time: $lrmsEventTimeString (=$lrmsEventTimestamp)");
+		&printLog (6, "Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)");
 	    }
 
 	    if ($tmpBuffTstamp > 0 && $lrmsEventTimestamp > $tmpBuffTstamp) {
-		&printLog (6,"Skipping $targetJobId (event log timestamp $lrmsEventTimestamp is after $tmpBuffTstamp in temporary buffer)");
+		&printLog (6,"Skipping $targetJobId (event timestamp $lrmsEventTimestamp is after $tmpBuffTstamp in temporary buffer)");
 		next;
 	    }
 
@@ -2163,11 +2174,11 @@ sub processLrmsLogFile {
             $jobsThisStep++;
 
 	    if (!$processLocalJobs && $gianduiottoHeader =~ /JOB_TYPE=local/) {
-		&printLog (7,"Skipping this local job (jobsToProcess = \"$jobsToProcess\")!");
+		&printLog (7,"Skipping local job (jobsToProcess = \"$jobsToProcess\")!");
 		next;
 	    }
 	    elsif (!$processGridJobs && $gianduiottoHeader =~ /JOB_TYPE=grid/) {
-		&printLog (7,"Skipping this grid job (jobsToProcess = \"$jobsToProcess\")!");
+		&printLog (7,"Skipping grid job (jobsToProcess = \"$jobsToProcess\")!");
 		next;
 	    }
 
@@ -2319,11 +2330,11 @@ sub processCondorJobClassad {
     my $retVal = 0; # ok
 
     if ($endTimestamp == 0) {
-        &printLog (2,"Error: Cannot process job, because classad didn't contain a CompletionDate! Stopping iteration!\n");
+        &printLog (2,"Error: Cannot process job, because classad don't contain a CompletionDate! Stopping iteration!\n");
         $retVal = 1;
     }
     elsif ($startTimestamp == 0) {
-        &printLog (2,"Error: Cannot process job, because classad didn't contain a JobStartDate! Stopping iteration!\n");
+        &printLog (2,"Error: Cannot process job, because classad don't contain a JobStartDate! Stopping iteration!\n");
         $retVal = 2;
     }
     else {
@@ -2340,11 +2351,11 @@ sub processCondorJobClassad {
         }
 
         if (!$processLocalJobs && $gianduiottoHeader =~ /JOB_TYPE=local/) {
-            &printLog (7,"Skipping this local job (jobsToProcess = \"$jobsToProcess\")!\n");
+            &printLog (7,"Skipping local job (jobsToProcess = \"$jobsToProcess\")!\n");
             return $retVal;
         }
         elsif (!$processGridJobs && $gianduiottoHeader =~ /JOB_TYPE=grid/) {
-            &printLog (7,"Skipping this grid job (jobsToProcess = \"$jobsToProcess\")!\n");
+            &printLog (7,"Skipping grid job (jobsToProcess = \"$jobsToProcess\")!\n");
             return $retVal;
         }
 
@@ -2363,7 +2374,7 @@ sub processCondorJobClassad {
 
         if (&produceRecord($gianduiottoHeader, $jhString."\n") != 0) 
 	{
-            &printLog (2,"".localtime().": Error: could not create for job $targetJobId with CompletionDate: $endTimestamp (".localtime($endTimestamp).")!\n");
+            &printLog (2,"".localtime().": Error: can't create Record for job $targetJobId with CompletionDate: $endTimestamp (".localtime($endTimestamp).")!\n");
             # EXIT BAD!!! and don't update the buffer!
             close(JOBHIST);
             &error("Stopping urCollector due to unrecoverable error!\n");
