@@ -199,12 +199,12 @@ int getJobId(string &uniqueChecksum, string &jobIdResult,
 			{
 				jobIdResult = result.getItem(0,0);	
 				accountingProcedureResult = result.getItem(0,1);
-        			hlr_log("query OK >0",&logStream,7);
+        			hlr_log("Found matching entries",&logStream,7);
 				return 0;
 			}	
 			else
 			{
-        			hlr_log("QUERY not OK <=0",&logStream,7);
+        			hlr_log("Don't found matching entries",&logStream,7);
 				return 1;
 			}
 		}

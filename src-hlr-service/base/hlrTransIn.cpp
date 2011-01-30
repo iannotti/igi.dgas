@@ -1,4 +1,4 @@
-// $Id: hlrTransIn.cpp,v 1.1.2.1.4.3 2010/12/13 10:18:36 aguarise Exp $
+// $Id: hlrTransIn.cpp,v 1.1.2.1.4.4 2011/01/30 13:01:27 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -18,9 +18,12 @@
 #include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/hlr-service/base/hlrTransIn.h"
+#include "glite/dgas/common/base/libdgas_log.h"
 
 #define TOO_MANY_ROWS 1
 #define NO_RECORD 2
+
+extern ofstream logStream;
 
 extern const char * hlr_sql_server;
 extern const char * hlr_sql_user;
@@ -269,6 +272,8 @@ bool hlrTransIn::exists()
 		if ( uniqueChecksum != "" ) queryStr += "AND uniqueChecksum='" + uniqueChecksum + "'";
 		if ( accountingProcedure != "" ) queryStr += "AND accountingProcedure='" + accountingProcedure + "'";
 		dbResult result = hlrDb.query(queryStr);
+		string logBuff = "TransIn:exists(), Query:" + queryStr;
+		 hlr_log (logBuff, &logStream,3);
 		if ( hlrDb.errNo == 0)
 		{
 			if ( result.numRows() == 1 )
