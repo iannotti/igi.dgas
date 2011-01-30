@@ -178,10 +178,10 @@ void* thrLoop(void *param)
 	if (goOn && (tstruct->a) != NULL )
 	{
 		logString = "Authenticating Agent:" + tNString;
-		hlr_log( logString, &logStream,6);
+		hlr_log( logString, &logStream,8);
 		connInfo connectionInfo;
 	 	logString ="in "+ tNString+ " Authenticating connection received from : " +(tstruct->a)->PeerName();
-		hlr_log( logString, &logStream,4);
+		hlr_log( logString, &logStream,7);
 		//pthread_mutex_lock (&auth_mutex);
 		if ( tstruct->a ) (tstruct->a)-> SetTimeout( defConnTimeOut );
 		if ( tstruct->a ) (tstruct->s)->set_auth_timeout( 10*defConnTimeOut );
@@ -202,7 +202,7 @@ void* thrLoop(void *param)
 			#endif
 			//pthread_mutex_unlock (&auth_mutex);
 			logString = "Authenticated Agent:" + tNString;
-			hlr_log( logString, &logStream,4);
+			hlr_log( logString, &logStream,8);
 		}
 		else
 	 	{	
@@ -220,9 +220,9 @@ void* thrLoop(void *param)
       		}
 	 	logString = "in "+ tNString+ " Connection received from : " +connectionInfo.hostName + " ";
 		logString += "with cert subject: " + connectionInfo.contactString;
-		hlr_log (logString, &logStream, 4);
+		hlr_log (logString, &logStream, 5);
 		logString = "Begin I/O in thread:" + tNString;
-		hlr_log (logString, &logStream, 6);	
+		hlr_log (logString, &logStream, 8);	
 		bool receiveOk = true;
 			if ( (tstruct->a) != NULL )
 			{
@@ -234,7 +234,7 @@ void* thrLoop(void *param)
 					if ( (tstruct->a) != NULL )
 					{
 						logString = "In thread "+ tNString +" killing the agent";
-						hlr_log (logString, &logStream, 6);
+						hlr_log (logString, &logStream, 8);
 				
 						if ( (tstruct->a) != NULL )
 						{	
@@ -243,7 +243,7 @@ void* thrLoop(void *param)
 						}
 					}
 					logString = "In thread "+ tNString +" killed, continue...";
-					hlr_log (logString, &logStream, 6);
+					hlr_log (logString, &logStream, 8);
 					authErrors++;
 					activeThreads--;
 					pthread_exit((void *) 0);
@@ -251,13 +251,13 @@ void* thrLoop(void *param)
 			}
 			if ( !receiveOk )
 			{
-				logString += "Error receiving message from client.\n";
+				logString += "Error receiving message from client.";
 			}
 			else
 			{
 		
 				logString = "message received:"+tNString;
-				logString += xml_input + "\n";
+				logString += xml_input;
 				hlr_log (logString, &logStream, 7);
 				int res =-1;
 				res = parse_xml (xml_input, connectionInfo, lStatus ,&xml_output);
@@ -267,7 +267,7 @@ void* thrLoop(void *param)
 				{
 					logString = "Sending Message in thread:" + tNString;
 					logString += xml_output;
-					hlr_log (logString, &logStream, 6);
+					hlr_log (logString, &logStream, 8);
 					if ( ((tstruct->a)) != NULL )
 					{
 						(tstruct->a)-> SetSndTimeout( defConnTimeOut );
@@ -285,17 +285,17 @@ void* thrLoop(void *param)
 				}
 			}
 		logString = "Killing:" + tNString;
-		hlr_log (logString, &logStream, 7);
+		hlr_log (logString, &logStream, 8);
 		if ( ( (tstruct->a) != NULL ) )
 		{
 			(tstruct->s)->KillAgent((tstruct->a));
 			tstruct->a = NULL;
 			logString = "Killed:" + tNString;
-			hlr_log (logString, &logStream, 6);
+			hlr_log (logString, &logStream, 8);
 		}
 	}
   logString = "Exiting from thread:" + int2string(tstruct->tN);
-  hlr_log (logString, &logStream, 6);
+  hlr_log (logString, &logStream, 7);
   activeThreads--;
   usleep(threadUsecDelay); 
   pthread_exit((void *) 0);

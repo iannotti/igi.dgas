@@ -424,7 +424,7 @@ int main ( int argc, char * argv[] )
 			}
 			theAgent[i] = NULL;
 			logString = "Listening for incoming connections,";
-			hlr_log(logString,&logStream,4);
+			hlr_log(logString,&logStream,7);
 			//pthread_mutex_lock (&listen_mutex);
 			logString = "Creating agent:" + int2string(i);
 			hlr_log(logString,&logStream,8);
