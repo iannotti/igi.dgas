@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.3 2011/01/30 16:56:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -616,15 +616,15 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 		//Resubmission check below
 		if ( possibleResubmission && t.exists() && success )//success still necessary
 		{
-			 hlr_log ("ATMEngine: Warning: record dgJobId already present, possible resubmission.", &logStream,3);
-			if ( t.get() != 0 )
-			{
-				hlr_log ("ATMEngine: Error retrieving record", &logStream,1);
-				code = atoi(ATM_E_DUPLICATED_C);//72
-				success = false;
-			}
-			else
-			{	
+			 hlr_log ("ATMEngine: Warning: record dgJobId already present, resubmission.", &logStream,3);
+			//if ( t.get() != 0 )
+			//{
+			//	hlr_log ("ATMEngine: Error retrieving record", &logStream,1);
+			//	code = atoi(ATM_E_DUPLICATED_C);//72
+			//	success = false;
+			//}
+			//else
+			//{	
 				db hlrDb ( hlr_sql_server,
 					hlr_sql_user,
 					hlr_sql_password,
@@ -676,7 +676,7 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 					hlr_log ("ATM Engine: Error opening DB!", &logStream,1);
 					code = atoi(E_NO_DB);
 				}
-			}
+			//}
 		}
 		//end of resubmission check.
 	}
