@@ -479,7 +479,7 @@ if (&readBuffer($collectorBufferFileName, $startJob, $startTimestamp) != 0) {
 	# print "".localtime().": Waiting for new jobs to finish. Sleeping for $mainPollInterval seconds.";
 	my $secsWaited = 0;
 	while ($keepGoing && $secsWaited < $mainPollInterval) {
-	    usleep(10000);
+	    usleep(100000);
 	    $secsWaited++;
 	}
     }

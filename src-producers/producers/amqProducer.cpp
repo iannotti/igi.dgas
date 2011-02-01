@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.4 2010/12/23 12:19:53 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.5 2011/02/01 14:38:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -181,6 +181,7 @@ public:
                 connection->start();
             } catch( CMSException& e ) {
                 e.printStackTrace();
+		returnCode = 13;
                 throw e;
             }
 
@@ -221,6 +222,7 @@ public:
             }
 
         }catch ( CMSException& e ) {
+	    if ( returnCode == 0 ) returnCode = 13;
             e.printStackTrace();
         }
     }
@@ -401,7 +403,7 @@ endl;
 		output_message += textLine += "\n";
 	}	
 	std::string brokerURI =
-		"failover:("+ amqBrokerUri +
+		""+ amqBrokerUri +
 		//"failover:(tcp://hlr-test-29.to.infn.it:61616"
 		"?" + amqOptions 
 		//"wireFormat=openwire"
@@ -409,10 +411,11 @@ endl;
 		//"&transport.commandTracingEnabled=true"
 		//"&transport.tcpTracingEnabled=true"
 		//"&wireFormat.tightEncodingEnabled=true"
-		+ ")";
+		+ "";
 	std::string destURI = amqTopic;
 	bool useTopics = false;
 	unsigned int numMessages = 1;
+	
 	SimpleProducer producer( brokerURI, numMessages, destURI, useTopics );
 	producer.run(output_message);
 	producer.close();
