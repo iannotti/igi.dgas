@@ -1391,7 +1391,7 @@ sub callAtmClient
 	&printLog ( 8, "Writing: $exe");
  	my $arguments = $cmd;
         $arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'transport2','$recordComposer2','$arguments','$recordProducer2','$urGridInfo{start}', '$urGridInfo{lrmsId}','')";
+        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'transport2','$recordComposer2','$arguments','$recordProducer2','$urGridInfo{start}', '$urGridInfo{lrmsId}','0')";
     	my $querySuccesfull = 1;
 	my $queryCounter = 0;
 	while ($keepGoing && $querySuccesfull)

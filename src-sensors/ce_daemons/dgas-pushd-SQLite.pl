@@ -144,7 +144,7 @@ while( $keepGoing )
     my $failRecords = 0;       
     # first get all interesting keys from dgasDB.commands:
 	#FIXME Populate @commandKeys with DB query
-    my $commandKeys = $dbh->selectall_arrayref( " SELECT key,transport,composer,arguments,producer,commandStatus FROM commands ORDER by key DESC limit $limit" );
+    my $commandKeys = $dbh->selectall_arrayref( " SELECT key,transport,composer,arguments,producer,commandStatus FROM commands ORDER by commandStatus desc limit $limit" );
     $dbh->commit;
     my $numOfRecords = 0;
     if (@$commandKeys) { 
@@ -423,15 +423,28 @@ sub execCommand
 	my $protocol = $_[1];
 	my $key = $_[3];
 	$command =~ s/\\"/"/g;
-        my $status = system("$command &>/dev/null");
-		if ($status & 127) 
-		{
-                	$status = ($? & 127);
-            	}
-            	else 
-		{
-                	$status = $? >> 8;
-            	}
+	my $status = -1;
+	eval {
+		local $SIG{ALRM} = sub { die "alarm\n" }; # NB: \n required
+		alarm 10;
+        	$status = system("$command &>/dev/null");
+		alarm 0;
+	};
+	if ( $@ )
+	{
+		&printLog ( 4, "Timeout, $protocol, key=:$key" );
+		$status = -2;
+		$_[2] = $status;
+        	return $status;
+	}
+	if ($status & 127) 
+	{
+               	$status = ($? & 127);
+        } 
+        else 
+	{
+               	$status = $? >> 8;
+        }
 	&printLog ( 9, "Executing:$protocol, key=$key :$command EXIT_STATUS=$status" );
 	&printLog ( 5, "Executing:$protocol, key=$key, EXIT_STATUS=$status" );
 	if ( $printAsciiLog == 1)
