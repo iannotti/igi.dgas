@@ -47,7 +47,7 @@ eval MANAGER_LOCK=`grep managerLockFileName $HLRD_CONF | grep "^#" -v  | cut -d'
 [ -d $DGAS_VAR_DIR/log ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log
 
 # Some functions to make the below more readable
-HLR_CONSUMER=$PREFIX/libexec/glite_dgas_AMQConsumer
+HLR_CONSUMER=$PREFIX/libexec/glite-dgas-AMQConsumer
 #eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 CONSUMER_OPTIONS="-c $HLRD_CONF"
 
@@ -58,7 +58,7 @@ else
 	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-hlr-amq-consumer"
 fi
 
-REC_MGR=$PREFIX/libexec/glite_dgas_AMQRecordManager
+REC_MGR=$PREFIX/libexec/glite-dgas-legacyRecordManager
 REC_MGR_OPTIONS="-c $HLRD_CONF"
 
 startMain()
