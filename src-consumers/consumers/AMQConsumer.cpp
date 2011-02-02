@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.2 2010/12/17 09:35:44 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.3 2011/02/02 15:49:48 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -26,6 +26,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <sys/stat.h>
 
 #include <decaf/lang/Thread.h>
 #include <decaf/lang/Runnable.h>
@@ -180,7 +181,7 @@ public:
 	// Called from the consumer since this class is a registered MessageListener.
 	virtual void onMessage( const Message* message )
 	{
-		static int count = 0;
+		static long int count = 0;
 		try
 		{
 			count++;
@@ -200,7 +201,6 @@ public:
 				message->acknowledge();
 			}
 			
-			//printf( "Message #%d, dir:%s, Received: %s\n", count, dir.c_str(), text.c_str() );
 			std::ofstream fileS;
 			string fname = dir + "/"+ fileName(int2string(count));
 			fileS.open( fname.c_str() , ios::app);
@@ -422,10 +422,25 @@ int AMQConsumer (consumerParms& parms)
 		}
 	}
 
+	//check if parms.recordDir exists. Create it otherwise.
+	struct stat st;
+	if(stat((parms.recordsDir).c_str(),&st) != 0)
+	{
+		//Does not exists. create it. //Caveat: parent dir MUST
+		//aleady exists!
+		if ( (mkdir ((parms.recordsDir).c_str(), 0777 )) != 0)
+		{
+			string logBuff = "Error creating UR dirctory:" + parms.recordsDir;
+			cerr << logBuff << endl;
+			hlr_log(logBuff, &logStream, 1);
+			exit(1);
+		}
+	}	
+
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	std::string brokerURI =
         //"failover:(tcp://127.0.0.1:61616"
-        "failover:(" + parms.amqBrokerUri +//tcp://127.0.0.1:61616"
+        "failover:(" + parms.amqBrokerUri +
 //        "?wireFormat=openwire"
 //        "&connection.useAsyncSend=true"
 //        "&transport.commandTracingEnabled=true"
