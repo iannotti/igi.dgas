@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.2 2010/12/17 09:35:44 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.3 2011/02/03 15:44:57 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -295,13 +295,15 @@ endl;
         }
 	signal (SIGTERM, exit_signal);
     	signal (SIGINT, exit_signal);
+	int counter =0;
+	time_t t0 = time(NULL);
 	while ( goOn )
 	{
 		connInfo connectionInfo;
 		vector<fileType> records;
 		returncode = recordList(recordsDir, records);
 		vector<fileType>::iterator it = records.begin();
-		while ( it != records.end() )
+		while ( goOn && it != records.end() )
 		{
 			if ( (*it).second == DT_REG)
 			{ 
@@ -329,9 +331,26 @@ endl;
 				hlr_log(logBuff, &logStream, 5); 
 			}
 			it++;
+		counter ++;
+		if ( counter >= 1000 )
+		{
+			time_t t1 = time(NULL);
+			int et = t1-t0;
+			if ( et >0 )
+			{
+				int rec_min = (counter*60)/et;
+				string logBuff = "Rec/min = " + int2string(rec_min);
+				hlr_log ( logBuff, &logStream, 5);
+				counter =0;
+				time_t t0 = time(NULL);
+			}
+		}
 		}
 		if ( singleRun ) break;
-		sleep(10);
+		for (int i=0; i< 10; i++)
+		{
+			sleep(1);
+		}
 	}
 	removeLock(lockFileName);
         cout << "Removing:" << lockFileName << endl;
