@@ -77,7 +77,27 @@ GetOptions (
 
 
 my $parser = XML::LibXML->new();
-my $doc = $parser->parse_file($file) or die;
+my $doc;
+my $docBuffer ="";
+if ( $file ne "stdin" )
+{
+	$doc = $parser->parse_file($file) or die;
+}
+else
+{
+	binmode(STDIN);
+	open (STDIN, "< -");
+	while ( <STDIN> ) { $docBuffer .= $_; }
+	if ( $docBuffer ne "" )
+	{
+		$doc = $parser->parse_string($docBuffer);
+	}
+	else
+	{
+		exit(1);
+	}
+	close (STDIN);
+}
 my $xmlschema = XML::LibXML::Schema->new( location => $schemaFile );
 eval {$xmlschema->validate( $doc );}; warn $@ if $@;
 my $root = $doc->documentElement;
