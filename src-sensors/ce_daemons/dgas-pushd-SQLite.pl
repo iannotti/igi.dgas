@@ -409,7 +409,7 @@ sub getCommand
 	my $args = $_[2];
 	my $producer = $_[3];
 	my $command;
-        $command = "$composer $args";
+        $command = "set -o pipefail; $composer $args";
         	if ( $producer ne "" )
         	{
                 	$command .= " | $producer";
