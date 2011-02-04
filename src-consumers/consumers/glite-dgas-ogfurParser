@@ -56,7 +56,8 @@ sub ogfurMem2KB
 }
 
 my $file;
-my $outputType;
+my $outputType = "list";
+my $validate = "yes";
 
 my $dgasLocation = $ENV{DGAS_LOCATION};
 if ( $dgasLocation eq "" )
@@ -72,7 +73,9 @@ GetOptions (
 	'schemaFile=s' => \$schemaFile,
 	's=s' => \$schemaFile,
         'outputType=s' => \$outputType,
-        'o=s' => \$outputType
+        'o=s' => \$outputType,
+	'v=s' => \$validate,
+	'validate=s' => \$validate
 );
 
 
@@ -99,7 +102,10 @@ else
 	close (STDIN);
 }
 my $xmlschema = XML::LibXML::Schema->new( location => $schemaFile );
-eval {$xmlschema->validate( $doc );}; warn $@ if $@;
+if ( $validate eq  "yes" )
+{
+	eval {$xmlschema->validate( $doc );}; warn $@ if $@;
+}
 my $root = $doc->documentElement;
 #print $root->toString,"\n";
 
