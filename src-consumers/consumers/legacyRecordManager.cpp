@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.4 2011/02/04 09:31:37 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.5 2011/02/04 09:41:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -344,7 +344,7 @@ endl;
 						string logBuff = "Rec/min = " + int2string(rec_min);
 						hlr_log ( logBuff, &logStream, 5);
 						counter =0;
-						time_t t0 = time(NULL);
+						t0 = time(NULL);
 					}
 				}
 			}	
