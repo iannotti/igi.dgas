@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.3 2011/02/03 15:44:57 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.4 2011/02/04 09:31:37 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -136,14 +136,14 @@ int recordList(string& recordsDir, vector<fileType>& records)
 
 int processRecord (string& fileName, string command , bool dryRun)
 {
-	cout << "Processing:" << fileName << endl;
 	size_t pos = command.find("MESSAGEFILE");
 	if ( pos != string::npos )
 	{
 		command.erase(pos,12);
 		command.insert(pos,fileName);
 	}
-	cout << "With command:" << command << endl;
+	string logBuff = "Command:" + command;
+	hlr_log(logBuff, &logStream, 8);
 	string message;
 	FILE *output;
 	output = popen (command.c_str(),"r");
@@ -171,7 +171,8 @@ int processRecord (string& fileName, string command , bool dryRun)
 	}
 	if ( dryRun )
 	{
-		cout << "Message:" << message << "End." <<endl;
+		string logBuff = "Dry Run.";
+		hlr_log(logBuff, &logStream, 8);
 		return -123;
 	}
 	else
@@ -205,7 +206,6 @@ int processRecord (string& fileName, string command , bool dryRun)
 
 int unlink (string& fileName)
 {
-	cout << "Unlink:" << fileName << endl;
 	return unlink(fileName.c_str());
 	return 0;
 }
@@ -299,61 +299,63 @@ endl;
 	time_t t0 = time(NULL);
 	while ( goOn )
 	{
-		connInfo connectionInfo;
+		//connInfo connectionInfo;
 		vector<fileType> records;
 		returncode = recordList(recordsDir, records);
 		vector<fileType>::iterator it = records.begin();
-		while ( goOn && it != records.end() )
+		while ( goOn )
 		{
-			if ( (*it).second == DT_REG)
-			{ 
-				string logBuff = "file:" + (*it).first;
-				hlr_log ( logBuff, &logStream, 5);
-				if ( ((*it).first).find("DGASAMQ") != string::npos )
-				{
-					string fileBuff = recordsDir + "/" + (*it).first;
-					int res = processRecord(fileBuff,commandBuff,dryRun);
-					if ( res == 0 ||
-						res == 64 ||
-						res == 65 ||
-						res == 69 ||
-						res == 70 ||
-						res == 71 ||
-						res == 73)
+			for (int t=0; (t < 4) && ( it != records.end()) ; t++ )
+			{
+				if ( (*it).second == DT_REG)
+				{ 
+					string logBuff = "file:" + (*it).first;
+					hlr_log ( logBuff, &logStream, 5);
+					if ( ((*it).first).find("DGASAMQ") != string::npos )
 					{
-						res = unlink(fileBuff);
+						string fileBuff = recordsDir + "/" + (*it).first;
+						int res = processRecord(fileBuff,commandBuff,dryRun);
+						if ( res == 0 ||
+							res == 64 ||
+							res == 65 ||
+							res == 69 ||
+							res == 70 ||
+							res == 71 ||
+							res == 73)
+						{
+							res = unlink(fileBuff);
+						}
 					}
 				}
-			}
-			if ( (*it).second == DT_DIR)
-			{
-				string logBuff = "dir:" + (*it).first;
-				hlr_log(logBuff, &logStream, 5); 
-			}
-			it++;
-		counter ++;
-		if ( counter >= 1000 )
-		{
-			time_t t1 = time(NULL);
-			int et = t1-t0;
-			if ( et >0 )
-			{
-				int rec_min = (counter*60)/et;
-				string logBuff = "Rec/min = " + int2string(rec_min);
-				hlr_log ( logBuff, &logStream, 5);
-				counter =0;
-				time_t t0 = time(NULL);
-			}
-		}
+				if ( (*it).second == DT_DIR)
+				{
+					string logBuff = "dir:" + (*it).first;
+					hlr_log(logBuff, &logStream, 5); 
+				}
+				it++;
+				counter ++;
+				if ( counter >= 100 )
+				{
+					time_t t1 = time(NULL);
+					int et = t1-t0;
+					if ( et >0 )
+					{
+						int rec_min = (counter*60)/et;
+						string logBuff = "Rec/min = " + int2string(rec_min);
+						hlr_log ( logBuff, &logStream, 5);
+						counter =0;
+						time_t t0 = time(NULL);
+					}
+				}
+			}	
 		}
 		if ( singleRun ) break;
-		for (int i=0; i< 10; i++)
+		for (int i=0; (i< 10) && goOn; i++)
 		{
 			sleep(1);
 		}
 	}
 	removeLock(lockFileName);
-        cout << "Removing:" << lockFileName << endl;
 	return returncode;
 }
 
