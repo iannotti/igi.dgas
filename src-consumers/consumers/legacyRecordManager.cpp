@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.5 2011/02/04 09:41:16 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.6 2011/02/04 10:46:26 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -22,6 +22,7 @@
 #include <csignal>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <vector>
 #include <string>
@@ -305,50 +306,77 @@ endl;
 		vector<fileType>::iterator it = records.begin();
 		while ( goOn )
 		{
+			vector<pid_t> childPids;
 			for (int t=0; (t < 4) && ( it != records.end()) ; t++ )
 			{
-				if ( (*it).second == DT_REG)
-				{ 
-					string logBuff = "file:" + (*it).first;
-					hlr_log ( logBuff, &logStream, 5);
-					if ( ((*it).first).find("DGASAMQ") != string::npos )
-					{
-						string fileBuff = recordsDir + "/" + (*it).first;
-						int res = processRecord(fileBuff,commandBuff,dryRun);
-						if ( res == 0 ||
-							res == 64 ||
-							res == 65 ||
-							res == 69 ||
-							res == 70 ||
-							res == 71 ||
-							res == 73)
+				pid_t pid;
+				pid = fork();
+				if ( pid < 0  )
+				{
+					//out of resources
+				}
+				else if ( pid == 0 )
+				{
+					//child
+					if ( (*it).second == DT_REG)
+					{ 
+						string logBuff = "file:" + (*it).first;
+						hlr_log ( logBuff, &logStream, 5);
+						if ( ((*it).first).find("DGASAMQ") != string::npos )
 						{
-							res = unlink(fileBuff);
+							string fileBuff = recordsDir + "/" + (*it).first;
+							int res = processRecord(fileBuff,commandBuff,dryRun);
+							if ( res == 0 ||
+								res == 64 ||
+								res == 65 ||
+								res == 69 ||
+								res == 70 ||
+								res == 71 ||
+								res == 73)
+							{
+								res = unlink(fileBuff);
+							}
+						}
+					}
+					if ( (*it).second == DT_DIR)
+					{
+						string logBuff = "dir:" + (*it).first;
+						hlr_log(logBuff, &logStream, 5); 
+					}
+					_exit(0);
+				}
+				else
+				{
+					//parent
+					childPids.push_back(pid);
+					it++;
+					counter ++;
+					if ( counter >= 100 )
+					{
+						time_t t1 = time(NULL);
+						int et = t1-t0;
+						if ( et >0 )
+						{
+							int rec_min = (counter*60)/et;
+							string logBuff = "Rec/min = " + int2string(rec_min);
+							hlr_log ( logBuff, &logStream, 5);
+							counter =0;
+							t0 = time(NULL);
 						}
 					}
 				}
-				if ( (*it).second == DT_DIR)
+			}//for
+			vector<pid_t>::iterator pid_it = childPids.begin();
+			while ( pid_it != childPids.end() )	
+			{
+				int status;
+				if  ( waitpid (*pid_it, &status, 0) != *pid_it )
 				{
-					string logBuff = "dir:" + (*it).first;
-					hlr_log(logBuff, &logStream, 5); 
+					status = -1;
 				}
-				it++;
-				counter ++;
-				if ( counter >= 100 )
-				{
-					time_t t1 = time(NULL);
-					int et = t1-t0;
-					if ( et >0 )
-					{
-						int rec_min = (counter*60)/et;
-						string logBuff = "Rec/min = " + int2string(rec_min);
-						hlr_log ( logBuff, &logStream, 5);
-						counter =0;
-						t0 = time(NULL);
-					}
-				}
-			}	
-		}
+				pid_it++;
+			}
+		}//while (goOn)
 		if ( singleRun ) break;
 		for (int i=0; (i< 10) && goOn; i++)
 		{
