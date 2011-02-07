@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.6 2011/02/04 10:46:26 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.7 2011/02/07 15:42:30 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -214,6 +214,7 @@ int unlink (string& fileName)
 int dgasHlrRecordConsumer (string& confFileName, string& recordsDir, string& commandBuff, bool dryRun, bool singleRun)
 {
 	int returncode = 0;
+	int threadNumber = 4;
 	string logFileName;
 	string lockFileName;
 	map <string,string> confMap;
@@ -294,6 +295,10 @@ endl;
                         lazyAccountCheck = true;
                 }
         }
+	if ( confMap["thread_number"] != "" )
+	{
+		threadNumber = atoi((confMap["thread_number"]).c_str());
+	}
 	signal (SIGTERM, exit_signal);
     	signal (SIGINT, exit_signal);
 	int counter =0;
@@ -307,7 +312,7 @@ endl;
 		while ( goOn )
 		{
 			vector<pid_t> childPids;
-			for (int t=0; (t < 4) && ( it != records.end()) ; t++ )
+			for (int t=0; (t < threadNumber ) && ( it != records.end()) ; t++ )
 			{
 				pid_t pid;
 				pid = fork();
