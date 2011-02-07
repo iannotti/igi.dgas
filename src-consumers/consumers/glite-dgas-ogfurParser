@@ -57,7 +57,7 @@ sub ogfurMem2KB
 
 my $file;
 my $outputType = "list";
-my $validate = "yes";
+my $validate = "no";
 
 my $dgasLocation = $ENV{DGAS_LOCATION};
 if ( $dgasLocation eq "" )
@@ -90,7 +90,12 @@ else
 {
 	binmode(STDIN);
 	open (STDIN, "< -");
-	while ( <STDIN> ) { $docBuffer .= $_; }
+	while ( <STDIN> ) 
+	{
+	#	s/http:\/\/www.w3.org\//file:\/\/\/opt\/glite\/etc\/ogfurxmlcat\//g; 
+	#	s/http:\/\/schema.ogf.org\//file:\/\/\/opt\/glite\/etc\/ogfurxmlcat\//g; 
+		$docBuffer .= $_; 
+	}
 	if ( $docBuffer ne "" )
 	{
 		$doc = $parser->parse_string($docBuffer);
@@ -101,13 +106,12 @@ else
 	}
 	close (STDIN);
 }
-my $xmlschema = XML::LibXML::Schema->new( location => $schemaFile );
 if ( $validate eq  "yes" )
 {
+	my $xmlschema = XML::LibXML::Schema->new( location => $schemaFile );
 	eval {$xmlschema->validate( $doc );}; warn $@ if $@;
 }
 my $root = $doc->documentElement;
-#print $root->toString,"\n";
 
 
 my %record = (
@@ -369,7 +373,7 @@ $record{virtualMemory}
 <dgas:item voOrigin=\"$record{voOrigin}\"\\>
 <dgas:item SiteName=\"$record{machineName}\"\\>
 <dgas:item ceCertificateSubject=\"$record{ceCertificateSubject}\"\\>
-<dgas:item atmClientVersion=\"ogfur1.0_to_dgas3.4.0_v1\"\\>
+<dgas:item atmClientVersion=\"ogfur1.0_to_dgas4.0.0_v2\"\\>
 </AdditionalUR>
 </BODY>
 </HLR>";
