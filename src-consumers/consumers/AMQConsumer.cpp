@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.3 2011/02/02 15:49:48 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.4 2011/02/09 09:22:52 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -117,21 +117,6 @@ public:
 		this->cleanup();
 	}
 
-	string dir;
-	
-	string fileName(string messageNumber)
-	{
-		//DGAS log
-                time_t curtime;
-                struct tm *timeLog;
-                curtime = time(NULL);
-                timeLog = localtime(&curtime);
-                char timeBuff[16];
-                strftime(timeBuff,sizeof(timeBuff),"%Y%m%d%H%M%S",timeLog);
-               	string buffer = "DGASAMQ" + (string)timeBuff + "_" + messageNumber; 
-		return buffer;
-	}
-
 	void runConsumer() 
 	{
 		try 
@@ -201,19 +186,8 @@ public:
 				message->acknowledge();
 			}
 			
-			std::ofstream fileS;
-			string fname = dir + "/"+ fileName(int2string(count));
-			fileS.open( fname.c_str() , ios::app);
-			if ( !fileS)
-			{
-				//FIXME error open file
-			}
-			else
-			{
-				fileS << text << endl;
-				fileS.close();
-			}
-			string logBuff = "Message written in " + fname;
+				//FIXME WRITE MESSAGE in DATABASE
+			string logBuff = "Message written in DB.";
 			hlr_log(logBuff, &logStream, 7);
 		}
 		catch (CMSException& e) 
@@ -421,7 +395,58 @@ int AMQConsumer (consumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
+	
+	if ( parms.hlrSqlTmpDBName == "" )
+	{
+		if ( confMap["hlr_tmp_sql_dbname"] != "" )
+		{
+			parms.hlrSqlTmpDBName = confMap["hlr_tmp_sql_dbname"];
+		}
+		else
+		{
+		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+			return E_BROKER_URI;
+		}
+	}
+	
+	if ( parms.hlrSqlServer == "" )
+	{
+		if ( confMap["hlr_sql_server"] != "" )
+		{
+			parms.hlrSqlServer = confMap["hlr_sql_server"];
+		}
+		else
+		{
+		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+			return E_BROKER_URI;
+		}
+	}
 
+	if ( parms.hlrSqlUser == "" )
+	{
+		if ( confMap["hlr_sql_user"] != "" )
+		{
+			parms.hlrSqlUser = confMap["hlr_sql_user"];
+		}
+		else
+		{
+		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+			return E_BROKER_URI;
+		}
+	}
+
+	if ( parms.hlrSqlPassword == "" )
+	{
+		if ( confMap["hlr_sql_password"] != "" )
+		{
+			parms.hlrSqlPassword = confMap["hlr_sql_password"];
+		}
+		else
+		{
+		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+			return E_BROKER_URI;
+		}
+	}
 	//check if parms.recordDir exists. Create it otherwise.
 	struct stat st;
 	if(stat((parms.recordsDir).c_str(),&st) != 0)
@@ -465,7 +490,6 @@ int AMQConsumer (consumerParms& parms)
     // Create the consumer
     SimpleAsyncConsumer consumer( brokerURI, destURI, useTopics, clientAck );
 
-    consumer.dir = parms.recordsDir;
     // Start it up and it will listen forever.
     consumer.runConsumer();
 
