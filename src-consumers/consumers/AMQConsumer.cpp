@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.5 2011/02/09 13:40:53 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.6 2011/02/09 14:22:44 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -186,14 +186,35 @@ public:
 			{
 				text = "NOT A TEXTMESSAGE!";
 			}
-			if( clientAck ) 
-			{
-				message->acknowledge();
-			}
 			
-				//FIXME WRITE MESSAGE in DATABASE
-			string logBuff = "Message written in DB.";
-			hlr_log(logBuff, &logStream, 7);
+			//FIXME WRITE MESSAGE in DATABASE
+			db hlrDb ( hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_tmp_sql_dbname	
+			);
+			if ( hlrDb.errNo != 0 )
+			{
+				hlr_log("Error connecting to SQL database",&logStream,2);
+				exit(1);
+			}
+			string messageQuery = "INSERT INTO messages SET ";
+			messageQuery += "message=";
+			messageQuery += "\'" + text + "\'";
+			hlrDb.query(messageQuery);
+			if ( hlrDb.errNo != 0 )
+			{
+				hlr_log("Error Inserting message",&logStream,1);
+			}
+			else
+			{
+				string logBuff = "Message written in DB.";
+				hlr_log(logBuff, &logStream, 7);
+				if( clientAck ) 
+				{
+					message->acknowledge();
+				}
+			}
 		}
 		catch (CMSException& e) 
 		{
@@ -444,7 +465,7 @@ int AMQConsumer (consumerParms& parms)
 	hlr_sql_user = (parms.hlrSqlUser).c_str();
 	hlr_sql_password = (parms.hlrSqlPassword).c_str();
 	hlr_tmp_sql_dbname = (parms.hlrSqlTmpDBName).c_str();
-	//FIXME check if Database  exists. Create it otherwise.
+	//check if Database  exists. Create it otherwise.
 	db hlrDb ( hlr_sql_server,
 		hlr_sql_user,
 		hlr_sql_password,
