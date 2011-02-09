@@ -9,7 +9,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
-#define OPTION_STRING "3hv:B:D:c:"
+#define OPTION_STRING "3hv:B:c:"
 
 using namespace std;
 
@@ -33,7 +33,6 @@ int options ( int argc, char **argv )
 	{
 		{"verbosity",1,0,'v'},
 		{"brokerUri",1,0,'B'},
-		{"recordsDir",1,0,'D'},
 		{"config",1,0,'c'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
@@ -44,7 +43,6 @@ int options ( int argc, char **argv )
 		{
 			case 'v': verbosity=atoi(optarg); break;
 			case 'B': brokerUri=optarg; break;
-			case 'D': recordsDir=optarg; break;
 			case 'c': configFile=optarg; break;
 			case 'h': needs_help =true; break;		  
 			default : break;
@@ -63,7 +61,6 @@ int main (int argc, char *argv[])
 	consumerParms parms;
 	parms.amqBrokerUri = brokerUri;
 	parms.confFileName = configFile;
-	parms.recordsDir = recordsDir;
 	int res = AMQConsumer(parms);
 	if ( verbosity > 0 )
 	{

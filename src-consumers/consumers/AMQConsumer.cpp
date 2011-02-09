@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.4 2011/02/09 09:22:52 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.5 2011/02/09 13:40:53 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -49,6 +49,7 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/dgas_config.h"
@@ -74,6 +75,10 @@ using namespace cms;
 using namespace std;
 
 ofstream logStream;
+const char * hlr_sql_server;
+const char * hlr_sql_user;
+const char * hlr_sql_password;
+const char * hlr_tmp_sql_dbname;
 
 volatile sig_atomic_t goOn = 1;
 
@@ -371,18 +376,6 @@ int AMQConsumer (consumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
-	if ( parms.recordsDir == "" )
-	{
-		if ( confMap["recordsDir"] != "" )
-		{
-			parms.recordsDir= confMap["recordsDir"];
-		}
-		else
-		{
-		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
-			return E_BROKER_URI;
-		}
-	}
 	if ( parms.dgasAMQTopic == "" )
 	{
 		if ( confMap["dgasAMQTopic"] != "" )
@@ -447,20 +440,39 @@ int AMQConsumer (consumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
-	//check if parms.recordDir exists. Create it otherwise.
-	struct stat st;
-	if(stat((parms.recordsDir).c_str(),&st) != 0)
+	hlr_sql_server = (parms.hlrSqlServer).c_str();
+	hlr_sql_user = (parms.hlrSqlUser).c_str();
+	hlr_sql_password = (parms.hlrSqlPassword).c_str();
+	hlr_tmp_sql_dbname = (parms.hlrSqlTmpDBName).c_str();
+	//FIXME check if Database  exists. Create it otherwise.
+	db hlrDb ( hlr_sql_server,
+		hlr_sql_user,
+		hlr_sql_password,
+		hlr_tmp_sql_dbname	
+		);
+	if ( hlrDb.errNo != 0 )
 	{
-		//Does not exists. create it. //Caveat: parent dir MUST
-		//aleady exists!
-		if ( (mkdir ((parms.recordsDir).c_str(), 0777 )) != 0)
+		hlr_log("Error connecting to SQL database",&logStream,2);
+		exit(1);
+	}
+	string queryString = "DESCRIBE messages";
+	dbResult queryResult = hlrDb.query(queryString);
+	if ( hlrDb.errNo != 0 )
+	{
+		hlr_log("Table messages doesn't exists, creating it.",&logStream,5);
+		queryString = "CREATE TABLE messages";
+		queryString += " (";
+		queryString += " id bigint(20) unsigned auto_increment, ";
+		queryString += " int status DEFAULT '0', ";
+		queryString += " blob message, ";
+		queryString += " primary key (id))";
+		hlrDb.query(queryString);
+		if ( hlrDb.errNo != 0 )
 		{
-			string logBuff = "Error creating UR dirctory:" + parms.recordsDir;
-			cerr << logBuff << endl;
-			hlr_log(logBuff, &logStream, 1);
+			hlr_log("Error creating table messages.",&logStream,2);
 			exit(1);
 		}
-	}	
+	}
 
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	std::string brokerURI =
