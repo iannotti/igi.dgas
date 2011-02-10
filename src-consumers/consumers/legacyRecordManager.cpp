@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.8 2011/02/10 13:17:12 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.9 2011/02/10 13:49:36 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -30,6 +30,7 @@
 #include <fstream>
 #include <map>
 
+#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/dgas_config.h"
@@ -115,7 +116,40 @@ int removeLock(string lockFile)
 int getMessages( vector<string>& records)
 {
 	string queryBuffer = "SELECT id,status,message FROM messages ORDER by status limit 100";
-	return 0;
+	db hlrDb ( hlr_sql_server,
+                        hlr_sql_user,
+                        hlr_sql_password,
+                        hlr_sql_dbname
+                );
+	if ( hlrDb.errNo == 0 )
+	{
+		dbResult result = hlrDb.query( queryBuffer );
+		
+		if ( hlrDb.errNo == 0 )
+		{
+			int numRows = result.numRows();
+			if ( numRows > 0 )
+			{
+				for (int i = 0;i < numRows; i++ )
+				{
+					records.push_back(result.getItem(i,2));
+				}
+			}
+			return 0;
+		}
+		else
+		{
+			string logBuff = "Error in query: " + queryBuffer + ":" + int2string(hlrDb.errNo);
+			hlr_log("Error removing the lock file", &logStream, 3);
+			return hlrDb.errNo;
+		}
+	}
+	else
+	{
+		string logBuff = "Error connecting to DB:" + int2string(hlrDb.errNo);
+		hlr_log("Error removing the lock file", &logStream, 3);
+		return hlrDb.errNo;
+	}
 }
 
 int processRecord (string& inputMessage, string command , bool dryRun)
@@ -272,9 +306,9 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 	{
 		//connInfo connectionInfo;
 		vector<string> messages;
-		returncode = getMesages(messages);
+		returncode = getMessages(messages);
 		vector<fileType>::iterator it = messages.begin();
-		while ( goOn )
+		while ( goOn && ( it != messages.end()) )
 		{
 			vector<pid_t> childPids;
 			for (int t=0; (t < threadNumber ) && ( it != messages.end()) ; t++ )
