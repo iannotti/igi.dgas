@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.9 2011/02/10 13:49:36 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.10 2011/02/10 15:47:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -58,6 +58,12 @@ bool lazyAccountCheck;
 
 volatile sig_atomic_t goOn = 1;
 
+struct messageType {
+	string message;
+	string id;
+	string status;
+};
+
 static int
      one (const struct dirent64 *unused)
      {
@@ -113,13 +119,13 @@ int removeLock(string lockFile)
         }
 }
 
-int getMessages( vector<string>& records)
+int getMessages( vector<messageType>& records)
 {
 	string queryBuffer = "SELECT id,status,message FROM messages ORDER by status limit 100";
 	db hlrDb ( hlr_sql_server,
                         hlr_sql_user,
                         hlr_sql_password,
-                        hlr_sql_dbname
+                        hlr_tmp_sql_dbname
                 );
 	if ( hlrDb.errNo == 0 )
 	{
@@ -132,7 +138,11 @@ int getMessages( vector<string>& records)
 			{
 				for (int i = 0;i < numRows; i++ )
 				{
-					records.push_back(result.getItem(i,2));
+					messageType messageBuff;
+					messageBuff.id = result.getItem(i,0);
+					messageBuff.status = result.getItem(i,1);
+					messageBuff.message= result.getItem(i,2);
+					records.push_back(messageBuff);
 				}
 			}
 			return 0;
@@ -217,10 +227,60 @@ int processRecord (string& inputMessage, string command , bool dryRun)
 	return 0;
 }
 
-int unlink (string& fileName)
+int delRecord(string& id)
 {
-	return unlink(fileName.c_str());
-	return 0;
+	db hlrDb ( hlr_sql_server,
+                                hlr_sql_user,
+                                hlr_sql_password,
+                                hlr_tmp_sql_dbname
+                        );
+	if ( hlrDb.errNo == 0 )
+	{ 
+		string queryStr;
+		queryStr = "DELETE FROM message WHERE id=";
+		queryStr += id;
+		hlrDb.query(queryStr);
+		if ( hlrDb.errNo != 0 )
+		{
+			return hlrDb.errNo;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return hlrDb.errNo;
+	}
+}
+
+int lowerPriority(string& id)
+{
+	db hlrDb ( hlr_sql_server,
+                                hlr_sql_user,
+                                hlr_sql_password,
+                                hlr_tmp_sql_dbname
+                        );
+	if ( hlrDb.errNo == 0 )
+	{ 
+		string queryStr;
+		queryStr = "UPDATE message SET status = status + 1 WHERE id=";
+		queryStr += id;
+		hlrDb.query(queryStr);
+		if ( hlrDb.errNo != 0 )
+		{
+			return hlrDb.errNo;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return hlrDb.errNo;
+	}
 }
 
 int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
@@ -305,9 +365,9 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 	while ( goOn )
 	{
 		//connInfo connectionInfo;
-		vector<string> messages;
+		vector<messageType> messages;
 		returncode = getMessages(messages);
-		vector<fileType>::iterator it = messages.begin();
+		vector<messageType>::iterator it = messages.begin();
 		while ( goOn && ( it != messages.end()) )
 		{
 			vector<pid_t> childPids;
@@ -322,26 +382,24 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 				else if ( pid == 0 )
 				{
 					//child
-					if ( (*it).second == DT_REG)
-					{ 
-						string logBuff = "message:" + (*it);
-						hlr_log ( logBuff, &logStream, 9);
-						int res = processRecord(*it,parms.messageParser,dryRun);
-						if ( res == 0 ||
-							res == 64 ||
-							res == 65 ||
-							res == 69 ||
-							res == 70 ||
-							res == 71 ||
-							res == 73)
-						{
-							//remove record
-							res = unlink(fileBuff);
-						}
-						else
-						{
-							record status++;
-						}
+					string logBuff = "message:" + (*it).message;
+					hlr_log ( logBuff, &logStream, 9);
+					int res = processRecord((*it).message,parms.messageParser,parms.dryRun);
+					if ( res == 0 ||
+						res == 64 ||
+						res == 65 ||
+						res == 69 ||
+						res == 70 ||
+						res == 71 ||
+						res == 73)
+					{
+						//remove record
+						res = delRecord((*it).id);
+					}
+					else
+					{
+						res = lowerPriority((*it).id);
+						//record status++;
 					}
 					_exit(0);
 				}
@@ -377,7 +435,7 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 				pid_it++;
 			}
 		}//while (goOn)
-		if ( singleRun ) break;
+		if ( parms.singleRun ) break;
 		for (int i=0; (i< 10) && goOn; i++)
 		{
 			sleep(1);
