@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.7 2011/02/07 15:42:30 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.8 2011/02/10 13:17:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -112,37 +112,15 @@ int removeLock(string lockFile)
         }
 }
 
-int recordList(string& recordsDir, vector<fileType>& records)
+int getMessages( vector<string>& records)
 {
-       struct dirent64 **eps;
-       int n;
-	//On some version ofglibc scandir and scandir64 have mem leaks.
-	n = scandir64 (recordsDir.c_str(), &eps, one, alphasort64);
-	if (n >= 0)
-	{
-		int cnt;
-		for (cnt = 0; cnt < n; ++cnt)
-		{
-			fileType buff(eps[cnt]->d_name,eps[cnt]->d_type);
-			records.push_back(buff);
-		}
-        }
-	else
-	{
-		hlr_log("Couldn't open the directory",&logStream,2);
-	}
-	free(eps);
+	string queryBuffer = "SELECT id,status,message FROM messages ORDER by status limit 100";
 	return 0;
 }
 
-int processRecord (string& fileName, string command , bool dryRun)
+int processRecord (string& inputMessage, string command , bool dryRun)
 {
-	size_t pos = command.find("MESSAGEFILE");
-	if ( pos != string::npos )
-	{
-		command.erase(pos,12);
-		command.insert(pos,fileName);
-	}
+	command = "echo -n \'" + inputMessage + "\' |" + command;
 	string logBuff = "Command:" + command;
 	hlr_log(logBuff, &logStream, 8);
 	string message;
@@ -211,7 +189,7 @@ int unlink (string& fileName)
 	return 0;
 }
 
-int dgasHlrRecordConsumer (string& confFileName, string& recordsDir, string& commandBuff, bool dryRun, bool singleRun)
+int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 {
 	int returncode = 0;
 	int threadNumber = 4;
@@ -220,8 +198,7 @@ int dgasHlrRecordConsumer (string& confFileName, string& recordsDir, string& com
 	map <string,string> confMap;
         if ( dgas_conf_read ( confFileName, &confMap ) != 0 )
         {
-                cerr << "WARNING: Error reading conf file: " << confFileName <<
-endl;
+                cerr << "WARNING: Error reading conf file: " << confFileName << endl;
                 cerr << "There can be problems processing the transaction" << endl;
                 return E_CONFIG;
 
@@ -258,23 +235,11 @@ endl;
         hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
         hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
         hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
-	if ( recordsDir == "" )
-	{
-		if ( confMap["recordsDir"] != "" )
-		{
-			recordsDir= confMap["recordsDir"];
-		}
-		else
-		{
-		 	cerr << "WARNING: Error reading conf file: " << confFileName << endl;
-			return E_BROKER_URI;
-		}
-	}
-	if ( commandBuff == "" )
+	if ( parms.messageParser == "" )
 	{
 		if ( confMap["messageParsingCommand"] != "" )
 		{
-			commandBuff= confMap["messageParsingCommand"];
+			parms.messageParser = confMap["messageParsingCommand"];
 		}
 		else
 		{
@@ -306,13 +271,13 @@ endl;
 	while ( goOn )
 	{
 		//connInfo connectionInfo;
-		vector<fileType> records;
-		returncode = recordList(recordsDir, records);
-		vector<fileType>::iterator it = records.begin();
+		vector<string> messages;
+		returncode = getMesages(messages);
+		vector<fileType>::iterator it = messages.begin();
 		while ( goOn )
 		{
 			vector<pid_t> childPids;
-			for (int t=0; (t < threadNumber ) && ( it != records.end()) ; t++ )
+			for (int t=0; (t < threadNumber ) && ( it != messages.end()) ; t++ )
 			{
 				pid_t pid;
 				pid = fork();
@@ -325,28 +290,24 @@ endl;
 					//child
 					if ( (*it).second == DT_REG)
 					{ 
-						string logBuff = "file:" + (*it).first;
-						hlr_log ( logBuff, &logStream, 5);
-						if ( ((*it).first).find("DGASAMQ") != string::npos )
+						string logBuff = "message:" + (*it);
+						hlr_log ( logBuff, &logStream, 9);
+						int res = processRecord(*it,parms.messageParser,dryRun);
+						if ( res == 0 ||
+							res == 64 ||
+							res == 65 ||
+							res == 69 ||
+							res == 70 ||
+							res == 71 ||
+							res == 73)
 						{
-							string fileBuff = recordsDir + "/" + (*it).first;
-							int res = processRecord(fileBuff,commandBuff,dryRun);
-							if ( res == 0 ||
-								res == 64 ||
-								res == 65 ||
-								res == 69 ||
-								res == 70 ||
-								res == 71 ||
-								res == 73)
-							{
-								res = unlink(fileBuff);
-							}
+							//remove record
+							res = unlink(fileBuff);
 						}
-					}
-					if ( (*it).second == DT_DIR)
-					{
-						string logBuff = "dir:" + (*it).first;
-						hlr_log(logBuff, &logStream, 5); 
+						else
+						{
+							record status++;
+						}
 					}
 					_exit(0);
 				}

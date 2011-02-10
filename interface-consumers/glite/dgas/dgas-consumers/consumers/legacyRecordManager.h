@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.h,v 1.1.2.2 2010/12/17 09:35:44 aguarise Exp $
+// $Id: legacyRecordManager.h,v 1.1.2.3 2011/02/10 13:17:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -29,6 +29,13 @@
 
 using namespace std;
 
-int dgasHlrRecordConsumer(string& config, string& brokerUri, string& messageParser, bool dryRun, bool singleRun);
+struct confParameters {
+	string messageParser;
+	bool dryRun;
+	bool singleRun;
+	int verbosity;
+};
+
+int dgasHlrRecordConsumer(string& config, confParameters& parms);
 
 

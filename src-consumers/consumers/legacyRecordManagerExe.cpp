@@ -10,7 +10,7 @@
 #include "glite/dgas/hlr-service/engines/atmResourceEngine.h"
 #include "glite/dgas/dgas-consumers/consumers/legacyRecordManager.h"
 
-#define OPTION_STRING "3hv:P:D:c:Rs"
+#define OPTION_STRING "3hv:P:c:Rs"
 
 using namespace std;
 
@@ -19,7 +19,6 @@ bool dryRun = false;
 bool singleRun = false;
 int system_log_level = 9;
 int verbosity = 3;
-string recordsDir = "";
 string configFile = "";
 string messageParser = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
@@ -35,7 +34,6 @@ int options ( int argc, char **argv )
 	static struct option long_options[] =
 	{
 		{"verbosity",1,0,'v'},
-		{"recordsDir",1,0,'D'},
 		{"messageParser",1,0,'P'},
 		{"config",1,0,'c'},
 		{"help",0,0,'h'},
@@ -48,7 +46,6 @@ int options ( int argc, char **argv )
 		switch (option_char)
 		{
 			case 'v': verbosity=atoi(optarg); break;
-			case 'D': recordsDir=optarg; break;
 			case 'P': messageParser=optarg; break;
 			case 'c': configFile=optarg; break;
 			case 'h': needs_help =true; break;		  
@@ -67,7 +64,10 @@ int main (int argc, char *argv[])
 		help();
 		return 0;
 	}
-	int res = dgasHlrRecordConsumer(configFile, recordsDir, messageParser, dryRun, singleRun);
+	confParameters parms;
+	parms.messageParser = messageParser;
+	parms.verbosity = verbosity;
+	int res = dgasHlrRecordConsumer(configFile, parms);
 	if ( verbosity > 0 )
 	{
 		cout << "Return code:" << res << endl;
