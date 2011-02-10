@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.10 2011/02/10 15:47:14 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.11 2011/02/10 16:14:57 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -435,11 +435,11 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 				pid_it++;
 			}
 		}//while (goOn)
-		if ( parms.singleRun ) break;
 		for (int i=0; (i< 10) && goOn; i++)
 		{
 			sleep(1);
 		}
+		if ( parms.singleRun ) break;
 	}
 	removeLock(lockFileName);
 	return returncode;

@@ -67,6 +67,8 @@ int main (int argc, char *argv[])
 	confParameters parms;
 	parms.messageParser = messageParser;
 	parms.verbosity = verbosity;
+	parms.dryRun = dryRun;
+	parms.singleRun = singleRun;
 	int res = dgasHlrRecordConsumer(configFile, parms);
 	if ( verbosity > 0 )
 	{
