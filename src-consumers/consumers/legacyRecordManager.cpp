@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyRecordManager.cpp,v 1.1.2.11 2011/02/10 16:14:57 aguarise Exp $
+// $Id: legacyRecordManager.cpp,v 1.1.2.12 2011/02/11 10:16:11 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -119,9 +119,9 @@ int removeLock(string lockFile)
         }
 }
 
-int getMessages( vector<messageType>& records)
+int getMessages( vector<messageType>& records, int numRecordsPerIter)
 {
-	string queryBuffer = "SELECT id,status,message FROM messages ORDER by status limit 100";
+	string queryBuffer = "SELECT id,status,message FROM messages ORDER by status limit " + int2string(numRecordsPerIter);
 	db hlrDb ( hlr_sql_server,
                         hlr_sql_user,
                         hlr_sql_password,
@@ -150,14 +150,14 @@ int getMessages( vector<messageType>& records)
 		else
 		{
 			string logBuff = "Error in query: " + queryBuffer + ":" + int2string(hlrDb.errNo);
-			hlr_log("Error removing the lock file", &logStream, 3);
+			hlr_log(logBuff, &logStream, 3);
 			return hlrDb.errNo;
 		}
 	}
 	else
 	{
 		string logBuff = "Error connecting to DB:" + int2string(hlrDb.errNo);
-		hlr_log("Error removing the lock file", &logStream, 3);
+		hlr_log(logBuff, &logStream, 3);
 		return hlrDb.errNo;
 	}
 }
@@ -237,20 +237,26 @@ int delRecord(string& id)
 	if ( hlrDb.errNo == 0 )
 	{ 
 		string queryStr;
-		queryStr = "DELETE FROM message WHERE id=";
+		queryStr = "DELETE FROM messages WHERE id=";
 		queryStr += id;
 		hlrDb.query(queryStr);
 		if ( hlrDb.errNo != 0 )
 		{
+			string logBuff = "Error in query: " + queryStr + ":" + int2string(hlrDb.errNo);
+			hlr_log(logBuff, &logStream, 3);
 			return hlrDb.errNo;
 		}
 		else
 		{
+			string logBuff = "Deleted:" + id;
+			hlr_log(logBuff, &logStream, 7);
 			return 0;
 		}
 	}
 	else
 	{
+		string logBuff = "Error connecting to DB:" + int2string(hlrDb.errNo);
+		hlr_log(logBuff, &logStream, 3);
 		return hlrDb.errNo;
 	}
 }
@@ -265,20 +271,26 @@ int lowerPriority(string& id)
 	if ( hlrDb.errNo == 0 )
 	{ 
 		string queryStr;
-		queryStr = "UPDATE message SET status = status + 1 WHERE id=";
+		queryStr = "UPDATE messages SET status = status + 1 WHERE id=";
 		queryStr += id;
 		hlrDb.query(queryStr);
 		if ( hlrDb.errNo != 0 )
 		{
+			string logBuff = "Error in query: " + queryStr + ":" + int2string(hlrDb.errNo);
+			hlr_log(logBuff, &logStream, 3);
 			return hlrDb.errNo;
 		}
 		else
 		{
+			string logBuff = "Updated:" + id;
+			hlr_log(logBuff, &logStream, 7);
 			return 0;
 		}
 	}
 	else
 	{
+		string logBuff = "Error connecting to DB:" + int2string(hlrDb.errNo);
+		hlr_log(logBuff, &logStream, 3);
 		return hlrDb.errNo;
 	}
 }
@@ -287,6 +299,8 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 {
 	int returncode = 0;
 	int threadNumber = 4;
+	int waitFor = 1;
+	int numRecordsPerIter = 1000;
 	string logFileName;
 	string lockFileName;
 	map <string,string> confMap;
@@ -358,6 +372,15 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 	{
 		threadNumber = atoi((confMap["thread_number"]).c_str());
 	}
+	
+	if ( confMap["managerTimeWait"] != "" )
+	{
+		waitFor = atoi((confMap["managerTimeWait"]).c_str());
+	}
+	if ( confMap["managerRecordPerInterval"] != "" )
+	{
+		numRecordsPerIter = atoi((confMap["managerRecordPerInterval"]).c_str());
+	}
 	signal (SIGTERM, exit_signal);
     	signal (SIGINT, exit_signal);
 	int counter =0;
@@ -366,7 +389,7 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 	{
 		//connInfo connectionInfo;
 		vector<messageType> messages;
-		returncode = getMessages(messages);
+		returncode = getMessages(messages, numRecordsPerIter);
 		vector<messageType>::iterator it = messages.begin();
 		while ( goOn && ( it != messages.end()) )
 		{
@@ -435,7 +458,7 @@ int dgasHlrRecordConsumer (string& confFileName, confParameters& parms)
 				pid_it++;
 			}
 		}//while (goOn)
-		for (int i=0; (i< 10) && goOn; i++)
+		for (int i=0; (i <= waitFor ) && goOn; i++)
 		{
 			sleep(1);
 		}

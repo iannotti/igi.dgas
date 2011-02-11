@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.7 2011/02/09 15:15:13 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.8 2011/02/11 10:16:11 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -486,7 +486,7 @@ int AMQConsumer (consumerParms& parms)
 		queryString += " id bigint(20) unsigned auto_increment, ";
 		queryString += " status int DEFAULT '0', ";
 		queryString += " message blob, ";
-		queryString += " primary key (id))";
+		queryString += " primary key (id) , key(status))";
 		hlrDb.query(queryString);
 		if ( hlrDb.errNo != 0 )
 		{
