@@ -6,13 +6,11 @@ amqBrokerUri = "tcp://hlr-test-29.to.infn.it:61616"
 recordsDir = "/tmp/dgasamq/"
 dgasAMQTopic = "DGAS.TEST"
 hlr_user = "root"
-dgas_var_dir = "${DGAS_LOCATION}/var/"
-
 
 managerLockFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-manager.lock"
-messageParsingCommand = "cat MESSAGEFILE"
+managerLogFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-manager.log"
+messageParsingCommand = "cat"
 hlr_def_log = "${DGAS_LOCATION}/var/manager.log"
-AMQRecordsDir = "/tmp/dgasamq/"
 
 hlr_sql_server = "localhost"
 hlr_sql_user = "root"
