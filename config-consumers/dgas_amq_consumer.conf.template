@@ -10,7 +10,6 @@ hlr_user = "root"
 managerLockFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-manager.lock"
 managerLogFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-manager.log"
 messageParsingCommand = "cat"
-hlr_def_log = "${DGAS_LOCATION}/var/manager.log"
 
 hlr_sql_server = "localhost"
 hlr_sql_user = "root"
