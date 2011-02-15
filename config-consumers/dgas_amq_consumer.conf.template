@@ -1,6 +1,7 @@
 #dgas_activemq-producer.conf.template
 
-lockFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-consumer.lock"
+consumerLockFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-consumer.lock"
+consumerLogFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-consumer.log"
 amqBrokerUri = "tcp://hlr-test-29.to.infn.it:61616"
 recordsDir = "/tmp/dgasamq/"
 dgasAMQTopic = "DGAS.TEST"

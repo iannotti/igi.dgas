@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.9 2011/02/15 09:47:49 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.10 2011/02/15 12:11:15 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -351,9 +351,9 @@ int AMQConsumer (consumerParms& parms)
         }
 	if ( parms.logFileName == "" )
 	{
-		if ( confMap["logFileName"] != "" )
+		if ( confMap["consumerLogFileName"] != "" )
 		{
-			parms.logFileName= confMap["logFileName"];
+			parms.logFileName= confMap["consumerLogFileName"];
 	        	if ( bootstrapLog(parms.logFileName, &logStream) != 0 )
 		        {
         		        cerr << "Error bootstrapping Log file " << endl;
@@ -370,9 +370,9 @@ int AMQConsumer (consumerParms& parms)
 	}
 	if ( parms.lockFileName == "" )
 	{
-		if ( confMap["lockFileName"] != "" )	
+		if ( confMap["consumerLockFileName"] != "" )	
 		{
-			parms.lockFileName= confMap["lockFileName"];
+			parms.lockFileName= confMap["consumerLockFileName"];
 		}
 		else
 		{
