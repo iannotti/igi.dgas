@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.8 2011/02/11 10:16:11 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.9 2011/02/15 09:47:49 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -200,7 +200,7 @@ public:
 			}
 			string messageQuery = "INSERT INTO messages SET ";
 			messageQuery += "message=";
-			messageQuery += "\'" + text + "\'";
+			messageQuery += "\'" + hlrDb.escape_string(text) + "\'";
 			hlrDb.query(messageQuery);
 			if ( hlrDb.errNo != 0 )
 			{

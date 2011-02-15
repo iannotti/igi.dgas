@@ -1,4 +1,4 @@
-// $Id: db.h,v 1.1.2.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: db.h,v 1.1.2.3 2011/02/15 09:47:49 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -39,8 +39,8 @@ public:
 	db (string serverI, string userI, string passwdI, string dbNameI);
 	~db ();
 	dbResult::dbResult  query ( string queryString );
+	string escape_string(string& input);
 	long long getAffectedRows();
-
 	int errNo;
 	string errMsg;
 	#ifdef WITH_UNIXODBC

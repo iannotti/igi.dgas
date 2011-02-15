@@ -1,4 +1,4 @@
-// $Id: db.cpp,v 1.1.2.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: db.cpp,v 1.1.2.3 2011/02/15 09:47:49 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -51,6 +51,14 @@ db::db ( string serverI,
 	} while ( (errNo != 0) && ( retry < 15 ) );
 	if ( errNo != 0 )
 		cerr << "Warning: reached maximum retry value!" << endl;
+}
+
+string db::escape_string(string& input)
+{
+	unsigned long inputLength = input.size();
+	char buffer[(inputLength*2)+1];
+	mysql_real_escape_string(dbhandle,buffer,input.c_str(),inputLength);
+	return buffer;
 }
 
 db::~db ()

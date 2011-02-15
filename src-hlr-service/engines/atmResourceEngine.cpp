@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.3 2011/01/30 16:56:35 aguarise Exp $
+// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.4 2011/02/15 09:47:50 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -547,7 +547,8 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 		if ( connectionInfo.contactString == "")
 		{
 			//this is important for AMQ based records
-			hlr_log ("using ceCertificateSubject from UR in connInfo",&logStream,4);
+			string logBuff = "using ceCertificateSubject from UR in connInfo" + usage_info.ceCertificateSubject;
+			hlr_log (logBuff,&logStream,4);
 			connectionInfo.contactString = usage_info.ceCertificateSubject;
 		}
 		if ( !lazyAccountCheck )
