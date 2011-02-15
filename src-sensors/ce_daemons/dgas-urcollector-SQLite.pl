@@ -1728,7 +1728,6 @@ sub parseConf {
 	if(/^keyList\s*=\s*\"(.*)\"$/){$configValues{keyList}=$1;}
 	if(/^ldifDefaultFiles\s*=\s*\"(.*)\"$/){$configValues{ldifDefaultFiles}=$1;}
 	if(/^glueLdifFile\s*=\s*\"(.*)\"$/){$configValues{glueLdifFile}=$1;}
-	if(/^dgasURBox\s*=\s*\"(.*)\"$/){$configValues{dgasURBox}=$1;}
 	if(/^collectorLockFileName\s*=\s*\"(.*)\"$/){$configValues{collectorLockFileName}=$1;}
 	if(/^collectorLogFileName\s*=\s*\"(.*)\"$/){$configValues{collectorLogFileName}=$1;}
 	if(/^collectorBufferFileName\s*=\s*\"(.*)\"$/){$configValues{collectorBufferFileName}=$1;}
@@ -1741,25 +1740,13 @@ sub parseConf {
 	if(/^systemLogLevel\s*=\s*\"(.*)\"$/){$configValues{systemLogLevel}=$1;}
 	if(/^useUrKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{useUrKeyDefFile}=$1;}
 	if(/^urKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{urKeyDefFile}=$1;}
-	if(/^qDept\s*=\s*\"(.*)\"$/){$configValues{qDept}=$1;}
-	if(/^qMult\s*=\s*\"(.*)\"$/){$configValues{qMult}=$1;} 
-	if(/^dgasURBox\s*=\s*\"(.*)\"$/){$configValues{dgasURBox}=$1;}
-	if(/^dgasErrDir\s*=\s*\"(.*)\"$/){$configValues{dgasErrDir}=$1;}
-	if(/^pushdLockFileName\s*=\s*\"(.*)\"$/){$configValues{lockFileName}=$1;}
-	if(/^pushdLogFileName\s*=\s*\"(.*)\"$/){$configValues{logFileName}=$1;}
-	if(/^mainPollInterval\s*=\s*\"(.*)\"$/){$configValues{mainPollInterval}=$1;}
-	if(/^queuePollInterval\s*=\s*\"(.*)\"$/){$configValues{queuePollInterval}=$1;}
-	if(/^lrmsType\s*=\s*\"(.*)\"$/){$configValues{lrmsType}=$1;}
 	if(/^localUserGroup2VOMap\s*=\s*\"(.*)\"$/){$configValues{localUserGroup2VOMap}=$1;}
 	if(/^siteName\s*=\s*\"(.*)\"$/){$configValues{siteName}=$1;}
 	if(/^localHostNameAsCEHostName\s*=\s*\"(.*)\"$/){$configValues{localHostNameAsCEHostName}=$1;}
         if(/^havePoolAccounts\s*=\s*\"(.*)\"$/){$configValues{havePoolAccounts}=$1;}
         if(/^poolAccountPatternFile\s*=\s*\"(.*)\"$/){$configValues{poolAccountPatternFile}=$1;}
 	if(/^useCEHostName\s*=\s*\"(.*)\"$/){$configValues{useCEHostName}=$1;}
-	if(/^systemLogLevel\s*=\s*\"(.*)\"$/){$configValues{systemLogLevel}=$1;}
 	if(/^gipDynamicTmpCEFiles\s*=\s*\"(.*)\"$/){$configValues{gipDynamicTmpCEFiles}=$1;}
-	if(/^useUrKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{useUrKeyDefFile}=$1;}
-	if(/^urKeyDefFile\s*=\s*\"(.*)\"$/){$configValues{urKeyDefFile}=$1;}
 	if(/^voToProcess\s*=\s*\"(.*)\"$/){$configValues{voToProcess}=$1;}
 	if(/^transportLayer\s*=\s*\"(.*)\"$/){$configValues{transportLayer}=$1;}
 	if(/^recordComposer1\s*=\s*\"(.*)\"$/){$configValues{recordComposer1}=$1;}
