@@ -272,7 +272,7 @@ for (my $i = 0; $keepGoing && ( $i < $configValues{mainPollInterval} ); $i++)
 	usleep(10000);
 }
 my $elapsed = tv_interval ($t0, [gettimeofday]);
-&printLog ( 4,"ELAPSED:$elapsed");
+&printLog ( 9,"ELAPSED:$elapsed");
 my $success_min = ($successRecords/$elapsed)*60;
 my $failure_min = ($failRecords/$elapsed)*60;
 my $total_min = (($failRecords+$successRecords)/$elapsed)*60;
@@ -285,7 +285,7 @@ $success_min = sprintf("%.2f", $success_min);
 $failure_min = sprintf("%.2f", $failure_min);
 $total_min = sprintf("%.2f", $total_min);
 $min_krecords = sprintf("%.1f", $min_krecords);
-&printLog ( 4,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min, min/KRec:$min_krecords");
+&printLog ( 5,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min, min/KRec:$min_krecords");
 }
 &Exit();
 
@@ -445,7 +445,7 @@ sub execCommand
 	{
                	$status = $? >> 8;
         }
-	&printLog ( 9, "Executing:$protocol, key=$key :$command EXIT_STATUS=$status" );
+	&printLog ( 8, "Executing:$protocol, key=$key :$command EXIT_STATUS=$status" );
 	&printLog ( 5, "Executing:$protocol, key=$key, EXIT_STATUS=$status" );
 	if ( $printAsciiLog == 1)
         {
@@ -482,7 +482,7 @@ sub delCommand
                 else
                 {
                         $querySuccesfull = 0;
-                        &printLog ( 9, "$delString" );
+                        &printLog ( 9, "SUCCESS: $delString" );
                 }
                 last if ( $queryCounter >= 10 );
 	}
