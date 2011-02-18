@@ -49,7 +49,7 @@ fi
 [ -d $DGAS_VAR_DIR/log ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log
 
 # Some functions to make the below more readable
-HLRD=$PREFIX/sbin/glite-dgas-hlr-listener
+HLRD=$PREFIX/sbin/dgas-hlr-listener
 eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 HLRD_OPTIONS="-c $HLRD_CONF"
 
@@ -64,14 +64,14 @@ fi
 HOSTPROXY_SCRIPT="$PREFIX/libexec/dgas-hlr-checkHostCertProxy.sh"
 
 
-TRS_MGR=$PREFIX/sbin/glite-dgas-hlr-qmgr
+TRS_MGR=$PREFIX/sbin/dgas-hlr-qmgr
 eval TRS_MGR_LOG=`grep hlr_qmgr_def_log $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 eval TRS_MGR_LOCK=`grep hlr_qmgr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 TRS_MGR_OPTIONS="-l $TRS_MGR_LOG -c $HLRD_CONF"
 
 eval HAD_LOCK=`grep hlr_had_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 
-UR_FORWARD=$PREFIX/libexec/glite-dgas-hlr-urforward
+UR_FORWARD=$PREFIX/libexec/dgas-hlr-urforward
 eval serversFile=`grep serversFile $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 
 eval urForward_LOCK=`grep urForwardLock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
@@ -302,7 +302,7 @@ startHad()
 	if [ "$?" != "0" ]; then
 	    # starting HAD only if it is not yet running
 	    #echo "$HADPID; $?; starting HAD ..."
-	    $PREFIX/sbin/glite-dgas-hlr-had.pl $STARTUP_SCRIPT $HOSTPROXY_SCRIPT &>/dev/null &
+	    $PREFIX/sbin/dgas-hlr-had.pl $STARTUP_SCRIPT $HOSTPROXY_SCRIPT &>/dev/null &
 	    RETVAL=$?
 	    HADPID=$!
 	    [ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
