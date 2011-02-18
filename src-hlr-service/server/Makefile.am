@@ -11,15 +11,15 @@ noinst_LTLIBRARIES = libdgasXmlHlrHelper.la
 noinst_HEADERS = xmlHlrHelper.h
 
 sbin_PROGRAMS = \
-	glite-dgas-hlr-listener \
-	glite-dgas-hlr-qmgr
+	dgas-hlr-listener \
+	dgas-hlr-qmgr
 
 libexec_PROGRAMS = \
-	glite-dgas-ml-client \
-	glite-dgas-hlr-urforward
+	dgas-ml-client \
+	dgas-hlr-urforward
 
 sbin_SCRIPTS = \
-	glite-dgas-hlr-had.pl
+	dgas-hlr-had.pl
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
@@ -38,10 +38,10 @@ libdgasXmlHlrHelper_la_SOURCES = \
 	xmlHlrHelper.h \
 	xmlHlrHelper.cpp
 
-glite_dgas_hlr_urforward_SOURCES = urForwardFactory.cpp urForwardFactory.h \
+dgas_hlr_urforward_SOURCES = urForwardFactory.cpp urForwardFactory.h \
 	urForward.cpp 
 
-glite_dgas_hlr_urforward_LDADD = \
+dgas_hlr_urforward_LDADD = \
 	$(GLOBUS_THR_LIBS) \
 	$(GLOBUS_GSS_THR_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
@@ -54,11 +54,11 @@ glite_dgas_hlr_urforward_LDADD = \
 	-lglite_dgas_tls_gsisocket_pp \
 	$(DBLIBS)
 	
-glite_dgas_hlr_listener_SOURCES  = hlrServerd.cpp \
+dgas_hlr_listener_SOURCES  = hlrServerd.cpp \
 	daemonFactory.cpp \
 	daemonFactory.h 
 
-glite_dgas_hlr_listener_LDADD =  \
+dgas_hlr_listener_LDADD =  \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
@@ -87,16 +87,16 @@ glite_dgas_hlr_listener_LDADD =  \
 	-lglite_dgas_hlrGenericQuery \
 	$(DBLIBS) $(VOMSLIBS)
 
-glite_dgas_ml_client_SOURCES = mlClient.cpp
-glite_dgas_ml_client_LDADD   = \
+dgas_ml_client_SOURCES = mlClient.cpp
+dgas_ml_client_LDADD   = \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
 	$(GLOBUS_GSS_THR_LIBS) \
 	$(GLOBUS_SSL_UTILS_LIBS)
 
-glite_dgas_hlr_qmgr_SOURCES = hlrQtransMgrd.cpp
-glite_dgas_hlr_qmgr_LDADD = \
+dgas_hlr_qmgr_SOURCES = hlrQtransMgrd.cpp
+dgas_hlr_qmgr_LDADD = \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
