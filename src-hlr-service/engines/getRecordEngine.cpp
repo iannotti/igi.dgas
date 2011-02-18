@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: getRecordEngine.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
+// $Id: getRecordEngine.cpp,v 1.1.2.1.4.2 2011/02/18 08:52:13 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -309,27 +309,32 @@ int getRecordEngine( string &input, connInfo &connectionInfo, string *output )
 							//compose INSERT query managing field types.
 							string queryStr = "INSERT INTO " + usage_info.tableName + " SET ";
 							map<string,string>::iterator it = fieldsValues.begin();
+							bool alreadyStarted = false;
 							while ( it != fieldsValues.end() )
 							{
-								if ( it != fieldsValues.begin() )
-								{
-									queryStr += ",";
-								} 
-								queryStr += (*it).first+"=";
-								string typeBuff = tableDef[(*it).first];
-								if ( typeBuff.find("int") != string::npos )
-								{
-									queryStr += (*it).second; 
-								} 
-								if ( typeBuff.find("date") != string::npos )
-								{
-									//integer type
-									queryStr += (*it).second; 
-								} 
-								if ( typeBuff.find("char") != string::npos )
-								{
-									//string type
-									queryStr += "\"" + (*it).second + "\""; 
+								if ( (*it).second != "" )
+								{ 
+									if ( (it != fieldsValues.begin()) && alreadyStarted )
+									{
+										queryStr += ",";
+									}
+									queryStr += (*it).first+"=";
+									string typeBuff = tableDef[(*it).first];
+									if ( typeBuff.find("int") != string::npos )
+									{
+										queryStr += (*it).second; 
+									} 
+									if ( typeBuff.find("date") != string::npos )
+									{
+										//integer type
+										queryStr += (*it).second; 
+									} 
+									if ( typeBuff.find("char") != string::npos )
+									{
+										//string type
+										queryStr += "\"" + (*it).second + "\""; 
+									}
+									alreadyStarted=true;
 								}
 								it++;
 							}	

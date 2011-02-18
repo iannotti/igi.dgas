@@ -35,7 +35,7 @@ fi
 eval DGAS_VAR_DIR=`grep dgas_var_dir $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval HLR_USER=`grep hlr_user $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 
-eval CONSUMER_LOCK=`grep lockFileName $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval CONSUMER_LOCK=`grep consumerLockFileName $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval MANAGER_LOCK=`grep managerLockFileName $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 
 [ -d $PREFIX/var ] || mkdir $PREFIX/var
