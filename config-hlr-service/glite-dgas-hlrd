@@ -61,7 +61,7 @@ else
 fi
 
 # this is the script used to check and renew the host cert proxy:
-HOSTPROXY_SCRIPT="$PREFIX/libexec/glite-dgas-hlr-checkHostCertProxy.sh"
+HOSTPROXY_SCRIPT="$PREFIX/libexec/dgas-hlr-checkHostCertProxy.sh"
 
 
 TRS_MGR=$PREFIX/sbin/glite-dgas-hlr-qmgr
@@ -79,7 +79,7 @@ eval urForward_LOCK=`grep urForwardLock $HLRD_CONF | grep "^#" -v | cut -d'"' -f
 startMain()
 {
 	echo -n $"Initializing DGAS HLR...."
-	$PREFIX/sbin/glite-dgas-hlr-translatedb -M
+	$PREFIX/sbin/dgas-hlr-translatedb -M
         RETVAL=0
 	echo -n $"Starting $prog:"
 	[ -e $HLRD_LOCK ] && HLRD_PID=`cat $HLRD_LOCK` && ps auxw | grep $HLRD_PID | grep dgas &> /dev/null
