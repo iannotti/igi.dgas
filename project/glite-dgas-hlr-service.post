@@ -1,10 +1,13 @@
 ldconfig
 export DGAS_LOCATION=${DGAS_LOCATION:-/opt/glite}
 
-if [ -f $DGAS_LOCATION/sbin/glite-dgas-hlrd ]; then
+if [ -f $DGAS_LOCATION/sbin/dgas-hlrd ]; then
+	if [ -f /etc/rc.d/init.d/dgas-hlrd ] ; then
+		rm -f /etc/rc.d/init.d/dgas-hlrd
+	fi 
 	if [ -f /etc/rc.d/init.d/glite-dgas-hlrd ] ; then
 		rm -f /etc/rc.d/init.d/glite-dgas-hlrd
 	fi 
-	ln -s $DGAS_LOCATION/sbin/glite-dgas-hlrd /etc/rc.d/init.d/glite-dgas-hlrd
-	chkconfig --add glite-dgas-hlrd
+	ln -s $DGAS_LOCATION/sbin/dgas-hlrd /etc/rc.d/init.d/dgas-hlrd
+	chkconfig --add dgas-hlrd
 fi
