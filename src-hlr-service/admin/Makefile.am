@@ -11,7 +11,7 @@ sbin_PROGRAMS = \
 	dgas-hlr-archive
 
 sbin_SCRIPTS = \
-	dgas-hlrd-dbcreate \
+	dgas-hlr-dbcreate \
 	dgas-hlr-bdiiresimport.pl \
 	dgas-sumrecords2goc.pl
 
