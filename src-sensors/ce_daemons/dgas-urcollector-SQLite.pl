@@ -650,7 +650,7 @@ sub printLog
 			else
 			{
 				$logCounter++;
-				if ( $logCounter == 10 )
+				if ( $logCounter == 20 )
 				{
                 			print LOGH "$localtime: Last message repeated 10 times.\n";
 					$logCounter = 0;
