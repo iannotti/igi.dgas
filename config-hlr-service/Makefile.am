@@ -7,4 +7,4 @@ sysconf_DATA = \
 	glite-dgas-sumrecords2goc-SumCPU.sql
 
 sbin_SCRIPTS = \
-	glite-dgas-hlrd
+	dgas-hlrd
