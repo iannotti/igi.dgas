@@ -65,7 +65,7 @@ res_acct_bank_id = "hostname:portnumber:X509CertSubject"
 # information (user DN, user FQAN, grid job ID, etc) will be added
 # (jobs considered to be local jobs).
 useCEJobMap = "yes"
-ceJobMapLog = ""
+ceJobMapLog = "/opt/glite/var/log/accounting/blahp.log"
 
 # This section configures the composer/producer system that is used to publish 
 # information to the HLR servers. 
