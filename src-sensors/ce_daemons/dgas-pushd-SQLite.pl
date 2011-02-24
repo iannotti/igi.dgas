@@ -45,7 +45,7 @@ my %configValues = (
 		    printAsciiLog => "no",
 		    asciiLogFilePath => $dgasLocation . "/var/log/pushdAscii.log",
 		    dgasDB 	=> $dgasLocation . "/var/dgas.sqlite",			
-		    successLegacy 	=> "64;65;68;69;70;71;73",			
+		    successLegacy 	=> "0;64;65;68;69;70;71;73",			
 		    successTransport1 	=> "0",			
 		    successTransport2 	=> "0",			
 );
