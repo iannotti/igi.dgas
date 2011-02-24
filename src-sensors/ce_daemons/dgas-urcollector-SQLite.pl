@@ -80,7 +80,7 @@ my %configValues = (
 		    useUrKeyDefFile => "no",
 		    urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
 		    voToProcess => "",
-		    transportLayer => "legacy",
+		    transportLayer => "Legacy",
 		    recordComposer1 => $dgasLocation . "/libexec/dgas-legacyCpuComposer",
 		    recordProducer1 => $dgasLocation. "/libexec/dgas-amqProducer",
 		    recordComposer2 => $dgasLocation . "/libexec/ogfurComposer",
@@ -1347,7 +1347,7 @@ sub callAtmClient
     }
 
     my $exe = "";
-    if ( ( $transportLayer =~ "amq" ) || ( $transportLayer =~ "transport1" ) )
+    if ( ( $transportLayer =~ "Transport1" ) )
     {
 	my $recordComposer1 = $configValues{recordComposer1};
 	my $recordProducer1 = $configValues{recordProducer1};
@@ -1355,7 +1355,7 @@ sub callAtmClient
 	&printLog ( 8, "Writing: $exe");
         my $arguments = $cmd;
         $arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'transport1','$recordComposer1','$arguments','$recordProducer1','$urGridInfo{start}', '$urGridInfo{lrmsId}',0)";
+        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Transport1','$recordComposer1','$arguments','$recordProducer1','$urGridInfo{start}', '$urGridInfo{lrmsId}',0)";
 	my $querySuccesfull = 1;
 	my $queryCounter = 0;
 	while ($keepGoing && $querySuccesfull)
@@ -1383,7 +1383,7 @@ sub callAtmClient
     }
 
     $exe = "";
-    if ( $transportLayer =~ "transport2"  )
+    if ( $transportLayer =~ "Transport2"  )
     {
 	my $recordComposer2 = $configValues{recordComposer2};
 	my $recordProducer2 = $configValues{recordProducer2};
@@ -1391,7 +1391,7 @@ sub callAtmClient
 	&printLog ( 8, "Writing: $exe");
  	my $arguments = $cmd;
         $arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'transport2','$recordComposer2','$arguments','$recordProducer2','$urGridInfo{start}', '$urGridInfo{lrmsId}','0')";
+        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Transport2','$recordComposer2','$arguments','$recordProducer2','$urGridInfo{start}', '$urGridInfo{lrmsId}','0')";
     	my $querySuccesfull = 1;
 	my $queryCounter = 0;
 	while ($keepGoing && $querySuccesfull)
@@ -1419,13 +1419,13 @@ sub callAtmClient
     }
 
     $exe = "";
-    if ( $transportLayer =~ "legacy" )
+    if ( $transportLayer =~ "Legacy" )
     {
 	    $exe = $legacyCmd . $cmd;
 		&printLog ( 8, "Writing: $exe");
 		my $arguments = $cmd;
         	$arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'legacy','$legacyCmd','$arguments','','$urGridInfo{start}', '$urGridInfo{LRMSID}','')";
+        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Legacy','$legacyCmd','$arguments','','$urGridInfo{start}', '$urGridInfo{lrmsId}','')";
     	my $querySuccesfull = 1;
 	my $queryCounter = 0;
 	while ($keepGoing && $querySuccesfull)
@@ -1718,6 +1718,7 @@ sub parseConf {
 		s/\$\{$1\}/$value/g;
 	}
 	if(/^lrmsType\s*=\s*\"(.*)\"$/){$configValues{lrmsType}=$1;}
+	if(/^lrmsAcctLogDir\s*=\s*\"(.*)\"$/){$configValues{lrmsAcctLogDir}=$1;}
 	if(/^pbsAcctLogDir\s*=\s*\"(.*)\"$/){$configValues{pbsAcctLogDir}=$1;}
 	if(/^lsfAcctLogDir\s*=\s*\"(.*)\"$/){$configValues{lsfAcctLogDir}=$1;}
 	if(/^sgeAcctLogDir\s*=\s*\"(.*)\"$/){$configValues{sgeAcctLogDir}=$1;}
@@ -1749,11 +1750,21 @@ sub parseConf {
 	if(/^gipDynamicTmpCEFiles\s*=\s*\"(.*)\"$/){$configValues{gipDynamicTmpCEFiles}=$1;}
 	if(/^voToProcess\s*=\s*\"(.*)\"$/){$configValues{voToProcess}=$1;}
 	if(/^transportLayer\s*=\s*\"(.*)\"$/){$configValues{transportLayer}=$1;}
-	if(/^recordComposer1\s*=\s*\"(.*)\"$/){$configValues{recordComposer1}=$1;}
-	if(/^recordProducer1\s*=\s*\"(.*)\"$/){$configValues{recordProducer1}=$1;}
-	if(/^recordComposer2\s*=\s*\"(.*)\"$/){$configValues{recordComposer2}=$1;}
-	if(/^recordProducer2\s*=\s*\"(.*)\"$/){$configValues{recordProducer2}=$1;}
 	if(/^dgasDB\s*=\s*\"(.*)\"$/){$configValues{dgasDB}=$1;}
+	if(/^recordProducer(.*)\s*=\s*\"(.*)\"$/)
+        {
+                my $producerNameBuff = $1;
+                my $producerBuff = $2;
+                $producerNameBuff =~ s/\s//g;
+                $configValues{"recordProducer$producerNameBuff"}=$producerBuff;
+        }
+	if(/^recordComposer(.*)\s*=\s*\"(.*)\"$/)
+        {
+                my $composerNameBuff = $1;
+                my $composerBuff = $2;
+                $composerNameBuff =~ s/\s//g;
+                $configValues{"recordComposer$composerNameBuff"}=$composerBuff;
+        }
     }
     close(FILE);
 }

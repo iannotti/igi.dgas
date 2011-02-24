@@ -73,7 +73,7 @@ ceJobMapLog = "/opt/glite/var/log/accounting/blahp.log"
 # transportLayer specifies the transport mechanisms that can be used.
 # the 'legacy' value automatically set up the older, backward compatible 
 # mechanism adopted in earlier versions of DGAS.
-# transportLayer = "legacy;transport1;transport2"
+# transportLayer = "Legacy;Transport1;Transport2"
 
 # set of composer/producer commands used by the transport layers.
 # recordComposer1 = "${DGAS_LOCATION}/libexec/dgas-legacyCpuComposer"

@@ -56,6 +56,8 @@ my $LOGH;
 my $ASCIILOG;
 my $lastLog = "";
 my $logCounter = 0;
+my @availableTransports;
+push @availableTransports, "Legacy";
 
 #Parse configuration file
 if(exists $ARGV[0]) 
@@ -103,22 +105,21 @@ else
 	&printLog ( 7, "Lock file succesfully created.");
 }
 
-my @successLegacy;
-my @success1;
-my @success2;
-if ( $configValues{successLegacy} ne "" )
+my %successHoA;
+foreach my $transport ( @availableTransports )
 {
-        @successLegacy = split(';',$configValues{successLegacy});
+	my @successArray;
+	if ( $configValues{"success$transport"} ne "" )
+	{
+        	@successArray = split(';',$configValues{"success$transport"});
+        	$successHoA{"$transport"} = [ @successArray ];
+	}
+
 }
 
-if ( $configValues{successTransport1} ne "" )
+foreach my $transport ( keys %successHoA )
 {
-       	@success1 = split(';',$configValues{successTransport1});
-}
-
-if ( $configValues{successTransport2} ne "" )
-{
-        @success2 = split(';',$configValues{successTransport2});
+	print "$transport @{ $successHoA{$transport} }\n";
 }
 
 while ($keepGoing )
@@ -224,33 +225,16 @@ while( $keepGoing )
 		&printLog (9,"thread pid:$_,ThreadNumber:$commandThreadNumber[$_],status:$result");
 		my $threadNumber = $commandThreadNumber[$_];
 		my $isSuccessfull = 1;
-		if ( $protocol[$threadNumber] eq "legacy" )
+		foreach my $transport ( @availableTransports )
 		{
-			foreach my $successValue ( @successLegacy )
+			if ( $protocol[$threadNumber] eq $transport )
 			{
-				if ( $result == $successValue )
+				foreach my $successValue ( @{ $successHoA{$transport} } )
 				{
-					$isSuccessfull = 0;
-				}
-			}
-		}
-		if ( $protocol[$threadNumber] eq "transport1" )
-		{
-			foreach my $successValue ( @success1 )
-			{
-				if ( $result == $successValue )
-				{
-					$isSuccessfull = 0;
-				}
-			}
-		}
-		if ( $protocol[$threadNumber] eq "transport2" )
-		{
-			foreach my $successValue ( @success2 )
-			{
-				if ( $result == $successValue )
-				{
-					$isSuccessfull = 0;
+					if ( $result == $successValue )
+					{
+						$isSuccessfull = 0;
+					}
 				}
 			}
 		}
@@ -390,9 +374,17 @@ sub parseConf
 	if(/^asciiLogFilePath\s*=\s*\"(.*)\"$/){$configValues{asciiLogFilePath}=$1;}
 	if(/^mainPollInterval\s*=\s*\"(.*)\"$/){$configValues{mainPollInterval}=$1;}
 	if(/^dgasDB\s*=\s*\"(.*)\"$/){$configValues{dgasDB}=$1;}
-	if(/^successTransport1\s*=\s*\"(.*)\"$/){$configValues{successTransport1}=$1;}
-	if(/^successTransport2\s*=\s*\"(.*)\"$/){$configValues{successTransport2}=$1;}
-	if(/^successLegacy\s*=\s*\"(.*)\"$/){$configValues{successLegacy}=$1;}
+	if(/^success(.*)\s*=\s*\"(.*)\"$/)
+	{
+		my $transportBuff = $1;
+		my $transportSuccessBuff = $2;
+		$transportBuff =~ s/\s//g; 
+		$configValues{"success$transportBuff"}=$transportSuccessBuff;
+		if ( $transportBuff ne  "Legacy" )
+		{
+			push @availableTransports, $transportBuff;
+		}
+	}
     }
     close(FILE);
 
