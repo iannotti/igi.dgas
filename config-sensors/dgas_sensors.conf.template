@@ -76,11 +76,11 @@ ceJobMapLog = "/opt/glite/var/log/accounting/blahp.log"
 # transportLayer = "Legacy;Transport1;Transport2"
 
 # set of composer/producer commands used by the transport layers.
-# recordComposer1 = "${DGAS_LOCATION}/libexec/dgas-legacyCpuComposer"
-# recordProducer1 = "${DGAS_LOCATION}/libexec/dgas-amqProducer"
+# recordComposerTransport1 = "${DGAS_LOCATION}/libexec/dgas-legacyCpuComposer"
+# recordProducerTransport1 = "${DGAS_LOCATION}/libexec/dgas-amqProducer"
 
-# recordComposer2 = "${DGAS_LOCATION}/libexec/dgas-ogfurComposer"
-# recordProducer2 = "${DGAS_LOCATION}/libexec/dgas-legacyProducer"
+# recordComposerTransport2 = "${DGAS_LOCATION}/libexec/dgas-ogfurComposer"
+# recordProducerTransport2 = "${DGAS_LOCATION}/libexec/dgas-legacyProducer"
 
 # This is used by the SQLite version of the daemons. Ehen the record producer
 # exits with one of the specified exit status. the record is considered 
