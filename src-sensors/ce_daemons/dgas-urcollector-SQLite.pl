@@ -125,6 +125,7 @@ while (@ARGV) {
 # Parse configuration file
 &parseConf($configFilePath);
 
+my @transportLayers = split (/;/, $configValues{transportLayer} ); 
 my $systemLogLevel = $configValues{systemLogLevel};
 my $logType = 0;
 my $LOGH;
@@ -1347,109 +1348,76 @@ sub callAtmClient
     }
 
     my $exe = "";
-    if ( ( $transportLayer =~ "Transport1" ) )
+    foreach my $transportLayer ( @transportLayers )
     {
-	my $recordComposer1 = $configValues{recordComposer1};
-	my $recordProducer1 = $configValues{recordProducer1};
-	$exe = $recordComposer1 . " ". $cmd . " | ". $recordProducer1;
-	&printLog ( 8, "Writing: $exe");
-        my $arguments = $cmd;
-        $arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Transport1','$recordComposer1','$arguments','$recordProducer1','$urGridInfo{start}', '$urGridInfo{lrmsId}',0)";
-	my $querySuccesfull = 1;
-	my $queryCounter = 0;
-	while ($keepGoing && $querySuccesfull)
-	{
-		eval {
-        		my $res = $dbh->do( $sqlStatement );
-		};
-		if ( $@ )
+		if ( ( $transportLayer ne "Legacy" ) )
 		{
-			&printLog ( 3, "WARN: ($queryCounter) $@" );
-			print "Retrying in $queryCounter\n";
-			for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+			my $recordComposer = $configValues{"recordComposer$transportLayer"};
+			my $recordProducer = $configValues{"recordProducer$transportLayer"};
+        		my $arguments = $cmd;
+			$exe = $recordComposer . " ". $arguments . " | ". $recordProducer;
+			&printLog ( 8, "Writing: $exe");
+	        	$arguments =~ s/\"/\\\"/g;
+        		my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'$transportLayer','$recordComposer','$arguments','$recordProducer','$urGridInfo{start}', '$urGridInfo{lrmsId}',0)";
+			my $querySuccesfull = 1;
+			my $queryCounter = 0;
+			while ($keepGoing && $querySuccesfull)
 			{
-				sleep $i;
-			}
-			$queryCounter++;
-		}
-		else
-		{
-			$querySuccesfull = 0;
-			&printLog ( 9, "$sqlStatement" );
-		}
-		last if ( $queryCounter >= 10 );
-	} 
-    }
-
-    $exe = "";
-    if ( $transportLayer =~ "Transport2"  )
-    {
-	my $recordComposer2 = $configValues{recordComposer2};
-	my $recordProducer2 = $configValues{recordProducer2};
-	$exe = $recordComposer2 . " ". $cmd . " | ". $recordProducer2;
-	&printLog ( 8, "Writing: $exe");
- 	my $arguments = $cmd;
-        $arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Transport2','$recordComposer2','$arguments','$recordProducer2','$urGridInfo{start}', '$urGridInfo{lrmsId}','0')";
-    	my $querySuccesfull = 1;
-	my $queryCounter = 0;
-	while ($keepGoing && $querySuccesfull)
-	{
-		eval {
-        		my $res = $dbh->do( $sqlStatement );
-		};
-		if ( $@ )
-		{
-			&printLog ( 3, "WARN: ($queryCounter) $@" );
-			print "Retrying in $queryCounter\n";
-			for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+				eval 
+				{
+        				my $res = $dbh->do( $sqlStatement );
+				};
+				if ( $@ )
+				{
+					&printLog ( 3, "WARN: ($queryCounter) $@" );
+					print "Retrying in $queryCounter\n";
+					for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+					{
+						sleep $i;
+					}
+					$queryCounter++;
+				}
+				else
+				{	
+					$querySuccesfull = 0;
+					&printLog ( 9, "$sqlStatement" );
+				}
+				last if ( $queryCounter >= 10 );
+			}	 
+    	     	}
+    		else 
+    		{
+			#Legacy
+	    		$exe = $legacyCmd . $cmd;
+			&printLog ( 8, "Writing: $exe");
+			my $arguments = $cmd;
+        		$arguments =~ s/\"/\\\"/g;
+        		my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Legacy','$legacyCmd','$arguments','','$urGridInfo{start}', '$urGridInfo{lrmsId}','')";
+    			my $querySuccesfull = 1;
+			my $queryCounter = 0;
+			while ($keepGoing && $querySuccesfull)
 			{
-				sleep $i;
-			}
-			$queryCounter++;
-		}
-		else
-		{
-			$querySuccesfull = 0;
-			&printLog ( 9, "$sqlStatement" );
-		}
-		last if ( $queryCounter >= 10 );
-	} 
-    }
-
-    $exe = "";
-    if ( $transportLayer =~ "Legacy" )
-    {
-	    $exe = $legacyCmd . $cmd;
-		&printLog ( 8, "Writing: $exe");
-		my $arguments = $cmd;
-        	$arguments =~ s/\"/\\\"/g;
-        my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Legacy','$legacyCmd','$arguments','','$urGridInfo{start}', '$urGridInfo{lrmsId}','')";
-    	my $querySuccesfull = 1;
-	my $queryCounter = 0;
-	while ($keepGoing && $querySuccesfull)
-	{
-		eval {
-        		my $res = $dbh->do( $sqlStatement );
-		};
-		if ( $@ )
-		{
-			&printLog ( 3, "WARN: ($queryCounter) $@" );
-			print "Retrying in $queryCounter\n";
-			for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
-			{
-				sleep $i;
-			}
-			$queryCounter++;
-		}
-		else
-		{
-			$querySuccesfull = 0;
-			&printLog ( 9, "$sqlStatement" );
-		}
-		last if ( $queryCounter >= 10 );
-	} 
+				eval {
+        				my $res = $dbh->do( $sqlStatement );
+				};
+				if ( $@ )
+				{
+					&printLog ( 3, "WARN: ($queryCounter) $@" );
+					print "Retrying in $queryCounter\n";
+					for ( my $i =0; $keepGoing && ( $i < $queryCounter ) ; $i++ )
+					{
+						sleep $i;
+					}
+					$queryCounter++;
+				}
+				else
+				{
+					$querySuccesfull = 0;
+					&printLog ( 9, "$sqlStatement" );
+				}
+				last if ( $queryCounter >= 10 );
+			} 
+    		}
     }
 }
 
