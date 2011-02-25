@@ -33,7 +33,7 @@ if(exists $ARGV[1])
 
 ## Global variable initialization
 
-my $T = 15;
+my $T = 30;
 
 my $keepGoing = 1;
 
