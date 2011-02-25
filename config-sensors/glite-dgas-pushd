@@ -23,7 +23,7 @@ fi
 [ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$ACTIVEMQLIB
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$DGAS_LOCATION/lib64/:$ACTIVEMQLIB
 
 PUSHD_CONF=$PREFIX/etc/dgas_sensors.conf
 
