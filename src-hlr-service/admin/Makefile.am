@@ -7,6 +7,7 @@ sbin_PROGRAMS = \
 	dgas-hlr-delresource \
 	dgas-hlr-checkqueue \
 	dgas-hlr-translatedb \
+	dgas-hlr-populateJobTransSummary \
 	dgas-hlr-sqlexec \
 	dgas-hlr-archive
 
@@ -43,6 +44,13 @@ dgas_hlr_archive_LDADD = \
 
 dgas_hlr_translatedb_SOURCES = hlrTranslateDb.cpp
 dgas_hlr_translatedb_LDADD = \
+	$(LDADD) \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
+	-lglite_dgas_hlrGenericQuery -lcrypto 
+
+dgas_hlr_populateJobTransSummary_SOURCES = hlrJTSFeeder.cpp
+dgas_hlr_populateJobTransSummary_LDADD = \
 	$(LDADD) \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \

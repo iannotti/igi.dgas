@@ -140,6 +140,7 @@ my $limit = ($configValues{maxThreadNumber})*3;
 #my $counter =0; 
 while( $keepGoing )
 {
+    LOGH->flush;
     my $t0 = [gettimeofday];
     my $successRecords = 0;
     my $failRecords = 0;       
@@ -199,6 +200,7 @@ while( $keepGoing )
 						$status[$threadNumber],
 						$key[$threadNumber]);
 			}
+    			LOGH->flush;
 			exit($status[$threadNumber]);
 		}
 		else
