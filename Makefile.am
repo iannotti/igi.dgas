@@ -18,10 +18,10 @@
 ## *********************************************************************
 
 ## Process this file with automake to produce Makefile.in
-EXTRA_DIST = LICENSE
+EXTRA_DIST = LICENSE README
 
 docdir = $(datadir)/doc/@PACKAGE@-@VERSION@
-doc_DATA = LICENSE
+doc_DATA = LICENSE README
 
 ## Subdirectories list
 SUBDIRS = \
