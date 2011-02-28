@@ -13,6 +13,7 @@ use Sys::Syslog;
 use vars qw($PERL_SINGLE_QUOTE);
 use DBI;
 use Time::HiRes qw(usleep ualarm gettimeofday tv_interval);
+use IO::Handle;
 
 # turn off buffering of STDOUT
 $| = 1;
@@ -140,6 +141,7 @@ my $limit = ($configValues{maxThreadNumber})*3;
 #my $counter =0; 
 while( $keepGoing )
 {
+    LOGH->flush();
     my $t0 = [gettimeofday];
     my $successRecords = 0;
     my $failRecords = 0;       
@@ -199,6 +201,7 @@ while( $keepGoing )
 						$status[$threadNumber],
 						$key[$threadNumber]);
 			}
+			LOGH->flush();
 			exit($status[$threadNumber]);
 		}
 		else
