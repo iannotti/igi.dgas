@@ -8,9 +8,10 @@ if [ -f $DGAS_LOCATION/sbin/dgas-hlrd ]; then
 	fi
 else
 	if [ -f $DGAS_LOCATION/sbin/glite-dgas-hlrd ]; then
-        if $DGAS_LOCATION/sbin/glite-dgas-hlrd status >/dev/null; then
-                echo "glite-dgas-hlrd running"
-                $DGAS_LOCATION/sbin/glite-dgas-hlrd stop
-        else echo "glite-dgas-hlrd not running"
-        fi
+        	if $DGAS_LOCATION/sbin/glite-dgas-hlrd status >/dev/null; then
+                	echo "glite-dgas-hlrd running"
+                	$DGAS_LOCATION/sbin/glite-dgas-hlrd stop
+        	else echo "glite-dgas-hlrd not running"
+        	fi
+	fi
 fi
