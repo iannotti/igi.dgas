@@ -214,7 +214,7 @@ while( $keepGoing )
 	{
 		#$counter++;
 		my $numChilds = @childs;
-		&printLog ( 7, "$numChilds threads");
+		&printLog ( 8, "$numChilds threads");
 		my $result = 0;
 		waitpid($_,0);
 		if ($? & 127) 
@@ -457,7 +457,7 @@ sub delCommand
 {
 	my $key = $_[0];
 	my $status = 0;
-	&printLog ( 5, "Deleting:$key" );
+	&printLog ( 7, "Deleting:$key" );
 	my $delString = "DELETE FROM commands WHERE key=$key";
 	&printLog ( 8, "DELETE FROM commands WHERE key=$key" );
 	my $querySuccesfull = 1;
