@@ -2073,7 +2073,7 @@ sub processLrmsLogFile {
 	    # write this only if we have processed at least one job!
 	    # Otherwise it would be written on all empty iterations.
 	    if ( ($_[4] ne $startJob) || ($_[5] ne $startTimestamp)) {
-		&printLog (7,"Found processed $targetJobId,event time $lrmsEventTimeString (=$lrmsEventTimestamp).End iteration!");
+		&printLog (8,"Found processed $targetJobId,event time $lrmsEventTimeString (=$lrmsEventTimestamp).End iteration!");
 	    }
 	    close LRMSLOGFILE;
 	    $_[10] = $allProcessed = 1;

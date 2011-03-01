@@ -272,7 +272,10 @@ $success_min = sprintf("%.2f", $success_min);
 $failure_min = sprintf("%.2f", $failure_min);
 $total_min = sprintf("%.2f", $total_min);
 $min_krecords = sprintf("%.1f", $min_krecords);
-&printLog ( 5,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min, min/KRec:$min_krecords");
+if ( $failRecords+$successRecords > 0 )
+{
+	&printLog ( 5,"Success/min:$success_min, Fail/min:$failure_min, tot/min:$total_min, min/KRec:$min_krecords");
+}
 }
 &Exit();
 
