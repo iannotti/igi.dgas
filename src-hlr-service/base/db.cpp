@@ -1,4 +1,4 @@
-// $Id: db.cpp,v 1.1.2.3 2011/02/15 09:47:49 aguarise Exp $
+// $Id: db.cpp,v 1.1.2.4 2011/03/02 12:42:26 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -48,7 +48,7 @@ db::db ( string serverI,
                         cerr << ";Retrying." << endl;
                         retry++;
 	       }
-	} while ( (errNo != 0) && ( retry < 15 ) );
+	} while ( (errNo != 0) && ( retry < 13 ) );
 	if ( errNo != 0 )
 		cerr << "Warning: reached maximum retry value!" << endl;
 }
