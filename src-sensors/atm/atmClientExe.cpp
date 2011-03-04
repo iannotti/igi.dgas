@@ -24,10 +24,10 @@ string usrX509cert_buff = ""; // X509 subject of the user owning the job
 int verbosity = 3;
 vector<string> info_v;
 
-string cpu_time = "-1";
-string wall_time = "-1";
-string mem = "-1";
-string vmem = "-1";
+string cpu_time = "0";
+string wall_time = "0";
+string mem = "0";
+string vmem = "0";
 
 
 void help()
@@ -59,7 +59,6 @@ void help()
 	cerr << "\"si2k=<specint>\" \"sf2k=<specfloat>\" \"tz=<numerictimezone>\"" << endl;
 	cerr << "\"fqan=<vomscertfqan>\" \"accountingProcedure=outOfBand\"" << endl;
 	cerr << endl;
-	cerr << "Note: The mandatory usage metrics are: CPU_TIME, WALL_TIME, PMEM, VMEM," << endl << "      start, end, LRMSID and jobName; all other parameters are optional." << endl;
 	cerr << "IMPORTANT: \"accountingProcedure=outOfBand\" should be specified when" << endl;
 	cerr << "periodically processing LRMS logs instead of using DGAS Gianduia. This will" << endl;
 	cerr << "cause the HLR server to effect additional controls to prevent from duplicate" << endl;
@@ -119,8 +118,8 @@ int options ( int argc, char **argv )
 
 
 void listMandatoryParameters() {
-  cerr << "Error: At least the following manadotry job usage metrics have to be specified:" << endl;
-  cerr << " ==> CPU_TIME, WALL_TIME, PMEM, VMEM, start, end, LRMSID, jobName <==\n";
+  cerr << "Error: At least the following job usage metrics have to be specified:" << endl;
+  cerr << " ==> LRMSID <==\n";
 }
 
 bool usageMetricPresent(string param) {
@@ -181,47 +180,11 @@ int main (int argc, char *argv[])
 	}
 
 	// check for the presence of the mandatory metrics:
-	if (cpu_time == "-1")
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
-	if (wall_time == "-1")
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
-	if (mem == "-1")
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
-	if (vmem == "-1")
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
-	if (!usageMetricPresent("start"))
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
-	if (!usageMetricPresent("end"))
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
 	if (!usageMetricPresent("LRMSID"))
 	{
 	        listMandatoryParameters();
 		return 1;
 	}
-	if (!usageMetricPresent("jobName"))
-	{
-	        listMandatoryParameters();
-		return 1;
-	}
-
 
 	ATM_usage_info usage_info = { atoi(cpu_time.c_str()), 
 		atoi(wall_time.c_str()),
