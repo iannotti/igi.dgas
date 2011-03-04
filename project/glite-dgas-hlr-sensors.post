@@ -1,0 +1,35 @@
+ldconfig
+export DGAS_LOCATION=${DGAS_LOCATION:-/opt/glite}
+
+if [ -f $DGAS_LOCATION/sbin/glite-dgas-pushd ]; then
+	if [ -f /etc/rc.d/init.d/glite-dgas-pushd ] ; then
+		rm -f /etc/rc.d/init.d/glite-dgas-pushd
+	fi 
+	ln -s $DGAS_LOCATION/sbin/dgas-pushd /etc/rc.d/init.d/glite-dgas-pushd
+	chkconfig --add glite-dgas-pushd
+fi
+
+if [ -f $DGAS_LOCATION/sbin/dgas-pushd ]; then
+	if [ -f /etc/rc.d/init.d/dgas-pushd ] ; then
+		rm -f /etc/rc.d/init.d/dgas-pushd
+	fi 
+	ln -s $DGAS_LOCATION/sbin/dgas-pushd /etc/rc.d/init.d/dgas-pushd
+	chkconfig --add dgas-pushd
+fi
+
+
+if [ -f $DGAS_LOCATION/sbin/glite-dgas-urcollector ]; then
+	if [ -f /etc/rc.d/init.d/glite-dgas-urcollector ] ; then
+		rm -f /etc/rc.d/init.d/glite-dgas-urcollector
+	fi 
+	ln -s $DGAS_LOCATION/sbin/dgas-urcollector /etc/rc.d/init.d/glite-dgas-urcollector
+	chkconfig --add glite-dgas-urcollector
+fi
+
+if [ -f $DGAS_LOCATION/sbin/dgas-urcollector ]; then
+	if [ -f /etc/rc.d/init.d/dgas-urcollector ] ; then
+		rm -f /etc/rc.d/init.d/dgas-urcollector
+	fi 
+	ln -s $DGAS_LOCATION/sbin/dgas-urcollector /etc/rc.d/init.d/dgas-urcollector
+	chkconfig --add dgas-urcollector
+fi
