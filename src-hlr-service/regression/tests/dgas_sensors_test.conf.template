@@ -8,6 +8,8 @@
 #You should modify the following parameters according to your needs.
 #
 
+dgasDB = "${TESTBASE}/tests/dgas.sqlite"
+
 ##GLITE_URCOLLECTOR SECTION##
 
 # This is the location of the directory where gianduia puts the files

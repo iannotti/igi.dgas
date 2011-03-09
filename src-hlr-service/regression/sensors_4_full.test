@@ -27,7 +27,7 @@ start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-urcollector-SQLite.pl ${TEST
 
 #check LRMS_TYPE on PBS:1::grep "LRMS_TYPE=pbs" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
 check LRMS_JOBID on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" 
-check grid job not accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=grid"
+check grid job accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=grid"
 check local job accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=outOfBand"
 check end on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" | grep "end=1232913182" 
 check start on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" | grep "start=1232913174" 
@@ -46,7 +46,6 @@ select * from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from co
 cat log:0::cat $TESTBASE/dgas_collector.log
 Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
 rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
-
 
 
 start up collector jobToProcess=local:2:v:true
@@ -94,72 +93,65 @@ cat log:0::cat $TESTBASE/dgas_collector.log
 Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
 rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
 
+startup collector daemon LSF
+start up collector LSF jobToProcess=all:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+setup logs:1::$TESTBASE/tests/createLSFRecords.sh
+create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | gzip --to-stdout > $TESTBASE/tests/lrms-acct/lsb.acct.1.gz )
+create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
+Set lrmsType = "lsf":0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
+start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-urcollector-SQLite.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
+#
+check LRMS_JOBID on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "LRMSID=4530990" 
+check start on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep -P 'start=(\d{10})' 
+check end on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep -P 'end=(\d{10})' 
+check userDn on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "LRMSID=4530990" | grep "/C=IT/O=INFN/OU=Personal Certificate/L=Trieste/CN=stefano belforte" 
+check userFqan on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "LRMSID=4530990" | grep "/cms/Role=production/Capability=NULL\;/cms/Role=NULL/Capability=NULL\;/cms/itcms/Role=NULL/Capability=NULL" 
+check ceId on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "LRMSID=4530990" | grep "https://wms218.cern.ch:9000/E_vOh2Dz0ZZI4A0b2EM2yw" 
+check ceId on LSF:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "LRMSID=4530990" | grep "ce05-lcg.cr.cnaf.infn.it:2119/jobmanager-lcglsf-cms" 
+check grid job accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=grid"
+#
+#
+Stop collector daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+select * from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" 
+cat log:0::cat $TESTBASE/dgas_collector.log
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
+rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
+#
+#
 #startup collector daemon LSF
-#start up collector LSF jobToProcess=all:2:v:true
-#cleanup log:0::rm -f $TESTBASE/dgas_collector.log
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf_tmp
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf
-#clean up URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
-#create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
-#create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
-#setup logs:1::$TESTBASE/tests/createLSFRecords.sh
-#create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | gzip --to-stdout > $TESTBASE/tests/lrms-acct/lsb.acct.1.gz )
-#create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
-#create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
-#Set lrmsType = "lsf":0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
-#start up daemon:1::perl  ${DGAS_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
-#
-#check LRMS_TYPE on LSF:1::grep "LRMS_TYPE=lsf" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check LRMS_JOBID on LSF:1::grep "LRMS_JOBID=4530990" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check LRMS_EVENTTIME on LSF:1::grep -P 'LRMS_EVENTTIME=(\d{10})$' ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check LRMS_SUBMTIME on LSF:1::grep -P 'LRMS_SUBMTIME=(\d{10})$' ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check USER_DN on LSF:1::grep "USER_DN=/C=IT/O=INFN/OU=Personal Certificate/L=Trieste/CN=stefano belforte" ${TESTBASE}/tests/dgasURBox/lsf_4530990_* 
-#check USER_FQAN on LSF:1::grep "USER_FQAN=/cms/Role=production/Capability=NULL\;/cms/Role=NULL/Capability=NULL\;/cms/itcms/Role=NULL/Capability=NULL" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check CE_ID on LSF:1::grep "ce05-lcg.cr.cnaf.infn.it:2119/jobmanager-lcglsf-cms" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check timeZone on LSF:1::grep -P "timeZone=[+-]\d{4}" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check jobType=grid on LSF:1::grep "JOB_TYPE=grid" ${TESTBASE}/tests/dgasURBox/lsf_4530990_*
-#check GRID_JOBID=grid on LSF (all) :1::grep "GRID_JOBID=https://wms218.cern.ch:9000/E_vOh2Dz0ZZI4A0b2EM2yw" ${TESTBASE}/tests/dgasURBox/lsf_4530990_* 
-#
-#
-#Stop collector LSF daemon and cleanup:2:v:true
-##Stop the daemon
-#Stop collector:0::sleep 30
-#ls URBox:0::cp -r $TESTBASE/tests/dgasURBox/ /tmp/
-#cat URBox:0::cat $TESTBASE/tests/dgasURBox/*
-#rm URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
-#Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
-#
-#
-##startup collector daemon LSF
-#start up collector LSF jobToProcess=all:2:v:true
-#cleanup log:0::rm -f $TESTBASE/dgas_collector.log
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf_tmp
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf
-#clean up URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
-#clean LRMS accounting dir:0::rm -f $TESTBASE/tests/lrms-acct/
-#clean grid-jobmap accounting dir:0::rm -f $TESTBASE/tests/grid-jobmap/
-#create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
-#create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
-#setup logs:1::$TESTBASE/tests/createLSFRecords.sh
-#create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | gzip --to-stdout > $TESTBASE/tests/lrms-acct/lsb.acct.1.gz )
-#create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
-#create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
-#Create dgas_sensors.conf:0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.ldif.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
-#start up daemon:1::perl  ${DGAS_LOCATION}/sbin/glite-urcollector.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
-#
+start up collector LSF jobToProcess=all:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.lsf
+clean LRMS accounting dir:0::rm -f $TESTBASE/tests/lrms-acct/
+clean grid-jobmap accounting dir:0::rm -f $TESTBASE/tests/grid-jobmap/
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+setup logs:1::$TESTBASE/tests/createLSFRecords.sh
+create fake gzipped log:0::( head -2 $TESTBASE/tests/UR_LRMS_lsf.records.buff | gzip --to-stdout > $TESTBASE/tests/lrms-acct/lsb.acct.1.gz )
+create fake LRMS log:0::( sleep 65; tail -1 $TESTBASE/tests/UR_LRMS_lsf.records.buff > $TESTBASE/tests/lrms-acct/lsb.acct )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template.lsf.buff > $TESTBASE/tests/grid-jobmap/grid-jobmap_`date +"%Y%m%d"` )
+Create dgas_sensors.conf:0::( sed -f $TESTBASE/tests/dgas_sensors_test.conf.lsf.ldif.sed $TESTBASE/tests/dgas_sensors_test.conf.template > ${TESTBASE}/tests/dgas_sensors_test.conf.lsf )
+start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-urcollector-SQLite.pl ${TESTBASE}/tests/dgas_sensors_test.conf.lsf &
 #
 #check GlueHostBenchmarkSI00 on LSF:1::grep "GlueHostBenchmarkSI00=1371" ${TESTBASE}/tests/dgasURBox/lsf_4535228_*
 #check GlueHostBenchmarkSI00 on LSF:1::grep "GlueHostBenchmarkSF00=1268" ${TESTBASE}/tests/dgasURBox/lsf_4535228_*
 #
-#Stop collector LSF daemon and cleanup:2:v:true
-##Stop the daemon
-#Stop collector:0::sleep 30
-#ls URBox:1::cp -r $TESTBASE/tests/dgasURBox/ /tmp/
-#ls URBox:1::cat $TESTBASE/tests/dgasURBox/*
-#rm URBox:1::rm -f $TESTBASE/tests/dgasURBox/*
-#Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
-#
-#
+Stop collector daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+select * from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" 
+cat log:0::cat $TESTBASE/dgas_collector.log
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
+rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
 #
 #
 ##Start up daemon
