@@ -27,6 +27,8 @@ start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-urcollector-SQLite.pl ${TEST
 
 #check LRMS_TYPE on PBS:1::grep "LRMS_TYPE=pbs" `grep -l 280876.t2-ce-01.to.infn.it ${TESTBASE}/tests/dgasURBox/*`
 check LRMS_JOBID on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" 
+check grid job not accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=grid"
+check local job accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=outOfBand"
 check end on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" | grep "end=1232913182" 
 check start on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" | grep "start=1232913174" 
 check ctime on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" | grep "ctime=1232913173" 
@@ -35,7 +37,7 @@ check userFQAN on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from com
 check CE_ID on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280878.t2-ce-01.to.infn.it" | grep "t2-ce-01.to.infn.it:2119/jobmanager-lcgpbs-biomed" 
 check GRID jobId on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280876.t2-ce-01.to.infn.it" | grep "https://wms201.cern.ch:9000/fl_K71zmOZYz2T_QniyWtw" 
 check local jobType on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280879.t2-ce-01.to.infn.it" | grep "accountingProcedure=outOfBand" 
-check GRID jobID (gliteIn) on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280880.t2-ce-01.to.infn.it" | grep "GRID:280880.t2-ce-01.to.infn.it:1232914510" 
+check GRID jobID (glideIn) on PBS:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "280880.t2-ce-01.to.infn.it" | grep "GRID:280880.t2-ce-01.to.infn.it:1232914510" 
 
 Stop collector daemon and cleanup:2:v:true
 #Stop the daemon
@@ -47,37 +49,50 @@ rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
 
 
 
-#start up collector jobToProcess=local:2:v:true
-#cleanup log:0::rm -f $TESTBASE/dgas_collector.log
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
-#cleanup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
-#create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
-#create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
-#create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
-#create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
-#Set jobsToProcess=local:0::( sed -e 's/jobsToProcess = \"all\"/jobsToProcess=\"local\"/' $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.local )
-#start up daemon:1::perl  ${DGAS_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.local &
+start up collector jobToProcess=local:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
+Set jobsToProcess=local:0::( sed -e 's/jobsToProcess = \"all\"/jobsToProcess=\"local\"/' $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.local )
+start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-urcollector-SQLite.pl ${TESTBASE}/tests/dgas_sensors_test.conf.local &
 
-#check grid job not accounted:1:!(1):grep "JOB_TYPE=grid"  ${TESTBASE}/tests/dgasURBox/*
-#check local job accounted:1::grep "JOB_TYPE=local" ${TESTBASE}/tests/dgasURBox/*
+select * from commands:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" 
+check grid job not accounted:1:!(1):sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=grid"
+check local job accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=outOfBand"
 
+Stop collector daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+select * from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" 
+cat log:0::cat $TESTBASE/dgas_collector.log
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
+rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
 
-#start up collector jobToProcess=grid:2:v:true
-#cleanup log:0::rm -f $TESTBASE/dgas_collector.log
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
-#cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
-#cleanup dgasURBox:0::rm -f $TESTBASE/tests/dgasURBox/*
-#create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
-#create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
-#create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
-#create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
-#Set jobsToProcess=local:0::( sed -e "s/jobsToProcess = \"all\"/jobsToProcess=\"grid\"/" $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.grid )
-#start up daemon:1::perl  ${DGAS_LOCATION}/sbin/glite-urcollector.pl --nodaemon ${TESTBASE}/tests/dgas_sensors_test.conf.grid &
+start up collector jobToProcess=grid:2:v:true
+cleanup log:0::rm -f $TESTBASE/dgas_collector.log
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs_tmp
+cleanup buff:0::rm -f $TESTBASE/dgasCollectorBuffer.pbs
+create fake LRMS accounting dir:0::mkdir $TESTBASE/tests/lrms-acct/
+create grid-jobmap accounting dir:0::mkdir $TESTBASE/tests/grid-jobmap/
+create fake LRMS log:0::( cat $TESTBASE/tests/UR_LRMS_pbs.records > $TESTBASE/tests/lrms-acct/20090125 )
+create fake grid-jobmap log:0::( cat $TESTBASE/tests/grid-jobmap.template > $TESTBASE/tests/grid-jobmap/grid-jobmap_20090125 )
+Set jobsToProcess=local:0::( sed -e "s/jobsToProcess = \"all\"/jobsToProcess=\"grid\"/" $TESTBASE/tests/dgas_sensors_test.conf > ${TESTBASE}/tests/dgas_sensors_test.conf.grid )
+start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-urcollector-SQLite.pl ${TESTBASE}/tests/dgas_sensors_test.conf.grid &
 
-#check grid accounted:1::grep "JOB_TYPE=grid"  ${TESTBASE}/tests/dgasURBox/*
-#check local job not accounted:1:!(1):grep "JOB_TYPE=local" ${TESTBASE}/tests/dgasURBox/*
+check grid accounted:1::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=grid"
+check local job not accounted:1:!(1):sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" | grep "accountingProcedure=outOfBand"
 
+Stop collector daemon and cleanup:2:v:true
+#Stop the daemon
+Stop collector:0::sleep 30
+select * from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" 
+cat log:0::cat $TESTBASE/dgas_collector.log
+Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
+rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
 
 #startup collector daemon LSF
 #start up collector LSF jobToProcess=all:2:v:true
