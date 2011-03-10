@@ -151,35 +151,39 @@ Stop collector:0::sleep 30
 select * from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "select * from commands" 
 cat log:0::cat $TESTBASE/dgas_collector.log
 Stop collector:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_collector.lock`
-rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
+delete from commands:0::sqlite3  $TESTBASE/tests/dgas.sqlite "delete from commands" 
+#rm dgas.sqlite:0::rm -f $TESTBASE/tests/dgas.sqlite
 #
 #
 ##Start up daemon
-#Start up pushd on PBS:2:v:true
-#clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
-#clenup log:0::rm -f $TESTBASE/tests/dgasURBox/*
-#start up daemon:1::perl  ${DGAS_LOCATION}/sbin/glite-dgas-pushd.pl ${DGAS_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
-#check daemon:1::ps auxw | grep pushd | grep `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+Start up pushd on PBS:2:v:true
+clenup log:0::rm -f $TESTBASE/dgas_ce_pushd.log
+start up daemon:1::perl  ${DGAS_LOCATION}/sbin/dgas-pushd-SQLite.pl ${DGAS_LOCATION}/libexec/dgastests/tests/dgas_sensors_test.conf &
+check daemon:1::ps auxw | grep pushd | grep `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
 #
-#Check grid + FQAN job:2:v:true
-#clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
+Check grid + FQAN job:2:v:true
+clenup database:0:: $TESTBASE/tests/dgas.sqlite "delete from commands"
 #
-#create record:0::$TESTBASE/tests/putURindgasURBox.sh gridJobFQAN.sed gridFQAN 
-#ls record directory:0::ls -l $TESTBASE/tests/dgasURBox/
-#check record:0::cat $TESTBASE/tests/dgasURBox/*
-#atmClient line in the log:0::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log
-#check userVo:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "\"userVo=testvo\""
-#check queue:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "QUEUE=testqueue"
-#check unixuser:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "USER=guarise"
-#check FQAN:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "fqan=/testvo/Role=NULL/Capability=NULL"
-#check voOrigin:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "voOrigin=fqan"
-#check unixgroup:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "group=testunixgroup"
-#check userCert:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "usrcert \"/C=IT/O=INFN/OU=Personal Certificate/L=Torino/CN=Andrea Guarise\""
-#check cpuTime:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "CPU_TIME=201"
-#check wallTime:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "WALL_TIME=14601"
-#check si2k:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "si2k=1495"
-#check sf2k:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep "sf2k=1268"
-#check execHost:1::grep glite_dgas_atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQAN | grep "execHost=t2-wnU-16.to.infn.it/1"
+create record:0:v:$TESTBASE/tests/putURindgasURBox.SQL.sh gridJobFQAN.sed gridFQAN 
+atmClient line in the log:0::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log
+check userVo:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "userVo=testvo"
+check queue:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "QUEUE=testqueue"
+check unixuser:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "USER=guarise"
+check FQAN:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "fqan=/testvo/Role=NULL/Capability=NULL"
+check voOrigin:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "voOrigin=fqan"
+check unixgroup:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "group=testunixgroup"
+check userCert:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "usrcert \"/C=IT/O=INFN/OU=Personal Certificate/L=Torino/CN=Andrea Guarise\""
+check cpuTime:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "CPU_TIME=201"
+check wallTime:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "WALL_TIME=14601"
+check si2k:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "si2k=1495"
+check sf2k:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "sf2k=1268"
+check execHost:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQAN | grep "execHost=t2-wnU-16.to.infn.it/1"
+
+Stop daemon and cleanup:2:v:true
+##Stop the daemon
+Stop Pushd:1::kill `cat ${DGAS_LOCATION}/libexec/dgastests/dgas_ce_pushd.lock`
+
+
 #Check grid glideIn job:2:v:true
 #clenup URBox:0::rm -f $TESTBASE/tests/dgasURBox/*
 #
