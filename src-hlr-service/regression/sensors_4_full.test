@@ -164,7 +164,7 @@ check daemon:1::ps auxw | grep pushd | grep `cat ${DGAS_LOCATION}/libexec/dgaste
 Check grid + FQAN job:2:v:true
 clenup database:0:: $TESTBASE/tests/dgas.sqlite "delete from commands"
 #
-create record:0:v:$TESTBASE/tests/putURindgasURBox.SQL.sh gridJobFQAN.sed gridFQAN 
+create record:0::$TESTBASE/tests/putURindgasURBox.SQL.sh gridJobFQAN.sed gridFQAN 
 atmClient line in the log:0::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log
 check userVo:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "userVo=testvo"
 check queue:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "QUEUE=testqueue"
@@ -175,9 +175,6 @@ check unixgroup:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "group
 check userCert:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "usrcert \"/C=IT/O=INFN/OU=Personal Certificate/L=Torino/CN=Andrea Guarise\""
 check cpuTime:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "CPU_TIME=201"
 check wallTime:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "WALL_TIME=14601"
-check si2k:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "si2k=1495"
-check sf2k:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep "sf2k=1268"
-check execHost:1::grep dgas-atmClient $TESTBASE/dgas_ce_pushd.log | grep gridFQAN | grep "execHost=t2-wnU-16.to.infn.it/1"
 
 Stop daemon and cleanup:2:v:true
 ##Stop the daemon
