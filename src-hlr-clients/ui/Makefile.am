@@ -7,9 +7,9 @@
 ## *********************************************************************
 
 bin_PROGRAMS = \
-	glite-dgas-hlr-query
+	dgas-hlr-query
 
-glite_dgas_hlr_query_SOURCES = hlrAdvancedQueryClient.cpp
+dgas_hlr_query_SOURCES = hlrAdvancedQueryClient.cpp
 
 LDADD  = \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
