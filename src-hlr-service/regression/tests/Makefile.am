@@ -27,6 +27,7 @@ tests_SCRIPTS=\
 	negativeWCTJob.sh \
 	voOriginTest.sh \
 	test.pbs.UR \
+	test.pbs.UR.SQL \
 	test.lsf.UR \
 	glideInTest.sh \
 	gridJobFQAN.sed \
@@ -37,6 +38,7 @@ tests_SCRIPTS=\
 	dgas_sensors_test.conf.template \
 	dgas_sensors_test_poolPatterns.conf \
 	putURindgasURBox.sh \
+	putURindgasURBox.SQL.sh \
 	putLSFURindgasURBox.sh \
 	createLSFRecords.sh \
 	grid-jobmap.template \
