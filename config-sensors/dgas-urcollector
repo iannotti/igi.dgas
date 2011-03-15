@@ -32,11 +32,11 @@ else
 	exit 1;
 fi
 
-if [ -e /etc/rc.d/init.d/glite-dgas-urcollector ]
+if [ -e /etc/rc.d/init.d/dgas-urcollector ]
 then  
-	STARTUP_SCRIPT="/etc/rc.d/init.d/glite-dgas-urcollector"
+	STARTUP_SCRIPT="/etc/rc.d/init.d/dgas-urcollector"
 else
-	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-urcollector"
+	STARTUP_SCRIPT="$PREFIX/sbin/dgas-urcollector"
 fi
 
 RETVAL=0
