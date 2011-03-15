@@ -62,10 +62,10 @@ my $validate = "no";
 my $dgasLocation = $ENV{DGAS_LOCATION};
 if ( $dgasLocation eq "" )
 {
-        $dgasLocation = "/opt/glite/";
+        $dgasLocation = "/usr/";
 }
 
-my $schemaFile = $dgasLocation . '/etc/ogfur_v1.xsd.xml';
+my $schemaFile = '/etc/dgas/ogfur_v1.xsd.xml';
 
 GetOptions (
         'file=s' => \$file,
@@ -92,8 +92,8 @@ else
 	open (STDIN, "< -");
 	while ( <STDIN> ) 
 	{
-	#	s/http:\/\/www.w3.org\//file:\/\/\/opt\/glite\/etc\/ogfurxmlcat\//g; 
-	#	s/http:\/\/schema.ogf.org\//file:\/\/\/opt\/glite\/etc\/ogfurxmlcat\//g; 
+	#	s/http:\/\/www.w3.org\//file:\/\/\/etc\/dgas\/ogfurxmlcat\//g; 
+	#	s/http:\/\/schema.ogf.org\//file:\/\/\/etc\/dgas\/ogfurxmlcat\//g; 
 		$docBuffer .= $_; 
 	}
 	if ( $docBuffer ne "" )

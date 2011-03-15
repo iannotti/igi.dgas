@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/opt/glite/
+[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/usr/
 
 currdate=`date`;
 outdir="${DGAS_LOCATION}/var/dgas/";

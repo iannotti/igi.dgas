@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.8 2011/01/17 08:05:25 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.9 2011/03/15 10:38:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -35,7 +35,7 @@
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "glite/dgas/dgas-producers/producers/legacyProducer.h"
 
-#define GLITE_DGAS_DEF_CONF "/etc/dgas_sensors.conf"
+#define GLITE_DGAS_DEF_CONF "/etc/dgas/dgas_sensors.conf"
 
 void
 catch_alarm (int sig)

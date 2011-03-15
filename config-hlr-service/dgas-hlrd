@@ -5,11 +5,11 @@
 # description: DGAS HLR server daemon
 #
 # processname: hlr_serverd
-# config: $PREFIX/etc/hlr.conf
+# config: /etc/dgas/dgas_hlr.conf
 # chkconfig: 35 70 80 
 
 
-[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/opt/glite/
+[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/usr/
 [ ! -z $GLOBUS_LOCATION ] || export GLOBUS_LOCATION=/opt/globus/
 
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DGAS_LOCATION}/lib/:${GLOBUS_LOCATION}/lib/"
@@ -26,7 +26,7 @@ prog="HLR listener"
 prog1="Batch Transaction manager"
 if [ -z $2 ]
 then
- HLRD_CONF=$PREFIX/etc/dgas_hlr.conf
+ HLRD_CONF=/etc/dgas/dgas_hlr.conf
 else
  HLRD_CONF=$2
 fi

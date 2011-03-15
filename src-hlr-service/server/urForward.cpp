@@ -12,7 +12,7 @@
 
 
 
-#define DEFAULT_CONFIG "/etc/dgas_hlr.conf"
+#define DEFAULT_CONFIG "/etc/dgas/dgas_hlr.conf"
 
 
 

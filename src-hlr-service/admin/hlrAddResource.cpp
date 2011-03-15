@@ -1,4 +1,4 @@
-// $Id: hlrAddResource.cpp,v 1.1.2.1.4.3 2010/12/21 14:34:41 aguarise Exp $
+// $Id: hlrAddResource.cpp,v 1.1.2.1.4.4 2011/03/15 10:38:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -24,7 +24,7 @@
 #define GRIDMAP_USER "nobody"
 #define E_GRIDMAP 3
 #define OPTION_STRING "Fhr:d:c:e:g:f:C:S:D"
-#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
 
@@ -108,7 +108,7 @@ int help (const char *progname)
         cerr << "                         resource account already exists or the corresponding" << endl;
         cerr << "                         group or VO does not exist." << endl;
         cerr << "-C --Conf <confFile>     HLR configuration file name, if different" << endl;
-        cerr << "                         from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
+        cerr << "                         from the default (/etc/dgas/dgas_hlr.conf)." << endl;
         cerr << "-r --rid <resID>         String that identifies the resource in the database."<<endl;
 	cerr << "                         It can be set up freely by the HLR administrator, It must be unique per every resource added."<<endl;
 	cerr << "-e --email <address>     E-mail address of contact person."<<endl;

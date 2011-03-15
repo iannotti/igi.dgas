@@ -5,11 +5,11 @@
 # description: DGAS HLR server daemon
 #
 # processname: hlr_serverd
-# config: $PREFIX/etc/hlr.conf
+# config: /etc/dgas/dgas-activemq-consumer.conf
 # chkconfig: 35 70 80 
 
 
-[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/opt/glite/
+[ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/usr/
 [ ! -z $AMQCPPLIB ] || export AMQCPPLIB=/usr/local/lib/
 [ ! -z $APRLIB ] || export APRLIB=/usr/local/apr/lib/
 
@@ -27,7 +27,7 @@ prog="HLR AMQ consumer"
 prog1="HLR Record Manager"
 if [ -z $2 ]
 then
- HLRD_CONF=$PREFIX/etc/dgas-activemq-consumer.conf
+ HLRD_CONF=/etc/dgas/dgas-activemq-consumer.conf
 else
  HLRD_CONF=$2
 fi

@@ -14,7 +14,7 @@
 #define HLRDB_LOCK_FILE  "/tmp/dgas-hlrdb.lock"
 #define HLRDB_BUFF_FILE  "/tmp/dgas-hlrdb.buff"
 #define DBW_MT_DEF_MONTHS 12
-#define DBW_MT_MTFILE	"/etc/dgas_hlr_mt.buff"
+#define DBW_MT_MTFILE	"/etc/dgas/dgas_hlr_mt.buff"
 
 #define E_DBW_OPENFILE   71
 #define E_DBW_BADDEF     72

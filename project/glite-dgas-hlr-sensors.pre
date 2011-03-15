@@ -1,5 +1,6 @@
-export DGAS_LOCATION=${DGAS_LOCATION:-/opt/glite}
+export DGAS_LOCATION=${DGAS_LOCATION:-/usr}
 
+if [ -f /etc/dgas/dgas_sensors.conf ]; then
 
 if [ -f $DGAS_LOCATION/sbin/glite-dgas-pushd ]; then
 	if $DGAS_LOCATION/sbin/glite-dgas-pushd status >/dev/null; then
@@ -19,3 +20,6 @@ if [ -f $DGAS_LOCATION/sbin/glite-dgas-urcollector ]; then
 		echo "glite-dgas-urcollector not running"
 	fi
 fi
+
+fi
+

@@ -37,7 +37,7 @@
 //socketpp includes
   #include "glite/dgas/common/tls/GSISocketServer.h"
   #include "glite/dgas/common/tls/GSISocketAgent.h"
-#define DEFAULT_CONFIG "/etc/dgas_hlr.conf"
+#define DEFAULT_CONFIG "/etc/dgas/dgas_hlr.conf"
 #define OPTION_STRING "hp:l:L:c:"
 
 using namespace std;
@@ -74,7 +74,7 @@ string maxItemsPerQuery = "1000";
 string acceptRecordsStartDate ="";
 string acceptRecordsEndDate = "";
 string recordsPerConnection = "2000";
-string mergeTablesDefinitions = dgasLocation() + "/etc/glite_dgas_merge.def";
+string mergeTablesDefinitions = "/etc/dgas/glite_dgas_merge.def";
 string logFileName = "";
 string lockFileName = "";
 string configFileName = dgasLocation() + DEFAULT_CONFIG;
@@ -110,7 +110,7 @@ int print_help(const char* progname)
 	cerr<< "-L  --Lock <lockFile>    Set the lock file name (overwrites the value defined" << endl;
         cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
-        cerr<< "                         from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
+        cerr<< "                         from the default (/etc/dgas/dgas_hlr.conf)." << endl;
 	cerr<< "-h  --help               Print this help message." << endl;
 	return 0;
 }//print_help()

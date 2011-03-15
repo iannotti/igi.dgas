@@ -1,4 +1,6 @@
-export DGAS_LOCATION=${DGAS_LOCATION:-/opt/glite}
+export DGAS_LOCATION=${DGAS_LOCATION:-/usr}
+
+if [ -f /etc/dgas/dgas_hlr.conf ]; then
 
 if [ -f $DGAS_LOCATION/sbin/dgas-hlrd ]; then
 	if $DGAS_LOCATION/sbin/dgas-hlrd status >/dev/null; then
@@ -14,4 +16,6 @@ else
         	else echo "glite-dgas-hlrd not running"
         	fi
 	fi
+fi
+
 fi

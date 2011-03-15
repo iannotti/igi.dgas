@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.1 2011/02/28 14:03:34 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.2 2011/03/15 10:38:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -28,7 +28,7 @@
 #include "dbWaitress.h"
 
 #define OPTION_STRING "C:DmvrhcM"
-#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
 
@@ -932,7 +932,7 @@ int main (int argc, char **argv)
 	}
 	else
 	{
-		cfFileName = dgasLocation() + "/etc/stopTranslateDb";
+		cfFileName = dgasLocation() + "/var/stopTranslateDb";
 	}
 	if ( confMap["masterLock"] != "" )
 	{

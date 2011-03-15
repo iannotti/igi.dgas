@@ -42,11 +42,11 @@ if ( $dgasLocation eq "" )
 	$dgasLocation = $ENV{GLITE_LOCATION};
 	if ( $dgasLocation eq "" )
 	{
-		$dgasLocation = "/opt/glite/";
+		$dgasLocation = "/usr/";
 	}
 }
 
-my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf"; 
+my $configFilePath = "/etc/dgas/dgas_sensors.conf"; 
 my %configValues = (
 		    dgasURBox         =>  $dgasLocation . "/var/dgasURBox",
 		    dgasErrDir        =>  $dgasLocation . "/var/dgasURBox/ERR/",
@@ -66,7 +66,7 @@ my %configValues = (
 		    maxThreadNumber           => "5",
 		    gipDynamicTmpCEFiles              => "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*",
 		    useUrKeyDefFile => "no",
-		    urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
+		    urKeyDefFile => "/etc/dgas/dgas_sensors.conf",
 		    voToProcess => "",
 		    printAsciiLog => "no",
 		    useSQLite => "no",

@@ -12,7 +12,7 @@
 
 #define OPTION_STRING "3hv:B:c:O:T:"
 
-#define GLITE_DGAS_DEF_CONF "/etc/dgas_sensors.conf"
+#define GLITE_DGAS_DEF_CONF "/etc/dgas/dgas_sensors.conf"
 
 using namespace std;
 

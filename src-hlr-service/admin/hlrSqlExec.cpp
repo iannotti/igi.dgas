@@ -1,4 +1,4 @@
-// $Id: hlrSqlExec.cpp,v 1.1.2.1.4.2 2010/12/21 14:34:41 aguarise Exp $
+// $Id: hlrSqlExec.cpp,v 1.1.2.1.4.3 2011/03/15 10:38:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -22,7 +22,7 @@
 #include "glite/dgas/common/base/int2string.h"
 
 #define OPTION_STRING "C:Dh"
-#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
 

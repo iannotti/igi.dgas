@@ -47,7 +47,7 @@ int help (const char *progname)
 	cerr << " usage: " << endl;
 	cerr << " " << progname << " [OPTIONS]" << endl;
 	cerr << "-C --Conf <filename>      Configuration file name, if different from the" << endl;
-	cerr << "                          default: '/opt/glite/etc/dgas_pa.conf'." << endl;
+	cerr << "                          default: '/etc/dgas/dgas_pa.conf'." << endl;
 	cerr << "-s --server <PA contact>  Contact string of the PA to query." << endl;
 	cerr << "                          The PA contact string is of the form:" << endl;
 	cerr << "                          \"host:port:host_cert_subject\"" << endl;

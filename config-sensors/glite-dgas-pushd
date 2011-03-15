@@ -5,11 +5,11 @@
 # description: DGAS CE pushd daemon, forwards Usage Records to the HLR.
 #
 # processname: dgas_ce_pushd.pl
-# config: $PREFIX/etc/dgas_ce_pushd.conf
+# config: /etc/dgas/dgas_ce_pushd.conf
 # chkconfig: 35 50 80
 
 if [ -z ${DGAS_LOCATION} ]; then
-	export DGAS_LOCATION=/opt/glite/
+	export DGAS_LOCATION=/usr/
 fi
 
 PREFIX=$DGAS_LOCATION
@@ -25,7 +25,7 @@ fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$DGAS_LOCATION/lib64/:$ACTIVEMQLIB
 
-PUSHD_CONF=$PREFIX/etc/dgas_sensors.conf
+PUSHD_CONF=/etc/dgas/dgas_sensors.conf
 
 
 RETVAL=0

@@ -1,8 +1,8 @@
 ldconfig
-export DGAS_LOCATION=${DGAS_LOCATION:-/opt/glite}
+export DGAS_LOCATION=${DGAS_LOCATION:-/usr}
 
 if [ -f $DGAS_LOCATION/sbin/glite-dgas-hlr-amq-consumer ]; then
-	if [ -f /etc/rc.d/init.d/glite-dgas-hlr-amq-consumer ] ; then
+	if [ -h /etc/rc.d/init.d/glite-dgas-hlr-amq-consumer ] ; then
 		rm -f /etc/rc.d/init.d/glite-dgas-hlr-amq-consumer
 	fi 
 	ln -s $DGAS_LOCATION/sbin/glite-dgas-hlr-amq-consumer /etc/rc.d/init.d/glite-dgas-hlr-amq-consumer

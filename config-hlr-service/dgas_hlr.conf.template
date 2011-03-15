@@ -131,5 +131,5 @@ authUserSqlQueries = "false"
 #2nd level HLRs to wich usage records must be forwarded. If this
 #parameters is set AND the corresponding file is created and configured,
 #the glite-dgas-ur-forward daemon will be started.
-#serversFile="${DGAS_LOCATION}/etc/glite-dgas-2l-servers.conf"
+#serversFile="/etc/dgas/glite-dgas-2l-servers.conf"
 

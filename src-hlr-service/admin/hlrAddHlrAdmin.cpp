@@ -1,4 +1,4 @@
-// $Id: hlrAddHlrAdmin.cpp,v 1.1.2.1.4.3 2010/12/21 14:34:41 aguarise Exp $
+// $Id: hlrAddHlrAdmin.cpp,v 1.1.2.1.4.4 2011/03/15 10:38:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -20,7 +20,7 @@
 #define OPTION_STRING "hFa:v:C:HVLSGR:"
 #define GRIDMAP_USER "nobody"
 #define E_GRIDMAP 3
-#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 using namespace std;
 
 bool lazyAccountCheck; //just for build
@@ -93,7 +93,7 @@ int help (const char *progname)
 	cerr << "                           if the certificate subject is already listed" << endl;
 	cerr << "                           as HLR admin." << endl;  
 	cerr << "-C --Conf <confFile>       HLR configuration file name, if different" << endl;
-	cerr << "                           from the default (${DGAS_LOCATION}/etc/dgas_hlr.conf)." << endl;
+	cerr << "                           from the default (/etc/dgas/dgas_hlr.conf)." << endl;
         cerr << "-a --admin <cert_subject>  x509 certificate subject of the admin." << endl;
         cerr << "-v --vo    <vo id>         Identificative for a Virtual Organisation" << endl;
         cerr << "-R --vomsRole    <voms Role>      voms ROLE that will be assigned to the requested HLR auth level. (affects just VOMS based auth.)" << endl;

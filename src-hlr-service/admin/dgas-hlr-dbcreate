@@ -16,8 +16,8 @@ PREFIX=${DGAS_LOCATION}
 
 if [ -z ${DGAS_LOCATION} ]
 then
-	echo "Please set the DGAS_LOCATION environment variable. Trying with /opt/glite/"
-	PREFIX=/opt/glite/
+	echo "Please set the DGAS_LOCATION environment variable. Trying with /usr/"
+	PREFIX=/usr/
 fi
 
 
@@ -29,9 +29,9 @@ if [ "$1" = "-h" -o "$1" = "--help" ]; then
 fi
 
 
-CONFFILE=$PREFIX/etc/dgas_hlr.conf
-DBSPECFILE=$PREFIX/etc/dgas_hlr.sql
-DBTMPSPECFILE=$PREFIX/etc/dgas_hlr_tmp.sql
+CONFFILE=/etc/dgas/dgas_hlr.conf
+DBSPECFILE=/etc/dgas/dgas_hlr.sql
+DBTMPSPECFILE=/etc/dgas/dgas_hlr_tmp.sql
 
 if [ ! -f $CONFFILE ]; then
     echo "Configuration file $CONFFILE does not exist."

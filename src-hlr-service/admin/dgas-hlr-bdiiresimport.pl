@@ -43,7 +43,7 @@ my %opts = ();
 getopts('fhp:s:b:v:H:U:Nc:DC', \%opts);
 
 if ( $ENV{DGAS_LOCATION} eq "" ) {
-    $ENV{DGAS_LOCATION}="/opt/glite/";
+    $ENV{DGAS_LOCATION}="/usr/";
 }
 
 

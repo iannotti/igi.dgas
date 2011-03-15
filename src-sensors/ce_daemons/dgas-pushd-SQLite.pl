@@ -32,11 +32,11 @@ if ( !defined($dgasLocation) ||  $dgasLocation eq "" )
 	$dgasLocation = $ENV{GLITE_LOCATION};
 	if ( $dgasLocation eq "" )
 	{
-		$dgasLocation = "/opt/glite/";
+		$dgasLocation = "/usr/";
 	}
 }
 
-my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf"; 
+my $configFilePath = "/etc/dgas/dgas_sensors.conf"; 
 my %configValues = (
 		    lockFileName      =>  $dgasLocation . "/var/glite-dgas-ce-pushd.lock",
 		    logFileName       =>  $dgasLocation . "/var/log/dgas_ce_pushd.log",

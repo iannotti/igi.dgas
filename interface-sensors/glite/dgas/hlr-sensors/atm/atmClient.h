@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: atmClient.h,v 1.1.2.1 2010/11/09 09:36:06 aguarise Exp $
+// $Id: atmClient.h,v 1.1.2.2 2011/03/15 10:38:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -30,7 +30,7 @@
 
 #define ATM_CLIENT_VERSION "glite"
 
-#define GLITE_DGAS_DEF_CONF "/opt/glite/etc/dgas_sensors.conf"
+#define GLITE_DGAS_DEF_CONF "/etc/dgas/dgas_sensors.conf"
 
 using namespace std;
 #ifndef GLITE_SOCKETPP

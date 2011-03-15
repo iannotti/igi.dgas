@@ -54,7 +54,7 @@ if ( !defined($dgasLocation) ||  $dgasLocation eq "" )
 	$dgasLocation = $ENV{GLITE_LOCATION};
 	if ( $dgasLocation eq "" )
 	{
-		$dgasLocation = "/opt/glite/";
+		$dgasLocation = "/usr/";
 	}
 }
 my $TSTAMP_ACC = 86400; # timestamps between CE log and LRMS log can differ for up to a day.
@@ -67,18 +67,18 @@ my $useCElog = 1;   # default is use the CE's map: grid job <-> local job
 my $processGridJobs = 1; # default, changed through jobsToProcess
 my $processLocalJobs = 1; # default, changed through jobsToProcess
 
-my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf"; 
+my $configFilePath = "/etc/dgas/dgas_sensors.conf"; 
 my %configValues = (
 		    siteName	      =>"",
 		    localHostNameAsCEHostName => "no",
 		    useCEHostName => "",
-		    localUserGroup2VOMap => $dgasLocation . "/etc/dgas_localUserGroup2VOMap.conf",
+		    localUserGroup2VOMap => "/etc/dgas/dgas_localUserGroup2VOMap.conf",
                     havePoolAccounts => "yes",
 		    poolAccountPatternFile => "",
 		    systemLogLevel	      => 7,
 		    gipDynamicTmpCEFiles              => "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*",
 		    useUrKeyDefFile => "no",
-		    urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
+		    urKeyDefFile => "/etc/dgas/dgas_sensors.conf",
 		    voToProcess => "",
 		    transportLayer => "Legacy",
 		    recordComposer1 => $dgasLocation . "/libexec/dgas-legacyCpuComposer",
@@ -95,7 +95,7 @@ my %configValues = (
      		    jobsToProcess        =>  "all",
      		    keyList               => "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00,GlueHostApplicationSoftwareRunTimeEnvironment: SI00MeanPerCPU,GlueHostApplicationSoftwareRunTimeEnvironment: SF00MeanPerCPU",
      		    ldifDefaultFiles      => "",
-     		    glueLdifFile          =>  $dgasLocation. "/etc/gip/ldif/static-file-Cluster.ldif",
+     		    glueLdifFile          =>  "/etc/gip/ldif/static-file-Cluster.ldif",
      		    collectorLockFileName => $dgasLocation . "/var/dgas_urcollector.lock",
      		    collectorLogFileName =>  $dgasLocation . "/var/log/dgas_urcollector.log",
      		    collectorBufferFileName => $dgasLocation . "/var/dgasCollectorBuffer",

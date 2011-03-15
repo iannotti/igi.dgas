@@ -44,10 +44,10 @@ POSIX::sigaction(&POSIX::SIGTERM, $actionInt);
 my $dgasLocation = $ENV{DGAS_LOCATION};
 if ( $dgasLocation eq "" )
 {
-        $dgasLocation = "/opt/glite/";
+        $dgasLocation = "/usr/";
 }
 
-my $configFilePath = $dgasLocation . "/etc/dgas_sensors.conf";
+my $configFilePath = "/etc/dgas/dgas_sensors.conf";
 my %configValues =
     (
      lrmsType              =>  "",
@@ -78,7 +78,7 @@ my %configValues =
      limiterWaitFor => $DEF_WAITFOR,
      systemLogLevel => $DEF_SYSTEMLOGLEVEL,
      useUrKeyDefFile => "no",
-     urKeyDefFile => $dgasLocation . "/etc/dgas_sensors.conf",
+     urKeyDefFile => "/etc/dgas/dgas_sensors.conf",
      );
 
 

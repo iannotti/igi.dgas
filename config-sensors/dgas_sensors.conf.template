@@ -153,7 +153,7 @@ keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
 
 # This specifies the ldif description file where to search fo the records
 # spcified with the keyList configuration parameter.
-glueLdifFile = "${DGAS_LOCATION}/etc/glite-ce-ce-plugin/out.ldif"
+glueLdifFile = "/etc/glite-ce-ce-plugin/out.ldif"
 
 # lock file for the dgas-pushd daemon
 pushdLockFileName = "${DGAS_LOCATION}/var/dgas_ce_pushd.lock"
@@ -184,7 +184,7 @@ pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_ce_pushd.log"
 # mapping the first one that can be retrieved by the command
 # "groups <local_unix_username>" will be taken.
 #
-#localUserGroup2VOMap = "${DGAS_LOCATION}/etc/glite-urcollector_localUserGroup2VOMap.conf"
+#localUserGroup2VOMap = "/etc/dgas/glite-urcollector_localUserGroup2VOMap.conf"
 
 # The following paremeter specifies in which temporary (dynamic) CE LDIF files
 # to look for the total number of CPUs of the resource (GlueCEInfoTotalCPUs)
@@ -211,7 +211,7 @@ pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_ce_pushd.log"
 # setting havePoolAccounts = "no".
 #
 # havePoolAccounts = "yes"
-# poolAccountPatternFile = "${DGAS_LOCATION}/etc/glite-dgas-poolAccountPatterns.conf"
+# poolAccountPatternFile = "/etc/dgas/glite-dgas-poolAccountPatterns.conf"
 
 # This parameter can be used to explicitly specify a host name that has to be
 # used as the CE hostname. This is most useful for assigning out-of-band jobs

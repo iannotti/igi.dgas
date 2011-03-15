@@ -11,7 +11,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 
 #define OPTION_STRING "C:d:p:Dnhbi:"
-#define DGAS_DEF_CONF_FILE "/etc/dgas_hlr.conf"
+#define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 # description: DGAS Gianduia urCollector daemon.
 #
 # processname: glite-urcollector.pl
-# config: $PREFIX/etc/dgas_gianduia.conf
+# config: /etc/dgas/dgas_sensors.conf
 # chkconfig: 35 50 80
 
 PREFIX=$DGAS_LOCATION
@@ -14,15 +14,15 @@ PREFIX=$DGAS_LOCATION
 . /etc/rc.d/init.d/functions
 
 if [ -z $DGAS_LOCATION ]; then
-	if [ -d /opt/glite ]; then
-		PREFIX=/opt/glite
+	if [ -d /usr ]; then
+		PREFIX=/usr/
 	fi
 fi
 
 [ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
 
-URCOLLECTOR_CONF=$PREFIX/etc/dgas_sensors.conf
+URCOLLECTOR_CONF=/etc/dgas/dgas_sensors.conf
 if [ -e $URCOLLECTOR_CONF ]
 then
 	eval URCOLLECTOR_LOCK=`grep collectorLockFileName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`

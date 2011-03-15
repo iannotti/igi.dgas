@@ -16,7 +16,7 @@ if [ "$1" = "-h" -o "$1" = "--help" ]; then
     exit 0
 fi
 
-CONFFILE=$PREFIX/etc/dgas_hlr.conf
+CONFFILE=/etc/dgas/dgas_hlr.conf
 if [ "$1" != "" ]; then
     CONFFILE=$1
 fi
