@@ -7,13 +7,13 @@
 ## *********************************************************************
 
 lib_LTLIBRARIES  = libglite_dgas_pingClient.la
-bin_PROGRAMS = glite-dgas-ping
+bin_PROGRAMS = dgas-ping
 
 libglite_dgas_pingClient_la_SOURCES = \
 	pingClient.cpp 
 
-glite_dgas_ping_SOURCES = pingClientExe.cpp
-glite_dgas_ping_LDADD   = \
+dgas_ping_SOURCES = pingClientExe.cpp
+dgas_ping_LDADD   = \
 	./libglite_dgas_pingClient.la \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \

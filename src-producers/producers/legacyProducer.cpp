@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: legacyProducer.cpp,v 1.1.2.9 2011/03/15 10:38:35 aguarise Exp $
+// $Id: legacyProducer.cpp,v 1.1.2.10 2011/03/15 13:30:36 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -47,7 +47,7 @@ int  defConnTimeOut = 60;
 
 int ATM_client_toResource(string& input ,string *server_answer, producerConfiguration& conf)
 {
-	if (conf.configFileName == "") conf.configFileName = dgasLocation() + GLITE_DGAS_DEF_CONF;
+	if (conf.configFileName == "") conf.configFileName =  GLITE_DGAS_DEF_CONF;
 	int returncode = 0;
 	string output_message;
 	//not specified, get them form a configuration file.

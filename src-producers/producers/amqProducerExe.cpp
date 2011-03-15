@@ -21,7 +21,7 @@ int verbosity = 3;
 string brokerUri = "";
 string amqOptions = "";
 string amqTopic = "";
-string configFile = dgasLocation() + GLITE_DGAS_DEF_CONF;
+string configFile = GLITE_DGAS_DEF_CONF;
 
 void help()
 {

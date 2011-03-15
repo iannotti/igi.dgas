@@ -25,7 +25,7 @@ const char * hlr_sql_dbname;
 int system_log_level = 7;
 ofstream logStream;
 
-string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
+string confFileName = DGAS_DEF_CONF_FILE;
 string referenceDate;
 string prefix = dgasLocation() + "/var/dgas";
 string hlr_logFileName;

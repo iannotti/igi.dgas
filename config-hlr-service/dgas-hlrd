@@ -53,11 +53,11 @@ HLRD=$PREFIX/sbin/dgas-hlr-listener
 eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 HLRD_OPTIONS="-c $HLRD_CONF"
 
-if [ -e /etc/rc.d/init.d/glite-dgas-hlrd ]
+if [ -e /etc/rc.d/init.d/dgas-hlrd ]
 then
-	STARTUP_SCRIPT="/etc/rc.d/init.d/glite-dgas-hlrd"
+	STARTUP_SCRIPT="/etc/rc.d/init.d/dgas-hlrd"
 else
-	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-hlrd"
+	STARTUP_SCRIPT="$PREFIX/sbin/dgas-hlrd"
 fi
 
 # this is the script used to check and renew the host cert proxy:
@@ -246,7 +246,7 @@ status()
 		then
 			echo "The process is running."
   			#Try ping here
-			GLITE_PING_COMMAND=$PREFIX/bin/glite-dgas-ping
+			GLITE_PING_COMMAND=$PREFIX/bin/dgas-ping
 			if [ -e $GLITE_PING_COMMAND ]
 			then 
 				#Check if ping is successfull

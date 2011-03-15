@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.4 2011/03/15 10:38:34 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.5 2011/03/15 13:30:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -40,7 +40,7 @@ const char * hlr_sql_password;
 const char * hlr_sql_dbname;
 const char * hlr_tmp_sql_dbname;
 ofstream logStream;
-string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
+string confFileName = DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
 string userCertBuffer = "";
 string resourceIDBuffer = "";
@@ -1097,7 +1097,7 @@ int main (int argc, char **argv)
 	}
 	else
 	{
-		cfFileName = dgasLocation() + "/var/stopTranslateDb";
+		cfFileName = dgasLocation() + "/var/dgas/stopTranslateDb";
 	}
 	if ( confMap["masterLock"] != "" )
 	{
@@ -1105,7 +1105,7 @@ int main (int argc, char **argv)
 	}
 	else
 	{
-		masterLock = dgasLocation() + "/var/hlrTranslateDb.lock";
+		masterLock = dgasLocation() + "/var/dgas/hlrTranslateDb.lock";
 	}
 	if ( confMap["systemLogLevel"] != "" )
 	{

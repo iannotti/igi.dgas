@@ -1,4 +1,4 @@
-// $Id: hlrAddHlrAdmin.cpp,v 1.1.2.1.4.4 2011/03/15 10:38:34 aguarise Exp $
+// $Id: hlrAddHlrAdmin.cpp,v 1.1.2.1.4.5 2011/03/15 13:30:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -40,7 +40,7 @@ bool isRecordSource = false;
 bool isGroup = false;
 string admin_buff = "";
 string vo_buff = "";
-string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
+string confFileName = DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
 string vomsRole = "";
 

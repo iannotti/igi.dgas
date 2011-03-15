@@ -1,4 +1,4 @@
-// $Id: hlrSqlExec.cpp,v 1.1.2.1.4.3 2011/03/15 10:38:34 aguarise Exp $
+// $Id: hlrSqlExec.cpp,v 1.1.2.1.4.4 2011/03/15 13:30:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -36,7 +36,7 @@ const char * hlr_sql_dbname;
 int system_log_level = 7;
 ofstream logStream;
 
-string confFileName = dgasLocation() + DGAS_DEF_CONF_FILE;
+string confFileName = DGAS_DEF_CONF_FILE;
 bool debug = false;
 bool needs_help = false;
 vector<string> queries;
