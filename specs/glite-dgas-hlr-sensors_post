@@ -33,3 +33,7 @@ if [ -f $DGAS_LOCATION/sbin/dgas-urcollector ]; then
 	ln -s $DGAS_LOCATION/sbin/dgas-urcollector /etc/rc.d/init.d/dgas-urcollector
 	chkconfig --add dgas-urcollector
 fi
+
+if [ -d /opt/glite/var ]
+	cp /opt/glite/var/dgasCollectorBuffer.* /usr/var/
+fi
