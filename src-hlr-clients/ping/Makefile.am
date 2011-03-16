@@ -6,6 +6,8 @@
 ## *
 ## *********************************************************************
 
+man1_MANS = dgas-ping.man
+
 lib_LTLIBRARIES  = libglite_dgas_pingClient.la
 bin_PROGRAMS = dgas-ping
 

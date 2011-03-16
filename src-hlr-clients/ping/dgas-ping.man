@@ -1,0 +1,28 @@
+.\" Process this file with
+.\" groff -man -Tascii dgas-ping.1
+.\"
+.TH DGAS-PING 1 "MARCH 2011" Linux "User Manuals"
+.SH NAME
+dgas-ping \- DGAS client to ping a DGAS HLR server.
+.SH SYNOPSIS
+.B dgas-ping [-h] [-t
+.I ping type
+.B ]
+.I -s server contact string
+.B ...
+.SH DESCRIPTION
+.B dgas-ping
+This is the client used to ping a DGAS server status. It can be used to check if the server is alive and responsive, or gather more detailed information about its current status. 
+.SH OPTIONS
+.IP -h --help
+Print an help message
+.IP "-t --type pingType"
+Specifies the type of information desired. if "0" the result is just if the server is alive
+or not. Greater values result in detailed info on server status. Values greater thant "1"
+may not be availeble depending on server side configuration and user access rights.
+.IP "-s server contact string"
+Specifies the contact string for the server to ping in the form: 
+.I “host[:port[:cert_subject]]”
+.SH FILES
+.SH AUTHOR
+Andrea Guarise <andrea.guarise at to dot infn dot it>
