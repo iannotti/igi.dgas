@@ -6,6 +6,8 @@
 ## *
 ## *********************************************************************
 
+man1_MANS = dgas-hlr-query.man
+
 bin_PROGRAMS = \
 	dgas-hlr-query
 
