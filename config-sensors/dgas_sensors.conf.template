@@ -91,13 +91,13 @@ ceJobMapLog = "/var/log/cream/accounting/blahp.log"
 
 
 # the lock files for glite-urcollector.pl and HAD
-collectorLockFileName = "${DGAS_LOCATION}/var/dgas_gianduia_urCollector.lock"
-collectorHADLockFileName = "${DGAS_LOCATION}/var/dgas_gianduia_urCollector_HAD.lock"
+collectorLockFileName = "${DGAS_LOCATION}/var/dgas_urcollector.lock"
+collectorHADLockFileName = "${DGAS_LOCATION}/var/dgas_urcollector_HAD.lock"
 
 # the log file for glite-urcollector.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9
-collectorLogFileName = "${DGAS_LOCATION}/var/log/dgas_gianduia_urCollector.log"
+collectorLogFileName = "${DGAS_LOCATION}/var/log/dgas_urcollector.log"
 
 # the buffer file that keeps track of the last processed LRMS job_id and
 # log timestamp for glite-urcollector.pl:
@@ -156,13 +156,13 @@ keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
 glueLdifFile = "/etc/glite-ce-ce-plugin/out.ldif"
 
 # lock file for the dgas-pushd daemon
-pushdLockFileName = "${DGAS_LOCATION}/var/dgas_ce_pushd.lock"
+pushdLockFileName = "${DGAS_LOCATION}/var/dgas_pushd.lock"
 
 # the log file name for glite-dgas-pushd.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9. Logging facility is set
 # accordingly to LOG_LOCAL 1 through 9. 
-pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_ce_pushd.log"
+pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_pushd.log"
 
 # The following option can be used to specify a configuration file that
 # contains a mapping between local users/groups and VOs in case some local
