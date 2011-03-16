@@ -8,16 +8,15 @@
 # config: /etc/dgas/dgas_sensors.conf
 # chkconfig: 35 50 80
 
-PREFIX=$DGAS_LOCATION
 
 # source function library
 . /etc/rc.d/init.d/functions
 
-if [ -z $DGAS_LOCATION ]; then
-	if [ -d /usr ]; then
-		PREFIX=/usr/
-	fi
+if [ -z ${DGAS_LOCATION} ]; then
+        export DGAS_LOCATION=/usr/
 fi
+
+PREFIX=$DGAS_LOCATION
 
 [ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
