@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	level2.test \
 	full.test \
 	sensors_full.test \
+	sensors_4_full.test \
 	storage.test
  
 regression_DATA=\
