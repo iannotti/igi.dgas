@@ -34,6 +34,6 @@ if [ -f $DGAS_LOCATION/sbin/dgas-urcollector ]; then
 	chkconfig --add dgas-urcollector
 fi
 
-if [ -d /opt/glite/var ]
+if [ -d /opt/glite/var ]; then
 	cp /opt/glite/var/dgasCollectorBuffer.* /usr/var/
 fi
