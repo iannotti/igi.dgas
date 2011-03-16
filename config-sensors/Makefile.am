@@ -1,5 +1,5 @@
 
-man5_MANS = dgas-sensors.conf.man
+man5_MANS = dgas_sensors.conf.man
 
 sysconf_DATA = \
 	dgas_sensors.conf.template \
