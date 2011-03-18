@@ -30,6 +30,10 @@ libdgas_legacyCpuComposer_la_SOURCES = \
 dgas_amqProducer_SOURCES = amqProducerExe.cpp
 dgas_amqProducer_LDADD   = \
 	./libdgas_amqProducer.la \
+	-L/usr/local/apr1.4/lib64/ -lapr-1 \
+	-luuid -lrt -lcrypt -lssl  -lpthread -ldl \
+	-L/usr/local/apr-util1.3/lib64/ -laprutil-1 \
+	-lexpat \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
