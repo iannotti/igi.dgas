@@ -20,6 +20,7 @@ PREFIX=$DGAS_LOCATION
 
 [ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+[ -d $PREFIX/var/log/dgas ] || mkdir $PREFIX/var/log/dgas
 
 URCOLLECTOR_CONF=/etc/dgas/dgas_sensors.conf
 if [ -e $URCOLLECTOR_CONF ]

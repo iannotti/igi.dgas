@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: atmClient.cpp,v 1.1.2.2 2010/11/11 09:18:26 aguarise Exp $
+// $Id: atmClient.cpp,v 1.1.2.3 2011/03/18 10:02:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -69,12 +69,23 @@ int ATM_client_toResource(ATM_job_data &job_data, ATM_usage_info &usage_info, ve
 		cerr << "WARNING: Error reading conf file: " << confFileName << endl;
 		cerr << "There can be problems processing the transaction" << endl;
 	}
+	string hlrHostname = "";
+	int hlrPort = 56568;//default value
+	string hlrContact = "";
 	Split(':',job_data.res_acct_bank_id, &urlBuff);
-	if ( urlBuff.size() != 3 )
-		return atoi(E_WRONG_RES_HLR);
-	string resBankHostname = urlBuff[0];
-	int resBankPort = atoi((urlBuff[1]).c_str());
-	string resBankContact = urlBuff[2];
+	if ( urlBuff.size() > 0 )
+        {
+                if ( urlBuff.size() > 0 ) hlrHostname = urlBuff[0];
+                if ( urlBuff.size() > 1 ) hlrPort = atoi((urlBuff[1]).c_str());
+                if ( urlBuff.size() > 2 ) hlrContact = urlBuff[2];
+        }
+	else
+        {
+                return atoi(E_WRONG_RES_HLR);
+        }
+	string resBankHostname = hlrHostname;
+	int resBankPort = hlrPort;
+	string resBankContact = hlrContact;
 	//if the acct_PA_res_id and the acct_bank_res_id are
 	
 	//Now compose the XML ATM_request

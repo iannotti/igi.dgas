@@ -2,24 +2,24 @@ export DGAS_LOCATION=${DGAS_LOCATION:-/usr}
 
 if [ -f /etc/dgas/dgas_sensors.conf ]; then
 
-if [ -f $DGAS_LOCATION/sbin/glite-dgas-pushd ]; then
-	if $DGAS_LOCATION/sbin/glite-dgas-pushd status >/dev/null; then
-		echo "dgas-dgas-pushd running"
-		$DGAS_LOCATION/sbin/glite-dgas-pushd stop
+if [ -f $DGAS_LOCATION/sbin/dgas-pushd ]; then
+	if $DGAS_LOCATION/sbin/dgas-pushd status >/dev/null; then
+		echo "dgas-pushd running"
+		$DGAS_LOCATION/sbin/dgas-pushd stop
 	else
-		echo "dgas-dgas-pushd not running"
+		echo "dgas-pushd not running"
 	fi
 fi
 
 
-if [ -f $DGAS_LOCATION/sbin/glite-dgas-urcollector ]; then
-	if $DGAS_LOCATION/sbin/glite-dgas-urcollector status >/dev/null; then
-		echo "glite-dgas-urcollector running"
-		$DGAS_LOCATION/sbin/glite-dgas-urcollector stop
+if [ -f $DGAS_LOCATION/sbin/dgas-urcollector ]; then
+	if $DGAS_LOCATION/sbin/dgas-urcollector status >/dev/null; then
+		echo "dgas-urcollector running"
+		$DGAS_LOCATION/sbin/dgas-urcollector stop
 	else
-		echo "glite-dgas-urcollector not running"
+		echo "dgas-urcollector not running"
 	fi
 fi
 
 fi
-
+exit 0

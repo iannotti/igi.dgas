@@ -97,7 +97,7 @@ collectorHADLockFileName = "${DGAS_LOCATION}/var/dgas_urcollector_HAD.lock"
 # the log file for glite-urcollector.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9
-collectorLogFileName = "${DGAS_LOCATION}/var/log/dgas_urcollector.log"
+collectorLogFileName = "${DGAS_LOCATION}/var/log/dgas/dgas_urcollector.log"
 
 # the buffer file that keeps track of the last processed LRMS job_id and
 # log timestamp for glite-urcollector.pl:
@@ -162,7 +162,7 @@ pushdLockFileName = "${DGAS_LOCATION}/var/dgas_pushd.lock"
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9. Logging facility is set
 # accordingly to LOG_LOCAL 1 through 9. 
-pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_pushd.log"
+pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas/dgas_pushd.log"
 
 # The following option can be used to specify a configuration file that
 # contains a mapping between local users/groups and VOs in case some local
@@ -233,7 +233,7 @@ pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas_pushd.log"
 #printAsciiLog = "yes"
 
 #asciiLogFilePath specifies the full path for the asciiLog file.
-#asciiLogFilePath = "${DGAS_LOCATION}/var/log/pushdAscii.log"
+#asciiLogFilePath = "${DGAS_LOCATION}/var/log/dgas/pushdAscii.log"
 
 
 # resource PA: in the form host:port:X509_certSubject (OPTIONAL)

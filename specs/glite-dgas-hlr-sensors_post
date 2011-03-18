@@ -37,3 +37,4 @@ fi
 if [ -d /opt/glite/var ]; then
 	cp /opt/glite/var/dgasCollectorBuffer.* /usr/var/
 fi
+exit 0

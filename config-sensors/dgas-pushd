@@ -22,6 +22,7 @@ fi
 
 [ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+[ -d $PREFIX/var/log/dgas ] || mkdir $PREFIX/var/log/dgas
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$ACTIVEMQLIB
 
