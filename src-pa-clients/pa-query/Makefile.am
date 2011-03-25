@@ -7,7 +7,7 @@
 ## *********************************************************************
 
 lib_LTLIBRARIES  = libglite_dgas_paClient.la
-bin_PROGRAMS = glite-dgas-pa-info
+bin_PROGRAMS = dgas-paInfo
 
 libglite_dgas_paClient_la_SOURCES = \
 	paClient.cpp 
@@ -19,10 +19,10 @@ libglite_dgas_paClient_la_SOURCES = \
 #	$(GLOBUS_SSL_UTILS_LIBS) \
 #	$(GLOBUS_GSS_THR_LIBS) 
 
-glite_dgas_pa_info_SOURCES = \
+dgas_paInfo_SOURCES = \
 	paInfoClient.cpp
 
-glite_dgas_pa_info_LDADD = \
+dgas_paInfo_LDADD = \
 	libglite_dgas_paClient.la \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
