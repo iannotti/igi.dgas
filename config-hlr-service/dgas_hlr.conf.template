@@ -29,18 +29,18 @@ hlr_def_port = "56568"
 
 #directory for dgas log and locks
 
-dgas_var_dir = "${DGAS_LOCATION}/var/dgas"
+dgas_var_dir = "/usr/var/"
 
 # default log file
 
-hlr_def_log = "${DGAS_LOCATION}/var/dgas/log/hlrd.log"
-hlr_qmgr_def_log = "${DGAS_LOCATION}/var/dgas/log/hlr_qmgrd.log"
+hlr_def_log = "/usr/var/log/dgas/hlrd.log"
+hlr_qmgr_def_log = "/usr/var/log/dgas/hlr_qmgrd.log"
 
 #default lock file
 
-hlr_def_lock = "${DGAS_LOCATION}/var/dgas/hlr.lock"
-hlr_qmgr_def_lock ="${DGAS_LOCATION}/var/dgas/hlr_qmgrd.lock"
-hlr_had_def_lock ="${DGAS_LOCATION}/var/dgas/hlr_had.lock"
+hlr_def_lock = "/usr/var/hlr.lock"
+hlr_qmgr_def_lock ="/usr/var/hlr_qmgrd.lock"
+hlr_had_def_lock ="/usr/var/dgas/hlr_had.lock"
 
 #log verbosity:
 # 0      - Critical messages
@@ -118,10 +118,10 @@ authUserSqlQueries = "false"
 #usage records to 2nd level (concentrators) HLRs
 
 # this is the name of the lock file.
-#urForwardLock="${DGAS_LOCATION}/var/dgas/glite-dgas-ur-forward.lock"
+#urForwardLock="/usr/var/glite-dgas-ur-forward.lock"
 
 #this is the name of the daemon log file.
-#urForwardLog="${DGAS_LOCATION}/var/dgas/log/glite-dgas-ur-forward.log"
+#urForwardLog="/usr/var/log/dgas/glite-dgas-ur-forward.log"
 
 #This is the time (in seconds) that the ur-forward daemon waits
 #before sending new information to the 2nd level HLR.
