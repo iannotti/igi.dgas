@@ -52,7 +52,7 @@ const char * hlr_sql_user;
 const char * hlr_sql_password;
 const char * hlr_sql_dbname;
 const char * hlr_tmp_sql_dbname;
-string dgas_var_dir = dgasLocation() + "/var/dgas";
+string dgas_var_dir = "/usr/var/";
 int system_log_level = 7;
 int defConnTimeOut = 20;
 int help_flag = 0;

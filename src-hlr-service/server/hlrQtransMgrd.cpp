@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.4 2011/03/15 10:38:34 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.5 2011/03/28 09:32:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -415,7 +415,7 @@ int processErrorTransactions(int i)
 	mainLoop(i); 
 	time_t currtime;
 	currtime = time(NULL);
-	string fileName = dgasLocation() + "/var/dgas/hlr_tmp_dump-";
+	string fileName = "/usr/var/hlr_tmp_dump-";
 		fileName += int2string(currtime);
 		fileName += ".sqldump";
 	qTrans::archiveGreaterThan(i-1,fileName);
