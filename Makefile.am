@@ -53,7 +53,9 @@ common-interface-install: common-interface
 
 common-install: common-src-install common-interface-install
 
-common-install-etics: common-src-install common-interface-install
+#common-install-etics: common-src-install common-interface-install
+
+common-install-etics: common-src-install
 
 #hlr-clients-config:
 #	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS)
@@ -79,10 +81,14 @@ hlr-clients-install: common-install\
 	hlr-clients-src-install\
 	hlr-clients-interface-install
 
+#hlr-clients-install-etics: \
+#	common \
+#	hlr-clients-src-install\
+#	hlr-clients-interface-install
+
 hlr-clients-install-etics: \
 	common \
- 	hlr-clients-src-install\
-	hlr-clients-interface-install
+ 	hlr-clients-src-install
 
 sensors-config:
 	cd ./config-sensors ; $(MAKE) $(AM_MAKEFLAGS)
@@ -109,9 +115,13 @@ sensors-install: common-install\
 	sensors-interface-install \
 	sensors-config-install
 
+#sensors-install-etics: \
+#	sensors-src-install\
+#	sensors-interface-install \
+#	sensors-config-install
+
 sensors-install-etics: \
  	sensors-src-install\
-	sensors-interface-install \
 	sensors-config-install
 
 pa-clients-src: 
@@ -130,8 +140,9 @@ pa-clients-interface-install:
 
 pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
 
-pa-clients-install-etics: pa-clients-src-install pa-clients-interface-install
+#pa-clients-install-etics: pa-clients-src-install pa-clients-interface-install
 
+pa-clients-install-etics: pa-clients-src-install
 
 hlr-service-config:
 	cd ./config-hlr-service ; $(MAKE) $(AM_MAKEFLAGS)
@@ -157,15 +168,24 @@ hlr-service-src-install:
 hlr-service-interface-install: 
 	cd ./interface-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) install
 
+#hlr-service-install: common-install\
+#	pa-clients-install\
+#	hlr-service-src-install\
+#	hlr-service-interface-install\
+#	hlr-service-config-install
+
 hlr-service-install: common-install\
 	pa-clients-install\
 	hlr-service-src-install\
-	hlr-service-interface-install\
 	hlr-service-config-install
+
+#hlr-service-install-etics: \
+#	hlr-service-src-install\
+#	hlr-service-interface-install\
+#	hlr-service-config-install
 
 hlr-service-install-etics: \
 	hlr-service-src-install\
-	hlr-service-interface-install\
 	hlr-service-config-install
 
 producers-config:
@@ -196,9 +216,13 @@ producers-install: common-install\
 	producers-interface-install\
 	producers-config-install
 
+#producers-install-etics: \
+#	producers-src-install\
+#	producers-interface-install\
+#	producers-config-install
+
 producers-install-etics: \
 	producers-src-install\
-	producers-interface-install\
 	producers-config-install
 
 consumers-config:
@@ -231,9 +255,13 @@ consumers-install: common-install\
 	consumers-interface-install\
 	consumers-config-install
 
+#consumers-install-etics: \
+#	consumers-src-install\
+#	consumers-interface-install\
+#	consumers-config-install
+
 consumers-install-etics: \
 	consumers-src-install\
-	consumers-interface-install\
 	consumers-config-install
 
 

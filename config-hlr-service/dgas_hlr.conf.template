@@ -54,6 +54,12 @@ systemLogLevel = "6"
 
 #configuration options for the transaction manager daemon.
 
+#accountCheckPolicy defines the policy adopted to create account for resources.
+#default is 'lazy' wich just requres the DN to be added with the 
+# dgas-hlr-addadmin -Sa "DNSubject" command
+
+accountCheckPolicy = "lazy"
+
 #expiration period (in second) for a tranasction in the queue,
 #after this time the priority of the transaction is lowered. DEFAULT 600
 hlr_qmgr_expPeriod = "600"
