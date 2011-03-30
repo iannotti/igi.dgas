@@ -10,8 +10,8 @@
 
 
 [ ! -z $DGAS_LOCATION ]  || export DGAS_LOCATION=/usr/
-[ ! -z $AMQCPPLIB ] || export AMQCPPLIB=/usr/local/lib/
-[ ! -z $APRLIB ] || export APRLIB=/usr/local/apr/lib/
+[ ! -z $AMQCPPLIB ] || export AMQCPPLIB=/usr/lib/
+[ ! -z $APRLIB ] || export APRLIB=/usr/lib/
 
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DGAS_LOCATION}/lib/:$APRLIB:$AMQCPPLIB"
 
@@ -40,25 +40,21 @@ eval MANAGER_LOCK=`grep managerLockFileName $HLRD_CONF | grep "^#" -v  | cut -d'
 
 [ -d $PREFIX/var ] || mkdir $PREFIX/var
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
-[ -d $DGAS_VAR_DIR ] || mkdir $DGAS_VAR_DIR
-[ -d $DGAS_VAR_DIR/log ] || mkdir $DGAS_VAR_DIR/log
-
-[ -d $DGAS_VAR_DIR ] && chown $HLR_USER:$HLR_USER $DGAS_VAR_DIR
-[ -d $DGAS_VAR_DIR/log ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log
+[ -d $PREFIX/var/log/dgas ] || mkdir $PREFIX/var/log/dgas
 
 # Some functions to make the below more readable
-HLR_CONSUMER=$PREFIX/libexec/glite-dgas-AMQConsumer
+HLR_CONSUMER=$PREFIX/libexec/dgas-AMQConsumer
 #eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 CONSUMER_OPTIONS="-c $HLRD_CONF"
 
-if [ -e /etc/rc.d/init.d/glite-dgas-hlr-amq-consumer ]
+if [ -e /etc/rc.d/init.d/dgas-hlr-amq-consumer ]
 then
-	STARTUP_SCRIPT="/etc/rc.d/init.d/glite-dgas-hlr-amq-consumer"
+	STARTUP_SCRIPT="/etc/rc.d/init.d/dgas-hlr-amq-consumer"
 else
-	STARTUP_SCRIPT="$PREFIX/sbin/glite-dgas-hlr-amq-consumer"
+	STARTUP_SCRIPT="$PREFIX/sbin/dgas-hlr-amq-consumer"
 fi
 
-REC_MGR=$PREFIX/libexec/glite-dgas-legacyRecordManager
+REC_MGR=$PREFIX/libexec/dgas-legacyRecordManager
 REC_MGR_OPTIONS="-c $HLRD_CONF"
 
 startMain()
