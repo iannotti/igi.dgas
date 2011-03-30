@@ -9,8 +9,8 @@
 lib_LTLIBRARIES  = libglite_dgas_AMQConsumer.la \
 		libglite_dgas_legacyRecordManager.la 
 
-libexec_PROGRAMS = glite-dgas-AMQConsumer \
-		glite-dgas-legacyRecordManager 
+libexec_PROGRAMS = dgas-AMQConsumer \
+		dgas-legacyRecordManager 
 
 libexec_SCRIPTS = \
 		glite-dgas-ogfurParser	
@@ -26,8 +26,8 @@ endif
 libglite_dgas_AMQConsumer_la_SOURCES = \
 	AMQConsumer.cpp 
 
-glite_dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
-glite_dgas_AMQConsumer_LDADD   = \
+dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
+dgas_AMQConsumer_LDADD   = \
 	./libglite_dgas_AMQConsumer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
@@ -41,8 +41,8 @@ glite_dgas_AMQConsumer_LDADD   = \
 libglite_dgas_legacyRecordManager_la_SOURCES = \
 	legacyRecordManager.cpp 
 
-glite_dgas_legacyRecordManager_SOURCES = legacyRecordManagerExe.cpp
-glite_dgas_legacyRecordManager_LDADD   = \
+dgas_legacyRecordManager_SOURCES = legacyRecordManagerExe.cpp
+dgas_legacyRecordManager_LDADD   = \
 	./libglite_dgas_legacyRecordManager.la \
 	$(top_builddir)/src-hlr-service/engines/libdgasAtmResourceEngine.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlr.la \
