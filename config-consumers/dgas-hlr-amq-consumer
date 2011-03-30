@@ -5,7 +5,7 @@
 # description: DGAS HLR server daemon
 #
 # processname: hlr_serverd
-# config: /etc/dgas/dgas-activemq-consumer.conf
+# config: /etc/dgas/dgas_activemq_consumer.conf
 # chkconfig: 35 70 80 
 
 
@@ -27,7 +27,7 @@ prog="HLR AMQ consumer"
 prog1="HLR Record Manager"
 if [ -z $2 ]
 then
- HLRD_CONF=/etc/dgas/dgas-activemq-consumer.conf
+ HLRD_CONF=/etc/dgas/dgas_activemq_consumer.conf
 else
  HLRD_CONF=$2
 fi
