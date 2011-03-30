@@ -1,19 +1,18 @@
 #dgas_activemq-producer.conf.template
 
-consumerLockFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-consumer.lock"
-consumerLogFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-consumer.log"
-amqBrokerUri = "tcp://hlr-test-29.to.infn.it:61616"
-recordsDir = "/tmp/dgasamq/"
-dgasAMQTopic = "DGAS.TEST"
+consumerLockFileName = "/usr/var/dgas-hlr-amq-consumer.lock"
+consumerLogFileName = "/usr/var/dgas-hlr-amq-consumer.log"
+amqBrokerUri = "tcp://dgas-broker.to.infn.it:61616"
+dgasAMQTopic = "DGAS"
 hlr_user = "root"
 
-managerLockFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-manager.lock"
-managerLogFileName = "${DGAS_LOCATION}/var/dgas-hlr-amq-manager.log"
+managerLockFileName = "/usr/var/dgas-hlr-amq-manager.lock"
+managerLogFileName = "/usr/var/dgas-hlr-amq-manager.log"
 messageParsingCommand = "cat"
 
 hlr_sql_server = "localhost"
 hlr_sql_user = "root"
 hlr_sql_password = ""
-hlr_sql_dbname = "hlr1_amq"
-hlr_tmp_sql_dbname = "hlr_amq_tmp"
+hlr_sql_dbname = "hlr"
+hlr_tmp_sql_dbname = "hlr_tmp"
 
