@@ -42,11 +42,12 @@ fi
 
 [ -d $PREFIX/var ] || mkdir $PREFIX/var
 [ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
+[ -d $PREFIX/var/log/dgas ] || mkdir $PREFIX/var/log/dgas
 [ -d $DGAS_VAR_DIR ] || mkdir $DGAS_VAR_DIR
 [ -d $DGAS_VAR_DIR/log ] || mkdir $DGAS_VAR_DIR/log
 
-[ -d $DGAS_VAR_DIR ] && chown $HLR_USER:$HLR_USER $DGAS_VAR_DIR
-[ -d $DGAS_VAR_DIR/log ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log
+[ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
+[ -d $PREFIX/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
 
 # Some functions to make the below more readable
 HLRD=$PREFIX/sbin/dgas-hlr-listener
