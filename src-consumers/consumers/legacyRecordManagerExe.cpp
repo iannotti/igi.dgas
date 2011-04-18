@@ -23,8 +23,20 @@ string configFile = "";
 string messageParser = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
-void help()
+void help(string progname)
 {
+        cerr<< endl;
+        cerr<< "DGAS legacy record manager" <<endl;
+        cerr<< "Version :" << VERSION << endl ;
+        cerr<< "Author: A.Guarise <andrea.guarise@to.infn.it>"<< endl;
+        cerr<< endl << "Usage: " << endl;
+        cerr<< progname << " [OPTIONS]" << endl << endl;
+        cerr<< "OPTIONS:" <<endl;
+        cerr<< "-P  --messageParser <executable name>  A command that can translate the input usage record to a legacy UR." << endl;
+        cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
+        cerr<< "-R  --dryRun      Do not actually inser the usage record in the Database. Useful to debug message parsers." << endl;
+        cerr<< "-s  --singleRun   Do not run as a daemon. Process one iteration and exit." << endl;;
+        cerr<< "-h  --help               Print this help message." << endl;
 }
 
 int options ( int argc, char **argv )
@@ -61,7 +73,7 @@ int main (int argc, char *argv[])
 	options(argc, argv);
 	if (needs_help)
 	{
-		help();
+		help(argv[0]);
 		return 0;
 	}
 	confParameters parms;
