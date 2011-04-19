@@ -10,6 +10,12 @@ managerLockFileName = "/usr/var/dgas-hlr-amq-manager.lock"
 managerLogFileName = "/usr/var/log/dgas/dgas-hlr-amq-manager.log"
 messageParsingCommand = "cat"
 
+#accountCheckPolicy defines the resource authorization policy for the records coming
+#through the AMQ channel. It should be set the very same way as in the dgas_hlr.conf file
+accountCheckPolicy = "lazy"
+
+#the follwing parameters define the MySQL DB connection parameters. These must be the same
+# as in dgas_hlr.conf
 hlr_sql_server = "localhost"
 hlr_sql_user = "root"
 hlr_sql_password = ""
