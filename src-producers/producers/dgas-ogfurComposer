@@ -94,7 +94,6 @@ $doc->setDocumentElement( $root );
 $root->setNamespace( 'http://schema.ogf.org/urf/2003/09/urf' , 'urf', 0 );
 $root->setNamespace( 'http://www.w3.org/2001/XMLSchema-instance' , 'xsi', 0 );
 $root->setNamespace( 'http://www.w3.org/2000/09/xmldsig#' , 'ds', 0 );
-$root->setAttribute('xsi:schemaLocation','http://schema.ogf.org/urf/2003/09/urffile:/Users/bekah/Documents/GGF/URWG/urwg-schema.09.xsd');
 
 my $RecordIdentityTag = $doc->createElement("RecordIdentity");
 	$RecordIdentityTag->setAttribute('urf:recordId',$record{"recordID"});
