@@ -182,6 +182,10 @@ my $sqliteCmd = "/usr/bin/sqlite3 $configValues{dgasDB} \"$sqlStatement\"";
 my $status = system("$sqliteCmd");
 
 $urGridInfo{siteName}=$configValues{siteName};
+if ( $urGridInfo{siteName} eq "" )
+{
+	$urGridInfo{siteName} = `/bin/hostname -d`;
+}
 &printLog ( 4, "Publishing records for site::$urGridInfo{siteName}");
 my  @ATMDefinitions;
 if ( $configValues{useUrKeyDefFile} eq "yes" )
@@ -1214,7 +1218,6 @@ sub callAtmClient
 	$cmd .= " \"sf2k=$urGridInfo{GlueHostBenchmarkSF00}\"";
 	&printLog ( 8, "Got 'GlueHostBenchmarkSF00' from UR file: $urGridInfo{GlueHostBenchmarkSF00}");
     }
-    $urGridInfo{siteName}=$configValues{siteName};
     # Is this a strictly local job? Let the HLR server know!
     if (exists($urGridInfo{JOB_TYPE}) && $urGridInfo{JOB_TYPE} eq "local")
     {
