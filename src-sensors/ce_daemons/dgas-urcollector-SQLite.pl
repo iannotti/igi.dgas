@@ -181,12 +181,6 @@ my $sqlStatement = "CREATE TABLE IF NOT EXISTS commands (key INTEGER PRIMARY KEY
 my $sqliteCmd = "/usr/bin/sqlite3 $configValues{dgasDB} \"$sqlStatement\"";
 my $status = system("$sqliteCmd");
 
-$urGridInfo{siteName}=$configValues{siteName};
-if ( $urGridInfo{siteName} eq "" )
-{
-	$urGridInfo{siteName} = `/bin/hostname -d`;
-}
-&printLog ( 4, "Publishing records for site::$urGridInfo{siteName}");
 my  @ATMDefinitions;
 if ( $configValues{useUrKeyDefFile} eq "yes" )
 {
@@ -212,6 +206,13 @@ my $timeInterval = $configValues{timeInterval};
 my $jobPerTimeInterval = $configValues{jobPerTimeInterval};
 my $maxNumRecords = $configValues{maxNumRecords};
 my $waitFor = $configValues{limiterWaitFor};
+my $siteName = $configValues{siteName};
+if ( $siteName eq "" )
+{
+	$siteName = `/bin/hostname -d`;
+	chomp($siteName);
+}
+&printLog ( 4, "Publishing records for site::$siteName");
 
 # put lock
 if ( &putLock($collectorLockFileName) != 0 ) {
@@ -716,7 +717,7 @@ sub parseRecord #WAS parseFile
 	$urGridInfo{lrmsType} = $lrmsType;
 	&printLog ( 9 , "LRMS type: $lrmsType");
     }
-
+    $urGridInfo{siteName}=$siteName;
     &parseUR($lrmsType, $UR);
 
     return 0;
