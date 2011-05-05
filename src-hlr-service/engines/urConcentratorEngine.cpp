@@ -672,9 +672,9 @@ int urConcentrator::insertRecord(jobTransSummary& r)
 	{
 		if ( isDuplicateEntry(r.dgJobId, c->hostName, r.transType ) )//duplicate entry
 		{
-			logBuff = "Duplicate entry:" + r.dgJobId + ":" + r.transType + ",MysqlError:" + int2string(res);
+			logBuff = "Duplicate:" + r.dgJobId + ":" + r.transType + ",MysqlErr:" + int2string(res);
 			hlr_log(logBuff,&logStream,4);
-			hlr_log("going on anyway...",&logStream,3);
+			hlr_log("going on anyway...",&logStream,9);
 			return 0;	
 		}
 		logBuff = "Error in query:" + queryString + ":" + int2string(res);
