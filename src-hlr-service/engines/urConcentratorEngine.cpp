@@ -423,7 +423,7 @@ int urConcentrator::xmlParser( string& requestType,
 						urBuff.uniqueChecksum = fieldNode.text;
 					}
 					//go on with records here...
-					logBuff = "inserting:" + urBuff.dgJobId;
+					logBuff = "<--" + urBuff.dgJobId;
 					hlr_log(logBuff,&logStream,7);
 					r.push_back(urBuff);
 					urNode.release();
