@@ -23,10 +23,10 @@
 #include <iostream>
 #include <fstream>
 //local includes
-#include "glite/dgas/common/base/comm_struct.h"
 //hlr api includes
 #include "glite/dgas/common/base/dgas_config.h"
 #include "glite/dgas/common/base/dgas_lock.h"
+#include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/base/libdgas_log.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/localSecurity.h"
@@ -232,11 +232,10 @@ int main ( int argc, char * argv[] )
 	{
 		lockFileName = confMap["hlr_def_lock"];
 	}
-	//put the lock file
 	if ( putLock(lockFileName) != 0 )
 	{
 		//for some reasons it was impossible to create the lock
-		//threfore the server won't be started.
+		//therefore the server won't be started.
 		hlr_log("Startup failed: Error creating lock file",
 				&logStream, 0);
 		exit(atoi(E_LOCK_OPEN));
