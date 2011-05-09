@@ -415,7 +415,7 @@ int main ( int argc, char * argv[] )
 		while (keep_going)
 		{
 		int lastThread = 0;
-	     	for (int i=0; ( i< threadNumber ) && keep_going; i++ )
+	    for (int i=0; ( i< threadNumber ) && keep_going; i++ )
   		{
 			if ( activeThreads >= threadNumber )
 			{
@@ -439,7 +439,6 @@ int main ( int argc, char * argv[] )
 			lStatus.activeThreads = activeThreads;
 			logString = "Number of active threads:" + int2string(lStatus.activeThreads);
 			hlr_log(logString,&logStream,8);
-			//pthread_mutex_unlock (&listen_mutex);
 			if ( theAgent[i] != NULL )
 			{
 				thread[i] = new pthread_t;

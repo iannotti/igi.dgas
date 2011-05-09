@@ -17,7 +17,6 @@
 extern ofstream logStream;
 extern pthread_mutex_t auth_mutex;
 extern pthread_mutex_t listen_mutex;
-//extern pthread_mutex_t receive_mutex;
 extern volatile sig_atomic_t keep_going;
 extern int activeThreads;
 extern bool restart;
@@ -182,17 +181,17 @@ void* thrLoop(void *param)
 		connInfo connectionInfo;
 	 	logString ="in "+ tNString+ " Authenticating connection received from : " +(tstruct->a)->PeerName();
 		hlr_log( logString, &logStream,7);
-		//pthread_mutex_lock (&auth_mutex);
 		if ( tstruct->a ) (tstruct->a)-> SetTimeout( defConnTimeOut );
 		if ( tstruct->a ) (tstruct->s)->set_auth_timeout( 10*defConnTimeOut );
-                if ( (tstruct->s)->AuthenticateAgent((tstruct->a)) )
+        if ( (tstruct->s)->AuthenticateAgent((tstruct->a)) )
 		{
 			connectionInfo.hostName = (tstruct->a)->PeerName();
 			connectionInfo.contactString = (tstruct->a)->CertificateSubject();
-			string certFile = ( tstruct->a)->CredentialsFile();
-			logString = "Cert File:" + certFile;
-			hlr_log( logString, &logStream,8);
+
 			#ifdef WITH_VOMS
+			string certFile = ( tstruct->a)->CredentialsFile();
+						logString = "Cert File:" + certFile;
+						hlr_log( logString, &logStream,8);
 			if ( certFile != "" )
 			{
 				hlr_log( "Retrieving voms AC...",&logStream,7);
@@ -200,7 +199,6 @@ void* thrLoop(void *param)
 				hlr_log( "...Done.", &logStream,7);
 			}
 			#endif
-			//pthread_mutex_unlock (&auth_mutex);
 			logString = "Authenticated Agent:" + tNString;
 			hlr_log( logString, &logStream,8);
 		}
@@ -209,31 +207,30 @@ void* thrLoop(void *param)
                    if ( (tstruct->a) != NULL )
                    {
 	                (tstruct->s) -> KillAgent( (tstruct->a) );
-			(tstruct->a) = NULL;
+	                (tstruct->a) = NULL;
                    }
-		   //pthread_mutex_unlock (&auth_mutex);
 		   logString = "Error while Authenticating agent: " + tNString;
 		   hlr_log( logString, &logStream,2);
 		   authErrors++;
 		   activeThreads--; 
 		   pthread_exit((void *) 0);
-      		}
-	 	logString = "in "+ tNString+ " Connection received from : " +connectionInfo.hostName + " ";
-		logString += "with cert subject: " + connectionInfo.contactString;
+      	}
+	 	logString = tNString+ " Connection from : " +connectionInfo.hostName + " ";
+		logString += ",cert DN: " + connectionInfo.contactString;
 		hlr_log (logString, &logStream, 5);
-		logString = "Begin I/O in thread:" + tNString;
-		hlr_log (logString, &logStream, 8);	
+		logString = "I/O in:" + tNString;
+		hlr_log (logString, &logStream, 9);
 		bool receiveOk = true;
 			if ( (tstruct->a) != NULL )
 			{
 				(tstruct->a)-> SetRcvTimeout( defConnTimeOut );
 				if ( !((tstruct->a)-> Receive( xml_input )) )
 				{
-					string logString = "In thread "+ tNString +" receive, Error.:";
+					string logString = tNString +" receive error:";
 					hlr_log (logString, &logStream, 3);
 					if ( (tstruct->a) != NULL )
 					{
-						logString = "In thread "+ tNString +" killing the agent";
+						logString = "In "+ tNString +" on err, killing the agent";
 						hlr_log (logString, &logStream, 8);
 				
 						if ( (tstruct->a) != NULL )
@@ -242,12 +239,16 @@ void* thrLoop(void *param)
 							(tstruct->a) = NULL;
 						}
 					}
-					logString = "In thread "+ tNString +" killed, continue...";
+					logString = tNString +" killed, continue...";
 					hlr_log (logString, &logStream, 8);
 					authErrors++;
 					activeThreads--;
 					pthread_exit((void *) 0);
 				}
+			}
+			else
+			{
+				receiveOk = false;
 			}
 			if ( !receiveOk )
 			{
