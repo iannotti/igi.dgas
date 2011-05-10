@@ -85,9 +85,6 @@ string qtransInsertLog = "";
 
 bool restart;
 
-pthread_mutex_t auth_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t receive_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t listen_mutex = PTHREAD_MUTEX_INITIALIZER;
 volatile sig_atomic_t keep_going = 1;
 statusInfo serverStatus;
 errorInfo  errorStatus;
@@ -424,7 +421,6 @@ int main ( int argc, char * argv[] )
 			theAgent[i] = NULL;
 			logString = "Listening for incoming connections,";
 			hlr_log(logString,&logStream,7);
-			//pthread_mutex_lock (&listen_mutex);
 			logString = "Creating agent:" + int2string(i);
 			hlr_log(logString,&logStream,8);
 			while ( keep_going )
