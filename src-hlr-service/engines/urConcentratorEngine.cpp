@@ -506,10 +506,14 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 	hlr_log(logBuff,&logStream,4);
 	lastInsertedId = "-1";
 	//TODO open dbHandle HERE
+	db hlrDb (hlr_sql_server,
+					hlr_sql_user,
+					hlr_sql_password,
+					hlr_sql_dbname);
 	vector<jobTransSummary>::iterator it = r.begin();
 	while ( it != r.end() )
 	{
-		if ( insertRecord(*it) != 0 )
+		if ( insertRecord(db,*it) != 0 )
 		{
 			//error encountered. check if some record was
 			//inserted.
