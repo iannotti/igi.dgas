@@ -185,7 +185,6 @@ int main (int argc, char *argv[])
 	        listMandatoryParameters();
 		return 1;
 	}
-
 	ATM_usage_info usage_info = { atoi(cpu_time.c_str()), 
 		atoi(wall_time.c_str()),
 		mem,

@@ -505,6 +505,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 	string logBuff = "Entering insertRecords()";
 	hlr_log(logBuff,&logStream,4);
 	lastInsertedId = "-1";
+	//TODO open dbHandle HERE
 	vector<jobTransSummary>::iterator it = r.begin();
 	while ( it != r.end() )
 	{
@@ -516,6 +517,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 			{
 				logBuff = "Could not insert records.";
 				hlr_log(logBuff,&logStream,1);
+				//close dbHandle on failure HERE
 				return E_URCONCENTRATOR_INSERT_RECORDS;
 			}
 		}
@@ -528,6 +530,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 		}
 		it++;
 	}
+	//close dbHandle on success HERE
 	return 0;
 }
 
