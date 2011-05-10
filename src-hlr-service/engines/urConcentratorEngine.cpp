@@ -513,7 +513,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 	vector<jobTransSummary>::iterator it = r.begin();
 	while ( it != r.end() )
 	{
-		if ( insertRecord(db,*it) != 0 )
+		if ( insertRecord(hlrDb,*it) != 0 )
 		{
 			//error encountered. check if some record was
 			//inserted.
@@ -561,7 +561,7 @@ urConcentrator::checkResubmission(jobTransSummary& r)
 }
 */
 
-int urConcentrator::insertRecord(jobTransSummary& r)
+int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 {
 	int res = 0;
 	string logBuff;
@@ -673,8 +673,28 @@ int urConcentrator::insertRecord(jobTransSummary& r)
 	queryString += r.glueCEInfoTotalCPUs + "','";
 	queryString += r.executingNodes+ "','";//executingNodes place holder
 	queryString += r.uniqueChecksum + "')";
-	hlrGenericQuery insertRecord(queryString);
-	res = insertRecord.query();
+	//hlrGenericQuery insertRecord(queryString);
+	//res = insertRecord.query();
+	dbResult result = hlrDb.query(queryString);
+	if ( hlrDb.errNo == 0 )
+	{
+		if ( result.numRows() == 0 )
+		{
+			res = 1;
+		}
+		res = 0;
+	}
+	else
+	{
+		if ( hlrDb.errNo != 0 )
+		{
+			res = hlrDb.errNo;
+		}
+		else
+		{
+			res = -1;
+		}
+	}
 	if ( (res != 0) && ( res != 1 ) )
 	{
 		if ( isDuplicateEntry(r.dgJobId, c->hostName, r.transType ) )//duplicate entry

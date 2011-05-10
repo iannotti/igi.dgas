@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1.4.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.3 2011/05/10 15:02:29 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -131,7 +131,7 @@ class urConcentrator {
 		int resetRequestComposeXml();
 		
 		bool authorize();
-		int insertRecord(jobTransSummary& r);
+		int insertRecord(db& hlrDb, jobTransSummary& r);
 		int insertRecords(vector<jobTransSummary>& r);
 		int updateIndex(urConcentratorIndex& indexEntry);
 		int getIndex(urConcentratorIndex& indexEntry);
