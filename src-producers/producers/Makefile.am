@@ -51,6 +51,12 @@ dgas_legacyCpuComposer_LDADD   = \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
+	
+dgas_legacyStorageComposer_SOURCES = legacyStorageComoserExe.cpp
+dgas_legacyStorageComposer_LDADD   = \
+	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
+	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS)
+
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-producers \
