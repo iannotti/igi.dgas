@@ -14,7 +14,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([DGAS], [4.0.1.0])
+AC_INIT([DGAS], [4.0.3.b11])
 AC_CONFIG_AUX_DIR([./project])
 AM_INIT_AUTOMAKE([1.6.3 subdir-objects])
 AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.18 $])
+AC_REVISION([$Revision: 1.1.2.5.4.19 $])
 
 #Environment.
 WORKDIR=`pwd`
