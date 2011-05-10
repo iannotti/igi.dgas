@@ -1,8 +1,0 @@
-#! /bin/sh
-
-cd ../..
-cvs co org.glite
-cvs co org.glite.dgas
-
-cd org.glite.dgas/project
-ant -f glite.dgas.csf.xml
