@@ -12,6 +12,7 @@ lib_LTLIBRARIES  = libdgas_amqProducer.la \
 
 libexec_PROGRAMS = dgas-amqProducer \
 		dgas-legacyProducer \
+		dgas-legacyStorageComposer \
 	dgas-legacyCpuComposer
 
 libexec_SCRIPTS = \
@@ -52,7 +53,7 @@ dgas_legacyCpuComposer_LDADD   = \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
 	
-dgas_legacyStorageComposer_SOURCES = legacyStorageComoserExe.cpp
+dgas_legacyStorageComposer_SOURCES = legacyStorageComposerExe.cpp
 dgas_legacyStorageComposer_LDADD   = \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS)
