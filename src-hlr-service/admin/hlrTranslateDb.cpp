@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.8 2011/05/11 14:51:13 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.9 2011/05/11 15:06:22 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -702,7 +702,7 @@ int upgradeJTSSchema ()
 			Split (':', gridResource, &ceIdBuff);        
 			if (ceIdBuff.size() > 0)
 			{
-				valuesBuffer  = ceIdBuff[0];//FIXME can't we finde something else?
+				valuesBuffer  = ceIdBuff[0];//FIXME can't we find something else?
 			}
 			valuesBuffer += lrmsId;
 			valuesBuffer += start;
@@ -987,6 +987,34 @@ int createVoStorageRecordsTable ()
         return checkTable("voStorageRecords");
 }
 
+int createDGASTable ()
+{
+	if ( checkTable("DGAS") )
+	{
+		if ( debug )
+		{
+			cout << " table DGAS already exists." << endl;
+		}
+		return 0;
+	}
+	string queryString = "";
+        queryString = "CREATE TABLE DGAS";
+        queryString += " (";
+        queryString += " service char(32), ";
+        queryString += " version varchar(255), ";
+        queryString += " confFile varchar(255), ";
+        queryString += " logFile varchar(255), ";
+        queryString += " lockFile varchar(255), ";
+        queryString += "primary key (service))";
+        if ( debug )
+        {
+                cerr << queryString << endl;
+        }
+        hlrGenericQuery makeTable(queryString);
+        makeTable.query();
+        return checkTable("DGAS");
+}
+
 int execTranslationRules(string& rulesFile)
 {
 	//With great power comes great responsibility.
@@ -1172,16 +1200,17 @@ int main (int argc, char **argv)
 	{
 		is2ndLevelHlr =true;
 	}
+	if ( confMap["rulesFile"] != "" )
+	{
+			rulesFile = confMap["rulesFile"];
+	}
 	#ifdef MERGE
 	bool useMergeTables = false;
 	database DB(hlr_sql_server,
 			hlr_sql_user,
 			hlr_sql_password,
 			hlr_sql_dbname);
-	if ( confMap["rulesFile"] != "" )
-	{
-		rulesFile = confMap["rulesFile"];
-	}
+
 	if ( confMap["useMergeTables"] == "true" )
 	{
 		useMergeTables = true;
@@ -1248,6 +1277,7 @@ int main (int argc, char **argv)
 	}
 	//create storage records table if it doesn't exists yet.
 	createVoStorageRecordsTable();
+	createDGASTable();
 	//try to update the table withuot recreating it 
 	//(applies just if updating 
 	//from a database already containing previous updates otherwise
