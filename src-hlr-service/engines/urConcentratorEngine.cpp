@@ -10,7 +10,7 @@ extern bool deleteOnReset;
 int urConcentrator::run()
 {
 	int res = 0;
-	string logBuff = "Entering urConcentrator engine.";
+	string logBuff = "Entering urConcentrator engine";
 	hlr_log(logBuff,&logStream,4);
 	logBuff = "urSourceServer:" + c->hostName;
 	hlr_log(logBuff,&logStream,4); 
@@ -62,8 +62,8 @@ int urConcentrator::run()
 int urConcentrator::infoRequestSubEngine()
 {
 	int res = 0;
-	string logBuff = "Entering infoRequestSubEngine()";
-	hlr_log(logBuff,&logStream,4);
+	string logBuff = "Entering infoRequestSubEngine";
+	hlr_log(logBuff,&logStream,7);
 	//get entry from index table.
 	urConcentratorIndex indexEntry;
 	res = getIndex(indexEntry);
@@ -75,8 +75,8 @@ int urConcentrator::infoRequestSubEngine()
 	{
 		errorComposeXml(res);
 	}
-	logBuff = "infoRequestSubEngine() exit.";
-	hlr_log(logBuff,&logStream,4);
+	logBuff = "infoRequestSubEngine exit.";
+	hlr_log(logBuff,&logStream,7);
 	return res;
 }
 
@@ -89,7 +89,7 @@ bool urConcentrator::authorize()
 int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 {
 	string logBuff = "Entering insertRequestSubEngine()";
-	hlr_log(logBuff,&logStream,4);
+	hlr_log(logBuff,&logStream,7);
 	urConcentratorIndex currentIndex;
 	currentIndex.urSourceServer = c->hostName; 
 	currentIndex.urSourceServerDN = c->contactString;
@@ -98,7 +98,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	logBuff = "urSourceServerDN:" + currentIndex.urSourceServerDN;
 	hlr_log(logBuff,&logStream,4);
 	#ifdef MERGE
-	//check if databse is locked due to mege tables update.
+	//check if databse is locked due to merge tables update.
 	database hlrDb ( hlr_sql_server, 
                         hlr_sql_user,
                         hlr_sql_password,
@@ -113,7 +113,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	#endif
 	if ( getIndex(currentIndex) != 0 )
 	{
-		logBuff = "Error inserting queries in the database, can't Find index.";
+		logBuff = "Error inserting queries in the database, can't find index.";
 		hlr_log(logBuff,&logStream,4);
 		errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
 		return E_URCONCENTRATOR_INSERT_RECORDS;
@@ -175,7 +175,7 @@ int urConcentrator::resetRequestSubEngine()
 {
 	//reset all the records with urSourceServer == c->hostName;
 	string logBuff;
-	logBuff = "urConcentrator::resetRequestSubEngine()";
+	logBuff = "urConcentrator::resetRequestSubEngine";
 	hlr_log(logBuff,&logStream,2);
 	if ( authorize() )
 	{
@@ -417,6 +417,11 @@ int urConcentrator::xmlParser( string& requestType,
 					{
 						urBuff.glueCEInfoTotalCPUs = fieldNode.text;
 					}
+					fieldNode = parse (&urNode.text, "executingNodes" );
+					if ( fieldNode.status == 0 )
+					{
+						urBuff.executingNodes = fieldNode.text;
+					}
 					fieldNode = parse (&urNode.text, "uniqueChecksum" );
 					if ( fieldNode.status == 0 )
 					{
@@ -459,7 +464,7 @@ int urConcentrator::errorComposeXml(int errorCode)
 int urConcentrator::getIndex(urConcentratorIndex& indexEntry)
 {
 	//get index entry for server calling this service (info
-	//taken from connInfo conenction context)
+	//taken from connInfo connection context)
 	int res = 0;
 	string logBuff = "Entering getIndex()";	
 	hlr_log(logBuff,&logStream,4);
@@ -502,8 +507,8 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 {
 	//IMPORTANT should exit with !=0 just in case no records have
 	//been inserted at all.
-	string logBuff = "Entering insertRecords()";
-	hlr_log(logBuff,&logStream,4);
+	string logBuff = "Entering insertRecords";
+	hlr_log(logBuff,&logStream,7);
 	lastInsertedId = "-1";
 	//TODO open dbHandle HERE
 	db hlrDb (hlr_sql_server,
@@ -644,8 +649,6 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 	queryString += r.thisGridId + "','";
 	queryString += r.remoteGridId + "','";
 	queryString += r.userFqan + "','";
-//	queryString += r.userVo + "','";
-//	queryString += r.remoteHlr + "',";
 	queryString += r.userVo + "',";
 	queryString += r.cpuTime + ",";
 	queryString += r.wallTime + ",";
