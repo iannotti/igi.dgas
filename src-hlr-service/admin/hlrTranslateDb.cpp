@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.7 2011/05/11 14:22:47 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.8 2011/05/11 14:51:13 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1412,7 +1412,7 @@ int main (int argc, char **argv)
 			cout << "Adding uniqueChecksum to urConcentratorIndex" << endl;
 			if ( upgradeURCI() != 0 )
 			{
-				cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4"
+				cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4" << endl;
 			}
 		}
 		if ( reset ) 
