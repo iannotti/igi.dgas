@@ -25,16 +25,14 @@ vector<string> info_v;
 
 void help()
 {
-	cerr << "DGAS Send Record client" << endl;
+	cerr << "DGAS Storage Composer" << endl;
 	cerr << "Author: Andrea Guarise <andrea.guarise@to.infn.it>" << endl;
 	cerr << "Version:" << URS_CLIENT_VERSION << VERSION << endl;
 	cerr << "Usage:" << endl;
-	cerr << "glite-dgas-send-record <OPTIONS> [USAGE RECORD LIST]" << endl;
+	cerr << "dgas-legacyStorageComposer <OPTIONS> [USAGE RECORD LIST]" << endl;
 	cerr << "Where options are:" << endl;
 	cerr << "-h  --help                       Display this help and exit." << endl;
 	cerr << "-t  --table <HLR table>  table on the HLR." << endl;
-	cerr << endl;
-	cerr << "The HLR an PA contact strings have the form: \"host:port:host_cert_subject\"." << endl;
 	cerr << endl;
 	cerr << "[USAGE RECORD LIST]:" << endl;
 	cerr << "\"timestamp=<int>\" \"siteName=<string>\" \"vo=<string>\" \"voDefSubClass=<string>\"" << endl;

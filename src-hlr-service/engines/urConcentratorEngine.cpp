@@ -128,7 +128,8 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	else
 	{
 		currentIndex.remoteRecordId = lastInsertedId;
-		currentIndex.recordDate = lastInsertedRecordDate; 
+		currentIndex.recordDate = lastInsertedRecordDate;
+		currentIndex.uniqueChecksum = lastInsertedUniqueChecksum;
 		updateIndex(currentIndex);
 	}
 	insertRequestComposeXml();
@@ -497,6 +498,7 @@ int urConcentrator::getIndex(urConcentratorIndex& indexEntry)
 		indexEntry.remoteRecordId = ((getIndex.queryResult).front())[2];
 		indexEntry.recordDate = ((getIndex.queryResult).front())[3];
 		indexEntry.recordInsertDate = ((getIndex.queryResult).front())[4];
+		indexEntry.uniqueChecksum = ((getIndex.queryResult).front())[5];
 		return 0;
 	}
 	
@@ -510,7 +512,6 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 	string logBuff = "Entering insertRecords";
 	hlr_log(logBuff,&logStream,7);
 	lastInsertedId = "-1";
-	//TODO open dbHandle HERE
 	db hlrDb (hlr_sql_server,
 					hlr_sql_user,
 					hlr_sql_password,
@@ -526,7 +527,6 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 			{
 				logBuff = "Could not insert records.";
 				hlr_log(logBuff,&logStream,1);
-				//close dbHandle on failure HERE
 				return E_URCONCENTRATOR_INSERT_RECORDS;
 			}
 		}
@@ -536,10 +536,10 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 			//inserted record.
 			lastInsertedId = (*it).id;
 			lastInsertedRecordDate = (*it).date;
+			lastInsertedUniqueChecksum = (*it).uniqueChecksum;
 		}
 		it++;
 	}
-	//close dbHandle on success HERE
 	return 0;
 }
 
@@ -629,7 +629,7 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 		hlr_log(logBuff,&logStream,9);
 	} 
 	#endif
-	//check if uniqueChecksum is alraedy presnt, otherwise calculate it now.
+	//check if uniqueChecksum is alraedy present, otherwise calculate it now.
 	if ( r.uniqueChecksum == "" )
 	{
 		ATM_job_record usageInfo;
@@ -674,10 +674,8 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 	queryString += r.accountingProcedure + "','";
 	queryString += r.voOrigin + "','";
 	queryString += r.glueCEInfoTotalCPUs + "','";
-	queryString += r.executingNodes+ "','";//executingNodes place holder
+	queryString += r.executingNodes+ "','";
 	queryString += r.uniqueChecksum + "')";
-	//hlrGenericQuery insertRecord(queryString);
-	//res = insertRecord.query();
 	dbResult result = hlrDb.query(queryString);
 	if ( hlrDb.errNo == 0 )
 	{
@@ -702,7 +700,7 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 	{
 		if ( isDuplicateEntry(r.dgJobId, c->hostName, r.transType ) )//duplicate entry
 		{
-			logBuff = "Duplicate:" + r.dgJobId + ":" + r.transType + ",MysqlErr:" + int2string(res);
+			logBuff = "Dupl:" + r.dgJobId + ":" + r.transType + ",MysqlErr:" + int2string(res);
 			hlr_log(logBuff,&logStream,4);
 			hlr_log("going on anyway...",&logStream,9);
 			return 0;	
@@ -747,7 +745,8 @@ int urConcentrator::updateIndex(urConcentratorIndex& indexEntry)
 	queryString += indexEntry.urSourceServerDN + "','";
 	queryString += indexEntry.remoteRecordId + "','";
 	queryString += indexEntry.recordDate + "',";
-	queryString += "NOW())";
+	queryString += "NOW(),";
+	queryString += indexEntry.uniqueChecksum + "')";
 	hlrGenericQuery updateIndex(queryString);	
 	res = updateIndex.query();
 	if ( ( res != 0 ) && ( res != 1 ) )
@@ -772,6 +771,7 @@ int urConcentrator::infoRequestComposeXml(urConcentratorIndex& indexEntry)
 	*output += tagAdd( "remoteRecordId", indexEntry.remoteRecordId );
 	*output += tagAdd( "recordDate", indexEntry.recordDate );
 	*output += tagAdd( "recordInsertDate", indexEntry.recordInsertDate );
+	*output += tagAdd( "uniqueChecksum", indexEntry.uniqueChecksum );
 	*output += tagAdd( "serverVersion", VERSION );
 	*output += tagAdd( "STATUS", "0" );
 	*output += "</BODY>\n</HLR>\n";

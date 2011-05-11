@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1.4.3 2011/05/10 15:02:29 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.4 2011/05/11 12:49:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -98,6 +98,7 @@ struct urConcentratorIndex
 	string remoteRecordId;
 	string recordDate;
 	string recordInsertDate;
+	string uniqueChecksum;
 };
 
 class urConcentrator {
@@ -118,7 +119,8 @@ class urConcentrator {
 		int run();
 	private:
 		string lastInsertedId;
-		string lastInsertedRecordDate;	
+		string lastInsertedRecordDate;
+		string lastInsertedUniqueChecksum;
 		int xmlParser(	string& requestType, 
 				vector<jobTransSummary>& r);
 		

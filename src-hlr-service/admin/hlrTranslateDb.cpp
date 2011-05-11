@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.5 2011/03/15 13:30:35 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.6 2011/05/11 12:49:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -833,6 +833,26 @@ int upgradeTQSchema ()
 	return res;
 }
 
+int upgradeURCI ()
+{
+	int res = 0;
+	string upgradeQuery = "ALTER TABLE urConcentratorIndex ";
+	upgradeQuery += "ADD uniqueChecksum char(32)";
+	if ( debug )
+	{
+		cerr << upgradeQuery << endl;
+	}
+	hlrGenericQuery upgrade1(hlrsql_dbname, upgradeQuery);
+	upgrade1.query();
+	if ( upgrade1.errNo != 0)
+	{
+		cerr << "Error in query upgrading urConcentratorIndex (CHANGE step 1)." << endl;
+		cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
+		res = 1;
+	}
+	return res;
+}
+
 int upgradeRGV ()
 {
 	int res = 0;
@@ -1385,6 +1405,15 @@ int main (int argc, char **argv)
 			CFcreate(cfFileName );
 			putCFLock = true;
 			reset = true;
+		}
+		string urConcentratorIndexFieldsRel4 = "urSourceServer;urSourceServerDN;remoteRecordId;recordDate;recordInsertDate;uniqueChecksum";
+		if ( !isTableUpToDate(hlr_sql_dbname, "urConcentratorIndex", urConcentratorIndexFieldsRel4 ) )
+		{
+			cout << "Adding uniqueChecksum to urConcentratorIndex" << endl;
+			if ( upgradeURCI() != 0 )
+			{
+				cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4"
+			}
 		}
 		if ( reset ) 
 		{
