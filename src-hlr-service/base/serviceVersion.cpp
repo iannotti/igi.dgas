@@ -108,7 +108,7 @@ void serviceVersion::setVersion(string version)
 
 bool serviceVersion::tableExists()
 {
-	if ( _hlrDb->errNo != 0 )
+	if ( _hlrDb->errNo == 0 )
 	{
 		dbResult result = _hlrDb->query("SHOW TABLES LIKE serviceVersion");
 		if ( _hlrDb->errNo != 0 )
@@ -131,7 +131,7 @@ bool serviceVersion::tableExists()
 
 int serviceVersion::tableCreate()
 {
-	if ( _hlrDb->errNo != 0 )
+	if ( _hlrDb->errNo == 0 )
 		{
 			string queryString = "";
 		        queryString = "CREATE TABLE DGAS";
@@ -163,7 +163,7 @@ int serviceVersion::tableCreate()
 
 int serviceVersion::write()
 {
-	if ( _hlrDb->errNo != 0 )
+	if ( _hlrDb->errNo == 0 )
 			{
 				string queryStr = "REPLACE INTO serviceVersion VALUES ('";
 				queryStr += service + "','";
