@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.10 2011/05/12 08:53:55 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.11 2011/05/12 14:15:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -26,6 +26,7 @@
 #include "glite/dgas/common/base/libdgas_log.h"
 #include "serviceCommonUtl.h"
 #include "dbWaitress.h"
+#include "../base/serviceVersion.h"
 
 #define OPTION_STRING "C:DmvrhcM"
 #define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
@@ -988,33 +989,6 @@ int createVoStorageRecordsTable ()
         return checkTable("voStorageRecords");
 }
 
-int createDGASTable ()
-{
-	if ( checkTable("DGAS") )
-	{
-		if ( debug )
-		{
-			cout << " table DGAS already exists." << endl;
-		}
-		return 0;
-	}
-	string queryString = "";
-        queryString = "CREATE TABLE DGAS";
-        queryString += " (";
-        queryString += " service char(32), ";
-        queryString += " version varchar(255), ";
-        queryString += " confFile varchar(255), ";
-        queryString += " logFile varchar(255), ";
-        queryString += " lockFile varchar(255), ";
-        queryString += "primary key (service))";
-        if ( debug )
-        {
-                cerr << queryString << endl;
-        }
-        hlrGenericQuery makeTable(queryString);
-        makeTable.query();
-        return checkTable("DGAS");
-}
 
 int execTranslationRules(string& rulesFile)
 {
@@ -1278,7 +1252,17 @@ int main (int argc, char **argv)
 	}
 	//create storage records table if it doesn't exists yet.
 	createVoStorageRecordsTable();
-	createDGASTable();
+	serviceVersion thisServiceVersion(hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	if ( !thisServiceVersion.tableExists() )
+	{
+		thisServiceVersion.tableCreate();
+	}
+	thisServiceVersion.setService("dgas-hlr-translatedb");
+	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.write();
 	//try to update the table withuot recreating it 
 	//(applies just if updating 
 	//from a database already containing previous updates otherwise

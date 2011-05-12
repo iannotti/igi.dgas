@@ -136,11 +136,14 @@ int serviceVersion::tableCreate()
 			string queryString = "";
 		        queryString = "CREATE TABLE DGAS";
 		        queryString += " (";
-		        queryString += " service char(32), ";
+		        queryString += " service char(64), ";
 		        queryString += " version varchar(255), ";
+		        queryString += " host varchar(255), ";
 		        queryString += " confFile varchar(255), ";
 		        queryString += " logFile varchar(255), ";
 		        queryString += " lockFile varchar(255), ";
+		        queryString += " lastStartup datetime, ";
+		        queryString += " lastShutdown datetime, ";
 		        queryString += "primary key (service))";
 			dbResult result = _hlrDb->query(queryString);
 			if ( _hlrDb->errNo != 0 )
@@ -160,6 +163,31 @@ int serviceVersion::tableCreate()
 
 int serviceVersion::write()
 {
+	if ( _hlrDb->errNo != 0 )
+			{
+				queryStr = "REPLACE INTO serviceVersion VALUES ('";
+				queryStr += service + "','";
+				queryStr += version + "','";
+				queryStr += host + "','";
+				queryStr += confFile + "','";
+				queryStr += logFile + "','";
+				queryStr += lockFile + "','";
+				queryStr += ",";//lastStartup placeholder
+				queryStr += ",)";//lastStartup placeholder
+				dbResult result = _hlrDb->query(queryString);
+				if ( _hlrDb->errNo != 0 )
+				{
+					return _hlrDb->errNo;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			else
+			{
+				return _hlrDb->errNo;
+			}
 }
 
 
