@@ -745,7 +745,7 @@ int urConcentrator::updateIndex(urConcentratorIndex& indexEntry)
 	queryString += indexEntry.urSourceServerDN + "','";
 	queryString += indexEntry.remoteRecordId + "','";
 	queryString += indexEntry.recordDate + "',";
-	queryString += "NOW(),";
+	queryString += "NOW(),'";
 	queryString += indexEntry.uniqueChecksum + "')";
 	hlrGenericQuery updateIndex(queryString);	
 	res = updateIndex.query();
@@ -783,6 +783,7 @@ int urConcentrator::insertRequestComposeXml()
 	*output = "<HLR type=\"urConcentrator_answer\">\n";
 	*output += "<BODY>\n";
 	*output += tagAdd( "lastInsertedId", lastInsertedId );
+	*output += tagAdd( "lastInsertedUniqueChecksum", lastInsertedUniqueChecksum );
 	*output += tagAdd( "STATUS", "0" );
 	*output += "</BODY>\n</HLR>\n";
 	return 0;
