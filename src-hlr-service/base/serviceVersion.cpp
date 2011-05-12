@@ -113,7 +113,7 @@ bool serviceVersion::tableExists()
 {
 	if ( _hlrDb->errNo == 0 )
 	{
-		dbResult result = _hlrDb->query("SHOW TABLES LIKE serviceVersion");
+		dbResult result = _hlrDb->query("SHOW TABLES LIKE \"serviceVersion\"");
 		if ( _hlrDb->errNo != 0 )
 		{
 			string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
