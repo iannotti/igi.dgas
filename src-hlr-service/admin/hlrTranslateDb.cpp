@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.9 2011/05/11 15:06:22 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.10 2011/05/12 08:53:55 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -414,6 +414,7 @@ bool createUrConcentratorTable()
 	 queryString += "remoteRecordId varchar(31), ";
 	 queryString += "recordDate datetime, ";
 	 queryString += "recordInsertDate datetime, ";
+	 queryString += "uniqueChecksum char(32), ";
 	 queryString += "primary key (urSourceServer))";
 	if ( debug )
 	{
@@ -1428,13 +1429,14 @@ int main (int argc, char **argv)
 	if ( is2ndLevelHlr )
 	{
 		cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
-		string urConcentratorIndexFields = "urSourceServer;urSourceServerDN;remoteRecordId;recordDate;recordInsertDate";
-		if ( !isTableUpToDate(hlr_sql_dbname, "urConcentratorIndex", urConcentratorIndexFields ) )
+		if (!checkTable("urConcentratorIndex"))
 		{
-			cout << "Resetting urConcentratorIndex." << endl;
-			CFcreate(cfFileName );
-			putCFLock = true;
-			reset = true;
+			if ( !createUrConcentratorTable() )
+			{
+				cerr << "Error creating the  table urConcentratorIndex!" << endl;
+				if ( reset ) CFremove(cfFileName);
+				Exit(1);
+			}
 		}
 		string urConcentratorIndexFieldsRel4 = "urSourceServer;urSourceServerDN;remoteRecordId;recordDate;recordInsertDate;uniqueChecksum";
 		if ( !isTableUpToDate(hlr_sql_dbname, "urConcentratorIndex", urConcentratorIndexFieldsRel4 ) )
@@ -1443,19 +1445,6 @@ int main (int argc, char **argv)
 			if ( upgradeURCI() != 0 )
 			{
 				cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4" << endl;
-			}
-		}
-		if ( reset ) 
-		{
-			dropTable ("urConcentratorIndex");
-		}
-		if (!checkTable("urConcentratorIndex"))
-		{
-			if ( !createUrConcentratorTable() )
-			{
-				cerr << "Error creating the  table urConcentratorIndex!" << endl;
-				if ( reset ) CFremove(cfFileName);
-				Exit(1);
 			}
 		}
 		//cleanup entries older than the expected period.
