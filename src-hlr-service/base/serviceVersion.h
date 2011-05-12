@@ -8,7 +8,9 @@
 #ifndef SERVICEVERSION_H_
 #define SERVICEVERSION_H_
 #include "glite/dgas/hlr-service/base/db.h"
+#include "glite/dgas/common/base/libdgas_log.h"
 
+extern ofstream logStream;
 
 class serviceVersion {
 public:

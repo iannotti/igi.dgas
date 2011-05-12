@@ -6,6 +6,7 @@
  */
 
 #include "serviceVersion.h"
+#include "../../interface-common/glite/dgas/common/base/int2string.h"
 
 serviceVersion::serviceVersion() {
 	// TODO Auto-generated constructor stub
@@ -15,6 +16,8 @@ serviceVersion::serviceVersion() {
 serviceVersion::serviceVersion(string hlr_sql_server, string hlr_sql_user, string hlr_sql_password, string hlr_sql_dbname )
 {
 	_hlrDb = new db(hlr_sql_server, hlr_sql_user, hlr_sql_password, hlr_sql_dbname );
+	string logBuff = "serviceVersion():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+	hlr_log(logBuff,&logBuff,6);
 }
 
 serviceVersion::serviceVersion(db* hlrDb)
@@ -113,6 +116,8 @@ bool serviceVersion::tableExists()
 		dbResult result = _hlrDb->query("SHOW TABLES LIKE serviceVersion");
 		if ( _hlrDb->errNo != 0 )
 		{
+			string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+			hlr_log(logBuff,&logBuff,6);
 			return false;
 		}
 		else
@@ -125,6 +130,8 @@ bool serviceVersion::tableExists()
 	}
 	else
 	{
+		string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+		hlr_log(logBuff,&logBuff,6);
 		return false;
 	}
 }
@@ -134,7 +141,7 @@ int serviceVersion::tableCreate()
 	if ( _hlrDb->errNo == 0 )
 		{
 			string queryString = "";
-		        queryString = "CREATE TABLE DGAS";
+		        queryString = "CREATE TABLE serviceVersion";
 		        queryString += " (";
 		        queryString += " service char(64), ";
 		        queryString += " version varchar(255), ";
@@ -148,6 +155,8 @@ int serviceVersion::tableCreate()
 			dbResult result = _hlrDb->query(queryString);
 			if ( _hlrDb->errNo != 0 )
 			{
+				string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+				hlr_log(logBuff,&logBuff,6);
 				return _hlrDb->errNo;
 			}
 			else
@@ -157,6 +166,8 @@ int serviceVersion::tableCreate()
 		}
 		else
 		{
+			string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+			hlr_log(logBuff,&logBuff,6);
 			return _hlrDb->errNo;
 		}
 }
@@ -177,6 +188,8 @@ int serviceVersion::write()
 				dbResult result = _hlrDb->query(queryStr);
 				if ( _hlrDb->errNo != 0 )
 				{
+					string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+					hlr_log(logBuff,&logBuff,6);
 					return _hlrDb->errNo;
 				}
 				else
@@ -186,6 +199,8 @@ int serviceVersion::write()
 			}
 			else
 			{
+				string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb.errNo);
+				hlr_log(logBuff,&logBuff,6);
 				return _hlrDb->errNo;
 			}
 }
