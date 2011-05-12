@@ -14,7 +14,7 @@ serviceVersion::serviceVersion() {
 
 serviceVersion::serviceVersion(string hlr_sql_server, string hlr_sql_user, string hlr_sql_password, string hlr_sql_dbname )
 {
-	hlrDb = new db(hlr_sql_server, hlr_sql_user, hlr_sql_password, hlr_sql_dbname );
+	_hlrDb = new db(hlr_sql_server, hlr_sql_user, hlr_sql_password, hlr_sql_dbname );
 }
 
 serviceVersion::serviceVersion(db* hlrDb)
@@ -117,7 +117,7 @@ bool serviceVersion::tableExists()
 		}
 		else
 		{
-			if ( result.size() != 0 )
+			if ( result.numRows() != 0 )
 			{
 				return true;
 			}
