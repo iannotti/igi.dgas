@@ -1,0 +1,50 @@
+.\" Process this file with
+.\" groff -man -Tascii dgas-hlr-query.1
+.\"
+.TH DGAS-HLR_QUERY 1 "MARCH 2011" Linux "User Manuals"
+.SH NAME
+dgas-hlr-query \- DGAS client to query DGAS HLR server records database.
+.SH SYNOPSIS
+.B dgas-hlr-query -Q 
+.I queryType 
+.I SPECIFIC OPTIONS
+.SH DESCRIPTION
+.B dgas-hlr-query
+This DGAS client can be used for advanced queries, such as to retrieve lists of records as well as aggregated information on users, resources, groups, roles and VOs.
+Note that the authorization to access the accounting data will be checked by the HLR server, hence the use of the client requires a valid user X509 proxy certiﬁcate. Normal grid users can just retrieve information related to jobs submitted using their own x509 certificate. Only users mapped as HLR administrators can access all the usage records.
+.SH OPTIONS
+.IP -Q --queryType queryType
+Specifies wich type of query to perform. Can be one of:
+.IP - 4 
+"resourceAggregate" Aggregate usage records for a specific resource,
+.IP - 4 
+"resourceJobList" List of jobs executed by a specific resource, 
+
+.IP - 4 
+"sql" Direct SQL query to the HLR database (Only Admins are authorised to this command),
+
+.IP - 4
+"sqlCsv" Direct SQL query to the HLR database, CSV output (Only Admins are authorised to this command).  
+
+.IP -h --help
+Print an help message specific to the queryType selected.
+
+.SH QUERY OPTIONS
+resourceAggregate and resourceJobList OPTIONS
+
+.IP "-H --hlrLocation hlr Contact String"
+Specifies the contact string of the HLR to query. The HLR contact string is of the form: "host[:port[:host_cert_subject]], if port is not specified the default one (56568) will be used"
+
+.LP
+sql and sqlCsv OPTIONS
+.IP "-H --hlrLocation hlr Contact String"
+Specifies the contact string of the HLR to query. The HLR contact string is of the form: "host[:port[:host_cert_subject]], if port is not specified the default one (56568) will be used"
+.IP "-A --AggregateString SQL query" 
+Specify SQL command for sql and sqlCsv queries.
+.IP "-v --voId voID" 
+Used to specify the virtual organization (VOMS)
+.IP "-a --authoriseAs certificate DN" 
+asks the server to authorise the request as if coming from the specified DN (neeeds hlrAdmin privileges for the certificate being effectively used). It is also possible to directly specify "voAdmin" (must be used with the -v option)  and "siteAdmin" roles.
+
+.SH AUTHOR
+Andrea Guarise <andrea.guarise at to dot infn dot it>
