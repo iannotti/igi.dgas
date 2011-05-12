@@ -7,7 +7,8 @@ lib_LTLIBRARIES  = \
 	libglite_dgas_hlrTransLog.la 
 
 noinst_LTLIBRARIES = \
-	libglite_dgas_dbWaitress.la
+	libglite_dgas_dbWaitress.la \
+	libdgas_serviceVersion.la
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
@@ -22,6 +23,10 @@ libglite_dgas_dbhelper_la_SOURCES = db.cpp \
 libglite_dgas_dbWaitress_la_SOURCES = \
 	dbWaitress.h \
 	dbWaitress.cpp
+
+libdgas_serviceVersion_la_SOURCES = \
+	serviceVersion.h \
+	serviceVersion.cpp
 
 libglite_dgas_serviceCommonUtils_la_SOURCES = \
 	serviceCommonUtl.h \

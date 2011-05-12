@@ -1,0 +1,186 @@
+/*
+ * serviceVersion.cpp
+ *
+ *  Created on: May 12, 2011
+ *      Author: guarise
+ */
+
+#include "serviceVersion.h"
+
+serviceVersion::serviceVersion() {
+	// TODO Auto-generated constructor stub
+
+}
+
+serviceVersion::serviceVersion(string hlr_sql_server, string hlr_sql_user, string hlr_sql_password, string hlr_sql_dbname )
+{
+	hlrDb = new db(hlr_sql_server, hlr_sql_user, hlr_sql_password, hlr_sql_dbname );
+}
+
+serviceVersion::serviceVersion(db* hlrDb)
+{
+	_hlrDb = hlrDb;
+}
+
+serviceVersion::~serviceVersion() {
+	// TODO Auto-generated destructor stub
+}
+
+string serviceVersion::getConfFile() const
+{
+    return confFile;
+}
+
+string serviceVersion::getHost() const
+{
+    return host;
+}
+
+string serviceVersion::getLastShutdown() const
+{
+    return lastShutdown;
+}
+
+string serviceVersion::getLastStartup() const
+{
+    return lastStartup;
+}
+
+string serviceVersion::getLockFile() const
+{
+    return lockFile;
+}
+
+string serviceVersion::getLogFile() const
+{
+    return logFile;
+}
+
+string serviceVersion::getService() const
+{
+    return service;
+}
+
+string serviceVersion::getVersion() const
+{
+    return version;
+}
+
+void serviceVersion::setConfFile(string confFile)
+{
+    this->confFile = confFile;
+}
+
+void serviceVersion::setHost(string host)
+{
+    this->host = host;
+}
+
+void serviceVersion::setLastShutdown(string lastShutdown)
+{
+    this->lastShutdown = lastShutdown;
+}
+
+void serviceVersion::setLastStartup(string lastStartup)
+{
+    this->lastStartup = lastStartup;
+}
+
+void serviceVersion::setLockFile(string lockFile)
+{
+    this->lockFile = lockFile;
+}
+
+void serviceVersion::setLogFile(string logFile)
+{
+    this->logFile = logFile;
+}
+
+void serviceVersion::setService(string service)
+{
+    this->service = service;
+}
+
+void serviceVersion::setVersion(string version)
+{
+    this->version = version;
+}
+
+bool serviceVersion::tableExists()
+{
+	if ( _hlrDb->errNo != 0 )
+	{
+		dbResult result = _hlrDb->query("SHOW TABLES LIKE serviceVersion");
+		if ( _hlrDb->errNo != 0 )
+		{
+			return false;
+		}
+		else
+		{
+			if ( result.size() != 0 )
+			{
+				return true;
+			}
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+int serviceVersion::tableCreate()
+{
+	if ( _hlrDb->errNo != 0 )
+		{
+			string queryString = "";
+		        queryString = "CREATE TABLE DGAS";
+		        queryString += " (";
+		        queryString += " service char(32), ";
+		        queryString += " version varchar(255), ";
+		        queryString += " confFile varchar(255), ";
+		        queryString += " logFile varchar(255), ";
+		        queryString += " lockFile varchar(255), ";
+		        queryString += "primary key (service))";
+			dbResult result = _hlrDb->query(queryString);
+			if ( _hlrDb->errNo != 0 )
+			{
+				return _hlrDb->errNo;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			return _hlrDb->errNo;
+		}
+}
+
+int serviceVersion::write()
+{
+}
+
+
+
+int serviceVersion::entries(vector<string> & v)
+{
+}
+
+
+
+int serviceVersion::read(string & s)
+{
+}
+
+
+
+
+
+
+
+
+
+
+
