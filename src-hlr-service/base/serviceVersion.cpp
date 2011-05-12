@@ -118,7 +118,7 @@ bool serviceVersion::tableExists()
 		{
 			string logBuff = "serviceVersion:tableExists():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
 			hlr_log(logBuff,&logStream,6);
-			hlr_log(queryString,&logStream,6);
+			hlr_log("SHOW TABLES LIKE serviceVersion",&logStream,6);
 			return false;
 		}
 		else
