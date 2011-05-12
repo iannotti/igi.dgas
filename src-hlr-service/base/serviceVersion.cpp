@@ -165,7 +165,7 @@ int serviceVersion::write()
 {
 	if ( _hlrDb->errNo != 0 )
 			{
-				queryStr = "REPLACE INTO serviceVersion VALUES ('";
+				string queryStr = "REPLACE INTO serviceVersion VALUES ('";
 				queryStr += service + "','";
 				queryStr += version + "','";
 				queryStr += host + "','";
@@ -174,7 +174,7 @@ int serviceVersion::write()
 				queryStr += lockFile + "','";
 				queryStr += ",";//lastStartup placeholder
 				queryStr += ",)";//lastStartup placeholder
-				dbResult result = _hlrDb->query(queryString);
+				dbResult result = _hlrDb->query(queryStr);
 				if ( _hlrDb->errNo != 0 )
 				{
 					return _hlrDb->errNo;
