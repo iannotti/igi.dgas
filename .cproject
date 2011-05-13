@@ -144,6 +144,14 @@
 						<useDefaultCommand>false</useDefaultCommand>
 						<runAllBuilders>false</runAllBuilders>
 					</target>
+					<target name="ChangeLog" path="project" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+						<buildCommand>echo</buildCommand>
+						<buildArguments>`date` &gt;&gt;</buildArguments>
+						<buildTarget>ChangeLog</buildTarget>
+						<stopOnError>true</stopOnError>
+						<useDefaultCommand>false</useDefaultCommand>
+						<runAllBuilders>false</runAllBuilders>
+					</target>
 				</buildTargets>
 			</storageModule>
 		</cconfiguration>
