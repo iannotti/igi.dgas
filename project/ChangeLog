@@ -1,0 +1,5 @@
+2011-05-13  Andrea Guarise  <andrea.guarise@to.infn.it>
+
+	* GAS\ branch\ 4/src-hlr-service/base/serviceVersion.cpp
+	(serviceVersion::write):
+	

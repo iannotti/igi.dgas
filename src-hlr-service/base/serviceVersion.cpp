@@ -127,6 +127,10 @@ bool serviceVersion::tableExists()
 			{
 				return true;
 			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 	else
@@ -224,7 +228,7 @@ int serviceVersion::updateStartup()
 {
 	if ( _hlrDb->errNo == 0 )
 	{
-		string queryStr = "UPDATE jobTransSummary SET lastStartup=NOW()";
+		string queryStr = "UPDATE serviceVersion SET lastStartup=NOW() WHERE service='" + service + "'";
 		dbResult result = _hlrDb->query(queryStr);
 		if ( _hlrDb->errNo != 0 )
 		{
@@ -251,7 +255,7 @@ int serviceVersion::updateShutdown()
 {
 	if ( _hlrDb->errNo == 0 )
 	{
-		string queryStr = "UPDATE jobTransSummary SET lastStartup=NOW()";
+		string queryStr = "UPDATE jobTransSummary SET lastShutdown=NOW() WHERE service='" + service + "'";
 		dbResult result = _hlrDb->query(queryStr);
 		if ( _hlrDb->errNo != 0 )
 		{

@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.11 2011/05/12 14:15:12 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.12 2011/05/13 09:20:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1262,7 +1262,12 @@ int main (int argc, char **argv)
 	}
 	thisServiceVersion.setService("dgas-hlr-translatedb");
 	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.setHost("localhost");
+	thisServiceVersion.setConfFile(confFileName);
+	thisServiceVersion.setLockFile(masterLock);
+	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
+	thisServiceVersion.updateStartup();
 	//try to update the table withuot recreating it 
 	//(applies just if updating 
 	//from a database already containing previous updates otherwise
