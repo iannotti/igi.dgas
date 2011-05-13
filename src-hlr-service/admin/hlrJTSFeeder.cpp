@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.3 2011/03/15 13:30:35 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.4 2011/05/13 09:48:22 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -26,6 +26,7 @@
 #include "glite/dgas/common/base/libdgas_log.h"
 #include "serviceCommonUtl.h"
 #include "dbWaitress.h"
+#include "../base/serviceVersion.h"
 
 #define OPTION_STRING "C:DmvrhcM"
 #define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
@@ -1030,6 +1031,22 @@ int main (int argc, char **argv)
 		cout << "Found file:" << cfFileName << " ,which is a request to not perform any operation. Probably this is set by another instance of this command. Do not remove it unless you know what you are doing." << endl;
 		 Exit(0);
 	}
+	serviceVersion thisServiceVersion(hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
+		if ( !thisServiceVersion.tableExists() )
+		{
+			thisServiceVersion.tableCreate();
+		}
+		thisServiceVersion.setService("dgas-hlr-populateJobTransSummary");
+		thisServiceVersion.setVersion(VERSION);
+		thisServiceVersion.setHost("localhost");
+		thisServiceVersion.setConfFile(confFileName);
+		thisServiceVersion.setLockFile(masterLock);
+		thisServiceVersion.setLogFile(hlr_logFileName);
+		thisServiceVersion.write();
+		thisServiceVersion.updateStartup();
 	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
 	if ( !isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields ) )
 	{
