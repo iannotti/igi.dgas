@@ -31,82 +31,82 @@ serviceVersion::~serviceVersion() {
 
 string serviceVersion::getConfFile() const
 {
-    return confFile;
+	return confFile;
 }
 
 string serviceVersion::getHost() const
 {
-    return host;
+	return host;
 }
 
 string serviceVersion::getLastShutdown() const
 {
-    return lastShutdown;
+	return lastShutdown;
 }
 
 string serviceVersion::getLastStartup() const
 {
-    return lastStartup;
+	return lastStartup;
 }
 
 string serviceVersion::getLockFile() const
 {
-    return lockFile;
+	return lockFile;
 }
 
 string serviceVersion::getLogFile() const
 {
-    return logFile;
+	return logFile;
 }
 
 string serviceVersion::getService() const
 {
-    return service;
+	return service;
 }
 
 string serviceVersion::getVersion() const
 {
-    return version;
+	return version;
 }
 
 void serviceVersion::setConfFile(string confFile)
 {
-    this->confFile = confFile;
+	this->confFile = confFile;
 }
 
 void serviceVersion::setHost(string host)
 {
-    this->host = host;
+	this->host = host;
 }
 
 void serviceVersion::setLastShutdown(string lastShutdown)
 {
-    this->lastShutdown = lastShutdown;
+	this->lastShutdown = lastShutdown;
 }
 
 void serviceVersion::setLastStartup(string lastStartup)
 {
-    this->lastStartup = lastStartup;
+	this->lastStartup = lastStartup;
 }
 
 void serviceVersion::setLockFile(string lockFile)
 {
-    this->lockFile = lockFile;
+	this->lockFile = lockFile;
 }
 
 void serviceVersion::setLogFile(string logFile)
 {
-    this->logFile = logFile;
+	this->logFile = logFile;
 }
 
 void serviceVersion::setService(string service)
 {
-    this->service = service;
+	this->service = service;
 }
 
 void serviceVersion::setVersion(string version)
 {
-    this->version = version;
+	this->version = version;
 }
 
 bool serviceVersion::tableExists()
@@ -140,71 +140,71 @@ bool serviceVersion::tableExists()
 int serviceVersion::tableCreate()
 {
 	if ( _hlrDb->errNo == 0 )
-		{
-			string queryString = "";
-		        queryString = "CREATE TABLE serviceVersion";
-		        queryString += " (";
-		        queryString += " service char(64), ";
-		        queryString += " version varchar(255), ";
-		        queryString += " host varchar(255), ";
-		        queryString += " confFile varchar(255), ";
-		        queryString += " logFile varchar(255), ";
-		        queryString += " lockFile varchar(255), ";
-		        queryString += " lastStartup datetime, ";
-		        queryString += " lastShutdown datetime, ";
-		        queryString += "primary key (service))";
-			dbResult result = _hlrDb->query(queryString);
-			if ( _hlrDb->errNo != 0 )
-			{
-				string logBuff = "serviceVersion:tableCreate():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
-				hlr_log(logBuff,&logStream,6);
-				hlr_log(queryString,&logStream,6);
-				return _hlrDb->errNo;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else
+	{
+		string queryString = "";
+		queryString = "CREATE TABLE serviceVersion";
+		queryString += " (";
+		queryString += " service char(64), ";
+		queryString += " version varchar(255), ";
+		queryString += " host varchar(255), ";
+		queryString += " confFile varchar(255), ";
+		queryString += " logFile varchar(255), ";
+		queryString += " lockFile varchar(255), ";
+		queryString += " lastStartup datetime, ";
+		queryString += " lastShutdown datetime, ";
+		queryString += "primary key (service))";
+		dbResult result = _hlrDb->query(queryString);
+		if ( _hlrDb->errNo != 0 )
 		{
 			string logBuff = "serviceVersion:tableCreate():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
 			hlr_log(logBuff,&logStream,6);
+			hlr_log(queryString,&logStream,6);
 			return _hlrDb->errNo;
 		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		string logBuff = "serviceVersion:tableCreate():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+		hlr_log(logBuff,&logStream,6);
+		return _hlrDb->errNo;
+	}
 }
 
 int serviceVersion::write()
 {
 	if ( _hlrDb->errNo == 0 )
-			{
-				string queryStr = "REPLACE INTO serviceVersion VALUES ('";
-				queryStr += service + "','";
-				queryStr += version + "','";
-				queryStr += host + "','";
-				queryStr += confFile + "','";
-				queryStr += logFile + "','";
-				queryStr += lockFile + "','";
-				queryStr += ",";//lastStartup placeholder
-				queryStr += ",)";//lastStartup placeholder
-				dbResult result = _hlrDb->query(queryStr);
-				if ( _hlrDb->errNo != 0 )
-				{
-					string logBuff = "serviceVersion:write():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
-					hlr_log(logBuff,&logStream,6);
-					return _hlrDb->errNo;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			else
-			{
-				string logBuff = "serviceVersion:write():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
-				hlr_log(logBuff,&logStream,6);
-				return _hlrDb->errNo;
-			}
+	{
+		string queryStr = "REPLACE INTO serviceVersion VALUES ('";
+		queryStr += service + "','";
+		queryStr += version + "','";
+		queryStr += host + "','";
+		queryStr += confFile + "','";
+		queryStr += logFile + "','";
+		queryStr += lockFile + "',";
+		queryStr += "";//lastStartup placeholder
+		queryStr += ",)";//lastShutdown placeholder
+		dbResult result = _hlrDb->query(queryStr);
+		if ( _hlrDb->errNo != 0 )
+		{
+			string logBuff = "serviceVersion:write():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+			hlr_log(logBuff,&logStream,6);
+			return _hlrDb->errNo;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		string logBuff = "serviceVersion:write():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+		hlr_log(logBuff,&logStream,6);
+		return _hlrDb->errNo;
+	}
 }
 
 
@@ -218,6 +218,60 @@ int serviceVersion::entries(vector<string> & v)
 int serviceVersion::read(string & s)
 {
 }
+
+int serviceVersion::updateStartup()
+{
+	if ( _hlrDb->errNo == 0 )
+	{
+		string queryStr = "UPDATE jobTransSummary SET lastStartup=NOW()";
+		dbResult result = _hlrDb->query(queryStr);
+		if ( _hlrDb->errNo != 0 )
+		{
+			string logBuff = "serviceVersion:lastStartup():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+			hlr_log(logBuff,&logStream,6);
+			return _hlrDb->errNo;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		string logBuff = "serviceVersion:lastStartup():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+		hlr_log(logBuff,&logStream,6);
+		return _hlrDb->errNo;
+	}
+}
+
+
+
+int serviceVersion::updateShutdown()
+{
+	if ( _hlrDb->errNo == 0 )
+	{
+		string queryStr = "UPDATE jobTransSummary SET lastStartup=NOW()";
+		dbResult result = _hlrDb->query(queryStr);
+		if ( _hlrDb->errNo != 0 )
+		{
+			string logBuff = "serviceVersion:lastStartup():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+			hlr_log(logBuff,&logStream,6);
+			return _hlrDb->errNo;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		string logBuff = "serviceVersion:lastStartup():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
+		hlr_log(logBuff,&logStream,6);
+		return _hlrDb->errNo;
+	}
+}
+
+
 
 
 

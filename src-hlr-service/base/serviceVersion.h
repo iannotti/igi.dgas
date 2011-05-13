@@ -41,6 +41,8 @@ public:
     bool tableExists();
     int tableCreate();
     int write();
+    int updateStartup();
+    int updateShutdown();
     int read(string& s);
     int entries(vector<string>& v);
 private:
