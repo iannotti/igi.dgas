@@ -34,6 +34,7 @@ LDADD = \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlr.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrTransLog.la \
+	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
 	$(DBLIBS)
 
 dgas_hlr_archive_SOURCES = hlrArchiveOldRecords.cpp
@@ -47,7 +48,6 @@ dgas_hlr_translatedb_LDADD = \
 	$(LDADD) \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
-	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
 	-lglite_dgas_hlrGenericQuery -lcrypto 
 
 dgas_hlr_populateJobTransSummary_SOURCES = hlrJTSFeeder.cpp
