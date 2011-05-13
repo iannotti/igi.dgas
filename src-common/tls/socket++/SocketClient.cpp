@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketClient.cpp,v 1.1.2.1.4.2 2011/05/13 12:55:41 aguarise Exp $
+// $Id: SocketClient.cpp,v 1.1.2.1.4.3 2011/05/13 13:22:54 aguarise Exp $
 
 /**
  * @file SocketClient.cpp
@@ -61,7 +61,7 @@ bool SocketClient::AttachAgent(SocketAgent* a)
 	bool result = false;
 	if((agent = a)) 
 	{
-		agent -> peeraddr_in.sin_family = AF_INET6;
+		agent -> peeraddr_in.sin_family = AF_INET;
 		struct hostent *hp; 
 		if(!(hp = gethostbyname(host.c_str()))) 
 		{
@@ -93,7 +93,7 @@ SocketClient::~SocketClient()
 bool SocketClient::Open()
 {
 	bool result = true;
-  	if( (agent -> sck = socket(AF_INET6, SOCK_STREAM, 0)) == -1 )
+  	if( (agent -> sck = socket(AF_INET, SOCK_STREAM, 0)) == -1 ) 
 	{
 		result = false;
 	}
