@@ -185,13 +185,14 @@ int serviceVersion::write()
 		queryStr += confFile + "','";
 		queryStr += logFile + "','";
 		queryStr += lockFile + "',";
-		queryStr += "";//lastStartup placeholder
-		queryStr += ",)";//lastShutdown placeholder
+		queryStr += "''";//lastStartup placeholder
+		queryStr += ",'')";//lastShutdown placeholder
 		dbResult result = _hlrDb->query(queryStr);
 		if ( _hlrDb->errNo != 0 )
 		{
 			string logBuff = "serviceVersion:write():_hlrDb.errNo=" + int2string(_hlrDb->errNo) + "," + _hlrDb->errMsg;
 			hlr_log(logBuff,&logStream,6);
+			hlr_log(queryStr,&logStream,6);
 			return _hlrDb->errNo;
 		}
 		else
