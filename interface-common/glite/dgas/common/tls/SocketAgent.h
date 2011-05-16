@@ -47,7 +47,7 @@ class SocketAgent
    * @param i the long value to send.
    * @return true on success, false otherwise.
    */ 
-  virtual bool Send(long);
+  //virtual bool Send(long);
   
   /**
    * Receive an int value.
@@ -60,7 +60,7 @@ class SocketAgent
    * @param i a long to fill.
    * @return true on success, false otherwise.
    */
-  virtual bool Receive(long&);
+  //virtual bool Receive(long&);
   /**
    * Receive a string value.
    * @param s the string to fill.

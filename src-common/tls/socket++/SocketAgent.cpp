@@ -117,13 +117,14 @@ bool SocketAgent::Send(int i)
  * @param l the value to be sent.
  * @return true on success, false otherwise.
  */
+/*
 bool SocketAgent::Send(long l)
 {
 	unsigned char long_buffer[8];
 	for( int i=0 ; i<8; i++) 
 	long_buffer[i] = (unsigned char) ((l >> (56-(i*8))) & 0xff);
  	return sendbuffer((char*)long_buffer,8);
-}
+}*/
 
 /**
  * Send a string value.
@@ -155,6 +156,7 @@ bool SocketAgent::Receive( int& i )
 	return result;
 }
 
+/*
 bool SocketAgent::Receive( long& l )
 {
 	bool result;
@@ -169,6 +171,7 @@ bool SocketAgent::Receive( long& l )
 	}
 	return result;
 }
+*/
 
 /**
  * Receive a string value.
