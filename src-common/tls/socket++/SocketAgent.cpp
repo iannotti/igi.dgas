@@ -47,37 +47,6 @@ SocketAgent::~SocketAgent()
 	close(sck);
 }
 
-/*
-bool SocketAgent::is_recv_pending()
-{
-	fd_set readfs;
-	struct timeval timeout;
-	timeout.tv_sec=m_recv_timeout;
-	timeout.tv_usec=0;
-	FD_ZERO(&readfs);
-	FD_SET(sck,&readfs);
- 	int result(
-		select(sck+1,&readfs,0,0,m_recv_timeout<0?0:&timeout)
-	);
-	return result==1;
-}
-*/
-
-/*
-bool SocketAgent::is_send_pending()
-{
-	fd_set sendfs;
-	struct timeval timeout;
-	timeout.tv_sec=m_send_timeout;
-	timeout.tv_usec=0;
-	FD_ZERO(&sendfs);
-	FD_SET(sck,&sendfs);
-	int result(
-		select(sck+1,0,&sendfs,0,m_send_timeout<0?0:&timeout)
-	);
-	return result==1;
-}
-*/
 
 /**
  * Set the connection timeout.

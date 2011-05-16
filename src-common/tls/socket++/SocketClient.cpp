@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketClient.cpp,v 1.1.2.1.4.4 2011/05/16 08:37:50 aguarise Exp $
+// $Id: SocketClient.cpp,v 1.1.2.1.4.5 2011/05/16 12:29:14 aguarise Exp $
 
 /**
  * @file SocketClient.cpp
@@ -130,53 +130,6 @@ bool SocketClient::Close()
 	return (close(agent -> sck) == 0);
 }
 
-/**
- * Send an int value.
- * @param i the int value to send.
- * @return true on success, false otherwise.
- */
-bool SocketClient::Send(int i)
-{
-	return agent -> Send(i);
-}
-bool SocketClient::Send(long i)
-{
-	return agent -> Send(i);
-}
-
-/**
- * Send a string value.
- * @param s the string value to send.
- * @return true on success, false otherwise.
- */
-bool SocketClient::Send(const std::string& s)
-{
-	return agent->Send(s);
-}
-
-/**
- * Receive an int value.
- * @param i an int to fill.
- * @return true on success, false otherwise.
- */
-bool SocketClient::Receive(int& i)
-{
-	return agent -> Receive(i);
-}
-bool SocketClient::Receive(long& i)
-{
-	return agent -> Receive(i);
-}
-
-/**
- * Receive a string value.
- * @param s the string to fill.
- * @return true on success, false otherwise.
- */
-bool SocketClient::Receive(std::string& s)
-{
-	return agent -> Receive(s);
-}
 
 SocketAgent* SocketClient::getAgent() const
 {

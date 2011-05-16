@@ -57,6 +57,45 @@ GSISocketAgent::~GSISocketAgent()
 	}	
 }
 
+/**
+ * Send a int value.
+ * @param i the int value to send.
+ * @return true on success, false otherwise.
+ */ 
+bool GSISocketAgent::Send(int i)
+{
+	bool return_status = true;
+
+	unsigned char         int_buffer[4];
+	int_buffer[0] = (unsigned char) ((i >> 24) & 0xff);
+	int_buffer[1] = (unsigned char) ((i >> 16) & 0xff);
+	int_buffer[2] = (unsigned char) ((i >>  8) & 0xff);
+	int_buffer[3] = (unsigned char) ((i      ) & 0xff);
+	if(return_status = !(gss_context == GSS_C_NO_CONTEXT)) 
+	{
+		gss_buffer_desc  input_token;
+		gss_buffer_desc  output_token;
+ 		OM_uint32        maj_stat, min_stat;
+		input_token.value = (void*)int_buffer;
+		input_token.length = 4; /* ??? */
+		std::pair<int,int> arg(sck, m_send_timeout);
+    /* set this flag to 1 if you want to encrypt messages. set it to zero
+       if only integrity protection is requested */
+		int conf_req_flag = 0;
+		maj_stat = gss_wrap (&min_stat,
+			 gss_context,
+			 conf_req_flag,
+			 GSS_C_QOP_DEFAULT,
+			 &input_token,
+			 NULL,
+			 &output_token);
+		
+		return_status = !GSS_ERROR(maj_stat) &&
+      			!send_token((void*)&arg, output_token.value, output_token.length);
+			gss_release_buffer(&min_stat, &output_token);
+	}    
+	return return_status;
+}
 
 /**
  * Send a string value.
@@ -92,6 +131,48 @@ bool GSISocketAgent::Send(const std::string& s)
 	return return_status;
 }
 
+/**
+ * Receive an int value.
+ * @param i an int to fill.
+ * @return true on success, false otherwise.
+ */
+bool GSISocketAgent::Receive(int& i)
+{
+	unsigned char int_buffer[4];
+	bool return_status = true;
+	OM_uint32 maj_stat, min_stat;
+	gss_buffer_desc input_token;
+	gss_buffer_desc output_token;
+	input_token.value = NULL;
+	std::pair<int,int> arg(sck, m_recv_timeout);
+	if(return_status = !(gss_context == GSS_C_NO_CONTEXT ||
+		       get_token(&arg, &input_token.value, &input_token.length) != 0)) 
+	{
+		maj_stat = gss_unwrap (&min_stat,
+			   gss_context,
+			   &input_token,
+			   &output_token,
+			   NULL,
+			   NULL);
+		if( (return_status = !GSS_ERROR(maj_stat)) ) 
+		{
+			memcpy((char*)int_buffer, output_token.value, output_token.length);
+			i  = ((unsigned int) int_buffer[0]) << 24;
+			i |= ((unsigned int) int_buffer[1]) << 16;
+			i |= ((unsigned int) int_buffer[2]) <<  8;
+			i |= ((unsigned int) int_buffer[3]);
+		} 
+		gss_release_buffer(&min_stat, &output_token);
+		gss_release_buffer(&min_stat, &input_token);
+	}
+	return return_status;
+}
+
+/**
+ * Receive a string value.
+ * @param s the string to fill.
+ * @return true on success, false otherwise.
+ */
 bool GSISocketAgent::Receive(std::string& s)
 {
 	bool return_status = true;
