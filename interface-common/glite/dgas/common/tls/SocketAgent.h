@@ -29,52 +29,14 @@ namespace socket_pp {
 class SocketAgent
 { 
  public:  
-
-  /**
-   * Send a string value.
-   * @param s the string value to send.
-   * @return true on success, false otherwise.
-   */ 
-  virtual bool Send(const std::string&);
-  /**
-   * Send a int value.
-   * @param i the int value to send.
-   * @return true on success, false otherwise.
-   */ 
-  virtual bool Send(int);
-  /**
-   * Send a long value.
-   * @param i the long value to send.
-   * @return true on success, false otherwise.
-   */ 
-  virtual bool Send(long);
-  
-  /**
-   * Receive an int value.
-   * @param i an int to fill.
-   * @return true on success, false otherwise.
-   */
-  virtual bool Receive(int&);
-  /**
-   * Receive a long value.
-   * @param i a long to fill.
-   * @return true on success, false otherwise.
-   */
-  virtual bool Receive(long&);
-  /**
-   * Receive a string value.
-   * @param s the string to fill.
-   * @return true on success, false otherwise.
-   */
-  virtual bool Receive(std::string&);
   
   /**
    * Returns the host name.
    * @param the string to fill with host name.
    */
   std::string PeerName();
-  bool is_recv_pending();
-  bool is_send_pending();
+//  bool is_recv_pending();
+//  bool is_send_pending();
   /**
    * Set the connection timeout.
    * @param secs a size_t representing the timeout in seconds.
@@ -127,14 +89,14 @@ protected:
    * @param buf the transmission buffer.
    * @param size teh max number of chars to be sent.
    */
-  bool sendbuffer(char *, unsigned int);
+  //bool sendbuffer(char *, unsigned int);
   /**
    * Receive chars in a buffer. The max number of chars to be received is fixed by
    * size parameter. 
    * @param buf the reception buffer.
    * @param size teh max number of chars to be received.
    */
-  bool readbuffer(char *, unsigned int);
+  //bool readbuffer(char *, unsigned int);
 
   /** The Server. */
   friend class SocketServer;

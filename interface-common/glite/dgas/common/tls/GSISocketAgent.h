@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: GSISocketAgent.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
+// $Id: GSISocketAgent.h,v 1.1.2.1.4.2 2011/05/16 12:15:25 aguarise Exp $
 
 /**
  * @file GSISocketAgent.h
@@ -46,19 +46,6 @@ public:
    * @return true on success, false otherwise.
    */ 
   virtual bool Send(const std::string&);
-  /**
-   * Send a int value.
-   * @param i the int value to send.
-   * @return true on success, false otherwise.
-   */
-  virtual bool Send(int);
-
-  /**
-   * Receive an int value.
-   * @param i an int to fill.
-   * @return true on success, false otherwise.
-   */
-  virtual bool Receive(int&);
   /**
    * Receive a string value.
    * @param s the string to fill.
