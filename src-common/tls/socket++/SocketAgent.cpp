@@ -112,19 +112,6 @@ bool SocketAgent::Send(int i)
 	return sendbuffer((char*)int_buffer,4);
 }
 
-/**
- * Sends a long value.
- * @param l the value to be sent.
- * @return true on success, false otherwise.
- */
-/*
-bool SocketAgent::Send(long l)
-{
-	unsigned char long_buffer[8];
-	for( int i=0 ; i<8; i++) 
-	long_buffer[i] = (unsigned char) ((l >> (56-(i*8))) & 0xff);
- 	return sendbuffer((char*)long_buffer,8);
-}*/
 
 /**
  * Send a string value.
@@ -148,36 +135,15 @@ bool SocketAgent::Receive( int& i )
 	unsigned char int_buffer[4];
   	if( result = readbuffer((char*)int_buffer,4))  
 	{
-		i  = (((unsigned int) int_buffer[0]) << 24 ) & 0xffffffff;
-		i |= (((unsigned int) int_buffer[1]) << 16 ) & 0xffffffff;
-		i |= (((unsigned int) int_buffer[2]) <<  8 ) & 0xffffffff;
-		i |= (((unsigned int) int_buffer[3])       ) & 0xffffffff;
+		i  = ((unsigned int) int_buffer[0]) << 24;
+		i |= ((unsigned int) int_buffer[1]) << 16;
+		i |= ((unsigned int) int_buffer[2]) <<  8;
+		i |= ((unsigned int) int_buffer[3]);
 	}
 	return result;
 }
 
-/*
-bool SocketAgent::Receive( long& l )
-{
-	bool result;
-	l=0;
-	unsigned char long_buffer[8];
-  	if( result = readbuffer((char*)long_buffer,8))  
-	{
-		for (int i=0; i<8; i++) 
-		{
-			l  |= (((unsigned long) long_buffer[i]) << (56-i*8)) & ((1L << 64) - 1);
-		}     
-	}
-	return result;
-}
-*/
 
-/**
- * Receive a string value.
- * @param s the string to fill.
- * @return true on success, false otherwise.
- */
 bool SocketAgent::Receive(std::string& s)
 {
 	bool result;

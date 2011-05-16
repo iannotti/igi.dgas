@@ -106,7 +106,7 @@ namespace socket_pp {
 						 &user_to_user,
 						 &token_status,
 						// &delegated_cred,
-						GLOBUS_NULL,//FIXME justa TRY
+						GLOBUS_NULL,
 						 &get_token,
 						 (void *) &arg,
 						 &send_token,
@@ -133,9 +133,9 @@ namespace socket_pp {
 		{		
 			free(name);
 			name = NULL;
-	    	}
-		std::string source(gssmsg);
-		cerr << source << endl;
+	    }
+		//std::string source(gssmsg);//FIXME log this
+		//cerr << source << endl;
 		free(gssmsg);	
 		goto end;
 	}
@@ -259,7 +259,7 @@ namespace socket_pp {
 	*/
 	return_status = true;
   
-	end:
+	end://FIXME horrible!
   
 	  //  if(return_status == false) {
 	  //      if (delegated_cred != GSS_C_NO_CREDENTIAL) {
@@ -291,9 +291,9 @@ namespace socket_pp {
 		GSISocketAgent*  sa;
 		sa = static_cast<GSISocketAgent*>(SocketServer::Listen(new GSISocketAgent));
           	return sa;
-        }
+	}
 
-        bool GSISocketServer::AuthenticateAgent(GSISocketAgent* sa) 
+	bool GSISocketServer::AuthenticateAgent(GSISocketAgent* sa)
 	{
 		gss_ctx_id_t   context = GSS_C_NO_CONTEXT;
 		OM_uint32      major_status, minor_status;
@@ -311,26 +311,23 @@ namespace socket_pp {
 				SocketServer::KillAgent(sa);
 				sa = NULL;
 				char *gssmsg;
-				char buff[16];
-	      			globus_gss_assist_display_status_str( &gssmsg, 
+	      		globus_gss_assist_display_status_str( &gssmsg,
 						    NULL,
 						    major_status,
 						    minor_status,
 						    0);
       
-	      			std::string source(gssmsg);
-	      			free(gssmsg);
-	      			return false;
-	    		}
-		}
-		if(sa)
-		{ 
+	      		std::string source(gssmsg);//FIXME log this
+	      		free(gssmsg);
+	      		return false;
+	    	}
 			context = AcceptGSIAuthentication(sa->sck, ctx);
-	    		if( context == GSS_C_NO_CONTEXT) 
+	    	if( context == GSS_C_NO_CONTEXT)
 			{ 
 				gss_release_cred(&minor_status, &(ctx.credential)); 
 				SocketServer::KillAgent(sa);
 				sa = NULL;
+				return false;
 			} 
 			else 
 			{

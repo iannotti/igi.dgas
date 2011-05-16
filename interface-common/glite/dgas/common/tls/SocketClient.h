@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketClient.h,v 1.1.2.1.4.3 2011/05/16 12:51:29 aguarise Exp $
+// $Id: SocketClient.h,v 1.1.2.1.4.4 2011/05/16 15:34:10 aguarise Exp $
 
 /**
  * @file SocketClient.h
@@ -70,25 +70,15 @@ class SocketClient
    * @return true on success, false otherwise.
    */
   bool Send(int);
-  /**
-   * Send a long value.
-   * @param i the long value to send.
-   * @return true on success, false otherwise.
-   */
-  bool Send(long); 
+
   /**
    * Receive an int value.
    * @param i an int to fill.
    * @return true on success, false otherwise.
    */
   bool Receive(int&);
-  /**
-   * Receive a long value.
-   * @param i a long to fill.
-   * @return true on success, false otherwise.
-   */
-  bool Receive(long&);
  
+
   /**
    * Receive a string value.
    * @param s the string to fill.
