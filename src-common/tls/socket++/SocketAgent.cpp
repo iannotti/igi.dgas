@@ -115,9 +115,13 @@ bool SocketAgent::SetRcvTimeout( int secs )
 
 bool SocketAgent::Send(int i)
 {
-
 	string sBuff = int2string(i);
-	return sendbuffer(sBuff.c_str(),sizeof(sBuff.c_str()));
+		        char* buffer = new char[sBuff.length() + 1];
+		        strcpy(buffer, sBuff.c_str());
+		        std::cout << "Send("+ sBuff +")" << std::endl;
+	bool res = sendbuffer(sBuff.c_str(),sizeof(sBuff.c_str()));
+	delete buffer;
+	return res;
 }
 
 /**
