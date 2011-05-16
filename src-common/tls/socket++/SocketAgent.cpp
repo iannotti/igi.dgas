@@ -115,6 +115,7 @@ bool SocketAgent::SetRcvTimeout( int secs )
 
 bool SocketAgent::Send(int i)
 {
+
 	string sBuff = int2string(i);
 	return sendbuffer(sBuff.c_str(),sizeof(sBuff.c_str()));
 }
