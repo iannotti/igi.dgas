@@ -64,19 +64,20 @@ GSISocketAgent::~GSISocketAgent()
  */ 
 bool GSISocketAgent::Send(int i)
 {
-	string sBuff = int2string(i);
-	        char* buffer = new char[sBuff.length() + 1];
-	        strcpy(buffer, sBuff.c_str());
-	        std::cout << "Send("+ sBuff +")" << std::endl;
 	bool return_status = true;
 
+	unsigned char         int_buffer[4];
+	int_buffer[0] = (unsigned char) ((i >> 24) & 0xff);
+	int_buffer[1] = (unsigned char) ((i >> 16) & 0xff);
+	int_buffer[2] = (unsigned char) ((i >>  8) & 0xff);
+	int_buffer[3] = (unsigned char) ((i      ) & 0xff);
 	if(return_status = !(gss_context == GSS_C_NO_CONTEXT)) 
 	{
 		gss_buffer_desc  input_token;
 		gss_buffer_desc  output_token;
  		OM_uint32        maj_stat, min_stat;
-		input_token.value = (void*)buffer;
-		input_token.length = sizeof(buffer); /* ??? */
+		input_token.value = (void*)int_buffer;
+		input_token.length = 4; /* ??? */
 		std::pair<int,int> arg(sck, m_send_timeout);
     /* set this flag to 1 if you want to encrypt messages. set it to zero
        if only integrity protection is requested */
@@ -93,7 +94,6 @@ bool GSISocketAgent::Send(int i)
       			!send_token((void*)&arg, output_token.value, output_token.length);
 			gss_release_buffer(&min_stat, &output_token);
 	}    
-	delete buffer;
 	return return_status;
 }
 

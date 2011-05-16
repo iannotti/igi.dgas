@@ -23,7 +23,6 @@
 #include <arpa/inet.h>
 /** This class header file. */
 #include "glite/dgas/common/tls/SocketAgent.h"
-#include "../../../interface-common/glite/dgas/common/base/int2string.h"
 
 namespace glite { 
 namespace wmsutils { 
@@ -99,11 +98,11 @@ bool SocketAgent::SetRcvTimeout( int secs )
 }
 
 /**
- * Send an int value.
+ * Send a string value.
  * @param s the string value to send.
  * @return true on success, false otherwise.
  */ 
-/*bool SocketAgent::Send(int i)
+bool SocketAgent::Send(int i)
 {  
 	unsigned char		int_buffer[4];
 	int_buffer[0] = (unsigned char) ((i >> 24) & 0xff);
@@ -111,12 +110,6 @@ bool SocketAgent::SetRcvTimeout( int secs )
 	int_buffer[2] = (unsigned char) ((i >>  8) & 0xff);
 	int_buffer[3] = (unsigned char) ((i      ) & 0xff);
 	return sendbuffer((char*)int_buffer,4);
-}*/
-
-bool SocketAgent::Send(int i)
-{
-	string sBuff = int2string(i);
-	return sendbuffer(sBuff.c_str(),sizeof(sBuff.c_str()));
 }
 
 /**

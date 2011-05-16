@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketClient.cpp,v 1.1.2.1.4.6 2011/05/16 12:51:29 aguarise Exp $
+// $Id: SocketClient.cpp,v 1.1.2.1.4.7 2011/05/16 13:03:31 aguarise Exp $
 
 /**
  * @file SocketClient.cpp
