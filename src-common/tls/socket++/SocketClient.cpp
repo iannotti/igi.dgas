@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketClient.cpp,v 1.1.2.1.4.5 2011/05/16 12:29:14 aguarise Exp $
+// $Id: SocketClient.cpp,v 1.1.2.1.4.6 2011/05/16 12:51:29 aguarise Exp $
 
 /**
  * @file SocketClient.cpp
@@ -104,7 +104,12 @@ bool SocketClient::Open()
 		if( connect(agent -> sck, (struct sockaddr*)& agent -> peeraddr_in, sizeof(struct sockaddr_in)) == -1) 
 		{
 			result = false;
-			//error Unable to connect to remote Host():port.
+			char src[32];
+			sprintf(src,"socket #%d", agent -> sck);
+			std::string msg("Unable to connect to remote (");
+			char port_str [32] ;
+			sprintf (port_str, "%d" , port );
+			msg += Host() +":" + std::string ( port_str) +")";
 		}
 		else 
 		{
@@ -114,7 +119,8 @@ bool SocketClient::Open()
 			if (getsockname(agent -> sck, (struct sockaddr*)&myaddr_in, &addrlen) == -1) 
 			{
 				result = false;
-				//error in getsockname()
+				char src[32];
+				sprintf(src,"socket #%d", agent -> sck);
 			}
 		}
 	}
@@ -130,6 +136,53 @@ bool SocketClient::Close()
 	return (close(agent -> sck) == 0);
 }
 
+/**
+ * Send an int value.
+ * @param i the int value to send.
+ * @return true on success, false otherwise.
+ */
+bool SocketClient::Send(int i)
+{
+	return agent -> Send(i);
+}
+bool SocketClient::Send(long i)
+{
+	return agent -> Send(i);
+}
+
+/**
+ * Send a string value.
+ * @param s the string value to send.
+ * @return true on success, false otherwise.
+ */
+bool SocketClient::Send(const std::string& s)
+{
+	return agent -> Send(s);
+}
+
+/**
+ * Receive an int value.
+ * @param i an int to fill.
+ * @return true on success, false otherwise.
+ */
+bool SocketClient::Receive(int& i)
+{
+	return agent -> Receive(i);
+}
+bool SocketClient::Receive(long& i)
+{
+	return agent -> Receive(i);
+}
+
+/**
+ * Receive a string value.
+ * @param s the string to fill.
+ * @return true on success, false otherwise.
+ */
+bool SocketClient::Receive(std::string& s)
+{
+	return agent -> Receive(s);
+}
 
 SocketAgent* SocketClient::getAgent() const
 {

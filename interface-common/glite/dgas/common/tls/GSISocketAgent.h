@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: GSISocketAgent.h,v 1.1.2.1.4.3 2011/05/16 12:29:14 aguarise Exp $
+// $Id: GSISocketAgent.h,v 1.1.2.1.4.4 2011/05/16 12:51:29 aguarise Exp $
 
 /**
  * @file GSISocketAgent.h

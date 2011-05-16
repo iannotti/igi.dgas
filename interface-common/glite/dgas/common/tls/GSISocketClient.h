@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: GSISocketClient.h,v 1.1.2.1.4.2 2011/05/16 08:37:50 aguarise Exp $
+// $Id: GSISocketClient.h,v 1.1.2.1.4.3 2011/05/16 12:51:29 aguarise Exp $
 
 /**
  * @file GSISocketServer.h
@@ -47,7 +47,7 @@ class GSISocketClient : public SocketClient
    * @param p the secure server port.
    * @param b the backlog, that is the maximum number of outstanding connection requests.
    */
-  GSISocketClient(const std::string& host, int port);
+  GSISocketClient(const std::string&, int);
   /**
    * Destructor.
    */  

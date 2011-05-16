@@ -47,6 +47,33 @@ SocketAgent::~SocketAgent()
 	close(sck);
 }
 
+bool SocketAgent::is_recv_pending()
+{
+	fd_set readfs;
+	struct timeval timeout;
+	timeout.tv_sec=m_recv_timeout;
+	timeout.tv_usec=0;
+	FD_ZERO(&readfs);
+	FD_SET(sck,&readfs);
+ 	int result(
+		select(sck+1,&readfs,0,0,m_recv_timeout<0?0:&timeout)
+	);
+	return result==1;
+}
+
+bool SocketAgent::is_send_pending()
+{
+	fd_set sendfs;
+	struct timeval timeout;
+	timeout.tv_sec=m_send_timeout;
+	timeout.tv_usec=0;
+	FD_ZERO(&sendfs);
+	FD_SET(sck,&sendfs);
+	int result(
+		select(sck+1,0,&sendfs,0,m_send_timeout<0?0:&timeout)
+	);
+	return result==1;
+}
 
 /**
  * Set the connection timeout.
@@ -71,7 +98,181 @@ bool SocketAgent::SetRcvTimeout( int secs )
 	return true;  
 }
 
+/**
+ * Send an int value.
+ * @param s the string value to send.
+ * @return true on success, false otherwise.
+ */ 
+/*bool SocketAgent::Send(int i)
+{  
+	unsigned char		int_buffer[4];
+	int_buffer[0] = (unsigned char) ((i >> 24) & 0xff);
+	int_buffer[1] = (unsigned char) ((i >> 16) & 0xff);
+	int_buffer[2] = (unsigned char) ((i >>  8) & 0xff);
+	int_buffer[3] = (unsigned char) ((i      ) & 0xff);
+	return sendbuffer((char*)int_buffer,4);
+}*/
 
+bool SocketAgent::Send(int i)
+{
+	string sBuff = int2string(i);
+	return sendbuffer(sBuff.c_str(),sizeof(sBuff.c_str()));
+}
+
+/**
+ * Sends a long value.
+ * @param l the value to be sent.
+ * @return true on success, false otherwise.
+ */
+bool SocketAgent::Send(long l)
+{
+	unsigned char long_buffer[8];
+	for( int i=0 ; i<8; i++) 
+	long_buffer[i] = (unsigned char) ((l >> (56-(i*8))) & 0xff);
+ 	return sendbuffer((char*)long_buffer,8);
+}
+
+/**
+ * Send a string value.
+ * @param s the string value to send.
+ * @return true on success, false otherwise.
+ */ 
+bool SocketAgent::Send(const std::string& s)
+{
+	return ( Send( (int) (s.length()) ) &&
+	sendbuffer(const_cast<char*>(s.c_str()), s.length()) );
+}
+
+/**
+ * Receive an int value.
+ * @param i an int to fill.
+ * @return true on success, false otherwise.
+ */
+bool SocketAgent::Receive( int& i )
+{
+	bool result;
+	unsigned char int_buffer[4];
+  	if( result = readbuffer((char*)int_buffer,4))  
+	{
+		i  = (((unsigned int) int_buffer[0]) << 24 ) & 0xffffffff;
+		i |= (((unsigned int) int_buffer[1]) << 16 ) & 0xffffffff;
+		i |= (((unsigned int) int_buffer[2]) <<  8 ) & 0xffffffff;
+		i |= (((unsigned int) int_buffer[3])       ) & 0xffffffff;
+	}
+	return result;
+}
+
+bool SocketAgent::Receive( long& l )
+{
+	bool result;
+	l=0;
+	unsigned char long_buffer[8];
+  	if( result = readbuffer((char*)long_buffer,8))  
+	{
+		for (int i=0; i<8; i++) 
+		{
+			l  |= (((unsigned long) long_buffer[i]) << (56-i*8)) & ((1L << 64) - 1);
+		}     
+	}
+	return result;
+}
+
+/**
+ * Receive a string value.
+ * @param s the string to fill.
+ * @return true on success, false otherwise.
+ */
+bool SocketAgent::Receive(std::string& s)
+{
+	bool result;
+	int length = 0;
+	if( result = Receive(length) ) 
+	{
+		char *buf = new  char[length+1];
+		memset ((char *)buf, 0, length+1);
+		if( result = readbuffer(buf, length) ) 
+		{
+			s = std::string(buf);
+		}
+    		delete buf;
+	}
+	return result;
+}
+
+/**
+ * Send chars of a buffer. The max number of chars to be sent is fixed by
+ * size parameter. 
+ * @param buf the transmission buffer.
+ * @param size teh max number of chars to be sent.
+ */
+bool SocketAgent::sendbuffer(char* buf, unsigned int size)
+{
+	bool result = true;
+	unsigned int tot_written = 0;
+	int num_written = 0;
+	while(tot_written < size && is_send_pending() ) 
+	{
+		num_written = send(sck, buf + tot_written, size - tot_written,0);
+		if(num_written < 0) 
+		{
+			if(errno == EINTR) 
+			{
+				continue;
+			}
+      			else 
+			{
+				result = false;
+				break;
+      			}
+		}
+    		else
+		{
+      			tot_written += num_written;
+		}
+  	} 
+	if (tot_written < size) result=false;
+	return result;
+}
+
+/**
+ * Receive chars in a buffer. The max number of chars to be received is fixed by
+ * size parameter. 
+ * @param buf the reception buffer.
+ * @param size teh max number of chars to be received.
+ */
+bool SocketAgent::readbuffer(char* buf, unsigned int size) 
+{
+	bool result = true;
+	int num_read = 0;
+	unsigned int tot_read = 0;
+	while(tot_read < size && is_recv_pending())
+	{
+		num_read = recv(sck,buf + tot_read, size - tot_read,0);
+		if(num_read < 0) 
+		{
+			if(errno == EINTR)
+			{
+				continue;
+			}
+			else 
+			{
+				result = false;
+				break;
+			}
+		} 
+		else 
+		{
+			if(num_read==0) 
+			{ 
+				result = false;
+				break;
+			}
+			tot_read += num_read;
+		}
+	}
+	if (tot_read < size) result = false;
+	return result;
+}
 
 /**
  * Returns the host name.
