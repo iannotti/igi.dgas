@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: pingClient.cpp,v 1.1.2.1.4.3 2011/05/12 13:13:24 aguarise Exp $
+// $Id: pingClient.cpp,v 1.1.2.1.4.4 2011/05/16 08:37:50 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -116,7 +116,7 @@ int dgas_ping_client(string &acct_id, int pingType, statusInfo *status,errorInfo
 	if (!(theClient -> Open()))
 	{
 		returnCode = atoi(E_NO_CONNECTION) ;
-        }
+	}
 	else
 	{	
 		theClient -> SetTimeout(10);

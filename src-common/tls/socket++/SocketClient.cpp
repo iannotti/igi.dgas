@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketClient.cpp,v 1.1.2.1.4.3 2011/05/13 13:22:54 aguarise Exp $
+// $Id: SocketClient.cpp,v 1.1.2.1.4.4 2011/05/16 08:37:50 aguarise Exp $
 
 /**
  * @file SocketClient.cpp
@@ -104,12 +104,7 @@ bool SocketClient::Open()
 		if( connect(agent -> sck, (struct sockaddr*)& agent -> peeraddr_in, sizeof(struct sockaddr_in)) == -1) 
 		{
 			result = false;
-			char src[32];
-			sprintf(src,"socket #%d", agent -> sck);
-			std::string msg("Unable to connect to remote (");
-			char port_str [32] ;
-			sprintf (port_str, "%d" , port );
-			msg += Host() +":" + std::string ( port_str) +")";
+			//error Unable to connect to remote Host():port.
 		}
 		else 
 		{
@@ -119,8 +114,7 @@ bool SocketClient::Open()
 			if (getsockname(agent -> sck, (struct sockaddr*)&myaddr_in, &addrlen) == -1) 
 			{
 				result = false;
-				char src[32];
-				sprintf(src,"socket #%d", agent -> sck);
+				//error in getsockname()
 			}
 		}
 	}
@@ -157,7 +151,7 @@ bool SocketClient::Send(long i)
  */
 bool SocketClient::Send(const std::string& s)
 {
-	return agent -> Send(s);
+	return agent->Send(s);
 }
 
 /**
