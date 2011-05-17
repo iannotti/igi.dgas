@@ -135,7 +135,8 @@ class urForward {
 		int XML2serverParams(string &xml, serverParameters& serverParms);
 
 		int sendUsageRecords(hlrLocation& hlr, serverParameters& serverParms);
-		int getFirstAndLast (string& firstTid,string& lastTid );
+		int getFirstAndLastFromTid (string& firstTid,string& lastTid );
+		int getFirstAndLastFromUniqueChecksum (string& uniqueChecksum, string& firstTid,string& lastTid );
 		int sendBurst (hlrLocation& h, long startTid, long endTid, string& lastTid);
 		int urBurst2XML(hlrGenericQuery& q, string& answer);
 		int getStatus(string& answer);

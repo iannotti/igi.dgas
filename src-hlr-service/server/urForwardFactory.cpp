@@ -123,16 +123,28 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 
 	string firstTid, lastTid;
 	int res = 0;	
-	res = getFirstAndLast ( firstTid, lastTid ); 
+	if ( usedParameters.lastInsertedUniqueChecksum != "" )
+	{
+		res = getFirstAndLastFromUniqueChecksum ( usedParameters.lastInsertedUniqueChecksum,
+				firstTid,
+				lastTid );
+	}
+	else
+	{
+		res = getFirstAndLastFromTid ( firstTid, lastTid );
+	}
+	res = getFirstAndLastFromTid ( firstTid, lastTid ); 
 	if ( res != 0 )
 	{
-		logBuff = "Error retrieving First and Last records id to send.";
-		hlr_log(logBuff,&logStream,3);
 		if ( res == -1 )
 		{
+			logBuff = "Forwarding reset request";
+			hlr_log(logBuff,&logStream,5);
 			//reset
 			return -1;
 		}
+		logBuff = "Error retrieving First and Last records id to send";
+		hlr_log(logBuff,&logStream,3);
 		return 1;
 	}
 	//now send records from first to last.
@@ -348,7 +360,7 @@ int urForward::urBurst2XML(hlrGenericQuery& q, string& message)
 
 
 
-int urForward::getFirstAndLast (string& firstTid,string& lastTid )
+int urForward::getFirstAndLastFromTid (string& firstTid,string& lastTid )
 {
 	//performs a query to the DB to find the first id and 
 	//the last id to send according to the effective parameters
@@ -659,6 +671,59 @@ int urForward::getServers(vector<string>& serverList )
 		buff = buff.substr(0, pos+1);
 		serverList.push_back(buff);
 	}	
+	return 0;
+}
+
+int urForward::getFirstAndLastFromUniqueChecksum(string & uniqueChecksum, string & firstTid, string & lastTid)
+{
+	//performs a query to the DB to find the first id and
+	//the last id to send according to the last uniqueCheckusm sent on previous run.
+	string logBuff;
+	string queryString = "SELECT max(id) FROM jobTransSummary";
+	logBuff = "query:" + queryString;
+	hlr_log(logBuff,&logStream,6);
+	bool needReset = false;
+	hlrGenericQuery currentMax(queryString);
+	int res = currentMax.query();
+	if ( res != 0 )
+	{
+		logBuff = "ERROR in query:" + queryString;
+		hlr_log(logBuff,&logStream,3);
+		return 1;
+	}
+	queryString = "SELECT id FROM jobTransSummary WHERE uniqueChecksum ='";
+	queryString += uniqueChecksum + "'";
+	logBuff = "query:" + queryString;
+	hlr_log(logBuff,&logStream,6);
+	bool needReset = false;
+	hlrGenericQuery currentMin(queryString);
+	res = currentMin.query();
+	if ( res != 0 )
+	{
+		logBuff = "ERROR in query:" + queryString;
+		hlr_log(logBuff,&logStream,3);
+		return 1;
+	}
+	else
+	{
+		if ( currentMin.numRows == 0 )//uniqueChecksum not found!
+		{
+			needReset = true;
+			logBuff = "uniqueChecksum:" + uniqueChecksum + " not found in jobTransSummary. Reset Needed";
+			hlr_log(logBuff,&logStream,7);
+		}
+	}
+	if ( needReset )
+	{
+		logBuff = "Reset Needed.";
+		hlr_log(logBuff,&logStream,6);
+		//unique Checksum not found.
+		return -1;
+	}
+	firstTid = ((currentMin.queryResult).front())[0];
+	lastTid = ((currentMax.queryResult).front())[0];
+	logBuff = "from uniqueChecksum, FIRST to send:" + firstTid + ",LAST to send:" +lastTid;
+	hlr_log(logBuff,&logStream,7);
 	return 0;
 }
 
