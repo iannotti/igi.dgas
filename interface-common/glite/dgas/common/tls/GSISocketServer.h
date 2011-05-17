@@ -81,6 +81,7 @@ class GSISocketServer : public SocketServer
  
   void LimitedProxyMode(limited_proxy_mode_t mode) { limited_proxy_mode = mode; }
   void set_auth_timeout(int to);
+  string getErrMsg() { return errMsg; }
 		  
  private:
   /**
@@ -94,6 +95,7 @@ class GSISocketServer : public SocketServer
   FILE *gsi_logfile;
   limited_proxy_mode_t limited_proxy_mode;
   int m_auth_timeout;
+  string errMsg = "";
 };
 
 } // namespace socket_pp

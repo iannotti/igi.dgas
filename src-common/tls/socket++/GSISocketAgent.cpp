@@ -77,7 +77,7 @@ bool GSISocketAgent::Send(int i)
 		gss_buffer_desc  output_token;
  		OM_uint32        maj_stat, min_stat;
 		input_token.value = (void*)int_buffer;
-		input_token.length = 4; /* ??? */
+		input_token.length = 4; /* Specified by the protocol definition */
 		std::pair<int,int> arg(sck, m_send_timeout);
     /* set this flag to 1 if you want to encrypt messages. set it to zero
        if only integrity protection is requested */

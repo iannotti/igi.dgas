@@ -4,7 +4,7 @@
  *  copyright : (C) 2001 by INFN
  ***************************************************************************/
 
-// $Id: SocketServer.cpp,v 1.1.2.1.4.1 2010/10/19 09:06:52 aguarise Exp $
+// $Id: SocketServer.cpp,v 1.1.2.1.4.2 2011/05/17 08:50:22 aguarise Exp $
 
 /**
  * @file SocketServer.cpp
@@ -39,15 +39,15 @@ namespace socket_pp {
  */
 SocketServer::SocketServer(int p, int b) : port(p), backlog(b)
 {
-  memset ((char *)&myaddr_in, 0, sizeof(struct sockaddr_in));
-  
-  myaddr_in.sin_family = AF_INET;
-  myaddr_in.sin_addr.s_addr = INADDR_ANY;
-  myaddr_in.sin_port=htons(p);
-  sck = -1;
+	memset ((char *)&myaddr_in, 0, sizeof(struct sockaddr_in));
 
-  agent_mutex = new pthread_mutex_t();
-  pthread_mutex_init(agent_mutex,0);
+	myaddr_in.sin_family = AF_INET;
+	myaddr_in.sin_addr.s_addr = INADDR_ANY;
+	myaddr_in.sin_port=htons(p);
+	sck = -1;
+
+	agent_mutex = new pthread_mutex_t();
+	pthread_mutex_init(agent_mutex,0);
 }
 
 /**
@@ -56,22 +56,22 @@ SocketServer::SocketServer(int p, int b) : port(p), backlog(b)
  */
 bool SocketServer::Open()
 {
-  bool result = false;
-  
-  sck = socket (AF_INET, SOCK_STREAM, 0);
-  result = (sck!=-1);
-  if( result ) {
-  
-    int		val = 1;	  
-    int         oldval;
-    socklen_t   len = sizeof( oldval );
-    getsockopt( sck, SOL_SOCKET, SO_REUSEADDR, (void *) &oldval, &len );
-    oldval |= val;
-    setsockopt( sck, SOL_SOCKET, SO_REUSEADDR, (const void *) &oldval, len);
-    result = (bind(sck, (struct sockaddr*)&myaddr_in, sizeof(struct sockaddr_in)) != -1) &&   
-      (listen(sck, backlog) != -1);   
-  }
-  return result;
+	bool result = false;
+
+	sck = socket (AF_INET, SOCK_STREAM, 0);
+	result = (sck!=-1);
+	if( result ) {
+
+		int		val = 1;
+		int         oldval;
+		socklen_t   len = sizeof( oldval );
+		getsockopt( sck, SOL_SOCKET, SO_REUSEADDR, (void *) &oldval, &len );
+		oldval |= val;
+		setsockopt( sck, SOL_SOCKET, SO_REUSEADDR, (const void *) &oldval, len);
+		result = (bind(sck, (struct sockaddr*)&myaddr_in, sizeof(struct sockaddr_in)) != -1) &&
+				(listen(sck, backlog) != -1);
+	}
+	return result;
 }
 
 /**
@@ -79,7 +79,7 @@ bool SocketServer::Open()
  */
 void SocketServer::Close()
 {
-  close(sck);
+	close(sck);
 }
 
 /**
@@ -88,15 +88,15 @@ void SocketServer::Close()
  */
 SocketServer::~SocketServer()
 {
-  pthread_mutex_lock(agent_mutex);
-  while(!agents.empty()) {
-    delete agents.front();
-    agents.pop_front();
-  }
-  pthread_mutex_unlock(agent_mutex);
-  pthread_mutex_destroy(agent_mutex);
-  delete agent_mutex;
-  Close();
+	pthread_mutex_lock(agent_mutex);
+	while(!agents.empty()) {
+		delete agents.front();
+		agents.pop_front();
+	}
+	pthread_mutex_unlock(agent_mutex);
+	pthread_mutex_destroy(agent_mutex);
+	delete agent_mutex;
+	Close();
 }
 
 /**
@@ -105,22 +105,22 @@ SocketServer::~SocketServer()
  */
 bool SocketServer::IsConnectionPending()
 {
-  fd_set readfs;
-  struct timeval timeout;
-  timeout.tv_sec=1;
-  timeout.tv_usec=0;
-  int retcod=0;
-  int i = 0;
-  while ((retcod == 0 ) )
-    {
-      FD_ZERO(&readfs);
-      FD_SET(sck,&readfs);
-      timeout.tv_sec=1;
-      timeout.tv_usec=0;
-      retcod = select(FD_SETSIZE,&readfs,(fd_set *)NULL,(fd_set *)NULL, &timeout);
-    }
-  if (retcod < 0) return(false);
-  else            return(true);
+	fd_set readfs;
+	struct timeval timeout;
+	timeout.tv_sec=1;
+	timeout.tv_usec=0;
+	int retcod=0;
+	int i = 0;
+	while ((retcod == 0 ) )
+	{
+		FD_ZERO(&readfs);
+		FD_SET(sck,&readfs);
+		timeout.tv_sec=1;
+		timeout.tv_usec=0;
+		retcod = select(FD_SETSIZE,&readfs,(fd_set *)NULL,(fd_set *)NULL, &timeout);
+	}
+	if (retcod < 0) return(false);
+	else            return(true);
 }
 
 /**
@@ -131,45 +131,45 @@ bool SocketServer::IsConnectionPending()
  */
 SocketAgent* SocketServer::Listen(SocketAgent* a)
 {
-  SocketAgent* sa = a;
+	SocketAgent* sa = a;
 
-  if(!sa) sa = new SocketAgent();
- 
-  socklen_t addrlen = sizeof(struct sockaddr_in);
-  int newsck = 0;
+	if(!sa) sa = new SocketAgent();
 
-  bool pending = IsConnectionPending();
+	socklen_t addrlen = sizeof(struct sockaddr_in);
+	int newsck = 0;
 
-  if (pending && 
-      (sa -> sck = newsck = accept(sck, 
-			           (struct sockaddr*)& sa -> peeraddr_in, 
-				   &addrlen)) == -1) {    
-    delete sa;
-    sa = 0;
+	bool pending = IsConnectionPending();
 
-  }	
-  else { 
-    
-    struct linger linger;
-    
-    linger.l_onoff  =1;
-    linger.l_linger =1;
-  
-    if( setsockopt(newsck, SOL_SOCKET, SO_LINGER, (char *)&linger, sizeof(linger)) == -1) {
-    
-      delete sa;
-      sa =0;
+	if (pending &&
+			(sa -> sck = newsck = accept(sck,
+					(struct sockaddr*)& sa -> peeraddr_in,
+					&addrlen)) == -1) {
+		delete sa;
+		sa = 0;
 
-    }
-  }
+	}
+	else {
 
-  if(sa) {
-    pthread_mutex_lock(agent_mutex);
-    agents.push_front(sa);
-    pthread_mutex_unlock(agent_mutex);
-  }
+		struct linger linger;
 
-  return sa;
+		linger.l_onoff  =1;
+		linger.l_linger =1;
+
+		if( setsockopt(newsck, SOL_SOCKET, SO_LINGER, (char *)&linger, sizeof(linger)) == -1) {
+
+			delete sa;
+			sa =0;
+
+		}
+	}
+
+	if(sa) {
+		pthread_mutex_lock(agent_mutex);
+		agents.push_front(sa);
+		pthread_mutex_unlock(agent_mutex);
+	}
+
+	return sa;
 }
 
 /**
@@ -179,14 +179,14 @@ SocketAgent* SocketServer::Listen(SocketAgent* a)
  */
 void SocketServer::KillAgent(SocketAgent* a)
 {
-  pthread_mutex_lock(agent_mutex);
+	pthread_mutex_lock(agent_mutex);
 
-  if( find(agents.begin(), agents.end(), a) != agents.end() ) {
-    agents.remove(a);
-    if ( a != NULL) delete a;
-  }
-  pthread_mutex_unlock(agent_mutex);
-  
+	if( find(agents.begin(), agents.end(), a) != agents.end() ) {
+		agents.remove(a);
+		if ( a != NULL) delete a;
+	}
+	pthread_mutex_unlock(agent_mutex);
+
 }
 
 } // namespace socket_pp

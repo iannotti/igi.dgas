@@ -77,7 +77,7 @@ bool SocketAgent::is_send_pending()
 /**
  * Set the connection timeout.
  * @param secs a size_t representing the timeout in seconds.
- * @return tru on success, false otherwise.
+ * @return true on success, false otherwise.
  */
 bool SocketAgent::SetTimeout( int secs )
 {

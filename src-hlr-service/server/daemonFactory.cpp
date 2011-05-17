@@ -179,7 +179,7 @@ void* thrLoop(void *param)
 		logString = "Authenticating Agent:" + tNString;
 		hlr_log( logString, &logStream,8);
 		connInfo connectionInfo;
-	 	logString ="in "+ tNString+ " Authenticating connection received from : " +(tstruct->a)->PeerName();
+	 	logString ="in "+ tNString+ " Authenticating: " +(tstruct->a)->PeerName();
 		hlr_log( logString, &logStream,7);
 		if ( tstruct->a ) (tstruct->a)-> SetTimeout( defConnTimeOut );
 		if ( tstruct->a ) (tstruct->s)->set_auth_timeout( 10*defConnTimeOut );
@@ -209,14 +209,14 @@ void* thrLoop(void *param)
 	                (tstruct->s) -> KillAgent( (tstruct->a) );
 	                (tstruct->a) = NULL;
                    }
-		   logString = "Error while Authenticating agent: " + tNString;
+		   logString = "Error while Authenticating agent: " + tNString +":" + (tstruct->s)->getErrMsg();
 		   hlr_log( logString, &logStream,2);
 		   authErrors++;
 		   activeThreads--; 
 		   pthread_exit((void *) 0);
       	}
-	 	logString = tNString+ " Connection from : " +connectionInfo.hostName + " ";
-		logString += ",cert DN: " + connectionInfo.contactString;
+	 	logString = tNString+ " Connection from : " +connectionInfo.hostName;
+		logString += ",DN:" + connectionInfo.contactString;
 		hlr_log (logString, &logStream, 5);
 		logString = "I/O in:" + tNString;
 		hlr_log (logString, &logStream, 9);
