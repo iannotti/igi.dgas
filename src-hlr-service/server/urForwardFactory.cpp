@@ -26,7 +26,7 @@ int urForward::run()
 	vector<string>::iterator it = serverList.begin();
 	while ( keep_going && it != serverList.end() )
 	{
-		logBuff = "run(),Contacting server:" + *it;
+		logBuff = "Contacting:" + *it;
 		hlr_log(logBuff,&logStream,4);
 		//for each entry in serverFile :
 		hlrLocation hlr(*it);
@@ -34,7 +34,7 @@ int urForward::run()
 		//get working parameters recorded in 2nd level HLR.
 		if ( getInfo(hlr, hlrParams) != 0 )
 		{
-			logBuff = "Error retrieving info from 2LHLR:" + *it;
+			logBuff = "Error retrieving info from:" + *it;
 			hlr_log(logBuff,&logStream,3);
 		}
 		else
@@ -49,18 +49,18 @@ int urForward::run()
 			{
 				if ( res == -1 )
 				{
-					logBuff = "Sending reset request to:";
+					logBuff = "Sending RESET request to:";
 					logBuff += *it;
 					hlr_log(logBuff,&logStream,3);
 					sendReset(hlr);
 				}
 				else
 				{
-					logBuff = "Error sending UR to:";
+					logBuff = "ERROR sending UR to:";
 					logBuff += *it;
 					hlr_log(logBuff,&logStream,3);
 				}
-					
+
 			}
 		}
 		it++;
@@ -72,17 +72,17 @@ int urForward::run()
 string urForward::getMaxId()
 {
 	string logBuff;
-        string queryString = "select max(id) FROM jobTransSummary";
-        logBuff = "Performing query:" + queryString;
-        hlr_log(logBuff,&logStream,6);
-        hlrGenericQuery currentMax(queryString); 
-        int res = currentMax.query();
-        if ( res != 0 )
-        {               
-                logBuff = "Error in query:"+ queryString; 
-                hlr_log(logBuff,&logStream,3);
-                return "";
-        }
+	string queryString = "SELECT max(id) FROM jobTransSummary";
+	logBuff = "query:" + queryString;
+	hlr_log(logBuff,&logStream,6);
+	hlrGenericQuery currentMax(queryString);
+	int res = currentMax.query();
+	if ( res != 0 )
+	{
+		logBuff = "ERROR in:"+ queryString;
+		hlr_log(logBuff,&logStream,3);
+		return "";
+	}
 	else
 	{
 		if ( ((currentMax.queryResult).front())[0] != "" )
@@ -95,30 +95,30 @@ string urForward::getMaxId()
 
 int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 {
-	string logBuff = "Entering sendUsegeRecords()";
-	hlr_log(logBuff,&logStream,5);
+	string logBuff = "Entering sendUsegeRecords";
+	hlr_log(logBuff,&logStream,6);
 	string recordsStartDate;
 	string recordsEndDate;
 	string lastForwardedRecord;
-	ep.serverVersion = serverParms.serverVersion;
+	usedParameters.serverVersion = serverParms.serverVersion;
 	//Number of records sent per connection will be the minimum
 	//between conf.recordsPerConnection and 
 	//serverParms.recordsPerConnection
 	int a = atoi((conf.recordsPerConnection).c_str());
 	int b = atoi((serverParms.recordsPerConnection).c_str());
-	ep.recordsPerConnection = ( a <= b ) ? a : b; 
-		
-	ep.recordsStartDate = serverParms.acceptRecordsStartDate;
-	ep.recordsEndDate = serverParms.acceptRecordsEndDate;
-	ep.recordDate = serverParms.recordDate;
-	
+	usedParameters.recordsPerConnection = ( a <= b ) ? a : b;
+	usedParameters.recordsStartDate = serverParms.acceptRecordsStartDate;
+	usedParameters.recordsEndDate = serverParms.acceptRecordsEndDate;
+	usedParameters.recordDate = serverParms.recordDate;
+	usedParameters.lastInsertedUniqueChecksum = serverParms.lastInsertedUniqueChecksum;
+
 	if ( serverParms.remoteRecordId != "" )
 	{
-		ep.lastForwardedRecord = serverParms.remoteRecordId;
+		usedParameters.lastForwardedRecord = serverParms.remoteRecordId;
 	}
 	else
 	{
-		ep.lastForwardedRecord = "0";
+		usedParameters.lastForwardedRecord = "0";
 	}
 
 	string firstTid, lastTid;
@@ -138,7 +138,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 	//now send records from first to last.
 	res = 0;
 	long startTid = atoi(firstTid.c_str());
-	long endTid = startTid + ep.recordsPerConnection;
+	long endTid = startTid + usedParameters.recordsPerConnection;
 	while ( keep_going && res == 0 )
 	{
 		//send burst from startTid -> startTid + recordsPerConn
@@ -148,8 +148,8 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		hlr_log(logBuff, &logStream, 8);
 		res = sendBurst(hlr, startTid, endTid, lastTid);
 		startTid= endTid;
-		endTid = startTid + ep.recordsPerConnection;
-		
+		endTid = startTid + usedParameters.recordsPerConnection;
+
 	}
 	if ( res == 1 )
 	{
@@ -190,9 +190,9 @@ int urForward::sendBurst(hlrLocation& h, long startTid, long endTid, string& las
 		voQueryBuff += " ) ";
 		queryString += voQueryBuff;
 	}
-        queryString += " AND date >='";
-        queryString += ep.recordsStartDate + "' AND date <='";
-        queryString += ep.recordsEndDate + "'";
+	queryString += " AND date >='";
+	queryString += usedParameters.recordsStartDate + "' AND date <='";
+	queryString += usedParameters.recordsEndDate + "'";
 	queryString += " AND id <= " + lastTid;
 	logBuff = "Performing query:" + queryString;
 	hlr_log(logBuff,&logStream,6);
@@ -238,8 +238,8 @@ int urForward::sendBurst(hlrLocation& h, long startTid, long endTid, string& las
 			if ( contactServer(h, message, answer ) != 0 )
 			{
 				logBuff = "Got error sending XML!";
-	                        hlr_log(logBuff,&logStream,3);
-        	                return 3;
+				hlr_log(logBuff,&logStream,3);
+				return 3;
 			}
 			else
 			{
@@ -247,7 +247,7 @@ int urForward::sendBurst(hlrLocation& h, long startTid, long endTid, string& las
 				if ( res != 0 )
 				{
 					logBuff = "Got STATUS=" + int2string(res);
-		                        hlr_log(logBuff,&logStream,3);
+					hlr_log(logBuff,&logStream,3);
 					return 4;
 				}	
 			}
@@ -268,7 +268,7 @@ int urForward::getStatus(string& answer)
 			hlr_log(logBuff,&logStream,4);
 			return atoi((statusBuff.text).c_str()); 
 		}
-		
+
 	}
 	else
 	{
@@ -301,7 +301,7 @@ int urForward::urBurst2XML(hlrGenericQuery& q, string& message)
 			recordBuff += tagAdd( "start", (*it)[11] );
 			recordBuff += tagAdd( "end", (*it)[12] );
 			//backward compatibility: new forward old concentrator
-			if ( ep.serverVersion == "3.4.0" )
+			if ( usedParameters.serverVersion == "3.4.0" )
 			{
 				recordBuff += tagAdd( "gridResource", (*it)[2] );
 				recordBuff += tagAdd( "gridUser", (*it)[3] );
@@ -351,36 +351,36 @@ int urForward::urBurst2XML(hlrGenericQuery& q, string& message)
 int urForward::getFirstAndLast (string& firstTid,string& lastTid )
 {
 	//performs a query to the DB to find the first id and 
-	//the last id to send according to the effective paremeters
+	//the last id to send according to the effective parameters
 	//requested.
 	string logBuff;
-	string queryString = "select max(id) FROM jobTransSummary";
-        logBuff = "Performing query:" + queryString;
-        hlr_log(logBuff,&logStream,6);
+	string queryString = "SELECT max(id) FROM jobTransSummary";
+	logBuff = "query:" + queryString;
+	hlr_log(logBuff,&logStream,6);
 	bool needReset = false;
-        hlrGenericQuery currentMax(queryString);
-        int res = currentMax.query();
-        if ( res != 0 )
+	hlrGenericQuery currentMax(queryString);
+	int res = currentMax.query();
+	if ( res != 0 )
 	{
-                logBuff = "Error in query!";
-                hlr_log(logBuff,&logStream,3);
-                return 1;
+		logBuff = "ERROR in query:" + queryString;
+		hlr_log(logBuff,&logStream,3);
+		return 1;
 	}
 	else
 	{
 		if ( ((currentMax.queryResult).front())[0] != "" )
 		{
 			unsigned int maxLocal = atoi((((currentMax.queryResult).front())[0]).c_str());
-			unsigned int maxRemote = atoi((ep.lastForwardedRecord).c_str());
-			logBuff = "this server max(id)=" + int2string(maxLocal);
-			logBuff += ",remote server max(id)=" + int2string(maxRemote);
+			unsigned int maxRemote = atoi((usedParameters.lastForwardedRecord).c_str());
+			logBuff = "THIS forwarder max(id)=" + int2string(maxLocal);
+			logBuff += ",REMOTE server max(id)=" + int2string(maxRemote);
 			//check if max(id) in this server is lower than last inserted id in remote
 			//2LHLR. If true it means that table was cleaned upconslidated or 
 			//whatsoever.. So use this Server max(id) in lastForwardedRecord.
 			needReset = ( maxLocal < maxRemote ) ? true : false;
 			unsigned int buffer = ( maxLocal < maxRemote ) ? maxLocal : maxRemote;
-			ep.lastForwardedRecord = int2string(buffer);
-			logBuff += ";using max(id)=" + ep.lastForwardedRecord;
+			usedParameters.lastForwardedRecord = int2string(buffer);
+			logBuff += ";using max(id)=" + usedParameters.lastForwardedRecord;
 			logBuff += ";needReset==" + needReset;
 			additionalMessageBuffer += logBuff;
 			hlr_log(logBuff,&logStream,7);
@@ -395,29 +395,29 @@ int urForward::getFirstAndLast (string& firstTid,string& lastTid )
 	}
 	else
 	{
-        	queryString = "SELECT min(id),max(id) FROM jobTransSummary WHERE date >='";
-	        queryString += ep.recordsStartDate + "' AND date <='";
-	        queryString += ep.recordsEndDate + "' AND id >";
-	        queryString += ep.lastForwardedRecord;
+		queryString = "SELECT min(id),max(id) FROM jobTransSummary WHERE date >='";
+		queryString += usedParameters.recordsStartDate + "' AND date <='";
+		queryString += usedParameters.recordsEndDate + "' AND id >";
+		queryString += usedParameters.lastForwardedRecord;
 	}
-        logBuff = "Performing query:" + queryString;
-        hlr_log(logBuff,&logStream,6);
-        hlrGenericQuery query(queryString);
-        res = query.query();
-        if ( res != 0 )
-        {
-                logBuff = "Error in query!";
-                hlr_log(logBuff,&logStream,3);
-                return 1;
-        }
-        else
-        {
-                firstTid = ((query.queryResult).front())[0];
-                lastTid = ((query.queryResult).front())[1];
-                logBuff = "fisrt:" + firstTid + ",last:" +lastTid;
-                hlr_log(logBuff,&logStream,7);
-        }
-        return 0;
+	logBuff = "query:" + queryString;
+	hlr_log(logBuff,&logStream,6);
+	hlrGenericQuery query(queryString);
+	res = query.query();
+	if ( res != 0 )
+	{
+		logBuff = "Error in query!";
+		hlr_log(logBuff,&logStream,3);
+		return 1;
+	}
+	else
+	{
+		firstTid = ((query.queryResult).front())[0];
+		lastTid = ((query.queryResult).front())[1];
+		logBuff = "FIRST to send:" + firstTid + ",LAST to send:" +lastTid;
+		hlr_log(logBuff,&logStream,7);
+	}
+	return 0;
 }
 
 int urForward::contactServer(hlrLocation& s, string& message, string& answer)
@@ -438,7 +438,7 @@ int urForward::contactServer(hlrLocation& s, string& message, string& answer)
 	alarm(30*conf.defConnTimeout);
 	GSISocketClient *theClient;
 	theClient = new GSISocketClient(s.host, 
-				s.p);
+			s.p);
 	theClient -> ServerContact(s.dn);
 	theClient-> SetTimeout(conf.defConnTimeout);
 	theClient-> set_auth_timeout(2*conf.defConnTimeout);
@@ -484,7 +484,7 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 		{
 			if ( XML2serverParams(answer, serverParms) == 0 )
 			{
-				logBuff = "getInfo():got server parameters:";
+				logBuff = "server parameters:";
 				hlr_log(logBuff,&logStream,5);
 				logBuff = "serverVersion:" + serverParms.serverVersion;
 				hlr_log(logBuff,&logStream,5);
@@ -502,7 +502,8 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 				hlr_log(logBuff,&logStream,5);
 				logBuff = "recordInsertDate:" + serverParms.recordInsertDate;
 				hlr_log(logBuff,&logStream,5);
-
+				logBuff = "lastInsertedUniqueChecksum:" + serverParms.lastInsertedUniqueChecksum;
+				hlr_log(logBuff,&logStream,5);
 				return 0;
 			}
 			else
@@ -512,7 +513,7 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 				hlr_log(logBuff,&logStream,3);
 				return 1;
 			}
-			
+
 		}
 		else
 		{
@@ -529,7 +530,7 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 		hlr_log(logBuff,&logStream,3);
 		return 3;
 	}
-	
+
 }
 
 string urForward::getInfo2XML()
@@ -608,6 +609,11 @@ int urForward::XML2serverParams(string& xml, serverParameters& serverParms)
 				{
 					serverParms.recordInsertDate = tagBuff.text;
 				}
+				tagBuff = parse (&nodeBuff.text, "lastInsertedUniqueChecksum");
+				if ( tagBuff.status == 0 )
+				{
+					serverParms.lastInsertedUniqueChecksum = tagBuff.text;
+				}
 			}
 		}
 		else
@@ -681,23 +687,23 @@ int urForward::sendReset(hlrLocation& s)
 				hlr_log("Malformed answer.",&logStream,2);
 				return 2;
 			}
-			
-				
+
+
 		}
 		else
 		{
 			//error parsing answer
-                        logBuff = "getInfo():error contacting server.";
-                        hlr_log(logBuff,&logStream,3);
-                        return 1;
+			logBuff = "getInfo():error contacting server.";
+			hlr_log(logBuff,&logStream,3);
+			return 1;
 		}
 	}
 	else
 	{
 		//error composing message
-                logBuff = "getInfo():error composing message.";
-                hlr_log(logBuff,&logStream,3);
-                return 3;
+		logBuff = "getInfo():error composing message.";
+		hlr_log(logBuff,&logStream,3);
+		return 3;
 	}
 	return 0;
 }

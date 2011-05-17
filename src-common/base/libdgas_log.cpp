@@ -1,4 +1,4 @@
-// $Id: libdgas_log.cpp,v 1.1.2.1.4.1 2010/10/19 09:06:52 aguarise Exp $
+// $Id: libdgas_log.cpp,v 1.1.2.1.4.2 2011/05/17 13:08:47 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -92,7 +92,7 @@ int hlr_log ( string log_string, ofstream *logFile , int log_level )
 		//strip end of line from log_string;
 		if ( log_level <= system_log_level )
 		{
-			*logFile << "LOG (" << log_level << ") " << timeBuff  <<" : " << log_string << endl << flush;
+			*logFile << timeBuff << " ("<< log_level <<"):" << log_string << endl << flush;
 		}
 		return 0;
 	}

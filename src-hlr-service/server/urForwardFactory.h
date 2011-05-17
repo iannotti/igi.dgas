@@ -47,6 +47,7 @@ struct serverParameters
         string remoteRecordId;
         string recordDate;
         string recordInsertDate;
+        string lastInsertedUniqueChecksum;
 };
 
 struct confParams
@@ -67,6 +68,7 @@ struct effectiveParams
 	string lastForwardedRecord;
         string recordDate;
         string recordInsertDate;
+        string lastInsertedUniqueChecksum;
 };
 
 class hlrLocation
@@ -123,7 +125,7 @@ class urForward {
 
 	private:
 		confParams conf;
-		effectiveParams ep;
+		effectiveParams usedParameters;
 	 
 		//methods for run();
 		int getServers(vector<string>& serverList);

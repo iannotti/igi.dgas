@@ -125,14 +125,14 @@ protected:
    * Send chars of a buffer. The max number of chars to be sent is fixed by
    * size parameter. 
    * @param buf the transmission buffer.
-   * @param size teh max number of chars to be sent.
+   * @param size the max number of chars to be sent.
    */
   bool sendbuffer(char *, unsigned int);
   /**
    * Receive chars in a buffer. The max number of chars to be received is fixed by
    * size parameter. 
    * @param buf the reception buffer.
-   * @param size teh max number of chars to be received.
+   * @param size the max number of chars to be received.
    */
   bool readbuffer(char *, unsigned int);
 
