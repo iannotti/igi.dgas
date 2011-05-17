@@ -13,6 +13,7 @@
 
 #define HLRDB_LOCK_FILE  "/tmp/dgas-hlrdb.lock"
 #define HLRDB_BUFF_FILE  "/tmp/dgas-hlrdb.buff"
+#define JTS_LOCK_FILE "/tmp/dgas-jobTransSummary.lock"
 #define DBW_MT_DEF_MONTHS 12
 #define DBW_MT_MTFILE	"/etc/dgas/dgas_hlr_mt.buff"
 
@@ -37,7 +38,7 @@
 extern ofstream logStream;
 
 class database {
-	public:
+public:
 	database(){};
 	database(std::string _sqlServer,
 			std::string _sqlUser,
@@ -66,7 +67,7 @@ class database {
 };
 
 class table {
-	public:
+public:
 	table(database& _DB, std::string _tableName)
 	{
 		tableName = _tableName;	
@@ -86,9 +87,9 @@ class table {
 };
 
 class recordsTables {
-	public:
+public:
 	recordsTables ( database& _DB,
-		int _monthsNumber = 3 )
+			int _monthsNumber = 3 )
 	{
 		DB = _DB;
 		monthsNumber = _monthsNumber; 
@@ -107,11 +108,11 @@ class recordsTables {
 int getYearMonth(database& DB,std::string& yearMonth,int i = 0);
 
 class mergeTables {
-	public:
+public:
 	mergeTables( database& _DB,
-		std::string _defFile, 
-		std::string _mergeTablesFile = dgasLocation() + DBW_MT_MTFILE,
-		int _months = DBW_MT_DEF_MONTHS)
+			std::string _defFile,
+			std::string _mergeTablesFile = dgasLocation() + DBW_MT_MTFILE,
+			int _months = DBW_MT_DEF_MONTHS)
 	{
 		DB = _DB;
 		defFile = _defFile;
@@ -139,8 +140,8 @@ class mergeTables {
 		recordsTables t(DB,months);
 		return t.addIndex(field,indexName);
 	}
-	
-	private:
+
+private:
 	std::string defFile;
 	std::string mergeTablesFile;
 	int months; 
@@ -162,7 +163,7 @@ class mergeTables {
 };
 
 class JTS {
-	public:
+public:
 	JTS(database& _DB, std::string _jtsTableName, std::string _engine = "TYPE=MyISAM")
 	{
 		tableDef = "CREATE TABLE " +_jtsTableName;
@@ -202,21 +203,26 @@ class JTS {
 		tableDef += _engine;
 		engine = _engine;
 		DB = _DB;
-		hlr_log("JTS()", &logStream, 7);
+		tableLock = JTS_LOCK_FILE;
+		hlr_log("JTS()", &logStream, 8);
 	};
-	
+
 	database DB;
+	int lock();
+	int unlock();
+	bool locked();
 
 	//CREATE *jtsTableName* SQL table with JTS schema and *engine*
 	//it can be also used to create a JTS based merge using 
 	//*engine* something like ENGINE=MERGE UNION=(t1,t2) INSERT_METHOD=LAST
 	int create();
 
-	private:
+private:
 	//gets the current create definition from the jobTransSummary table. 
 	//int getCurrentDef();
 	std::string tableDef;
 	std::string engine;
+	std::string tableLock;
 };
 
 #endif

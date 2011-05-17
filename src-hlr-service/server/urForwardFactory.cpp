@@ -695,7 +695,7 @@ int urForward::getFirstAndLastFromUniqueChecksum(string & uniqueChecksum, string
 	queryString += uniqueChecksum + "'";
 	logBuff = "query:" + queryString;
 	hlr_log(logBuff,&logStream,6);
-	bool needReset = false;
+	needReset = false;
 	hlrGenericQuery currentMin(queryString);
 	res = currentMin.query();
 	if ( res != 0 )
@@ -706,7 +706,7 @@ int urForward::getFirstAndLastFromUniqueChecksum(string & uniqueChecksum, string
 	}
 	else
 	{
-		if ( currentMin.numRows == 0 )//uniqueChecksum not found!
+		if ( currentMin.Rows() == 0 )//uniqueChecksum not found!
 		{
 			needReset = true;
 			logBuff = "uniqueChecksum:" + uniqueChecksum + " not found in jobTransSummary. Reset Needed";

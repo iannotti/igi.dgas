@@ -38,6 +38,44 @@ bool database::locked()
 	}
 }
 
+int JTS::lock()
+{
+	std::fstream cfStream(tableLock.c_str(), ios::out);
+	if ( !cfStream )
+	{
+		hlr_log("Could not lock jobTransSummary", &logStream, 8);
+		return 1;
+	}
+	else
+	{
+		hlr_log("jobTransSummary locked", &logStream, 8);
+		cfStream.close();
+		return 0;
+	}
+}
+
+bool JTS::locked()
+{
+	ifstream cfStream (tableLock.c_str(), ios::in);
+	if ( !cfStream )
+	{
+		hlr_log("jobTransSummary is not locked.", &logStream, 8);
+		return false;
+	}
+	else
+	{
+		hlr_log("jobTransSummary is locked.", &logStream, 5);
+		cfStream.close();
+		return true;
+	}
+}
+
+int JTS::unlock()
+{
+	hlr_log("Un-lock jobTransSummary.", &logStream, 8);
+	return unlink ( lockFile.c_str());
+}
+
 int JTS::create()
 {
 	db hlrDb ( DB.sqlServer,
@@ -100,9 +138,9 @@ int mergeTables::produceSqlUnionDefinition(std::string& def, std::string& unionD
 			{
 				//oldRecords + all records_* tables ordered by date;
 				db hlrDb ( DB.sqlServer,
-					DB.sqlUser,
-					DB.sqlPassword,
-					DB.sqlDbName );
+						DB.sqlUser,
+						DB.sqlPassword,
+						DB.sqlDbName );
 				std::string findOldRecords = "SHOW TABLES LIKE \"oldRecords\"";
 				hlr_log(findOldRecords, &logStream, 9);
 				dbResult result0 = hlrDb.query(findOldRecords);
@@ -143,7 +181,7 @@ int mergeTables::produceSqlUnionDefinition(std::string& def, std::string& unionD
 				{
 					return E_DBW_DBERR;
 				}
-			
+
 			}
 			if ( definition.at(0) == '-' ) 
 			{
@@ -153,9 +191,9 @@ int mergeTables::produceSqlUnionDefinition(std::string& def, std::string& unionD
 				int m = atoi(months.c_str());
 				//here add the {-M} def handler 
 				db hlrDb ( DB.sqlServer,
-					DB.sqlUser,
-					DB.sqlPassword,
-					DB.sqlDbName );
+						DB.sqlUser,
+						DB.sqlPassword,
+						DB.sqlDbName );
 				std::string findTables = "SHOW TABLES LIKE \"records_%\"";
 				hlr_log(findTables, &logStream, 9);
 				dbResult result = hlrDb.query(findTables);
@@ -274,7 +312,7 @@ int mergeTables::createMergeTable(std::string& mergeTableName, std::string& unio
 				return E_DBW_DBERR;
 			}
 		}
-		
+
 	}
 	JTS _jts(DB, mergeTableName, unionDef);
 	return _jts.create();
@@ -326,22 +364,22 @@ int recordsTables::dropAll()
 {
 	hlr_log("Dropping all MyISAM records tables.",&logStream,7);
 	db hlrDb ( DB.sqlServer,
-		DB.sqlUser,
-		DB.sqlPassword,
-		DB.sqlDbName );
-		std::string findTables = "SHOW TABLES LIKE \"records_%\"";
-		hlr_log(findTables, &logStream, 9);
-		dbResult result = hlrDb.query(findTables);
-		int numRows = result.numRows();
-		for ( int i = 0; i < numRows; i++ )
-		{
-			//iterate over records_tables and drop them all.
-			table t(DB,result.getItem(i,0));
-			t.drop();
-		}
-		table oldRecords(DB,"oldRecords");
-		oldRecords.drop();
-		return 0;
+			DB.sqlUser,
+			DB.sqlPassword,
+			DB.sqlDbName );
+	std::string findTables = "SHOW TABLES LIKE \"records_%\"";
+	hlr_log(findTables, &logStream, 9);
+	dbResult result = hlrDb.query(findTables);
+	int numRows = result.numRows();
+	for ( int i = 0; i < numRows; i++ )
+	{
+		//iterate over records_tables and drop them all.
+		table t(DB,result.getItem(i,0));
+		t.drop();
+	}
+	table oldRecords(DB,"oldRecords");
+	oldRecords.drop();
+	return 0;
 }
 
 int mergeTables::create()
@@ -352,7 +390,7 @@ int mergeTables::create()
 	mtf.open(mergeTablesFile.c_str(), fstream::out );
 	if ( !mtf )
 	{
-	
+
 		hlr_log("Error opening merge tables file.", &logStream, 3);
 		return E_DBW_OPENFILE;
 	}
@@ -519,9 +557,9 @@ int mergeTables::restoreMyISAMJTS()
 		int res = 0;
 		//check that this IS a MERGE table first!
 		db hlrDb ( DB.sqlServer,
-			DB.sqlUser,
-			DB.sqlPassword,
-			DB.sqlDbName );
+				DB.sqlUser,
+				DB.sqlPassword,
+				DB.sqlDbName );
 		std::string showCreate = "show create table jobTransSummary";
 		dbResult result = hlrDb.query(showCreate);
 		if ( hlrDb.errNo == 0 )
@@ -618,7 +656,7 @@ int table::rename(std::string newLabel)
 
 bool table::exists()
 {
-	
+
 	db hlrDb ( DB.sqlServer,
 			DB.sqlUser,
 			DB.sqlPassword,
@@ -755,7 +793,7 @@ int table::read(std::string& writeWhereClause,int& readLines ,std::string fileBu
 				readLines = atoi((result.getItem(0,0)).c_str());
 			}
 		}
-		
+
 	}
 	if ( readLines != currentNumLines )
 	{
