@@ -18,6 +18,7 @@
 #ifndef _GSISocketServer_h_
 #define _GSISocketServer_h_
 
+#include <string>
 /** Include the super class header. */
 #include "glite/dgas/common/tls/SocketServer.h"
 /** Include the secure socket globus definition. */
@@ -81,7 +82,7 @@ class GSISocketServer : public SocketServer
  
   void LimitedProxyMode(limited_proxy_mode_t mode) { limited_proxy_mode = mode; }
   void set_auth_timeout(int to);
-  string getErrMsg() { return errMsg; }
+  std::string getErrMsg() { return errMsg; }
 		  
  private:
   /**
@@ -95,7 +96,7 @@ class GSISocketServer : public SocketServer
   FILE *gsi_logfile;
   limited_proxy_mode_t limited_proxy_mode;
   int m_auth_timeout;
-  string errMsg = "";
+  std::string errMsg;
 };
 
 } // namespace socket_pp

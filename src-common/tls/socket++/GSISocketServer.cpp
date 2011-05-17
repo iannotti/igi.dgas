@@ -17,7 +17,7 @@
 /** The secure Socket Agent used for communication. */
 #include "glite/dgas/common/tls/GSISocketAgent.h"
 /** This class header file. */
-#include "glite/dgas/common/tls//GSISocketServer.h
+#include "glite/dgas/common/tls//GSISocketServer.h"
 
 //extern ofstream logStream;
 
@@ -316,7 +316,7 @@ bool GSISocketServer::AuthenticateAgent(GSISocketAgent* sa)
 					minor_status,
 					0);
 
-			errMsg = (string)gssmsg;
+			errMsg = (std::string)gssmsg;
 			free(gssmsg);
 			return false;
 		}
@@ -335,7 +335,7 @@ bool GSISocketServer::AuthenticateAgent(GSISocketAgent* sa)
 			sa -> _delegated_credentials_file = ctx.delegated_credentials_file;
 			sa -> _certificate_subject = ctx.certificate_subject;
 			sa -> _gridmap_name = ctx.gridmap_name;
-			int prevTimeOut = m_send_timeout;
+			int prevTimeOut = sa->m_send_timeout;
 			sa -> SetSndTimeout(m_auth_timeout);
 			bool res = sa -> Send(1);
 			sa -> SetSndTimeout(prevTimeOut);//take back previous timeout;
