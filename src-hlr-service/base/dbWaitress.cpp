@@ -73,7 +73,7 @@ bool JTS::locked()
 int JTS::unlock()
 {
 	hlr_log("Un-lock jobTransSummary.", &logStream, 8);
-	return unlink ( lockFile.c_str());
+	return unlink ( tableLock.c_str());
 }
 
 int JTS::create()
