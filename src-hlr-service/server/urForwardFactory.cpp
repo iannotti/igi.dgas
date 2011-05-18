@@ -29,7 +29,7 @@ int urForward::run()
 	{
 		//FIXME manage JTS lock here.
 		table jobTransSummary(dBase, "jobTransSummary");
-		while( jobTransSummary.isLocked() )
+		while( jobTransSummary.locked() )
 		{
 			logBuff = "jobTransSummary table is locked with file:" + jobTransSummary.getTableLock();
 			hlr_log(logBuff,&logStream,5);

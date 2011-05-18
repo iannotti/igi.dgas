@@ -50,6 +50,7 @@ dgas_hlr_urforward_LDADD = \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrGenericQuery.la \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
 	$(DBLIBS)
