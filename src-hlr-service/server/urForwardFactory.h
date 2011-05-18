@@ -2,7 +2,7 @@
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   :
  *  copyright : 
@@ -38,16 +38,16 @@ extern volatile sig_atomic_t keep_going;
 
 struct serverParameters
 {
-        string serverVersion;
-        string acceptRecordsStartDate;
-        string acceptRecordsEndDate;
-        string recordsPerConnection;
-        string urSourceServer;
-        string urSourceServerDN;
-        string remoteRecordId;
-        string recordDate;
-        string recordInsertDate;
-        string lastInsertedUniqueChecksum;
+	string serverVersion;
+	string acceptRecordsStartDate;
+	string acceptRecordsEndDate;
+	string recordsPerConnection;
+	string urSourceServer;
+	string urSourceServerDN;
+	string remoteRecordId;
+	string recordDate;
+	string recordInsertDate;
+	string lastInsertedUniqueChecksum;
 };
 
 struct confParams
@@ -61,89 +61,91 @@ struct confParams
 
 struct effectiveParams
 {
-        string serverVersion;
+	string serverVersion;
 	int recordsPerConnection;
 	string recordsStartDate;
 	string recordsEndDate;
 	string lastForwardedRecord;
-        string recordDate;
-        string recordInsertDate;
-        string lastInsertedUniqueChecksum;
+	string recordDate;
+	string recordInsertDate;
+	string lastInsertedUniqueChecksum;
 };
 
 class hlrLocation
 {
 	//The format is:
 	//[{vo1,vo2,...}]host[:port[:remoteHosDN]]
-	public:	
-		hlrLocation(string &s)
+public:
+	hlrLocation(string &s)
+	{
+		host = "";
+		p = 56568;
+		dn = "";
+		vector<string> urlBuff;
+		Split(':',s, &urlBuff);
+		if ( urlBuff.size() > 0 )
 		{
-			host = "";
-			p = 56568;
-			dn = "";
-			vector<string> urlBuff;
-			Split(':',s, &urlBuff);
 			if ( urlBuff.size() > 0 )
 			{
-				if ( urlBuff.size() > 0 ) 
+				size_t posS = urlBuff[0].find_first_of("{");
+				if ( posS != string::npos )
 				{
-					size_t posS = urlBuff[0].find_first_of("{");
-					if ( posS != string::npos )
+					size_t posE = urlBuff[0].find_first_of("}");
+					if ( posE != string::npos )
 					{
-						size_t posE = urlBuff[0].find_first_of("}");
-						if ( posE != string::npos )
-						{
-							host = urlBuff[0].substr(posE+1);
-							string voListString = urlBuff[0].substr(posS+1,posE-posS-1);
-							Split(',',voListString,&voList);
-						}
-					}
-					else
-					{
-						host = urlBuff[0];
+						host = urlBuff[0].substr(posE+1);
+						string voListString = urlBuff[0].substr(posS+1,posE-posS-1);
+						Split(',',voListString,&voList);
 					}
 				}
-				if ( urlBuff.size() > 1 ) p = atoi((urlBuff[1]).c_str());
-				if ( urlBuff.size() > 2 ) dn = urlBuff[2];
+				else
+				{
+					host = urlBuff[0];
+				}
 			}
-		};
-		string host;
-		int p;
-		string dn;
-		vector<string> voList;//CSV list of pertinetn VOs
+			if ( urlBuff.size() > 1 ) p = atoi((urlBuff[1]).c_str());
+			if ( urlBuff.size() > 2 ) dn = urlBuff[2];
+		}
+	};
+	string host;
+	int p;
+	string dn;
+	vector<string> voList;//CSV list of pertinetn VOs
 };
 
 class urForward {
-	public:
-		urForward( confParams& _conf)
-		{
-			conf = _conf;
-		};
+public:
+	urForward( confParams& _conf, database& _dBase)
+	{
+		conf = _conf;
+		dBase = _dBase;
+	};
 
-		int run();
-		int reset();
+	int run();
+	int reset();
 
-	private:
-		confParams conf;
-		effectiveParams usedParameters;
-	 
-		//methods for run();
-		int getServers(vector<string>& serverList);
-		int contactServer(hlrLocation& s, string& message, string& answer);
-		int getInfo(hlrLocation& s, serverParameters& serverParms);
-		string getInfo2XML();
-		int XML2serverParams(string &xml, serverParameters& serverParms);
+private:
+	confParams conf;
+	effectiveParams usedParameters;
+	database dBase;
 
-		int sendUsageRecords(hlrLocation& hlr, serverParameters& serverParms);
-		int getFirstAndLastFromTid (string& firstTid,string& lastTid );
-		int getFirstAndLastFromUniqueChecksum (string& uniqueChecksum, string& firstTid,string& lastTid );
-		int sendBurst (hlrLocation& h, long startTid, long endTid, string& lastTid);
-		int urBurst2XML(hlrGenericQuery& q, string& answer);
-		int getStatus(string& answer);
-		string getMaxId();
-		//methods for reset().
-		string reset2XML();
-		int sendReset(hlrLocation& s);
+	//methods for run();
+	int getServers(vector<string>& serverList);
+	int contactServer(hlrLocation& s, string& message, string& answer);
+	int getInfo(hlrLocation& s, serverParameters& serverParms);
+	string getInfo2XML();
+	int XML2serverParams(string &xml, serverParameters& serverParms);
+
+	int sendUsageRecords(hlrLocation& hlr, serverParameters& serverParms);
+	int getFirstAndLastFromTid (string& firstTid,string& lastTid );
+	int getFirstAndLastFromUniqueChecksum (string& uniqueChecksum, string& firstTid,string& lastTid );
+	int sendBurst (hlrLocation& h, long startTid, long endTid, string& lastTid);
+	int urBurst2XML(hlrGenericQuery& q, string& answer);
+	int getStatus(string& answer);
+	string getMaxId();
+	//methods for reset().
+	string reset2XML();
+	int sendReset(hlrLocation& s);
 };
 
 

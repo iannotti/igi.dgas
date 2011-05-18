@@ -48,50 +48,50 @@ string serversFileName = DEFAULT_CONFIG;
 
 int putLock(string lockFile)
 {
-        dgasLock Lock(lockFile);
-        if ( Lock.exists() )
-        {
-                //the lock file already exists, return an error.
-                return 1;
-        }
-        else
-        {
-                //the lock file doesn't exists, therefore creates it
-                //and insert some important information inside the file.
-                if ( Lock.put() != 0 )
-                {
-                        //there was an error creating the lock file.
-                        //exit with an error.
-                        return 2;
-                }
-                else
-                {
-                        return 0;
-                }
-        }
+	dgasLock Lock(lockFile);
+	if ( Lock.exists() )
+	{
+		//the lock file already exists, return an error.
+		return 1;
+	}
+	else
+	{
+		//the lock file doesn't exists, therefore creates it
+		//and insert some important information inside the file.
+		if ( Lock.put() != 0 )
+		{
+			//there was an error creating the lock file.
+			//exit with an error.
+			return 2;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }
 
 
 int removeLock( string lockFile)
 {
-        dgasLock Lock(lockFile);
-        if ( Lock.exists() )
-        {
-                //the lock file exits, remove it.
-                if ( Lock.remove() != 0 )
-                {
-                        //error removing the lock
-                        return 2;
-                }
-                else
-                {
-                        return 0;
-                }
-        }
-        else
-        {
-                return 1;
-        }
+	dgasLock Lock(lockFile);
+	if ( Lock.exists() )
+	{
+		//the lock file exits, remove it.
+		if ( Lock.remove() != 0 )
+		{
+			//error removing the lock
+			return 2;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 
@@ -119,14 +119,14 @@ get_options (int argc, char **argv)
 	int     option_index;
 	static  struct option long_options[] =
 	{
-		{"help",0,0,'h'},
-		{"daemon",0,0,'d'},
-		{"reset",0,0,'r'},
-		{"log",1,0,'l'},
-		{"Lock",1,0,'L'},
-		{"config",1,0,'c'},
-		{"file",1,0,'f'},
-		{0,0,0,0}
+			{"help",0,0,'h'},
+			{"daemon",0,0,'d'},
+			{"reset",0,0,'r'},
+			{"log",1,0,'l'},
+			{"Lock",1,0,'L'},
+			{"config",1,0,'c'},
+			{"file",1,0,'f'},
+			{0,0,0,0}
 	};
 	while (( option_char = getopt_long (argc,
 			argv,
@@ -135,17 +135,17 @@ get_options (int argc, char **argv)
 			&option_index)) != EOF)
 		switch (option_char)
 		{
-			case 'h': needsHelp = true; break;
-			case 'd': isDaemon = true; break;
-			case 'r': isDaemon = false; isReset=true; break;
-			case 'l': logFileName = optarg; break;
-			case 'L': lockFileName = optarg; break;
-			case 'c': configFileName = optarg; break;
-			case 'f': serversFileName = optarg; break;
-			default : break;
+		case 'h': needsHelp = true; break;
+		case 'd': isDaemon = true; break;
+		case 'r': isDaemon = false; isReset=true; break;
+		case 'l': logFileName = optarg; break;
+		case 'L': lockFileName = optarg; break;
+		case 'c': configFileName = optarg; break;
+		case 'f': serversFileName = optarg; break;
+		default : break;
 		}
 	return 0;
-	
+
 }
 
 void fatal_error_signal (int sig)
@@ -179,10 +179,10 @@ int main ( int argc, char * argv[] )
 		exit(1);
 	}
 	hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
-        hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
-        hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
-        hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
-        hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
+	hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
+	hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
+	hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
+	hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
 	if (logFileName == "")
 	{
 		logFileName = confMap["urForwardLog"];
@@ -218,12 +218,12 @@ int main ( int argc, char * argv[] )
 		conf.defConnTimeout = atoi((confMap["defConnTimeOut"]).c_str());
 	}
 	if ( confMap["systemLogLevel"] != "" )
-        {
-                system_log_level = atoi((confMap["systemLogLevel"]).c_str());
-        }
-        logBuff = "Log level:";
-        logBuff += int2string(system_log_level);
-        hlr_log(logBuff,&logStream,5);
+	{
+		system_log_level = atoi((confMap["systemLogLevel"]).c_str());
+	}
+	logBuff = "Log level:";
+	logBuff += int2string(system_log_level);
+	hlr_log(logBuff,&logStream,5);
 	if ( confMap["sendRecordsStartDate"] != "" )
 	{
 		conf.sendRecordsStartDate = confMap["sendRecordsStartDate"] ;
@@ -255,10 +255,13 @@ int main ( int argc, char * argv[] )
 	logBuff = "Number of record sent per iteration (acceptRecordsStartDate):";
 	logBuff += conf.recordsPerConnection;
 	hlr_log(logBuff,&logStream,4);
-		
-	urForward forwarder (conf);
+	database dBase(hlr_sql_server,
+					hlr_sql_user,
+					hlr_sql_password,
+					hlr_sql_dbname);
+	urForward forwarder (conf, dBase);
 	signal (SIGTERM, fatal_error_signal);
-        signal (SIGINT, fatal_error_signal);
+	signal (SIGINT, fatal_error_signal);
 	if ( isReset )
 	{
 		res = forwarder.reset();
@@ -276,9 +279,9 @@ int main ( int argc, char * argv[] )
 			if ( !isDaemon )
 				break;
 			for ( int s=0; s < forwardInterval ; s++ )
-	                {
-                	        if (keep_going) sleep(1);
-        	        }
+			{
+				if (keep_going) sleep(1);
+			}
 		}
 	}	
 	hlr_log ("Removing lock file.", &logStream, 6);

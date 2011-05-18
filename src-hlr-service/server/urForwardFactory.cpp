@@ -28,10 +28,6 @@ int urForward::run()
 	while ( keep_going && it != serverList.end() )
 	{
 		//FIXME manage JTS lock here.
-		database dBase(hlr_sql_server,
-				hlr_sql_user,
-				hlr_sql_password,
-				hlr_sql_dbname);
 		table jobTransSummary(dBase, "jobTransSummary");
 		while( jobTransSummary.isLocked() )
 		{
