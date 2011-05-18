@@ -13,7 +13,6 @@
 
 #define HLRDB_LOCK_FILE  "/tmp/dgas-hlrdb.lock"
 #define HLRDB_BUFF_FILE  "/tmp/dgas-hlrdb.buff"
-#define JTS_LOCK_FILE "/tmp/dgas-jobTransSummary.lock"
 #define DBW_MT_DEF_MONTHS 12
 #define DBW_MT_MTFILE	"/etc/dgas/dgas_hlr_mt.buff"
 
