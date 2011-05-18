@@ -2,7 +2,6 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include <vector>
 #include <stdlib.h>
-#include <string.h>
 #include <string>
 #include <sstream>
 #include <fstream>
