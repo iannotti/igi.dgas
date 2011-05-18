@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.13 2011/05/18 09:22:05 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.14 2011/05/18 09:45:42 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1090,7 +1090,7 @@ void Exit (int exitStatus )
 			hlr_sql_password,
 			hlr_sql_dbname);
 	table jobTransSummary(dBase, "jobTransSummary");
-	if ( jobTransSummary.isLocked() )
+	if ( jobTransSummary.locked() )
 	{
 		jobTransSummary.unlock();
 	}
@@ -1155,7 +1155,7 @@ int main (int argc, char **argv)
 			hlr_sql_password,
 			hlr_sql_dbname);
 	table jobTransSummary(dBase, "jobTransSummary");
-	if ( jobTransSummary.isLocked() )
+	if ( jobTransSummary.locked() )
 	{
 		cout << "jobTransSummary table is locked with lock file:" << jobTransSummary.getTableLock() << endl;
 		exit(0);
