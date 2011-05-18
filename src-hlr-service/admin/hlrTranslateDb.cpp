@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.12 2011/05/13 09:20:14 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.13 2011/05/18 09:22:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -106,29 +106,29 @@ int options ( int argc, char **argv )
 	int option_index = 0;
 	static struct option long_options[] =
 	{
-		{"Conf",1,0,'C'},
-		{"debug",0,0,'D'},
-		{"reset",0,0,'r'},
-		{"mergeReset",0,0,'m'},
-		{"checkvo",0,0,'v'},
-		{"checkDuplicate",0,0,'c'},
-		{"masterLock",0,0,'M'},
-		{"help",0,0,'h'},
-		{0,0,0,0}
+			{"Conf",1,0,'C'},
+			{"debug",0,0,'D'},
+			{"reset",0,0,'r'},
+			{"mergeReset",0,0,'m'},
+			{"checkvo",0,0,'v'},
+			{"checkDuplicate",0,0,'c'},
+			{"masterLock",0,0,'M'},
+			{"help",0,0,'h'},
+			{0,0,0,0}
 	};
 	while (( option_char = getopt_long( argc, argv, OPTION_STRING,
-					long_options, &option_index)) != EOF)
+			long_options, &option_index)) != EOF)
 		switch (option_char)
 		{
-			case 'C': confFileName = optarg; break;
-			case 'D': debug = true; break;
-			case 'r': reset =true;; break;		  
-			case 'm': mergeReset =true;; break;		  
-			case 'v': checkVo =true;; break;
-			case 'c': checkDuplicate =true;; break;
-			case 'M': putMasterLock =true;; break;
-			case 'h': needs_help =true;; break;		  
-			default : break;
+		case 'C': confFileName = optarg; break;
+		case 'D': debug = true; break;
+		case 'r': reset =true;; break;
+		case 'm': mergeReset =true;; break;
+		case 'v': checkVo =true;; break;
+		case 'c': checkDuplicate =true;; break;
+		case 'M': putMasterLock =true;; break;
+		case 'h': needs_help =true;; break;
+		default : break;
 		}
 	return 0;
 }
@@ -136,20 +136,20 @@ int options ( int argc, char **argv )
 int help (const char *progname)
 {
 	cerr << "\n " << progname << endl;
-        cerr << " Version: "<< VERSION << endl;
-        cerr << " Author: Andrea Guarise " << endl;
-        cerr << " 26/03/2008 " << endl <<endl;
+	cerr << " Version: "<< VERSION << endl;
+	cerr << " Author: Andrea Guarise " << endl;
+	cerr << " 26/03/2008 " << endl <<endl;
 	cerr << " Updates a reference table used in queries to the database." << endl;
-        cerr << " usage: " << endl;
-        cerr << " " << progname << " [OPTIONS] " << endl;
-        cerr << setw(30) << left << "-D --debug"<<"Ask for debug output" << endl;
+	cerr << " usage: " << endl;
+	cerr << " " << progname << " [OPTIONS] " << endl;
+	cerr << setw(30) << left << "-D --debug"<<"Ask for debug output" << endl;
 	cerr << setw(30) << left << "-C --Conf"<<"HLR configuration file, if not the default: " << DGAS_DEF_CONF_FILE << endl;
-        cerr << setw(30) << left << "-r --reset"<<"Clean up the query tables and recreates them from raw database info." << endl;
+	cerr << setw(30) << left << "-r --reset"<<"Clean up the query tables and recreates them from raw database info." << endl;
 	cerr << setw(30) << left << "-v --checkvo"<<"Try to fix most common source of problems determining user vo." << endl;
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Search for duplicate entries and expunge the one with less information." << endl;
 	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
-        cerr << setw(30) << left <<"-h --help"<<"This help" << endl;
-        cerr << endl;
+	cerr << setw(30) << left <<"-h --help"<<"This help" << endl;
+	cerr << endl;
 	return 0;	
 }
 
@@ -244,15 +244,15 @@ int addIndex(string dbName, string table, string index, bool primary = false)
 		queryString = "CREATE INDEX " + index +" on " + table + " ("+index+ ")";
 	}
 	if ( debug )
-        {
-                cerr << queryString << endl;
-        }
+	{
+		cerr << queryString << endl;
+	}
 	hlrGenericQuery createIndex(dbName, queryString);
 	int res = createIndex.query();
 	if ( debug )
-        {
+	{
 		cerr << "Exited with:" << res << endl;
-        }
+	}
 	return res;
 }
 
@@ -270,10 +270,10 @@ int dropIndex(string dbName, string table, string index)
 	hlrGenericQuery dropIndex(queryString);
 	int res = dropIndex.query();
 	if ( debug )
-        {
-                cerr << queryString << endl;
+	{
+		cerr << queryString << endl;
 		cerr << "Exited with:" << res << endl;
-        }
+	}
 	return res;
 }
 
@@ -284,19 +284,19 @@ bool checkIndex(string dbName, string table, string index)
 	describe.query();
 	if ( debug )
 	{
-                cerr << queryString << endl;
+		cerr << queryString << endl;
 	}
 	if ( describe.errNo == 0 )
-        {
-                vector<resultRow>::const_iterator it = (describe.queryResult).begin();
-                while ( it != (describe.queryResult).end() )
-                {
+	{
+		vector<resultRow>::const_iterator it = (describe.queryResult).begin();
+		while ( it != (describe.queryResult).end() )
+		{
 			if ( (*it)[0] == index )
 			{
-                        	if ( (*it)[3] != "" ) return true;
+				if ( (*it)[3] != "" ) return true;
 			}
-                        it++;
-                }
+			it++;
+		}
 	}
 	return false;
 }
@@ -344,7 +344,7 @@ bool createJobTransSummaryTable()
 		cerr << queryString << endl;
 	} 
 	hlrGenericQuery makeTable(queryString);
-        makeTable.query();
+	makeTable.query();
 	addIndex(hlr_sql_dbname, "jobTransSummary", "date");
 	addIndex(hlr_sql_dbname, "jobTransSummary", "endDate");
 	addIndex(hlr_sql_dbname, "jobTransSummary", "urSourceServer");
@@ -360,10 +360,10 @@ int addField(string table, string fieldDesc)
 	hlrGenericQuery createIndex(queryString);
 	int res = createIndex.query();
 	if ( debug )
-        {
-                cerr << queryString << endl;
+	{
+		cerr << queryString << endl;
 		cerr << "Exited with:" << res << endl;
-        }
+	}
 	return res;
 }
 
@@ -373,10 +373,10 @@ int flushTables()
 	hlrGenericQuery flush(queryString);
 	int res = flush.query();
 	if ( debug )
-        {
-                cerr << queryString << endl;
+	{
+		cerr << queryString << endl;
 		cerr << "Exited with:" << res << endl;
-        }
+	}
 	return res;
 }
 
@@ -386,10 +386,10 @@ int disableKeys(string dbName, string table)
 	hlrGenericQuery disable(dbName, queryString);
 	int res = disable.query();
 	if ( debug )
-        {
-                cerr << queryString << endl;
+	{
+		cerr << queryString << endl;
 		cerr << "Exited with:" << res << endl;
-        }
+	}
 	return res;
 }
 
@@ -399,10 +399,10 @@ int enableKeys(string dbName, string table)
 	hlrGenericQuery disable(dbName, queryString);
 	int res = disable.query();
 	if ( debug )
-        {
-                cerr << queryString << endl;
+	{
+		cerr << queryString << endl;
 		cerr << "Exited with:" << res << endl;
-        }
+	}
 	return res;
 }
 
@@ -411,12 +411,12 @@ bool createUrConcentratorTable()
 	string queryString = "";
 	queryString = "CREATE TABLE urConcentratorIndex";
 	queryString += " (urSourceServer varchar(255), ";
-	 queryString += "urSourceServerDN varchar(255), ";
-	 queryString += "remoteRecordId varchar(31), ";
-	 queryString += "recordDate datetime, ";
-	 queryString += "recordInsertDate datetime, ";
-	 queryString += "uniqueChecksum char(32), ";
-	 queryString += "primary key (urSourceServer))";
+	queryString += "urSourceServerDN varchar(255), ";
+	queryString += "remoteRecordId varchar(31), ";
+	queryString += "recordDate datetime, ";
+	queryString += "recordInsertDate datetime, ";
+	queryString += "uniqueChecksum char(32), ";
+	queryString += "primary key (urSourceServer))";
 	if ( debug )
 	{
 		cerr << queryString << endl;
@@ -431,37 +431,37 @@ bool createRolesTable()
 {
 	string queryString = "";
 	queryString = "CREATE TABLE roles";
-        queryString += " (id int(11), ";
-        queryString += " dn varchar(255), ";
-        queryString += " role varchar(160), ";
-        queryString += " permission varchar(16), ";
-        queryString += " queryType varchar(160), ";
-        queryString += " queryAdd varchar(255), ";
-        queryString += "primary key (dn,role))";
-        if ( debug )
-        {
-                cerr << queryString << endl;
-        }
-        hlrGenericQuery makeTable(queryString);
-        makeTable.query();
-        return checkTable("roles");
+	queryString += " (id int(11), ";
+	queryString += " dn varchar(255), ";
+	queryString += " role varchar(160), ";
+	queryString += " permission varchar(16), ";
+	queryString += " queryType varchar(160), ";
+	queryString += " queryAdd varchar(255), ";
+	queryString += "primary key (dn,role))";
+	if ( debug )
+	{
+		cerr << queryString << endl;
+	}
+	hlrGenericQuery makeTable(queryString);
+	makeTable.query();
+	return checkTable("roles");
 }
 
 bool createVomsAuthMapTable()
 {
 	string queryString = "";
-        queryString = "CREATE TABLE vomsAuthMap";
-        queryString += " (vo_id varchar(255), ";
-        queryString += " voRole varchar(255), ";
-        queryString += " hlrRole varchar(255), ";
-        queryString += "primary key (vo_id,voRole))";
-        if ( debug )
-        {
-                cerr << queryString << endl;
-        }
-        hlrGenericQuery makeTable(queryString);
-        makeTable.query();
-        return checkTable("vomsAuthMap");
+	queryString = "CREATE TABLE vomsAuthMap";
+	queryString += " (vo_id varchar(255), ";
+	queryString += " voRole varchar(255), ";
+	queryString += " hlrRole varchar(255), ";
+	queryString += "primary key (vo_id,voRole))";
+	if ( debug )
+	{
+		cerr << queryString << endl;
+	}
+	hlrGenericQuery makeTable(queryString);
+	makeTable.query();
+	return checkTable("vomsAuthMap");
 }
 
 bool isTableUpToDate (string dbName, string tableName, string &fieldList)
@@ -507,12 +507,12 @@ int dropTable (string tableName )
 {
 	string queryString = "DROP TABLE " + tableName;
 	if ( debug )
-        {
-                cerr << queryString << endl;
-        }
+	{
+		cerr << queryString << endl;
+	}
 	hlrGenericQuery q(queryString);
 	int res = q.query();
-        if ( res != 0 )
+	if ( res != 0 )
 	{
 		cerr << "Error dropping table " << tableName << ":" << int2string(res) << endl;
 		return res;
@@ -633,25 +633,25 @@ int upgradeJTSSchema ()
 	}
 	else
 	{
-			resLastTid = atoi((((iterQuery.queryResult).front())[0]).c_str());
-			records = atoi((((iterQuery.queryResult).front())[1]).c_str()) - resLastTid;
-			if ( records <= 80000 )
+		resLastTid = atoi((((iterQuery.queryResult).front())[0]).c_str());
+		records = atoi((((iterQuery.queryResult).front())[1]).c_str()) - resLastTid;
+		if ( records <= 80000 )
+		{
+			if ( debug ) cout << "Just one iteration is sufficient." << endl;
+			stepNumber = 1;
+		}
+		else
+		{
+			int iBuff = records/80000;
+			if ( debug )
 			{
-				if ( debug ) cout << "Just one iteration is sufficient." << endl; 
-				stepNumber = 1;
+				cout << "Number of records: " << int2string(records) << endl;
+				cout << "First Id: " << int2string(resLastTid) << endl;
+				cout << "From configuration: " << int2string(stepNumber) << endl;
+				cout << "From number of transactions: " << int2string(iBuff) << endl;
 			}
-			else
-			{
-				int iBuff = records/80000;
-				if ( debug )
-				{
-					cout << "Number of records: " << int2string(records) << endl;
-					cout << "First Id: " << int2string(resLastTid) << endl;
-					cout << "From configuration: " << int2string(stepNumber) << endl;
-					cout << "From number of transactions: " << int2string(iBuff) << endl;
-				}
-				stepNumber = ( iBuff >= stepNumber ) ? iBuff : stepNumber;
-			}
+			stepNumber = ( iBuff >= stepNumber ) ? iBuff : stepNumber;
+		}
 	}
 	percentage = 0;
 	if ( debug )
@@ -667,8 +667,8 @@ int upgradeJTSSchema ()
 		string queryString = "SELECT id,gridResource,lrmsId,start,wallTime,cpuTime from jobTransSummary WHERE id >=" + int2string(resLastTid) + " AND id <" + int2string(resLastTid+step);
 		hlrGenericQuery stepQuery(queryString);
 		if ( debug )
-				cerr << queryString << endl; 
-   		int res = stepQuery.query();
+			cerr << queryString << endl;
+		int res = stepQuery.query();
 		if ( res != 0 )
 		{
 			cout << "Warning: problem in query.";
@@ -680,9 +680,9 @@ int upgradeJTSSchema ()
 		int x = 0;
 		int y = 0;
 		int counter = 0;
-	       	int records = (stepQuery.queryResult).size();
+		int records = (stepQuery.queryResult).size();
 		I += records;
-       		int barStep = records/40;
+		int barStep = records/40;
 		vector<string> valuesJTSV;
 		int valuesCounter = 0;
 		string indicator = "#";
@@ -718,13 +718,13 @@ int upgradeJTSSchema ()
 			queryBuffer += "' WHERE id=" + id;
 			dbResult resultUTI = hlrDb.query(queryBuffer);
 			if ( hlrDb.errNo != 0 )
-               	       	{
+			{
 				indicator = "!";
-  	                    	if ( debug )
-                               	{
-                       	       	 	cerr << "ERROR:" <<queryBuffer << endl;
-	                       	}
-       	                }
+				if ( debug )
+				{
+					cerr << "ERROR:" <<queryBuffer << endl;
+				}
+			}
 			else
 			{
 				y++;
@@ -733,12 +733,12 @@ int upgradeJTSSchema ()
 			x++;
 			counter++;
 			valuesCounter++;
-       		        if (counter >= barStep )
-	       	        {
-       		             cout << indicator << flush;
-  	                     counter = 0;
-			     indicator = "#";
-  		        }
+			if (counter >= barStep )
+			{
+				cout << indicator << flush;
+				counter = 0;
+				indicator = "#";
+			}
 			it++;
 		}
 		if ( debug )
@@ -768,7 +768,7 @@ int upgradeJTSSchema ()
 	addIndex(hlr_sql_dbname, "jobTransSummary", "urSourceServer");
 	addIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid");
 	addIndex(hlr_sql_dbname, "jobTransSummary", "uniqueChecksum");
-	*/
+	 */
 	enableKeys ( hlr_sql_dbname, "jobTransSummary");
 	return res;
 }
@@ -869,7 +869,7 @@ int upgradeRGV ()
 	{
 		if ( (select1.queryResult).size() != 0 )
 		{
-			
+
 			vector<resultRow>::iterator it = (select1.queryResult).begin();
 			while ( it != (select1.queryResult).end() )
 			{
@@ -966,27 +966,27 @@ int createVoStorageRecordsTable ()
 		return 0;
 	}
 	string queryString = "";
-        queryString = "CREATE TABLE voStorageRecords";
-        queryString += " (";
+	queryString = "CREATE TABLE voStorageRecords";
+	queryString += " (";
 	queryString += " id bigint(20) unsigned auto_increment, ";
-        queryString += " uniqueChecksum char(32), ";
-        queryString += " timestamp int(10) unsigned, ";
+	queryString += " uniqueChecksum char(32), ";
+	queryString += " timestamp int(10) unsigned, ";
 	queryString += " siteName varchar(255), ";
-        queryString += " vo varchar(255), ";
-        queryString += " voDefSubClass varchar(255), ";
-        queryString += " storage varchar(255), ";
-        queryString += " storageSubClass varchar(255), ";
-        queryString += " urSourceServer varchar(255), ";
-        queryString += " usedBytes bigint(20) unsigned, ";
-        queryString += " freeBytes bigint(20) unsigned, ";
-        queryString += "primary key (uniqueChecksum), key(id), key (vo), key(storage))";
-        if ( debug )
-        {
-                cerr << queryString << endl;
-        }
-        hlrGenericQuery makeTable(queryString);
-        makeTable.query();
-        return checkTable("voStorageRecords");
+	queryString += " vo varchar(255), ";
+	queryString += " voDefSubClass varchar(255), ";
+	queryString += " storage varchar(255), ";
+	queryString += " storageSubClass varchar(255), ";
+	queryString += " urSourceServer varchar(255), ";
+	queryString += " usedBytes bigint(20) unsigned, ";
+	queryString += " freeBytes bigint(20) unsigned, ";
+	queryString += "primary key (uniqueChecksum), key(id), key (vo), key(storage))";
+	if ( debug )
+	{
+		cerr << queryString << endl;
+	}
+	hlrGenericQuery makeTable(queryString);
+	makeTable.query();
+	return checkTable("voStorageRecords");
 }
 
 
@@ -1040,13 +1040,13 @@ int removeDuplicated ()
 	string logBuff = "Checking for duplicate entries.";
 	hlr_log(logBuff,&logStream,6);
 	string queryString = "";
-        queryString = "SELECT uniqueChecksum,count(dgJobId) FROM jobTransSummary GROUP BY uniqueChecksum HAVING count(dgJobId) > 1";
-        if ( debug )
-        {
-                cerr << queryString << endl;
-        }
-        hlrGenericQuery getChecksums(queryString);
-        getChecksums.query();
+	queryString = "SELECT uniqueChecksum,count(dgJobId) FROM jobTransSummary GROUP BY uniqueChecksum HAVING count(dgJobId) > 1";
+	if ( debug )
+	{
+		cerr << queryString << endl;
+	}
+	hlrGenericQuery getChecksums(queryString);
+	getChecksums.query();
 	vector<resultRow>::const_iterator it = (getChecksums.queryResult).begin();
 	while ( it != (getChecksums.queryResult).end() )
 	{
@@ -1084,25 +1084,35 @@ void Exit (int exitStatus )
 {
 	if ( putMasterLock ) CFremove ( masterLock );
 	if ( putCFLock ) CFremove ( cfFileName );
+	//Now remove lock on jobTransSummary table.
+	database dBase(hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	table jobTransSummary(dBase, "jobTransSummary");
+	if ( jobTransSummary.isLocked() )
+	{
+		jobTransSummary.unlock();
+	}
 	exit(exitStatus);
 }
 
 int main (int argc, char **argv)
 {
 	options ( argc, argv );
-        map <string,string> confMap;
-        if ( dgas_conf_read ( confFileName, &confMap ) != 0 )
+	map <string,string> confMap;
+	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )
 	{
 		cerr << "Couldn't open configuration file: " <<
-			confFileName << endl;
+				confFileName << endl;
 	}
 	signal (SIGTERM, doNothing);
 	signal (SIGINT, doNothing);
-        hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
-        hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
-        hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
-        hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
-        hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
+	hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
+	hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
+	hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
+	hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
+	hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
 	hlr_logFileName = confMap["hlr_def_log"];
 	int stepNumber = 5;
 	string stepNumberStr = (confMap["translateStepNumber"]);
@@ -1110,7 +1120,7 @@ int main (int argc, char **argv)
 	bool autoDeleteOldRecords = false;
 	string rulesFile;
 	if ( ( confMap["autoDeleteOldRecords"] == "true" ) || 
-		( confMap["autoDeleteOldRecords"] == "yes" )  )
+			( confMap["autoDeleteOldRecords"] == "yes" )  )
 	{
 		autoDeleteOldRecords = true;
 	}
@@ -1138,6 +1148,21 @@ int main (int argc, char **argv)
 	{
 		cout << "Another instance of hlr-translatedb put a lock. Exiting." << endl;
 		exit(0);
+	}
+	//Now put a lock on jobTransSummary table.
+	database dBase(hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	table jobTransSummary(dBase, "jobTransSummary");
+	if ( jobTransSummary.isLocked() )
+	{
+		cout << "jobTransSummary table is locked with lock file:" << jobTransSummary.getTableLock() << endl;
+		exit(0);
+	}
+	else
+	{
+		jobTransSummary.lock();
 	}
 	if ( putMasterLock )
 	{
@@ -1177,9 +1202,9 @@ int main (int argc, char **argv)
 	}
 	if ( confMap["rulesFile"] != "" )
 	{
-			rulesFile = confMap["rulesFile"];
+		rulesFile = confMap["rulesFile"];
 	}
-	#ifdef MERGE
+#ifdef MERGE
 	bool useMergeTables = false;
 	database DB(hlr_sql_server,
 			hlr_sql_user,
@@ -1207,7 +1232,7 @@ int main (int argc, char **argv)
 			mergeTablesFile,
 			mergeTablesPastMonths);
 	if ( mergeReset || reset ) mt.reset = true;
-	#endif
+#endif
 	/*END merge tables definition*/
 	if (needs_help)
 	{
@@ -1217,7 +1242,7 @@ int main (int argc, char **argv)
 	if ( CFexists(cfFileName ) )
 	{
 		cout << "Found file:" << cfFileName << " ,which is a request to not perform any operation. Probably this is set by another instance of this command. Do not remove it unless you know what you are doing." << endl;
-		 Exit(0);
+		Exit(0);
 	}
 	else
 	{
@@ -1238,18 +1263,6 @@ int main (int argc, char **argv)
 	if ( !checkIndex(hlr_sql_dbname, "trans_in","uniqueChecksum")) addIndex(hlr_sql_dbname, "trans_in","uniqueChecksum");
 	if ( (!checkIndex(hlr_sql_dbname, "jobTransSummary","lrmsId")) && ( !is2ndLevelHlr ) ) addIndex(hlr_sql_dbname, "jobTransSummary","lrmsId");
 	if ( (!checkIndex(hlr_sql_dbname, "jobTransSummary","hlrTid")) && ( !is2ndLevelHlr ) ) addIndex(hlr_sql_dbname, "jobTransSummary","hlrTid");
-	//Remove unused 'jobAuth' table (>3.1.8)
-	if ( checkTable("jobAuth") )
-	{
-		if ( dropTable ("jobAuth") != 0) 
-		{
-			if ( debug )
-			{
-				cerr << "Warning: Error dropping jobAuth!" << endl;
-			}
-		}
-		
-	}
 	//create storage records table if it doesn't exists yet.
 	createVoStorageRecordsTable();
 	serviceVersion thisServiceVersion(hlr_sql_server,
@@ -1268,7 +1281,8 @@ int main (int argc, char **argv)
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
 	thisServiceVersion.updateStartup();
-	//try to update the table withuot recreating it 
+
+	//try to update the table without recreating it
 	//(applies just if updating 
 	//from a database already containing previous updates otherwise
 	//a reset will occur)
@@ -1366,10 +1380,10 @@ int main (int argc, char **argv)
 	}
 	if ( reset ) 
 	{
-		#ifdef MERGE
+#ifdef MERGE
 		if ( useMergeTables ) mt.drop();
 		if ( useMergeTables ) mt.dropAll();
-		#endif
+#endif
 		dropTable ("jobTransSummary");
 		if (checkTable("jobTransSummaryIndex") ) 
 			dropTable ("jobTransSummaryIndex");
@@ -1385,21 +1399,21 @@ int main (int argc, char **argv)
 		}
 	}
 	if (!checkTable("roles"))
-        {
-                if ( !createRolesTable() )
-                {
-                        cerr << "Error creating the  table roles!" << endl;
+	{
+		if ( !createRolesTable() )
+		{
+			cerr << "Error creating the  table roles!" << endl;
 			if ( reset ) CFremove(cfFileName);
-                        Exit(1);
-                }
-        }
+			Exit(1);
+		}
+	}
 	if (!checkTable("vomsAuthMap"))
 	{
 		if (!createVomsAuthMapTable())
 		{
 			cerr << "Error creating the  table vomsAuthMap!" << endl;
 			if ( reset ) CFremove(cfFileName);
-                        Exit(1);
+			Exit(1);
 		}
 	}
 	//drop transInInfo table. Not used anymore.
@@ -1452,7 +1466,7 @@ int main (int argc, char **argv)
 		if (checkTable("transInInfo")) dropTable("transInInfo");
 		if (checkTable("transInLog")) dropTable("transInLog");
 		if (checkTable("trans_in")) dropTable("trans_in");
-		#ifdef MERGE
+#ifdef MERGE
 		if ( useMergeTables )
 		{
 			cout << "Updating merge tables status." << endl;
@@ -1461,7 +1475,7 @@ int main (int argc, char **argv)
 			//tables
 			mt.addIndex("date","recordDate");
 		}
-		#endif
+#endif
 		if ( reset ) CFremove(cfFileName);
 		if ( checkDuplicate ) removeDuplicated();
 		execTranslationRules(rulesFile);
@@ -1476,7 +1490,7 @@ int main (int argc, char **argv)
 		}
 		cout << "We can safely exit here." << endl;
 		Exit(0);
-	//if this is a 2nd level HLR we can bail out here...
+		//if this is a 2nd level HLR we can bail out here...
 	}
 	//otherwise we must go on...
 	if (checkDuplicate ) removeDuplicated();

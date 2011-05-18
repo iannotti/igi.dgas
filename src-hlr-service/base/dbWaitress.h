@@ -73,6 +73,7 @@ public:
 		tableName = _tableName;	
 		DB = _DB;
 		hlr_log("table()", &logStream, 7);
+		tableLock = "/tmp/dgas-" + tableName + ".lock";
 	};
 	std::string tableName;
 	database DB;
@@ -84,6 +85,14 @@ public:
 	int removeRecords(std::string& whereClause);
 	int unlinkBuffer(std::string fileBuff = HLRDB_BUFF_FILE);
 	int drop();
+	int lock();
+	int unlock();
+	string lockOwner();
+	bool locked();
+	std::string getTableLock() const;
+	void setTableLock(std::string tableLock);
+protected:
+	std::string tableLock;
 };
 
 class recordsTables {
@@ -203,14 +212,10 @@ public:
 		tableDef += _engine;
 		engine = _engine;
 		DB = _DB;
-		tableLock = JTS_LOCK_FILE;
 		hlr_log("JTS()", &logStream, 8);
 	};
 
 	database DB;
-	int lock();
-	int unlock();
-	bool locked();
 
 	//CREATE *jtsTableName* SQL table with JTS schema and *engine*
 	//it can be also used to create a JTS based merge using 
@@ -222,7 +227,6 @@ private:
 	//int getCurrentDef();
 	std::string tableDef;
 	std::string engine;
-	std::string tableLock;
 };
 
 #endif

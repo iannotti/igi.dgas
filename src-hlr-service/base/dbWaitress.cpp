@@ -38,43 +38,8 @@ bool database::locked()
 	}
 }
 
-int JTS::lock()
-{
-	std::fstream cfStream(tableLock.c_str(), ios::out);
-	if ( !cfStream )
-	{
-		hlr_log("Could not lock jobTransSummary", &logStream, 8);
-		return 1;
-	}
-	else
-	{
-		hlr_log("jobTransSummary locked", &logStream, 8);
-		cfStream.close();
-		return 0;
-	}
-}
 
-bool JTS::locked()
-{
-	ifstream cfStream (tableLock.c_str(), ios::in);
-	if ( !cfStream )
-	{
-		hlr_log("jobTransSummary is not locked.", &logStream, 8);
-		return false;
-	}
-	else
-	{
-		hlr_log("jobTransSummary is locked.", &logStream, 5);
-		cfStream.close();
-		return true;
-	}
-}
 
-int JTS::unlock()
-{
-	hlr_log("Un-lock jobTransSummary.", &logStream, 8);
-	return unlink ( tableLock.c_str());
-}
 
 int JTS::create()
 {
@@ -1017,3 +982,84 @@ int recordsTables::createCurrentMonth()
 		return E_DBW_LINESMISMATCH;
 	}
 }
+
+int table::unlock()
+{
+	string logBuff = tableName + "UN-Locked";
+	hlr_log(logBuff, &logStream, 8);
+	return unlink ( tableLock.c_str());
+}
+
+int table::lock()
+{
+	std::fstream cfStream(tableLock.c_str(), ios::out);
+	if ( !cfStream )
+	{
+		string logBuff = "Could not lock " + tableName;
+		hlr_log(logBuff, &logStream, 8);
+		return 1;
+	}
+	else
+	{
+		string logBuff = tableName + " locked";
+		hlr_log(logBuff, &logStream, 8);
+		cfStream.close();
+		return 0;
+	}
+}
+
+
+
+std::string table::getTableLock() const
+{
+    return tableLock;
+}
+
+void table::setTableLock(std::string tableLock)
+{
+    this->tableLock = tableLock;
+}
+
+string table::lockOwner()
+{
+	ifstream cfStream (tableLock.c_str(), ios::in);
+		if ( !cfStream )
+		{
+			string logBuff = tableName + " is not locked";
+			hlr_log(logBuff, &logStream, 8);
+			return "";
+		}
+		else
+		{
+			string returnBuffer;
+			string textLine;
+			while ( getline (cfStream, textLine, '\n'))
+			{
+				returnBuffer += textLine;
+			}
+			string logBuff = tableName + " locked contents:" + returnBuffer;
+			hlr_log(logBuff, &logStream, 8);
+			cfStream.close();
+			return returnBuffer;
+		}
+}
+
+bool table::locked()
+{
+	ifstream cfStream (tableLock.c_str(), ios::in);
+	if ( !cfStream )
+	{
+		string logBuff = tableName + " is not locked";
+		hlr_log(logBuff, &logStream, 8);
+		return false;
+	}
+	else
+	{
+		string logBuff = tableName + " is locked";
+		hlr_log(logBuff, &logStream, 5);
+		cfStream.close();
+		return true;
+	}
+}
+
+

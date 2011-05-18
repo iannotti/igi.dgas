@@ -1,5 +1,6 @@
 #include "urForwardFactory.h"
 #include <setjmp.h> 
+#include "../base/dbWaitress.h"
 
 extern volatile sig_atomic_t keep_going;
 jmp_buf jump_on_alarm;
@@ -19,13 +20,28 @@ int urForward::run()
 	vector<string> serverList;
 	if ( getServers(serverList) != 0 )
 	{
-		logBuff = "Error reading server list from:" + conf.serversFile;
+		logBuff = "ERROR reading server list from:" + conf.serversFile;
 		hlr_log(logBuff,&logStream,3);
 		return E_NO_SERVERSFILE;
 	}
 	vector<string>::iterator it = serverList.begin();
 	while ( keep_going && it != serverList.end() )
 	{
+		//FIXME manage JTS lock here.
+		database dBase(hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
+		table jobTransSummary(dBase, "jobTransSummary");
+		while( jobTransSummary.isLocked() )
+		{
+			logBuff = "jobTransSummary table is locked with file:" + jobTransSummary.getTableLock();
+			hlr_log(logBuff,&logStream,5);
+			logBuff = "waiting for the other process to release the lock";
+			hlr_log(logBuff,&logStream,5);
+			sleep(1);
+		}
+		jobTransSummary.lock();
 		logBuff = "Contacting:" + *it;
 		hlr_log(logBuff,&logStream,4);
 		//for each entry in serverFile :
@@ -34,7 +50,7 @@ int urForward::run()
 		//get working parameters recorded in 2nd level HLR.
 		if ( getInfo(hlr, hlrParams) != 0 )
 		{
-			logBuff = "Error retrieving info from:" + *it;
+			logBuff = "ERROR retrieving info from:" + *it;
 			hlr_log(logBuff,&logStream,3);
 		}
 		else
@@ -64,6 +80,7 @@ int urForward::run()
 			}
 		}
 		it++;
+		jobTransSummary.unlock();
 	}
 	additionalMessageBuffer = "";
 	return 0;
