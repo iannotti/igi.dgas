@@ -28,6 +28,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "glite/dgas/common/base/int2string.h"
+#include "../base/dbWaitress.h"
 
 #define E_NO_SERVERSFILE 1
 #define E_ERROR_IN_RESET 3
