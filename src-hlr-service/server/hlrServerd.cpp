@@ -6,7 +6,7 @@
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   : Salvatore Monforte <salvatore.monforte@ct.infn.it>
  *  copyright : (C) 2001-2002 INFN
@@ -35,8 +35,8 @@
 #include "glite/dgas/common/base/dgasVersion.h"
 #include "xmlHlrHelper.h"
 //socketpp includes
-  #include "glite/dgas/common/tls/GSISocketServer.h"
-  #include "glite/dgas/common/tls/GSISocketAgent.h"
+#include "glite/dgas/common/tls/GSISocketServer.h"
+#include "glite/dgas/common/tls/GSISocketAgent.h"
 #define DEFAULT_CONFIG "/etc/dgas/dgas_hlr.conf"
 #define OPTION_STRING "hp:l:L:c:"
 
@@ -101,13 +101,13 @@ int print_help(const char* progname)
 	cerr<< progname << " [OPTIONS]" << endl << endl;;
 	cerr<< "OPTIONS:" <<endl;
 	cerr<< "-p  --port <port_num>    Set the listening port (overwrites the value defined" << endl;
-        cerr<< "                         in the HLR configuration file)." << endl;
+	cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-l  --log <logFile>      Set the log file name (overwrites the value defined" << endl;
-        cerr<< "                         in the HLR configuration file)." << endl;
+	cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-L  --Lock <lockFile>    Set the lock file name (overwrites the value defined" << endl;
-        cerr<< "                         in the HLR configuration file)." << endl;
+	cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
-        cerr<< "                         from the default (/etc/dgas/dgas_hlr.conf)." << endl;
+	cerr<< "                         from the default (/etc/dgas/dgas_hlr.conf)." << endl;
 	cerr<< "-h  --help               Print this help message." << endl;
 	return 0;
 }//print_help()
@@ -119,12 +119,12 @@ int get_options (int argc, char **argv)
 	int 	option_index;
 	static	struct option long_options[] =
 	{
-		{"help",0,0,'h'},
-		{"port",1,0,'p'},
-		{"log",1,0,'l'},
-		{"Lock",1,0,'L'},
-		{"config",1,0,'c'},
-		{0,0,0,0}
+			{"help",0,0,'h'},
+			{"port",1,0,'p'},
+			{"log",1,0,'l'},
+			{"Lock",1,0,'L'},
+			{"config",1,0,'c'},
+			{0,0,0,0}
 	};
 	while (( option_char = getopt_long (argc,
 			argv,
@@ -133,12 +133,12 @@ int get_options (int argc, char **argv)
 			&option_index)) != EOF)
 		switch (option_char)
 		{
-			case 'h': help_flag = 1; break;
-			case 'p': server_port = atoi(optarg); break;
-			case 'l': logFileName = optarg; break;
-			case 'L': lockFileName = optarg; break;
-			case 'c': configFileName = optarg; break;
-			default : break;
+		case 'h': help_flag = 1; break;
+		case 'p': server_port = atoi(optarg); break;
+		case 'l': logFileName = optarg; break;
+		case 'L': lockFileName = optarg; break;
+		case 'c': configFileName = optarg; break;
+		default : break;
 		}
 	return 0;
 }//get_options()
@@ -170,17 +170,17 @@ int main ( int argc, char * argv[] )
 		print_help(argv[0]);
 		return 0;
 	}
-        map <string,string> confMap;
-        if ( dgas_conf_read ( configFileName, &confMap ) != 0 )
+	map <string,string> confMap;
+	if ( dgas_conf_read ( configFileName, &confMap ) != 0 )
 	{
 		cerr << "Can't open configuration file:"<< configFileName << endl;
 		exit(1);
 	}
-        hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
-        hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
-        hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
-        hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
-        hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
+	hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
+	hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
+	hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
+	hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
+	hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
 	server_contact = (confMap["hlr_server_contact"]).c_str();
 	hlr_gridMapFile = (confMap["hlr_gridmapfile"]).c_str();
 	hlr_user = (confMap["hlr_user"]).c_str();
@@ -192,7 +192,7 @@ int main ( int argc, char * argv[] )
 	serverStatus.uiRequests=0;
 	serverStatus.ATMRequests=0;
 	serverStatus.pingRequests=0;
-		
+
 	if (server_port == -1)
 	{
 		server_port = atoi((confMap["hlr_def_port"]).c_str());
@@ -209,7 +209,7 @@ int main ( int argc, char * argv[] )
 	}
 	if ( bootstrapLog(logFileName, &logStream) != 0 )
 	{
-		cerr << "Error bootstrapping Log file " << endl;
+		cerr << "ERROR bootstrapping Log file " << endl;
 		cerr << logFileName << endl;
 		exit(1);
 	}
@@ -221,7 +221,7 @@ int main ( int argc, char * argv[] )
 	}
 	if ( setSecurityEnvironment(security) != 0 )
 	{
-		hlr_log("Error setting security environment!",&logStream,2);
+		hlr_log("ERROR setting security environment!",&logStream,2);
 		exit(1);
 	}
 	hlr_log ( "Listening on port " + int2string(server_port), &logStream, 5 );
@@ -233,7 +233,7 @@ int main ( int argc, char * argv[] )
 	{
 		//for some reasons it was impossible to create the lock
 		//therefore the server won't be started.
-		hlr_log("Startup failed: Error creating lock file",
+		hlr_log("ERROR creating lock file. Startup failed",
 				&logStream, 0);
 		exit(atoi(E_LOCK_OPEN));
 	}
@@ -350,45 +350,45 @@ int main ( int argc, char * argv[] )
 		{
 			deleteOnReset = false;
 		}
-		logBuff = "Start accepting records (acceptRecordsStartDate) from:";
+		logBuff = "Accepting records since (acceptRecordsStartDate):";
 		logBuff += acceptRecordsStartDate;
 		hlr_log(logBuff,&logStream,7); 
 		logBuff = "Accepting records until (acceptRecordsEndDate):";
 		logBuff += acceptRecordsEndDate;
 		hlr_log(logBuff,&logStream,7); 
-		logBuff = "Number of record accepted per iteration (recordsPerConnection):";
+		logBuff = "Records accepted per iteration (recordsPerConnection):";
 		logBuff += recordsPerConnection;
 		hlr_log(logBuff,&logStream,7); 
 		serverStatus.engines="UI:CONCENTRATOR:PING";
 	}
-	
-		lStatus.server_port = server_port;
-		lStatus.logFileName = logFileName;
-		lStatus.lockFileName = lockFileName;
-		lStatus.qtransInsertLog =qtransInsertLog;
-		lStatus.threadNumber = threadNumber;
-		lStatus.strictAccountCheck = strictAccountCheck;
-		lStatus.defConnTimeOut = defConnTimeOut;
-		lStatus.system_log_level = system_log_level;
-		lStatus.maxItemsPerQuery = maxItemsPerQuery;
-		lStatus.dgas_var_dir = dgas_var_dir;
-		lStatus.authUserSqlQueries = authUserSqlQueries;
-		lStatus.useMergeTables = useMergeTables;
-		lStatus.mergeTablesDefinitions = mergeTablesDefinitions;
-		lStatus.threadUsecDelay =threadUsecDelay;
-		lStatus.threadPoolUsecDelay =threadPoolUsecDelay;
-		lStatus.is2ndLevelHlr = is2ndLevelHlr;
-		lStatus.checkVo = checkVo;
-		lStatus.acceptRecordsStartDate = acceptRecordsStartDate;
-		lStatus.acceptRecordsEndDate = acceptRecordsEndDate;
-		lStatus.recordsPerConnection = recordsPerConnection;
-		lStatus.deleteOnReset = deleteOnReset;
+
+	lStatus.server_port = server_port;
+	lStatus.logFileName = logFileName;
+	lStatus.lockFileName = lockFileName;
+	lStatus.qtransInsertLog =qtransInsertLog;
+	lStatus.threadNumber = threadNumber;
+	lStatus.strictAccountCheck = strictAccountCheck;
+	lStatus.defConnTimeOut = defConnTimeOut;
+	lStatus.system_log_level = system_log_level;
+	lStatus.maxItemsPerQuery = maxItemsPerQuery;
+	lStatus.dgas_var_dir = dgas_var_dir;
+	lStatus.authUserSqlQueries = authUserSqlQueries;
+	lStatus.useMergeTables = useMergeTables;
+	lStatus.mergeTablesDefinitions = mergeTablesDefinitions;
+	lStatus.threadUsecDelay =threadUsecDelay;
+	lStatus.threadPoolUsecDelay =threadPoolUsecDelay;
+	lStatus.is2ndLevelHlr = is2ndLevelHlr;
+	lStatus.checkVo = checkVo;
+	lStatus.acceptRecordsStartDate = acceptRecordsStartDate;
+	lStatus.acceptRecordsEndDate = acceptRecordsEndDate;
+	lStatus.recordsPerConnection = recordsPerConnection;
+	lStatus.deleteOnReset = deleteOnReset;
 	// instantiate the Socket server
 	GSISocketServer *theServer = new GSISocketServer(server_port,threadNumber);
 	theServer->LimitedProxyMode(GSISocketServer::multi);
 	if ( !(theServer -> Open()) )	
 	{
-		hlr_log( "Error opening the listener! Exiting", &logStream, 0 );
+		hlr_log( "ERROR opening the listener! Exiting", &logStream, 0 );
 		removeLock(lockFileName);
 		exit(atoi(E_SERVER_START));
 	}
@@ -411,52 +411,52 @@ int main ( int argc, char * argv[] )
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);//!!!
 		while (keep_going)
 		{
-		int lastThread = 0;
-	    for (int i=0; ( i< threadNumber ) && keep_going; i++ )
-  		{
-			if ( activeThreads >= threadNumber )
+			int lastThread = 0;
+			for (int i=0; ( i< threadNumber ) && keep_going; i++ )
 			{
-				continue;
-			}
-			theAgent[i] = NULL;
-			logString = "Listening for incoming connections,";
-			hlr_log(logString,&logStream,7);
-			logString = "Creating agent:" + int2string(i);
-			hlr_log(logString,&logStream,8);
-			while ( keep_going )
-			{	
-				theAgent[i] = theServer->Listen();
-				if (theAgent[i]) 
+				if ( activeThreads >= threadNumber )
 				{
-					theAgent[i] -> SetTimeout( defConnTimeOut );
-					break;//while (inner,listen)
+					continue;
+				}
+				theAgent[i] = NULL;
+				logString = "Listening for incoming connections";
+				hlr_log(logString,&logStream,7);
+				logString = "Creating agent:" + int2string(i);
+				hlr_log(logString,&logStream,8);
+				while ( keep_going )
+				{
+					theAgent[i] = theServer->Listen();
+					if (theAgent[i])
+					{
+						theAgent[i] -> SetTimeout( defConnTimeOut );
+						break;//while (inner,listen)
+					}
+				}
+				lStatus.activeThreads = activeThreads;
+				logString = "Number of active threads:" + int2string(lStatus.activeThreads);
+				hlr_log(logString,&logStream,8);
+				if ( theAgent[i] != NULL )
+				{
+					thread[i] = new pthread_t;
+					ts[i] = new threadStruct;
+					ts[i]->s = theServer;
+					ts[i]->a = theAgent[i];
+					ts[i]->tN = i;
+					logString = "spawning thread" + int2string(i);
+					hlr_log(logString,&logStream,8);
+					int res = pthread_create(thread[i],&attr,&thrLoop,(void *)ts[i]);
+					logString = "thread creation" + int2string(i) + ", returned:" + int2string(res);
+					hlr_log(logString,&logStream,9);
+					lastThread = i;
 				}
 			}
-			lStatus.activeThreads = activeThreads;
-			logString = "Number of active threads:" + int2string(lStatus.activeThreads);
-			hlr_log(logString,&logStream,8);
-			if ( theAgent[i] != NULL )
-			{
-				thread[i] = new pthread_t;
-				ts[i] = new threadStruct;
-				ts[i]->s = theServer;
-				ts[i]->a = theAgent[i];
-				ts[i]->tN = i;
-				logString = "spawning thread" + int2string(i);
-				hlr_log(logString,&logStream,8);
-				int res = pthread_create(thread[i],&attr,&thrLoop,(void *)ts[i]);
-				logString = "thread creation" + int2string(i) + ", returned :" + int2string(res);
-				hlr_log(logString,&logStream,8);
-				lastThread = i;
-			}
-		}
-		usleep(threadPoolUsecDelay);
+			usleep(threadPoolUsecDelay);
 		}
 	}			
-theServer->Close();
-delete theServer;
-hlr_log ("Server closed, removing lock file.", &logStream, 4);
-removeLock(lockFileName);
-hlr_log ("Exiting.", &logStream, 6);
-return 0;
+	theServer->Close();
+	delete theServer;
+	hlr_log ("Server closed, removing lock file", &logStream, 4);
+	removeLock(lockFileName);
+	hlr_log ("Exiting", &logStream, 6);
+	return 0;
 }

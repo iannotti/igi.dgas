@@ -1,13 +1,13 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.5 2011/03/28 09:32:39 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.6 2011/05/19 08:12:51 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   : 
  *  copyright : 
@@ -94,11 +94,11 @@ print_help(const char* progname)
 	cerr<< progname << " [OPTIONS]" << endl << endl;;
 	cerr<< "OPTIONS:" <<endl;
 	cerr<< "-l  --log <logFile>      Set the log file name (overwrites the value defined" << endl;
-        cerr<< "                         in the HLR configuration file)." << endl;
+	cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-L  --Lock <lockFile>    Set the lock file name (overwrites the value defined" << endl;
-        cerr<< "                         in the HLR configuration file)." << endl;
+	cerr<< "                         in the HLR configuration file)." << endl;
 	cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
-        cerr<< "                         from the default (/etc/dgas/dgas_hlr.conf)." << endl;
+	cerr<< "                         from the default (/etc/dgas/dgas_hlr.conf)." << endl;
 	cerr<< "-e  --error              Process the transactions in fatal error state. (this can be obtained also by issuing a SIGHUP to the daemon process.)" << endl;
 	cerr<< "-h  --help               Print this help message." << endl;
 	return 0;
@@ -112,12 +112,12 @@ get_options (int argc, char **argv)
 	int 	option_index;
 	static	struct option long_options[] =
 	{
-		{"help",0,0,'h'},
-		{"log",1,0,'l'},
-		{"error",0,0,'e'},
-		{"Lock",1,0,'L'},
-		{"config",1,0,'c'},
-		{0,0,0,0}
+			{"help",0,0,'h'},
+			{"log",1,0,'l'},
+			{"error",0,0,'e'},
+			{"Lock",1,0,'L'},
+			{"config",1,0,'c'},
+			{0,0,0,0}
 	};
 	while (( option_char = getopt_long (argc,
 			argv,
@@ -126,24 +126,24 @@ get_options (int argc, char **argv)
 			&option_index)) != EOF)
 		switch (option_char)
 		{
-			case 'h': help_flag = 1; break;
-			case 'l': logFileName = optarg; break;
-			case 'e': error_flag = true; break;
-			case 'L': lockFileName = optarg; break;
-			case 'c': configFileName = optarg; break;
-			default : break;
+		case 'h': help_flag = 1; break;
+		case 'l': logFileName = optarg; break;
+		case 'e': error_flag = true; break;
+		case 'L': lockFileName = optarg; break;
+		case 'c': configFileName = optarg; break;
+		default : break;
 		}
 	return 0;
 }//get_options()
 
 class fmap {
-	public:
+public:
 	string key;
 	string value;
 
 	fmap ( string _key = "",
-		string _value = ""):
-		key(_key),value(_value){;};
+			string _value = ""):
+				key(_key),value(_value){;};
 };
 
 int computeCostFormula ( string f, cmnLogRecords& l, price& p,int& cost)
@@ -151,10 +151,10 @@ int computeCostFormula ( string f, cmnLogRecords& l, price& p,int& cost)
 	string logBuff = "Determining cost from formula:" + f;
 	hlr_log( logBuff, &logStream, 5);
 	db hlrDb ( hlr_sql_server,
-		hlr_sql_user,
-		hlr_sql_password,
-		hlr_sql_dbname
-		);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname
+	);
 	vector<fmap> mv;
 	mv.push_back(fmap("cpuTime", int2string(l.cpuTime)));
 	mv.push_back(fmap("wallTime", int2string(l.wallTime)));
@@ -235,12 +235,12 @@ int computeJobCost(string& logData, qTransaction& t, int& cost)
 			res = dgas_pa_client( l.priceAuthority ,&p);
 			if ( res == 0 )
 			{
-				
+
 				if ( formula != "" )
 				{
 					if ( computeCostFormula(formula, l, p, cost) != 0 )
 					{
-						logBuff = "Error in cost formula:";
+						logBuff = "ERROR in cost formula:";
 						logBuff += formula;
 						hlr_log( logBuff, &logStream, 2);
 						return 3;
@@ -278,135 +278,135 @@ string retrieveUserCertSubject(string& s)
 
 void mainLoop( int hlr_qmgr_tPerIter )
 {
-  int i = 0;
-  while ( (i < hlr_qmgr_tPerIter) && keep_going)
-  {
-        vector<string> keys;
-        if ( qTrans::get(i, keys) == 0 && keep_going )
-        {
-                logBuff = "hlr_qMgr::mainLoop():Record priority:" + int2string(i);
-                hlr_log( logBuff, &logStream, 4);
+	int i = 0;
+	while ( (i < hlr_qmgr_tPerIter) && keep_going)
+	{
+		vector<string> keys;
+		if ( qTrans::get(i, keys) == 0 && keep_going )
+		{
+			logBuff = "hlr_qMgr::mainLoop():Record priority:" + int2string(i);
+			hlr_log( logBuff, &logStream, 7);
 
 
-                vector<string>::const_iterator it = keys.begin();
-                while ( (it != keys.end()) && keep_going )
-                {
-                        logBuff = "hlr_qMgr::mainLoop():Processing:" + *it;
-                        hlr_log( logBuff, &logStream, 4);
-
-                        qTransaction trans;
-                        if (trans.get(*it) != 0 )
-                        {
-                                logBuff = "hlr_qMgr::mainLoop():Error retrieving:" + *it;
-                                hlr_log( logBuff, &logStream, 2);
-                                it++;
-                                continue;
-                        }
-                        string logDataBuff = trans.logData;
-			string userCertBuff = retrieveUserCertSubject(trans.gridUser);
-                        hlrTransaction t(
-                                         0,
-                                         trans.transactionId,
-                                         userCertBuff,
-                                         trans.gridResource,
-                                         trans.urSource,
-                                         0,
-                                         trans.timestamp,
-                                         trans.logData,
-					 trans.uniqueChecksum,
-					 trans.accountingProcedure
-                                        );
-			logBuff = "Processing: ";
-			logBuff += trans.transactionId;
-			hlr_log (logBuff, &logStream, 4);
-			logBuff = "hlrTransaction, transaction_id: ";
-			logBuff += t.id;
-			logBuff += ",gridUser: ";
-			logBuff += t.gridUser;
-			logBuff += ",gridResource: ";
-			logBuff += t.gridResource;
-			logBuff += ",urSource: ";
-			logBuff += t.urSource;
-			logBuff += ",amount: ";
-			logBuff += int2string(t.amount);
-			logBuff += ",timeStamp: ";
-			logBuff += t.timeStamp;
-			logBuff += ",uniqueChecksum: ";
-			logBuff += t.uniqueChecksum;
-			logBuff += ",accountingProcedure: ";
-			logBuff += t.accountingProcedure;
-			hlr_log (logBuff, &logStream, 6);
-			
-			if ( computeJobCost(trans.logData, trans, t.amount) != 0)
+			vector<string>::const_iterator it = keys.begin();
+			while ( (it != keys.end()) && keep_going )
 			{
-				if ( priceIsMandatory )
+				logBuff = "hlr_qMgr::mainLoop():Processing:" + *it;
+				hlr_log( logBuff, &logStream, 4);
+
+				qTransaction trans;
+				if (trans.get(*it) != 0 )
 				{
-					logBuff = "hlr_qMgr::mainLoop():Computing job cost is mandatory for this server. Postponing";
-                                        hlr_log( logBuff, &logStream, 1);
-                                        if ((time(NULL) - trans.statusTime) > hlr_qmgr_expPeriod )
-                                        {
-                        	                trans.priority++;
-                                	        trans.statusTime = time(NULL);
-                                                trans.update();
-                                        }
-                                        it++;
-                                        continue;
+					logBuff = "ERROR retrieving:" + *it;
+					hlr_log( logBuff, &logStream, 2);
+					it++;
+					continue;
 				}
-			}
-                       	logBuff = "hlr_qMgr::mainLoop(): Processing: " + t.id;
-                       	hlr_log( logBuff, &logStream, 4);
-			alarm(60);
-			int res = 0;
-			if ( useATMVersion2 )
-			{
-                       		res = dgasResBankClient::bankClient2( t );
-			}
-			else
-			{
-                       		res = dgasResBankClient::bankClient( t );
-			}
-			alarm(0);
-                        if ( res != 0 )
-                        {
-                                logBuff = "hlr_qMgr::mainLoop(): Can't process:" + t.id + ",Error:" +int2string(res);
-                                hlr_log( logBuff, &logStream, 1);
-				if ( ( res == atoi(ATM_E_DUPLICATED_A) ) || ( res == atoi(ATM_E_DUPLICATED_B) ))
+				string logDataBuff = trans.logData;
+				string userCertBuff = retrieveUserCertSubject(trans.gridUser);
+				hlrTransaction t(
+						0,
+						trans.transactionId,
+						userCertBuff,
+						trans.gridResource,
+						trans.urSource,
+						0,
+						trans.timestamp,
+						trans.logData,
+						trans.uniqueChecksum,
+						trans.accountingProcedure
+				);
+				logBuff = "Processing: ";
+				logBuff += trans.transactionId;
+				hlr_log (logBuff, &logStream, 4);
+				logBuff = "hlrTransaction, transaction_id: ";
+				logBuff += t.id;
+				logBuff += ",gridUser: ";
+				logBuff += t.gridUser;
+				logBuff += ",gridResource: ";
+				logBuff += t.gridResource;
+				logBuff += ",urSource: ";
+				logBuff += t.urSource;
+				logBuff += ",amount: ";
+				logBuff += int2string(t.amount);
+				logBuff += ",timeStamp: ";
+				logBuff += t.timeStamp;
+				logBuff += ",uniqueChecksum: ";
+				logBuff += t.uniqueChecksum;
+				logBuff += ",accountingProcedure: ";
+				logBuff += t.accountingProcedure;
+				hlr_log (logBuff, &logStream, 6);
+
+				if ( computeJobCost(trans.logData, trans, t.amount) != 0)
 				{
-					logBuff = "Expunging duplicated record " + t.id;
-					hlr_log( logBuff, &logStream, 4);
-					trans.remove();	
+					if ( priceIsMandatory )
+					{
+						logBuff = "WARNING: Job cost is mandatory for this server, postponing";
+						hlr_log( logBuff, &logStream, 1);
+						if ((time(NULL) - trans.statusTime) > hlr_qmgr_expPeriod )
+						{
+							trans.priority++;
+							trans.statusTime = time(NULL);
+							trans.update();
+						}
+						it++;
+						continue;
+					}
+				}
+				logBuff = "Processing: " + t.id;
+				hlr_log( logBuff, &logStream, 4);
+				alarm(60);
+				int res = 0;
+				if ( useATMVersion2 )
+				{
+					res = dgasResBankClient::bankClient2( t );
 				}
 				else
 				{
-                                	if ((time(NULL) - trans.statusTime) > hlr_qmgr_expPeriod )
-                                	{
-						logBuff = "hlr_qMgr::mainLoop():Incresing Priority:";
-                                	        trans.priority++;
-                                        	trans.statusTime = time(NULL);
-						logBuff += "New Priority:" + int2string(trans.priority);
-						logBuff += ",New StatusTime:" + int2string(trans.statusTime);
-                                	        int res = trans.update();
-						logBuff += ",Ret:" + int2string(res);
-						hlr_log( logBuff, &logStream, 5);
-                        	        }
+					res = dgasResBankClient::bankClient( t );
 				}
-                        }
-                        else
-                        {
-                                logBuff = "hlr_qMgr::mainLoop(): Processed:" + t.id;
-                                hlr_log( logBuff, &logStream, 4);
+				alarm(0);
+				if ( res != 0 )
+				{
+					logBuff = "Can't process:" + t.id + ",ERROR:" +int2string(res);
+					hlr_log( logBuff, &logStream, 1);
+					if ( ( res == atoi(ATM_E_DUPLICATED_A) ) || ( res == atoi(ATM_E_DUPLICATED_B) ))
+					{
+						logBuff = "Delete duplicated record:" + t.id;
+						hlr_log( logBuff, &logStream, 4);
+						trans.remove();
+					}
+					else
+					{
+						if ((time(NULL) - trans.statusTime) > hlr_qmgr_expPeriod )
+						{
+							logBuff = "Increasing priority:";
+							trans.priority++;
+							trans.statusTime = time(NULL);
+							logBuff += "New Priority:" + int2string(trans.priority);
+							logBuff += ",New StatusTime:" + int2string(trans.statusTime);
+							int res = trans.update();
+							logBuff += ",Ret:" + int2string(res);
+							hlr_log( logBuff, &logStream, 7);
+						}
+					}
+				}
+				else
+				{
+					logBuff = "Processed:" + t.id;
+					hlr_log( logBuff, &logStream, 4);
 
-                                if ( trans.remove() != 0 )
-                                {
-                                	hlr_log( "hlr_qMgr::mainLoop(): Error removing processed record from queue", &logStream, 1);
-                                }
-                        }
-                        it++;
-                }
-        }
-        i++;
-  }
-return;
+					if ( trans.remove() != 0 )
+					{
+						hlr_log( "ERROR removing processed record from queue", &logStream, 1);
+					}
+				}
+				it++;
+			}
+		}
+		i++;
+	}
+	return;
 }
 
 
@@ -416,8 +416,8 @@ int processErrorTransactions(int i)
 	time_t currtime;
 	currtime = time(NULL);
 	string fileName = "/usr/var/hlr_tmp_dump-";
-		fileName += int2string(currtime);
-		fileName += ".sqldump";
+	fileName += int2string(currtime);
+	fileName += ".sqldump";
 	qTrans::archiveGreaterThan(i-1,fileName);
 	qTrans::removeGreaterThan(i-1);
 	return 0;
@@ -425,53 +425,53 @@ int processErrorTransactions(int i)
 
 int putLock(string lockFile)
 {
-        dgasLock Lock(lockFile);
-        if ( Lock.exists() )
-        {
-                //the lock file already exists, return an error.
-                return 1;
-        }
-        else
-        {
-                //the lock file doesn't exists, therefore creates it
-                //and insert some important information inside the file.
-                if ( Lock.put() != 0 )
-                {
-                        //there was an error creating the lock file.
-                        //exit with an error.
-                        return 2;
-                }
-                else
-                {
-                        return 0;
-                }
-        }
+	dgasLock Lock(lockFile);
+	if ( Lock.exists() )
+	{
+		//the lock file already exists, return an error.
+		return 1;
+	}
+	else
+	{
+		//the lock file doesn't exists, therefore creates it
+		//and insert some important information inside the file.
+		if ( Lock.put() != 0 )
+		{
+			//there was an error creating the lock file.
+			//exit with an error.
+			return 2;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
 }
 
 int removeLock( string lockFile)
 {
-        dgasLock Lock(lockFile);
-        if ( Lock.exists() )
-        {
-                //the lock file exits, remove it.
-                if ( Lock.remove() != 0 )
-                {
-			hlr_log("Error removing the lock file", &logStream, 1);
-                        //error removing the lock
-                        return 2;
-                }
-                else
-                {
+	dgasLock Lock(lockFile);
+	if ( Lock.exists() )
+	{
+		//the lock file exits, remove it.
+		if ( Lock.remove() != 0 )
+		{
+			hlr_log("ERROR removing lock file", &logStream, 1);
+			//error removing the lock
+			return 2;
+		}
+		else
+		{
 			hlr_log("lock file removed", &logStream, 4);
-                        return 0;
-                }
-        }
-        else
-        {
+			return 0;
+		}
+	}
+	else
+	{
 		hlr_log("lock file doesn't exists", &logStream, 1);
-                return 1;
-        }
+		return 1;
+	}
 }
 
 
@@ -498,13 +498,13 @@ int main ( int argc, char * argv[] )
 		print_help(argv[0]);
 		exit(1);
 	}
-        map <string,string> confMap;
-        dgas_conf_read ( configFileName, &confMap );
-        hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
-        hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
-        hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
-        hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
-        hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
+	map <string,string> confMap;
+	dgas_conf_read ( configFileName, &confMap );
+	hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
+	hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
+	hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
+	hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
+	hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
 	hlr_qmgr_expPeriod = atoi((confMap["hlr_qmgr_expPeriod"]).c_str());
 	hlr_qmgr_tPerIter = atoi((confMap["hlr_qmgr_tPerIter"]).c_str());
 	hlr_qmgr_pollPeriod = atoi((confMap["hlr_qmgr_pollPeriod"]).c_str());
@@ -525,75 +525,75 @@ int main ( int argc, char * argv[] )
 	}
 	if ( bootstrapLog(logFileName, &logStream) != 0 )
 	{
-		cerr << "Error bootstrapping the Log file:" << logFileName << endl;
+		cerr << "ERROR bootstrapping log file:" << logFileName << endl;
 		exit(1);
 	}
 	if (lockFileName == "" )
 	{
 		lockFileName = confMap["hlr_qmgr_def_lock"];
-		logBuff = "hlr_qMgr: Using default lock file: " +
-			lockFileName;
+		logBuff = "Using default lock file: " +
+				lockFileName;
 		hlr_log(logBuff, &logStream, 6);
 	}
 	if ( putLock(lockFileName) != 0 )
-        {
-                hlr_log("hlr_qMgr: Startup failed, Error creating the lock file.", &logStream, 1);
+	{
+		hlr_log("ERROR creating lock file. Startup failed", &logStream, 1);
 		logStream.close();
-                exit(atoi(E_LOCK_OPEN));
-        }
+		exit(atoi(E_LOCK_OPEN));
+	}
 	if ( confMap["systemLogLevel"] != "" )
-        {
-                system_log_level = atoi((confMap["systemLogLevel"]).c_str());
-        }
+	{
+		system_log_level = atoi((confMap["systemLogLevel"]).c_str());
+	}
 	if ( confMap["accountCheckPolicy"] != "" )
-        {
-                if ( confMap["accountCheckPolicy"] == "strict")
-                {
-                        strictAccountCheck = true;
-                        lazyAccountCheck =false;
-                }
-                if ( confMap["accountCheckPolicy"] == "lazy")
-                {
-                        strictAccountCheck = false;
-                        lazyAccountCheck = true;
-                }
-        }
+	{
+		if ( confMap["accountCheckPolicy"] == "strict")
+		{
+			strictAccountCheck = true;
+			lazyAccountCheck =false;
+		}
+		if ( confMap["accountCheckPolicy"] == "lazy")
+		{
+			strictAccountCheck = false;
+			lazyAccountCheck = true;
+		}
+	}
 	if ( confMap["useATMVersion2"] == "true" )
-        {
-                useATMVersion2 = true;
-        }
-        logBuff = "Log level:" + confMap["systemLogLevel"];
-        hlr_log(logBuff,&logStream,4);
-							
+	{
+		useATMVersion2 = true;
+	}
+	logBuff = "Log level:" + confMap["systemLogLevel"];
+	hlr_log(logBuff,&logStream,4);
+
 	signal (SIGTERM, fatal_error_signal);
 	signal (SIGINT, fatal_error_signal);
 	signal (SIGHUP, sighup_signal);
 	signal (SIGALRM, catch_alarm);
 	if (setjmp (return_to_top_level) != 0)
 	{
-		hlr_log("hlr_qMgr: Could not set long jmp!", &logStream, 1);
+		hlr_log("ERROR: Could not set long jmp!", &logStream, 1);
 	}
-	 while (keep_going)
+	while (keep_going)
 	{
 		if ( error_flag )
 		{
-			hlr_log("hlr_qMgr: processErrorTransactions():Start", &logStream, 4);
+			hlr_log("processErrorTransactions():Start", &logStream, 4);
 			error_flag= false;
 			processErrorTransactions(hlr_qmgr_tPerIter+1);
-			hlr_log("hlr_qMgr: processErrorTransactions():End", &logStream, 4);
+			hlr_log("processErrorTransactions():End", &logStream, 4);
 		}
-		hlr_log("hlr_qMgr: Entering main loop", &logStream, 8);
+		hlr_log("Entering main loop", &logStream, 8);
 		mainLoop(hlr_qmgr_tPerIter);
 		for ( int s=0; s < hlr_qmgr_pollPeriod ; s++ )
 		{		
 			if (keep_going) sleep(1);
 		}
 	}
-	
-hlr_log ( "hlr_qMgr: Received termination signal:  exiting...", &logStream, 4);
-removeLock(lockFileName);
-logStream.close();
-return 0;
+
+	hlr_log ( "Received termination signal:exiting...", &logStream, 4);
+	removeLock(lockFileName);
+	logStream.close();
+	return 0;
 }
 
 void
