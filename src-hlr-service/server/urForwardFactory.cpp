@@ -164,7 +164,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 	res = 0;
 	long startTid = atol(firstTid.c_str());
 	long endTid = startTid + usedParameters.recordsPerConnection;
-	long totalNumberOfRecordsToSend = lastTid - startTid;
+	long totalNumberOfRecordsToSend = atol(lastTid.c_str()) - startTid;
 	long totalNumberOfBurst = 0;
 	if ( usedParameters.recordsPerConnection != 0 )
 	{
