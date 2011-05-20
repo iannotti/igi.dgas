@@ -190,7 +190,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		time_t time1 = time(NULL);
 		timeEnd = time1;
 		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
-		int percentageSent = (sentBursts/totalNumberOfBurst)*100;
+		int percentageSent = ((float)(sentBursts/totalNumberOfBurst))*100;
 		logBuff = "Percentage of sent records:" + int2string(percentageSent);
 		logBuff += ",ETA:" + int2string(estimatedTimeOfArrival) + " secs";
 		hlr_log (logBuff,&logStream,5);
@@ -655,7 +655,7 @@ int urForward::XML2serverParams(string& xml, serverParameters& serverParms)
 				{
 					serverParms.recordInsertDate = tagBuff.text;
 				}
-				tagBuff = parse (&nodeBuff.text, "lastInsertedUniqueChecksum");
+				tagBuff = parse (&nodeBuff.text, "uniqueChecksum");
 				if ( tagBuff.status == 0 )
 				{
 					serverParms.lastInsertedUniqueChecksum = tagBuff.text;
