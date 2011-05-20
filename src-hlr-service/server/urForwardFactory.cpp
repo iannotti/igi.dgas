@@ -173,10 +173,11 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		totalNumberOfRecordsToSend = ( totalNumberOfRecordsToSend == 0 ) ? 1 : totalNumberOfRecordsToSend;
 	}
 	long sentBursts = 0;
-	time_t timeStart = time();
+	time_t timeStart = time(NULL);
+	time_t timeEnd = time(NULL);
 	while ( keep_going && res == 0 )
 	{
-		time_t time0 = time();
+		time_t time0 = time(NULL);
 		//send burst from startTid -> startTid + recordsPerConn
 		//checking if lastTid has been reached.
 		logBuff = "sendBurst(" + int2string(startTid) + ",";
@@ -186,13 +187,15 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		startTid= endTid;
 		endTid = startTid + usedParameters.recordsPerConnection;
 		sentBursts++;
-		time_t time1 = time();
+		time_t time1 = time(NULL);
+		timeEnd = time1;
 		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
 		int percentageSent = (sentBursts/totalNumberOfRecordsToSend)*100;
 		logBuff = "Percentage of sent records:" + int2string(percentageSent);
 		logBuff += ",ETA:" + int2string(estimatedTimeOfArrival) + " secs";
 		hlr_log (logBuff,&logStream,5);
 	}
+	logBuff = "Total time elapsed:" + int2string(timeEnd-timeStart) + " secs";
 	if ( res == 1 )
 	{
 		//everything is ok, lastTid reached.
