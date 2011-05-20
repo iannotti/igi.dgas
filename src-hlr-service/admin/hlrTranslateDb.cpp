@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.14 2011/05/18 09:45:42 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.15 2011/05/20 08:15:01 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1149,6 +1149,18 @@ int main (int argc, char **argv)
 		cout << "Another instance of hlr-translatedb put a lock. Exiting." << endl;
 		exit(0);
 	}
+	if ( putMasterLock )
+	{
+		cout << "Locking other instances out." << endl;
+		MLcreate ( masterLock );
+	}
+	int res = bootstrapLog(hlr_logFileName, &logStream);
+	if ( res != 0 )
+	{
+		cerr << "Error bootstrapping the Log file:" << endl;
+		cerr << hlr_logFileName<< endl;
+		Exit(1);
+	}
 	//Now put a lock on jobTransSummary table.
 	database dBase(hlr_sql_server,
 			hlr_sql_user,
@@ -1163,18 +1175,6 @@ int main (int argc, char **argv)
 	else
 	{
 		jobTransSummary.lock();
-	}
-	if ( putMasterLock )
-	{
-		cout << "Locking other instances out." << endl;
-		MLcreate ( masterLock );
-	}
-	int res = bootstrapLog(hlr_logFileName, &logStream);
-	if ( res != 0 )
-	{
-		cerr << "Error bootstrapping the Log file:" << endl;
-		cerr << hlr_logFileName<< endl;
-		Exit(1);
 	}
 	if ( confMap["acceptRecordsStartDate"] != "" )
 	{
