@@ -170,7 +170,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 	if ( usedParameters.recordsPerConnection != 0 )
 	{
 		totalNumberOfBurst = totalNumberOfRecordsToSend/usedParameters.recordsPerConnection;
-		totalNumberOfRecordsToSend = ( totalNumberOfRecordsToSend == 0 ) ? 1 : totalNumberOfRecordsToSend;
+		totalNumberOfBurst = ( totalNumberOfBurst == 0 ) ? 1 : totalNumberOfBurst;
 	}
 	long sentBursts = 0;
 	time_t timeStart = time(NULL);
@@ -190,7 +190,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		time_t time1 = time(NULL);
 		timeEnd = time1;
 		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
-		int percentageSent = (sentBursts/totalNumberOfRecordsToSend)*100;
+		int percentageSent = (sentBursts/totalNumberOfBurst)*100;
 		logBuff = "Percentage of sent records:" + int2string(percentageSent);
 		logBuff += ",ETA:" + int2string(estimatedTimeOfArrival) + " secs";
 		hlr_log (logBuff,&logStream,5);
