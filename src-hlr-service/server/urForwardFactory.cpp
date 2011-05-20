@@ -1,6 +1,7 @@
 #include "urForwardFactory.h"
 #include <setjmp.h> 
 #include "../base/dbWaitress.h"
+#include <time.h>
 
 extern volatile sig_atomic_t keep_going;
 jmp_buf jump_on_alarm;
@@ -172,8 +173,10 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		totalNumberOfRecordsToSend = ( totalNumberOfRecordsToSend == 0 ) ? 1 : totalNumberOfRecordsToSend;
 	}
 	long sentBursts = 0;
+	time_t timeStart = time();
 	while ( keep_going && res == 0 )
 	{
+		time_t time0 = time();
 		//send burst from startTid -> startTid + recordsPerConn
 		//checking if lastTid has been reached.
 		logBuff = "sendBurst(" + int2string(startTid) + ",";
@@ -183,8 +186,11 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		startTid= endTid;
 		endTid = startTid + usedParameters.recordsPerConnection;
 		sentBursts++;
+		time_t time1 = time();
+		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
 		int percentageSent = (sentBursts/totalNumberOfRecordsToSend)*100;
 		logBuff = "Percentage of sent records:" + int2string(percentageSent);
+		logBuff += ",ETA:" + int2string(estimatedTimeOfArrival) + " secs";
 		hlr_log (logBuff,&logStream,5);
 	}
 	if ( res == 1 )
