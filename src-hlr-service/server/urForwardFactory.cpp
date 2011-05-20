@@ -162,19 +162,30 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 	}
 	//now send records from first to last.
 	res = 0;
-	long startTid = atoi(firstTid.c_str());
+	long startTid = atol(firstTid.c_str());
 	long endTid = startTid + usedParameters.recordsPerConnection;
+	long totalNumberOfRecordsToSend = lastTid - startTid;
+	long totalNumberOfBurst = 0;
+	if ( usedParameters.recordsPerConnection != 0 )
+	{
+		totalNumberOfBurst = totalNumberOfRecordsToSend/usedParameters.recordsPerConnection;
+		totalNumberOfRecordsToSend = ( totalNumberOfRecordsToSend == 0 ) ? 1 : totalNumberOfRecordsToSend;
+	}
+	long sentBursts = 0;
 	while ( keep_going && res == 0 )
 	{
 		//send burst from startTid -> startTid + recordsPerConn
-		//checking if lastTid has been rached.
+		//checking if lastTid has been reached.
 		logBuff = "sendBurst(" + int2string(startTid) + ",";
 		logBuff += int2string(endTid) + "," + lastTid + ")";
 		hlr_log(logBuff, &logStream, 8);
 		res = sendBurst(hlr, startTid, endTid, lastTid);
 		startTid= endTid;
 		endTid = startTid + usedParameters.recordsPerConnection;
-
+		sentBursts++;
+		int percentageSent = (sentBursts/totalNumberOfRecordsToSend)*100;
+		logBuff = "Percentage of sent records:" + int2string(percentageSent);
+		hlr_log (logBuff,&logStream,5);
 	}
 	if ( res == 1 )
 	{

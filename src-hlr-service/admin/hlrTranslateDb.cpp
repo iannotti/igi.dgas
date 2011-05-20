@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.15 2011/05/20 08:15:01 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.16 2011/05/20 11:52:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -28,7 +28,7 @@
 #include "dbWaitress.h"
 #include "../base/serviceVersion.h"
 
-#define OPTION_STRING "C:DmvrhcM"
+#define OPTION_STRING "C:DmvrhcTM"
 #define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
@@ -59,6 +59,7 @@ bool mergeReset = false;
 bool needs_help = false;
 bool checkVo = false;
 bool checkDuplicate = false;
+bool translationRules = false;
 bool putMasterLock = false;
 bool putCFLock = false;
 bool is2ndLevelHlr = false;
@@ -113,6 +114,7 @@ int options ( int argc, char **argv )
 			{"checkvo",0,0,'v'},
 			{"checkDuplicate",0,0,'c'},
 			{"masterLock",0,0,'M'},
+			{"useTranslationRules",0,0,'T'},
 			{"help",0,0,'h'},
 			{0,0,0,0}
 	};
@@ -127,6 +129,7 @@ int options ( int argc, char **argv )
 		case 'v': checkVo =true;; break;
 		case 'c': checkDuplicate =true;; break;
 		case 'M': putMasterLock =true;; break;
+		case 'T': translationRules = true;; break;
 		case 'h': needs_help =true;; break;
 		default : break;
 		}
@@ -148,7 +151,8 @@ int help (const char *progname)
 	cerr << setw(30) << left << "-v --checkvo"<<"Try to fix most common source of problems determining user vo." << endl;
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Search for duplicate entries and expunge the one with less information." << endl;
 	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
-	cerr << setw(30) << left <<"-h --help"<<"This help" << endl;
+	cerr << setw(30) << left << "-c --checkDuplicate"<<"Perform database translation rules defined in the rules.conf file" << endl;
+	cerr << setw(30) << left << "-h --help"<<"This help" << endl;
 	cerr << endl;
 	return 0;	
 }
@@ -1097,6 +1101,74 @@ void Exit (int exitStatus )
 	exit(exitStatus);
 }
 
+void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile)
+{
+    cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
+    if(!checkTable("urConcentratorIndex")){
+        if(!createUrConcentratorTable()){
+            cerr << "Error creating the  table urConcentratorIndex!" << endl;
+            if(reset)
+                CFremove(cfFileName);
+
+            Exit(1);
+        }
+    }
+
+    string urConcentratorIndexFieldsRel4 = "urSourceServer;urSourceServerDN;remoteRecordId;recordDate;recordInsertDate;uniqueChecksum";
+    if(!isTableUpToDate(hlr_sql_dbname, "urConcentratorIndex", urConcentratorIndexFieldsRel4)){
+        cout << "Adding uniqueChecksum to urConcentratorIndex" << endl;
+        if(upgradeURCI() != 0){
+            cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4" << endl;
+        }
+    }
+
+    //cleanup entries older than the expected period.
+    if(acceptRecordsStartDate != ""){
+        if(cleanUpOld(acceptRecordsStartDate) != 0){
+            cerr << "Error cleaning up old records!" << endl;
+            if(reset)
+                CFremove(cfFileName);
+
+            Exit(1);
+        }
+    }
+
+    //clean up database from tables not needed on 2lhlr.
+    if(checkTable("acctdesc"))
+        dropTable("acctdesc");
+
+    if(checkTable("resource_group_vo"))
+        dropTable("resource_group_vo");
+
+    if(checkTable("transInInfo"))
+        dropTable("transInInfo");
+
+    if(checkTable("transInLog"))
+        dropTable("transInLog");
+
+    if(checkTable("trans_in"))
+        dropTable("trans_in");
+
+    //now add recordDate index on date field to records_*
+    //tables
+    if(reset)
+        CFremove(cfFileName);
+
+    if(checkDuplicate)
+        removeDuplicated();
+
+    if(translationRules)
+        execTranslationRules(rulesFile);
+
+    //cleanup Indexes that are not useful on 2L hlr
+    if(checkIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId")){
+        dropIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId");
+    }
+    if(checkIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid")){
+        dropIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid");
+    }
+}
+
 int main (int argc, char **argv)
 {
 	options ( argc, argv );
@@ -1119,6 +1191,11 @@ int main (int argc, char **argv)
 	string acceptRecordsStartDate = "";
 	bool autoDeleteOldRecords = false;
 	string rulesFile;
+	if (needs_help)
+	{
+			help(argv[0]);
+			Exit(0);
+	}
 	if ( ( confMap["autoDeleteOldRecords"] == "true" ) || 
 			( confMap["autoDeleteOldRecords"] == "yes" )  )
 	{
@@ -1162,19 +1239,22 @@ int main (int argc, char **argv)
 		Exit(1);
 	}
 	//Now put a lock on jobTransSummary table.
-	database dBase(hlr_sql_server,
-			hlr_sql_user,
-			hlr_sql_password,
-			hlr_sql_dbname);
-	table jobTransSummary(dBase, "jobTransSummary");
-	if ( jobTransSummary.locked() )
+	if ( !translationRules )
 	{
-		cout << "jobTransSummary table is locked with lock file:" << jobTransSummary.getTableLock() << endl;
-		exit(0);
-	}
-	else
-	{
-		jobTransSummary.lock();
+		database dBase(hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
+		table jobTransSummary(dBase, "jobTransSummary");
+		if ( jobTransSummary.locked() )
+		{
+			cout << "jobTransSummary table is locked with lock file:" << jobTransSummary.getTableLock() << endl;
+			exit(0);
+		}
+		else
+		{
+			jobTransSummary.lock();
+		}
 	}
 	if ( confMap["acceptRecordsStartDate"] != "" )
 	{
@@ -1234,11 +1314,6 @@ int main (int argc, char **argv)
 	if ( mergeReset || reset ) mt.reset = true;
 #endif
 	/*END merge tables definition*/
-	if (needs_help)
-	{
-		help(argv[0]);
-		Exit(0);
-	}
 	if ( CFexists(cfFileName ) )
 	{
 		cout << "Found file:" << cfFileName << " ,which is a request to not perform any operation. Probably this is set by another instance of this command. Do not remove it unless you know what you are doing." << endl;
@@ -1334,13 +1409,13 @@ int main (int argc, char **argv)
 		cout << "Updating trans_queue schema. This operation requires several minutes, no progress bar will be showed during the upgrade." << endl;
 		cout << "This operation is performed just once." << endl;
 		//add the field
-		CFcreate(cfFileName );//lock other comand instancies
+		CFcreate(cfFileName );//lock other command  out.
 		putCFLock = true;
 		res = upgradeTQSchema();
 		CFremove(cfFileName);
 		if ( res != 0 )
 		{
-			cerr << "Error upgrading database! Please contact dgas-support@to.infn.it" << endl;
+			cerr << "Error upgrading database structure! Please contact dgas-support@to.infn.it" << endl;
 			Exit(1);
 		}
 	}
@@ -1393,7 +1468,7 @@ int main (int argc, char **argv)
 		flushTables();
 		if ( !createJobTransSummaryTable() )
 		{
-			cerr << "Error creating the table jobTransSummary!" << endl;
+			cerr << "Error creating table jobTransSummary!" << endl;
 			if ( reset ) CFremove(cfFileName);
 			Exit(1);
 		}
@@ -1416,86 +1491,14 @@ int main (int argc, char **argv)
 			Exit(1);
 		}
 	}
-	//drop transInInfo table. Not used anymore.
-	if (checkTable("transInInfo")) dropTable("transInInfo");
-	//drop vodesc table. Not used anymore.
-	if (checkTable("vodesc")) dropTable("vodesc");
-	//drop grdesc table. Not used anymore.
-	if (checkTable("grdesc")) dropTable("grdesc");
-	//dropping tables related to User HLR (remvoved >=3.2.0)
-	if (checkTable("transOutInfo")) dropTable("transOutInfo");
-	if (checkTable("transOutLog")) dropTable("transOutLog");
-	if (checkTable("trans_out")) dropTable("trans_out");
-	if (checkTable("user_group_vo")) dropTable("user_group_vo");
-	if (checkTable("group_vo")) dropTable("group_vo");
-	if (checkTable("groupAdmin")) dropTable("groupAdmin");
 	if ( is2ndLevelHlr )
 	{
-		cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
-		if (!checkTable("urConcentratorIndex"))
-		{
-			if ( !createUrConcentratorTable() )
-			{
-				cerr << "Error creating the  table urConcentratorIndex!" << endl;
-				if ( reset ) CFremove(cfFileName);
-				Exit(1);
-			}
-		}
-		string urConcentratorIndexFieldsRel4 = "urSourceServer;urSourceServerDN;remoteRecordId;recordDate;recordInsertDate;uniqueChecksum";
-		if ( !isTableUpToDate(hlr_sql_dbname, "urConcentratorIndex", urConcentratorIndexFieldsRel4 ) )
-		{
-			cout << "Adding uniqueChecksum to urConcentratorIndex" << endl;
-			if ( upgradeURCI() != 0 )
-			{
-				cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4" << endl;
-			}
-		}
-		//cleanup entries older than the expected period.
-		if ( acceptRecordsStartDate != "" )
-		{
-			if ( cleanUpOld(acceptRecordsStartDate) != 0 )
-			{
-				cerr << "Error cleaning up old records!" << endl;
-				if ( reset ) CFremove(cfFileName);
-				Exit(1);
-			}
-		}
-		//clean up database from tables not needed on 2lhlr.
-		if (checkTable("acctdesc")) dropTable("acctdesc");
-		if (checkTable("resource_group_vo")) dropTable("resource_group_vo");
-		if (checkTable("transInInfo")) dropTable("transInInfo");
-		if (checkTable("transInLog")) dropTable("transInLog");
-		if (checkTable("trans_in")) dropTable("trans_in");
-#ifdef MERGE
-		if ( useMergeTables )
-		{
-			cout << "Updating merge tables status." << endl;
-			mt.exec();
-			//now add recordDate index on date field to records_*
-			//tables
-			mt.addIndex("date","recordDate");
-		}
-#endif
-		if ( reset ) CFremove(cfFileName);
-		if ( checkDuplicate ) removeDuplicated();
-		execTranslationRules(rulesFile);
-		//cleanup Indexes that are not useful on 2L hlr
-		if ( checkIndex(hlr_sql_dbname, "jobTransSummary","lrmsId") )
-		{
-			dropIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId" );
-		}
-		if ( checkIndex(hlr_sql_dbname, "jobTransSummary","hlrTid") )
-		{
-			dropIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid" );
-		}
-		cout << "We can safely exit here." << endl;
+	    doOnSecondLevel(acceptRecordsStartDate, rulesFile);
 		Exit(0);
 		//if this is a 2nd level HLR we can bail out here...
 	}
 	//otherwise we must go on...
-	if (checkDuplicate ) removeDuplicated();
-	execTranslationRules(rulesFile);
-	/*merge tables exec end*/
-	cout << "Done." << endl;
+	if ( checkDuplicate ) removeDuplicated();
+	if ( translationRules ) execTranslationRules(rulesFile);
 	Exit(0);
 }
