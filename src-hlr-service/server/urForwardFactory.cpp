@@ -196,6 +196,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		hlr_log (logBuff,&logStream,5);
 	}
 	logBuff = "Total time elapsed:" + int2string(timeEnd-timeStart) + " secs";
+	hlr_log (logBuff,&logStream,5);
 	if ( res == 1 )
 	{
 		//everything is ok, lastTid reached.
