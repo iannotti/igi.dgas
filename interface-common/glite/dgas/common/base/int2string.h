@@ -13,5 +13,18 @@ inline string int2string(int i)
 	return ost.str();
 }
 	
+inline string int2string(long l)
+{
+	ostringstream ost;
+	ost << l;
+	return ost.str();
+}
+
+inline string int2string(float f)
+{
+	ostringstream ost;
+	ost << f;
+	return ost.str();
+}
 
 #endif
