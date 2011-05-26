@@ -14,19 +14,4 @@ template <class Type>
 	return ost.str();
 }
 
-	/*
-inline string long2string(long l)
-{
-	ostringstream ost;
-	ost << l;
-	return ost.str();
-}
-
-inline string float2string(float f)
-{
-	ostringstream ost;
-	ost << f;
-	return ost.str();
-}
-*/
 #endif

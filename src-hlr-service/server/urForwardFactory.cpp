@@ -189,7 +189,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		time_t time1 = time(NULL);
 		timeEnd = time1;
 		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
-		float percentageSent = ((float)(sentBursts/totalNumberOfBurst))*100;
+		float percentageSent = ((float)sentBursts/(float)totalNumberOfBurst)*100.0;
 		logBuff = "startTid=" + int2string(startTid);
 		logBuff += ",lastTid=" + int2string(lastTid);
 		logBuff += ",totalNumberOfRecordsToSend=" + int2string(totalNumberOfRecordsToSend);
