@@ -6,25 +6,27 @@
 
 using namespace std;
 
-inline string int2string(int i)
+template <class Type>
+	inline string int2string(Type i)
 {
 	ostringstream ost;
 	ost << i;
 	return ost.str();
 }
-	
-inline string int2string(long l)
+
+	/*
+inline string long2string(long l)
 {
 	ostringstream ost;
 	ost << l;
 	return ost.str();
 }
 
-inline string int2string(float f)
+inline string float2string(float f)
 {
 	ostringstream ost;
 	ost << f;
 	return ost.str();
 }
-
+*/
 #endif
