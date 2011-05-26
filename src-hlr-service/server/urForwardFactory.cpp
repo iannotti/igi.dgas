@@ -194,8 +194,8 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		logBuff += ",lastTid=" + int2string(lastTid);
 		logBuff += ",totalNumberOfRecordsToSend=" + int2string(totalNumberOfRecordsToSend);
 		logBuff += ",totalNumberOfBurst=" + int2string(totalNumberOfBurst);
-		logBuff += ",sentBursts" + int2string(sentBursts);
-		hlr_log (logBuff,&logStream,5);
+		logBuff += ",sentBursts=" + int2string(sentBursts);
+		hlr_log (logBuff,&logStream,7);
 		logBuff = "Percentage of sent records:" + int2string(percentageSent);
 		logBuff += ",ETA:" + int2string(estimatedTimeOfArrival) + " secs";
 		hlr_log (logBuff,&logStream,5);
