@@ -147,7 +147,6 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 	{
 		res = getFirstAndLastFromTid ( firstTid, lastTid );
 	}
-	res = getFirstAndLastFromTid ( firstTid, lastTid ); 
 	if ( res != 0 )
 	{
 		if ( res == -1 )
@@ -190,7 +189,13 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		time_t time1 = time(NULL);
 		timeEnd = time1;
 		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
-		int percentageSent = ((float)(sentBursts/totalNumberOfBurst))*100;
+		float percentageSent = ((float)(sentBursts/totalNumberOfBurst))*100;
+		logBuff = "startTid=" + int2string(startTid);
+		logBuff += ",lastTid=" + int2string(lastTid);
+		logBuff += ",totalNumberOfRecordsToSend=" + int2string(totalNumberOfRecordsToSend);
+		logBuff += ",totalNumberOfBurst=" + int2string(totalNumberOfBurst);
+		logBuff += ",sentBursts" = int2string(sentBursts);
+		hlr_log (logBuff,&logStream,5);
 		logBuff = "Percentage of sent records:" + int2string(percentageSent);
 		logBuff += ",ETA:" + int2string(estimatedTimeOfArrival) + " secs";
 		hlr_log (logBuff,&logStream,5);
