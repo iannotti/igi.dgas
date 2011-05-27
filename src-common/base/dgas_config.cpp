@@ -1,4 +1,4 @@
-// $Id: dgas_config.cpp,v 1.1.2.1.4.4 2011/05/27 08:51:52 aguarise Exp $
+// $Id: dgas_config.cpp,v 1.1.2.1.4.5 2011/05/27 08:57:42 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -53,7 +53,6 @@ int getEnvValue(string envName, string &envValue)
         }
 */
         return 0;
-        setenv();
 }
 
 int setEnvValue(string envName, string envValue)
