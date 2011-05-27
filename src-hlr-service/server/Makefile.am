@@ -51,6 +51,7 @@ dgas_hlr_urforward_LDADD = \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_hlrGenericQuery.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
+	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
 	-lglite_dgas_tls_gsisocket_pp \
 	$(DBLIBS)
@@ -81,6 +82,7 @@ dgas_hlr_listener_LDADD =  \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
+	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
 	$(GLITE_DGAS_PACLIENTS_LIBS) \
 	-lglite_dgas_paClient \
 	-lglite_dgas_localSecurity \
@@ -116,6 +118,7 @@ dgas_hlr_qmgr_LDADD = \
 	$(top_builddir)/src-hlr-service/engines/libdgasEngineCmnUtl.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_serviceCommonUtils.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
+	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
 	$(DBLIBS)
 
 SERVICE_BASE_LIBS = \
