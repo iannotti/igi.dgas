@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.7 2011/05/27 08:19:28 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.8 2011/05/27 12:10:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -573,7 +573,7 @@ int main ( int argc, char * argv[] )
 	{
 		thisServiceVersion.tableCreate();
 	}
-	thisServiceVersion.setService("dgas-hlr-listener");
+	thisServiceVersion.setService("dgas-hlr-qmgr");
 	thisServiceVersion.setVersion(VERSION);
 	thisServiceVersion.setHost("localhost");
 	thisServiceVersion.setConfFile(configFileName);

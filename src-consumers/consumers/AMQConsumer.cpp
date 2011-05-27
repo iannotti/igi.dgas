@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.10 2011/02/15 12:11:15 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.11 2011/05/27 12:10:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -59,6 +59,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
+#include "../../src-hlr-service/base/serviceVersion.h"
 
 
 #define E_CONFIG 10
@@ -465,6 +466,22 @@ int AMQConsumer (consumerParms& parms)
 	hlr_sql_user = (parms.hlrSqlUser).c_str();
 	hlr_sql_password = (parms.hlrSqlPassword).c_str();
 	hlr_tmp_sql_dbname = (parms.hlrSqlTmpDBName).c_str();
+	serviceVersion thisServiceVersion(hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
+		if ( !thisServiceVersion.tableExists() )
+		{
+			thisServiceVersion.tableCreate();
+		}
+		thisServiceVersion.setService("dgas-AMQConsumer");
+		thisServiceVersion.setVersion(VERSION);
+		thisServiceVersion.setHost("localhost");
+		thisServiceVersion.setConfFile(configFileName);
+		thisServiceVersion.setLockFile(lockFileName);
+		thisServiceVersion.setLogFile(logFileName);
+		thisServiceVersion.write();
+		thisServiceVersion.updateStartup();
 	//check if Database  exists. Create it otherwise.
 	db hlrDb ( hlr_sql_server,
 		hlr_sql_user,
