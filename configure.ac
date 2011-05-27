@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.19 $])
+AC_REVISION([$Revision: 1.1.2.5.4.20 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -57,7 +57,7 @@ AC_FUNC_MEMCMP
 AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([bzero memset mkdir pow strerror strtol])
+AC_CHECK_FUNCS([bzero memset mkdir strtol])
 
 have_globus=no
 have_mysql=no

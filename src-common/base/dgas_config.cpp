@@ -1,4 +1,4 @@
-// $Id: dgas_config.cpp,v 1.1.2.1.4.3 2011/03/15 10:38:34 aguarise Exp $
+// $Id: dgas_config.cpp,v 1.1.2.1.4.4 2011/05/27 08:51:52 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -53,7 +53,14 @@ int getEnvValue(string envName, string &envValue)
         }
 */
         return 0;
+        setenv();
 }
+
+int setEnvValue(string envName, string envValue)
+{
+	return setenv(envName.c_str(),envValue.c_str(),0);
+}
+
 
 string dgasLocation()
 {
@@ -75,6 +82,12 @@ string dgasLocation()
 int
 dgas_conf_read( string confFileName, map<string,string> *confMap)
 {
+	//check for DGAS_LOCATION ENV first: Set it to default /usr if not found.
+	getEnvValue("DGAS_LOCATION", dgasLocation);
+	if ( dgasLocation == "" )
+	{
+		setEnvValue("DGAS_LOCATION", "/usr" );
+	}
 	ifstream inFile(confFileName.c_str());
 	if ( ! inFile )
 	{
