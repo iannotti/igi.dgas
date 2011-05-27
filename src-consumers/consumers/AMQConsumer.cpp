@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.11 2011/05/27 12:10:14 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.12 2011/05/27 12:28:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -80,6 +80,7 @@ const char * hlr_sql_server;
 const char * hlr_sql_user;
 const char * hlr_sql_password;
 const char * hlr_tmp_sql_dbname;
+const char * hlr_sql_dbname;
 
 volatile sig_atomic_t goOn = 1;
 
@@ -424,6 +425,19 @@ int AMQConsumer (consumerParms& parms)
 		}
 	}
 	
+	if ( parms.hlrSqlDBName == "" )
+		{
+			if ( confMap["hlr_sql_dbname"] != "" )
+			{
+				parms.hlrSqlDBName = confMap["hlr_sql_dbname"];
+			}
+			else
+			{
+			 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+				return E_BROKER_URI;
+			}
+		}
+
 	if ( parms.hlrSqlServer == "" )
 	{
 		if ( confMap["hlr_sql_server"] != "" )
@@ -466,22 +480,23 @@ int AMQConsumer (consumerParms& parms)
 	hlr_sql_user = (parms.hlrSqlUser).c_str();
 	hlr_sql_password = (parms.hlrSqlPassword).c_str();
 	hlr_tmp_sql_dbname = (parms.hlrSqlTmpDBName).c_str();
+	hlr_sql_dbname = (parms.hlrSqlDBName).c_str();
 	serviceVersion thisServiceVersion(hlr_sql_server,
-				hlr_sql_user,
-				hlr_sql_password,
-				hlr_sql_dbname);
-		if ( !thisServiceVersion.tableExists() )
-		{
-			thisServiceVersion.tableCreate();
-		}
-		thisServiceVersion.setService("dgas-AMQConsumer");
-		thisServiceVersion.setVersion(VERSION);
-		thisServiceVersion.setHost("localhost");
-		thisServiceVersion.setConfFile(configFileName);
-		thisServiceVersion.setLockFile(lockFileName);
-		thisServiceVersion.setLogFile(logFileName);
-		thisServiceVersion.write();
-		thisServiceVersion.updateStartup();
+					hlr_sql_user,
+					hlr_sql_password,
+					hlr_sql_dbname);
+			if ( !thisServiceVersion.tableExists() )
+			{
+				thisServiceVersion.tableCreate();
+			}
+			thisServiceVersion.setService("dgas-AMQConsumer");
+			thisServiceVersion.setVersion(VERSION);
+			thisServiceVersion.setHost("localhost");
+			thisServiceVersion.setConfFile(parms.confFileName);
+			thisServiceVersion.setLockFile(parms.lockFileName);
+			thisServiceVersion.setLogFile(parms.logFileName);
+			thisServiceVersion.write();
+			thisServiceVersion.updateStartup();
 	//check if Database  exists. Create it otherwise.
 	db hlrDb ( hlr_sql_server,
 		hlr_sql_user,

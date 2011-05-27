@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.2 2011/02/09 13:40:53 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.3 2011/05/27 12:28:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -37,6 +37,7 @@ class consumerParms {
 		string logFileName; 
 		string dgasAMQTopic;
 		string hlrSqlTmpDBName;
+		string hlrSqlDBName;
 		string hlrSqlServer;
 		string hlrSqlUser;
 		string hlrSqlPassword;
