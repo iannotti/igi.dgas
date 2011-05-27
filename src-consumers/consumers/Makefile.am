@@ -35,6 +35,7 @@ dgas_AMQConsumer_LDADD   = \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
+	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
 	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
 	$(DBLIBS) 
 
