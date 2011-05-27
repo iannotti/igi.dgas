@@ -5,7 +5,7 @@
 
 extern volatile sig_atomic_t keep_going;
 jmp_buf jump_on_alarm;
-string additionalMessageBuffer;
+
 
 
 using namespace std;
@@ -315,8 +315,8 @@ int urForward::getStatus(string& answer)
 	{
 		if ( statusBuff.text != "" )
 		{
-			logBuff = "STATUS ==" +  statusBuff.text;
-			hlr_log(logBuff,&logStream,4);
+			logBuff = "STATUS == " +  statusBuff.text;
+			hlr_log(logBuff,&logStream,8);
 			return atoi((statusBuff.text).c_str()); 
 		}
 
@@ -433,7 +433,6 @@ int urForward::getFirstAndLastFromTid (string& firstTid,string& lastTid )
 			usedParameters.lastForwardedRecord = int2string(buffer);
 			logBuff += ";using max(id)=" + usedParameters.lastForwardedRecord;
 			logBuff += ";needReset==" + needReset;
-			additionalMessageBuffer += logBuff;
 			hlr_log(logBuff,&logStream,7);
 		}
 	}
@@ -480,10 +479,10 @@ int urForward::contactServer(hlrLocation& s, string& message, string& answer)
 	{
 		hlr_log("Could not set longjump!",&logStream,1);
 	}
-	string logBuff = "Entering contactServer()";
-	hlr_log(logBuff,&logStream,5);
+	string logBuff = "Entering contactServer(" + s.host + ")";
+	hlr_log(logBuff,&logStream,4);
 	logBuff = s.host + ":" + int2string(s.p) + ":" + s.dn;
-	hlr_log(logBuff,&logStream,3);
+	hlr_log(logBuff,&logStream,8);
 	int res = 0;
 	//alarm ON here
 	alarm(30*conf.defConnTimeout);

@@ -37,6 +37,7 @@
 //socketpp includes
 #include "glite/dgas/common/tls/GSISocketServer.h"
 #include "glite/dgas/common/tls/GSISocketAgent.h"
+#include "../base/serviceVersion.h"
 #define DEFAULT_CONFIG "/etc/dgas/dgas_hlr.conf"
 #define OPTION_STRING "hp:l:L:c:"
 
@@ -361,6 +362,22 @@ int main ( int argc, char * argv[] )
 		hlr_log(logBuff,&logStream,7); 
 		serverStatus.engines="UI:CONCENTRATOR:PING";
 	}
+	serviceVersion thisServiceVersion(hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	if ( !thisServiceVersion.tableExists() )
+	{
+		thisServiceVersion.tableCreate();
+	}
+	thisServiceVersion.setService("dgas-hlr-listener");
+	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.setHost("localhost");
+	thisServiceVersion.setConfFile(configFileName);
+	thisServiceVersion.setLockFile(lockFileName);
+	thisServiceVersion.setLogFile(logFileName);
+	thisServiceVersion.write();
+	thisServiceVersion.updateStartup();
 
 	lStatus.server_port = server_port;
 	lStatus.logFileName = logFileName;

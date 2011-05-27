@@ -129,6 +129,7 @@ private:
 	confParams conf;
 	effectiveParams usedParameters;
 	database dBase;
+	string additionalMessageBuffer;
 
 	//methods for run();
 	int getServers(vector<string>& serverList);

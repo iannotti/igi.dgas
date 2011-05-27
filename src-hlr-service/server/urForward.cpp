@@ -8,21 +8,13 @@
 #include "glite/dgas/common/base/dgasVersion.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "urForwardFactory.h"
-
-
-
+#include "../base/serviceVersion.h"
 
 #define DEFAULT_CONFIG "/etc/dgas/dgas_hlr.conf"
 
-
-
-
-
 #define OPTION_STRING "hdl:L:c:f:r"
 
-
 using namespace std;
-
 
 const char * hlr_sql_server;
 const char * hlr_sql_user;
@@ -255,10 +247,26 @@ int main ( int argc, char * argv[] )
 	logBuff = "Number of record sent per iteration (acceptRecordsStartDate):";
 	logBuff += conf.recordsPerConnection;
 	hlr_log(logBuff,&logStream,4);
+	serviceVersion thisServiceVersion(hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	if ( !thisServiceVersion.tableExists() )
+	{
+		thisServiceVersion.tableCreate();
+	}
+	thisServiceVersion.setService("dgas-hlr-urforward");
+	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.setHost("localhost");
+	thisServiceVersion.setConfFile(configFileName);
+	thisServiceVersion.setLockFile(lockFileName);
+	thisServiceVersion.setLogFile(logFileName);
+	thisServiceVersion.write();
+	thisServiceVersion.updateStartup();
 	database dBase(hlr_sql_server,
-					hlr_sql_user,
-					hlr_sql_password,
-					hlr_sql_dbname);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
 	urForward forwarder (conf, dBase);
 	signal (SIGTERM, fatal_error_signal);
 	signal (SIGINT, fatal_error_signal);

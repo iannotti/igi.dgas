@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.6 2011/05/19 08:12:51 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.7 2011/05/27 08:19:28 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -43,6 +43,7 @@
 #include "glite/dgas/pa-clients/paClient.h"
 #include "glite/dgas/common/pa/libPA_comm.h"
 #include <setjmp.h>
+#include "../base/serviceVersion.h"
 
 #define OPTION_STRING "hl:L:c:e"
 //global variables
@@ -564,7 +565,22 @@ int main ( int argc, char * argv[] )
 	}
 	logBuff = "Log level:" + confMap["systemLogLevel"];
 	hlr_log(logBuff,&logStream,4);
-
+	serviceVersion thisServiceVersion(hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	if ( !thisServiceVersion.tableExists() )
+	{
+		thisServiceVersion.tableCreate();
+	}
+	thisServiceVersion.setService("dgas-hlr-listener");
+	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.setHost("localhost");
+	thisServiceVersion.setConfFile(configFileName);
+	thisServiceVersion.setLockFile(lockFileName);
+	thisServiceVersion.setLogFile(logFileName);
+	thisServiceVersion.write();
+	thisServiceVersion.updateStartup();
 	signal (SIGTERM, fatal_error_signal);
 	signal (SIGINT, fatal_error_signal);
 	signal (SIGHUP, sighup_signal);
@@ -577,10 +593,10 @@ int main ( int argc, char * argv[] )
 	{
 		if ( error_flag )
 		{
-			hlr_log("processErrorTransactions():Start", &logStream, 4);
+			hlr_log("start processErrorTransactions", &logStream, 4);
 			error_flag= false;
 			processErrorTransactions(hlr_qmgr_tPerIter+1);
-			hlr_log("processErrorTransactions():End", &logStream, 4);
+			hlr_log("end processErrorTransactions", &logStream, 4);
 		}
 		hlr_log("Entering main loop", &logStream, 8);
 		mainLoop(hlr_qmgr_tPerIter);
