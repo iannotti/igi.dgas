@@ -185,7 +185,7 @@ int urForward::sendUsageRecords(hlrLocation &hlr, serverParameters& serverParms)
 		res = sendBurst(hlr, startTid, endTid, lastTid);
 		startTid= endTid;
 		endTid = startTid + usedParameters.recordsPerConnection;
-		sentBursts++;
+		if ( res == 0 ) sentBursts++;
 		time_t time1 = time(NULL);
 		timeEnd = time1;
 		int estimatedTimeOfArrival = (time1-time0)*(totalNumberOfBurst-sentBursts);
