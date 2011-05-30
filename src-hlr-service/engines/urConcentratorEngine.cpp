@@ -546,7 +546,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 
 int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 {
-	int insertetdRecords = 0;
+	int insertedRecords = 0;
 	//FIXME go on with bulk inserts.
 	//IMPORTANT should exit with !=0 just in case no records have
 	//been inserted at all.
