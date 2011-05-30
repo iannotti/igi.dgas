@@ -10,7 +10,7 @@
 #       University of Bergen (UiB), Norway
 #       Council for the Central Laboratory of the Research Councils (CCLRC), United Kingdom
 #
-                                                                                                                                                             
+#t                                                                                                                                                             
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.20 $])
+AC_REVISION([$Revision: 1.1.2.5.4.21 $])
 
 #Environment.
 WORKDIR=`pwd`
