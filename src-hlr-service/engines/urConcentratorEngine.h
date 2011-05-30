@@ -1,13 +1,13 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1.4.4 2011/05/11 12:49:05 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.5 2011/05/30 14:20:15 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   :
  *  copyright : 
@@ -102,47 +102,50 @@ struct urConcentratorIndex
 };
 
 class urConcentrator {
-	public:
-		connInfo *c;
-		string *input;
-		string *output;
-		urConcentrator(
+public:
+	connInfo *c;
+	string *input;
+	string *output;
+	urConcentrator(
 			string *_input,
 			connInfo *_c,
 			string *_output
-			)
-		{
-			input = _input;
-			c = _c;
-			output = _output;
-		};
-		int run();
-	private:
-		string lastInsertedId;
-		string lastInsertedRecordDate;
-		string lastInsertedUniqueChecksum;
-		int xmlParser(	string& requestType, 
-				vector<jobTransSummary>& r);
-		
-		int infoRequestSubEngine();
-		int insertRequestSubEngine(vector<jobTransSummary>& r);
-		int resetRequestSubEngine();
-		
-		int infoRequestComposeXml(urConcentratorIndex& indexEntry);
-		int insertRequestComposeXml();
-		int resetRequestComposeXml();
-		
-		bool authorize();
-		int insertRecord(db& hlrDb, jobTransSummary& r);
-		int insertRecords(vector<jobTransSummary>& r);
-		int updateIndex(urConcentratorIndex& indexEntry);
-		int getIndex(urConcentratorIndex& indexEntry);
-		int removeServerRecords();
-		
-		int errorComposeXml(int errorCode);
-		int checkExistsOutOfBand(jobTransSummary& r, string& recordId);
-		int removeRecord(string &recordId);
-		bool isDuplicateEntry(string& dgJobId, string& hostName, string& transType );	
+	)
+	{
+		input = _input;
+		c = _c;
+		output = _output;
+	};
+	int run();
+private:
+	string lastInsertedId;
+	string lastInsertedRecordDate;
+	string lastInsertedUniqueChecksum;
+	vector<string> insertValuesBuffer;//TODO buffer to store values for bulk insert
+	int xmlParser(	string& requestType,
+			vector<jobTransSummary>& r);
+
+	int infoRequestSubEngine();
+	int insertRequestSubEngine(vector<jobTransSummary>& r);
+	int resetRequestSubEngine();
+
+	int infoRequestComposeXml(urConcentratorIndex& indexEntry);
+	int insertRequestComposeXml();
+	int resetRequestComposeXml();
+
+	bool authorize();
+	int insertRecord(db& hlrDb, jobTransSummary& r);
+	int insertRecords(vector<jobTransSummary>& r);
+	int bulkInsertRecord(db& hlrDb, jobTransSummary& r);
+	int bulkInsertRecords(vector<jobTransSummary>& r);
+	int updateIndex(urConcentratorIndex& indexEntry);
+	int getIndex(urConcentratorIndex& indexEntry);
+	int removeServerRecords();
+
+	int errorComposeXml(int errorCode);
+	int checkExistsOutOfBand(jobTransSummary& r, string& recordId);
+	int removeRecord(string &recordId);
+	bool isDuplicateEntry(string& dgJobId, string& hostName, string& transType );
 
 };
 

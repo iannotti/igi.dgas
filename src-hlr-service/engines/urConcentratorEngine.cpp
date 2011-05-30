@@ -97,12 +97,12 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	hlr_log(logBuff,&logStream,4); 
 	logBuff = "urSourceServerDN:" + currentIndex.urSourceServerDN;
 	hlr_log(logBuff,&logStream,4);
-	#ifdef MERGE
+#ifdef MERGE
 	//check if databse is locked due to merge tables update.
 	database hlrDb ( hlr_sql_server, 
-                        hlr_sql_user,
-                        hlr_sql_password,
-                        hlr_sql_dbname);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
 	if ( hlrDb.locked() )
 	{
 		logBuff = "Error inserting queries in the database, the databse is temporary locked.";
@@ -110,7 +110,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 		errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
 		return E_URCONCENTRATOR_INSERT_RECORDS;
 	} 
-	#endif
+#endif
 	if ( getIndex(currentIndex) != 0 )
 	{
 		logBuff = "Error inserting queries in the database, can't find index.";
@@ -118,7 +118,8 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 		errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
 		return E_URCONCENTRATOR_INSERT_RECORDS;
 	}
-	if ( insertRecords(r) != 0 )
+	//if ( insertRecords(r) != 0 )//FIXME
+	if ( bulkInsertRecords(r) != 0 )
 	{
 		logBuff = "Error inserting queries in the database";
 		hlr_log(logBuff,&logStream,4);
@@ -146,7 +147,7 @@ int urConcentrator::removeServerRecords()
 		string logBuff = "Error deleting server entry from DB with query:" + queryString;
 		hlr_log(logBuff,&logStream,2);
 		return E_URCONCENTRATOR_DELETE_RECORDS;
-		
+
 	}
 	if ( deleteOnReset )
 	{
@@ -184,14 +185,14 @@ int urConcentrator::resetRequestSubEngine()
 		if ( res != 0 )
 		{
 			logBuff = "Error removing entries from DB!";
-	                hlr_log(logBuff,&logStream,2);
+			hlr_log(logBuff,&logStream,2);
 			errorComposeXml(res);
 			return res;
 		}
 		else
 		{
 			logBuff = "Entries removed from DB.";
-	                hlr_log(logBuff,&logStream,5);
+			hlr_log(logBuff,&logStream,5);
 			resetRequestComposeXml();
 			return 0;
 		}
@@ -206,7 +207,7 @@ int urConcentrator::resetRequestSubEngine()
 }
 
 int urConcentrator::xmlParser( string& requestType,
-	vector<jobTransSummary>& r)
+		vector<jobTransSummary>& r)
 {
 	string logBuff;
 	node nodeBuff;
@@ -281,11 +282,11 @@ int urConcentrator::xmlParser( string& requestType,
 					{
 						urBuff.userVo = fieldNode.text;
 					}
-//					fieldNode = parse (&urNode.text, "remoteHlr" );
-//					if ( fieldNode.status == 0 )
-//					{
-//						urBuff.remoteHlr = fieldNode.text;
-//					}
+					//					fieldNode = parse (&urNode.text, "remoteHlr" );
+					//					if ( fieldNode.status == 0 )
+					//					{
+					//						urBuff.remoteHlr = fieldNode.text;
+					//					}
 					fieldNode = parse (&urNode.text, "cpuTime" );
 					if ( fieldNode.status == 0 )
 					{
@@ -492,7 +493,7 @@ int urConcentrator::getIndex(urConcentratorIndex& indexEntry)
 	}
 	else
 	{
-		
+
 		indexEntry.urSourceServer = ((getIndex.queryResult).front())[0];
 		indexEntry.urSourceServerDN = ((getIndex.queryResult).front())[1];
 		indexEntry.remoteRecordId = ((getIndex.queryResult).front())[2];
@@ -501,7 +502,7 @@ int urConcentrator::getIndex(urConcentratorIndex& indexEntry)
 		indexEntry.uniqueChecksum = ((getIndex.queryResult).front())[5];
 		return 0;
 	}
-	
+
 
 }
 
@@ -513,9 +514,9 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 	hlr_log(logBuff,&logStream,7);
 	lastInsertedId = "-1";
 	db hlrDb (hlr_sql_server,
-					hlr_sql_user,
-					hlr_sql_password,
-					hlr_sql_dbname);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
 	vector<jobTransSummary>::iterator it = r.begin();
 	while ( it != r.end() )
 	{
@@ -543,6 +544,69 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 	return 0;
 }
 
+int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
+{
+	int insertetdRecords = 0;
+	//FIXME go on with bulk inserts.
+	//IMPORTANT should exit with !=0 just in case no records have
+	//been inserted at all.
+	string logBuff = "Entering insertRecords";
+	hlr_log(logBuff,&logStream,7);
+
+	lastInsertedId = "-1";
+	db hlrDb (hlr_sql_server,
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	vector<jobTransSummary>::iterator it = r.begin();
+	while ( it != r.end() )
+	{
+		insertValuesBuffer.clear();
+		for (int i=0; i < 10 || it != r.end(); i++ )
+		{
+			bulkInsertRecord(hlrDb,*it);
+			it++;
+		}
+		string valuesString;
+		vector<string>::iterator valuesIt = insertValuesBuffer.begin();
+		while ( valuesIt != insertValuesBuffer.end() )
+		{
+			if ( valuesIt != insertValuesBuffer.begin() )
+			{
+				valuesString += ",";
+			}
+			valuesString += *valuesIt;
+			valuesIt++;
+		}
+		string insertQueryString = "INSERT INTO jobTransSummary VALUES ("+ valuesString + ")";
+		dbResult result = hlrDb.query(insertQueryString);
+		if ( hlrDb.errNo == 0 )
+		{
+			insertedRecords += hlrDb.getAffectedRows();
+			lastInsertedId = (*it).id;
+			lastInsertedRecordDate = (*it).date;
+			lastInsertedUniqueChecksum = (*it).uniqueChecksum;
+		}
+		else
+		{
+			logBuff = "WARNING Could not insert records: ErrMsg:" + hlrDb.errMsg;
+			hlr_log(logBuff,&logStream,3);
+		}
+	}
+
+	//TODO go on from here. compose query and execute it. Then check for errors and update
+	//to last correctly inserted checksum for this sourceServer.
+	//error encountered. check if some record was
+	//inserted.
+	if ( insertedRecords == 0 )
+	{
+		logBuff = "Could not insert records.";
+		hlr_log(logBuff,&logStream,1);
+		return E_URCONCENTRATOR_INSERT_RECORDS;
+	}
+	return 0;
+}
+
 /*
 int urConcentrator::checkExistsOutOfBand(jobTransSummary& r, string& recordId)
 {
@@ -552,7 +616,7 @@ int urConcentrator::checkExistsOutOfBand(jobTransSummary& r, string& recordId)
 	queryString += "lrmsId = " + r.lrmsId;
 	queryString += "AND start = "
 }
-*/
+ */
 
 /*
 urConcentrator::checkResubmission(jobTransSummary& r)
@@ -564,7 +628,7 @@ urConcentrator::checkResubmission(jobTransSummary& r)
 	//lrmsId are different it must be a resubmission, otherwis it is a duplication.
 	//overhead should be low since dgJobId is a DB Key.
 }
-*/
+ */
 
 int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 {
@@ -574,14 +638,14 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 	{
 		string buff = "";
 		r.userVo = checkUserVo(r.userVo,
-					r.userFqan,
-					r.localUserId,
-					buff);
+				r.userFqan,
+				r.localUserId,
+				buff);
 		if ( buff != "" )
 		{
 			hlr_log (buff, &logStream,4);
 		}
-	
+
 	}
 	string recordId;//taken from id field in jobTransSummary.
 	/*
@@ -592,16 +656,16 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 			logBuff = "Could not remove old  outOfband.";
 		}
 	}
-	*/
+	 */
 	string tableName = "jobTransSummary";
-	#ifdef MERGE
+#ifdef MERGE
 	if ( useMergeTables )
 	{
-		
+
 		database hlrDb ( hlr_sql_server, 
-                        hlr_sql_user,
-                        hlr_sql_password,
-                        hlr_sql_dbname);
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
 		//build records_XXXXYY from date
 		string year,month;
 		year = (r.date).substr(0,4);
@@ -628,8 +692,8 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 		logBuff += " into table " + tableName;
 		hlr_log(logBuff,&logStream,9);
 	} 
-	#endif
-	//check if uniqueChecksum is alraedy present, otherwise calculate it now.
+#endif
+	//check if uniqueChecksum is already present, otherwise calculate it now.
 	if ( r.uniqueChecksum == "" )
 	{
 		ATM_job_record usageInfo;
@@ -715,6 +779,119 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 	}
 }
 
+int urConcentrator::bulkInsertRecord(db& hlrDb, jobTransSummary& r)
+{
+	int res = 0;
+	string logBuff;
+	if ( checkVo )
+	{
+		string buff = "";
+		r.userVo = checkUserVo(r.userVo,
+				r.userFqan,
+				r.localUserId,
+				buff);
+		if ( buff != "" )
+		{
+			hlr_log (buff, &logStream,4);
+		}
+
+	}
+	string recordId;//taken from id field in jobTransSummary.
+	/*
+	if ( checkExistsOutOfBand(r, recordId) )
+	{
+		if ( removeRecord(recordId) != 0 )
+		{
+			logBuff = "Could not remove old  outOfband.";
+		}
+	}
+	 */
+#ifdef MERGE
+	if ( useMergeTables )
+	{
+
+		database hlrDb ( hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
+		//build records_XXXXYY from date
+		string year,month;
+		year = (r.date).substr(0,4);
+		month = (r.date).substr(5,2);
+		string buff = "records_"+year+month;
+		table recordsBuff(hlrDb,buff);
+		//see if records_XXXXYY exists
+		if ( recordsBuff.exists() )
+		{
+			tableName = buff;
+		}
+		else
+		{
+			//otherwise see if oldRcords exists
+			buff = "oldRecords";
+			table oldRecordsBuff(hlrDb,buff);
+			if ( oldRecordsBuff.exists() )
+			{
+				tableName = buff;
+			}
+		}
+		//otherwise use jobTransSummary
+		logBuff = "Writing records with date " + r.date;
+		logBuff += " into table " + tableName;
+		hlr_log(logBuff,&logStream,9);
+	}
+#endif
+	//check if uniqueChecksum is already present, otherwise calculate it now.
+	if ( r.uniqueChecksum == "" )
+	{
+		ATM_job_record usageInfo;
+		usageInfo.res_grid_id = r.thisGridId;
+		usageInfo.lrmsId = r.lrmsId;
+		usageInfo.start = r.start;
+		usageInfo.wall_time = atoi((r.wallTime).c_str());
+		usageInfo.cpu_time = atoi((r.cpuTime).c_str());
+		makeUniqueChecksum(usageInfo,r.uniqueChecksum);
+		logBuff = "uniqueChecksum: dgJobId:" + r.dgJobId;
+		logBuff += ",uniqueChecksum:" + r.uniqueChecksum;
+		hlr_log(logBuff,&logStream,9);
+	}
+	string queryString = "('";
+	queryString += r.dgJobId + "','";
+	queryString += r.date + "','";
+	queryString += r.thisGridId + "','";
+	queryString += r.remoteGridId + "','";
+	queryString += r.userFqan + "','";
+	queryString += r.userVo + "',";
+	queryString += r.cpuTime + ",";
+	queryString += r.wallTime + ",";
+	queryString += r.pmem + ",";
+	queryString += r.vmem + ",";
+	queryString += r.amount + ",";
+	queryString += r.start + ",";
+	queryString += r.end + ",'";
+	queryString += r.iBench + "','";
+	queryString += r.iBenchType + "','";
+	queryString += r.fBench + "','";
+	queryString += r.fBenchType + "','";
+	queryString += r.acl + "',";
+	queryString += "0,'";
+	queryString += r.lrmsId + "','";
+	queryString += r.localUserId + "','";
+	queryString += r.hlrGroup + "','";
+	queryString += r.localGroup + "','";
+	queryString += r.endDate + "','";
+	queryString += r.siteName + "','";
+	queryString += c->hostName + "','";
+	queryString += r.hlrTid + "','";
+	queryString += r.accountingProcedure + "','";
+	queryString += r.voOrigin + "','";
+	queryString += r.glueCEInfoTotalCPUs + "','";
+	queryString += r.executingNodes+ "','";
+	queryString += r.uniqueChecksum + "')";
+	insertValuesBuffer.push_back(queryString);
+	return 0;
+}
+
 bool urConcentrator::isDuplicateEntry(string& dgJobId, string& hostName, string& transType )
 {
 	string queryString = "SELECT dgJobId FROM jobTransSummary WHERE";
@@ -754,7 +931,7 @@ int urConcentrator::updateIndex(urConcentratorIndex& indexEntry)
 		logBuff = "Error in query:" + queryString + " exited with:";
 		logBuff += int2string(res);
 		hlr_log(logBuff,&logStream,1);
-		
+
 	}
 	return res;
 }
