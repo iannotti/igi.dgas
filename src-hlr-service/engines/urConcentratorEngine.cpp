@@ -806,6 +806,7 @@ int urConcentrator::bulkInsertRecord(db& hlrDb, jobTransSummary& r)
 		}
 	}
 	 */
+	string tableName = "jobTransSummary";
 #ifdef MERGE
 	if ( useMergeTables )
 	{
