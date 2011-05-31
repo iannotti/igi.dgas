@@ -554,6 +554,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 	hlr_log(logBuff,&logStream,7);
 
 	lastInsertedId = "-1";
+	string lastInsertedIdBuff;
+	string lastInsertedRecordDateBuff;
+	string lastInsertedUniqueChecksumBuff;
 	db hlrDb (hlr_sql_server,
 			hlr_sql_user,
 			hlr_sql_password,
@@ -565,6 +568,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 		for (int i=0; i < 10 || it != r.end(); i++ )
 		{
 			bulkInsertRecord(hlrDb,*it);
+			lastInsertedIdBuff = (*it).id;
+			lastInsertedRecordDateBuff = (*it).date;
+			lastInsertedUniqueChecksumBuff = (*it).uniqueChecksum;
 			it++;
 		}
 		string valuesString;
@@ -580,7 +586,7 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 		}
 		string insertQueryString = "INSERT IGNORE INTO jobTransSummary VALUES "+ valuesString;
 		logBuff = "QUERY:" + insertQueryString;
-					hlr_log(logBuff,&logStream,8);
+		hlr_log(logBuff,&logStream,8);
 		dbResult result = hlrDb.query(insertQueryString);
 		if ( hlrDb.errNo == 0 )
 		{
@@ -590,9 +596,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			insertedRecords += affectedRowsBuff;
 			logBuff = "Total records inserted this iteration:" + int2string(insertedRecords);
 			hlr_log(logBuff,&logStream,5);
-			lastInsertedId = (*it).id;
-			lastInsertedRecordDate = (*it).date;
-			lastInsertedUniqueChecksum = (*it).uniqueChecksum;
+			lastInsertedId = lastInsertedIdBuff;
+			lastInsertedRecordDate = lastInsertedRecordDateBuff;
+			lastInsertedUniqueChecksum = lastInsertedUniqueChecksumBuff;
 		}
 		else
 		{
