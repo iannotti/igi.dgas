@@ -578,13 +578,18 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			valuesString += *valuesIt;
 			valuesIt++;
 		}
-		string insertQueryString = "INSERT INTO jobTransSummary VALUES "+ valuesString + " ON DUPLICATE KEY UPDATE";
+		string insertQueryString = "INSERT IGNORE INTO jobTransSummary VALUES "+ valuesString;
 		logBuff = "QUERY:" + insertQueryString;
 					hlr_log(logBuff,&logStream,8);
 		dbResult result = hlrDb.query(insertQueryString);
 		if ( hlrDb.errNo == 0 )
 		{
-			insertedRecords += hlrDb.getAffectedRows();
+			long long affectedRowsBuff = hlrDb.getAffectedRows();
+			logBuff = "Records inserted this bulk step:" + int2string(affectedRowsBuff);
+			hlr_log(logBuff,&logStream,6);
+			insertedRecords += affectedRowsBuff;
+			logBuff = "Total records inserted this iteration:" + int2string(insertedRecords);
+			hlr_log(logBuff,&logStream,5);
 			lastInsertedId = (*it).id;
 			lastInsertedRecordDate = (*it).date;
 			lastInsertedUniqueChecksum = (*it).uniqueChecksum;
