@@ -578,7 +578,7 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			valuesString += *valuesIt;
 			valuesIt++;
 		}
-		string insertQueryString = "INSERT INTO jobTransSummary VALUES "+ valuesString;
+		string insertQueryString = "INSERT INTO jobTransSummary VALUES "+ valuesString + "ON DUPLICATE KEY UPDATE";
 		logBuff = "QUERY:" + insertQueryString;
 					hlr_log(logBuff,&logStream,8);
 		dbResult result = hlrDb.query(insertQueryString);
