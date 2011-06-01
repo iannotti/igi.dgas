@@ -105,7 +105,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 			hlr_sql_dbname);
 	if ( hlrDb.locked() )
 	{
-		logBuff = "Error inserting queries in the database, the databse is temporary locked.";
+		logBuff = "Error inserting queries in the database, the database is temporary locked.";
 		hlr_log(logBuff,&logStream,4);
 		errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
 		return E_URCONCENTRATOR_INSERT_RECORDS;
@@ -584,6 +584,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 	while ( it != r.end() )
 	{
 		insertValuesBuffer.clear();
+		logBuff = "Records to be inserted this bulk step:" + int2string(recordsPerBulkInsert);
+		hlr_log(logBuff,&logStream,8);
+		int counter = 0;
 		for (int i=0; i < recordsPerBulkInsert || it != r.end(); i++ )
 		{
 			bulkInsertRecord(hlrDb,*it);
@@ -591,7 +594,10 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			lastInsertedRecordDateBuff = (*it).date;
 			lastInsertedUniqueChecksumBuff = (*it).uniqueChecksum;
 			it++;
+			counter++;
 		}
+		logBuff = "Records counter for this bulk step:" + int2string(counter);
+		hlr_log(logBuff,&logStream,8);
 		string valuesString;
 		vector<string>::iterator valuesIt = insertValuesBuffer.begin();
 		while ( valuesIt != insertValuesBuffer.end() )
@@ -613,7 +619,7 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			logBuff = "Records inserted this bulk step:" + int2string(affectedRowsBuff);
 			hlr_log(logBuff,&logStream,6);
 			insertedRecords += affectedRowsBuff;
-			logBuff = "Total records inserted this iteration:" + int2string(insertedRecords);
+			logBuff = "Total records inserted this bulk iteration:" + int2string(insertedRecords);
 			hlr_log(logBuff,&logStream,5);
 			lastInsertedId = lastInsertedIdBuff;
 			lastInsertedRecordDate = lastInsertedRecordDateBuff;
