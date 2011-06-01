@@ -36,12 +36,14 @@ struct listenerStatus {
         int authErrors;
         int threadUsecDelay;
         int threadPoolUsecDelay;
+        int recordsPerBulkInsert;
         bool strictAccountCheck;
         bool authUserSqlQueries;
         bool is2ndLevelHlr;
         bool checkVo;
         bool useMergeTables;
         bool deleteOnReset;
+        bool useBulkInsert;
         string maxItemsPerQuery;
         string acceptRecordsStartDate;
         string acceptRecordsEndDate;

@@ -118,20 +118,39 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 		errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
 		return E_URCONCENTRATOR_INSERT_RECORDS;
 	}
-	//if ( insertRecords(r) != 0 )//FIXME
-	if ( bulkInsertRecords(r) != 0 )
+	if ( useBulkInsert )
 	{
-		logBuff = "Error inserting queries in the database";
-		hlr_log(logBuff,&logStream,4);
-		errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
-		return E_URCONCENTRATOR_INSERT_RECORDS;
+		if ( bulkInsertRecords(r) != 0 )
+		{
+			logBuff = "Error inserting queries in the database";
+			hlr_log(logBuff,&logStream,4);
+			errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
+			return E_URCONCENTRATOR_INSERT_RECORDS;
+		}
+		else
+		{
+			currentIndex.remoteRecordId = lastInsertedId;
+			currentIndex.recordDate = lastInsertedRecordDate;
+			currentIndex.uniqueChecksum = lastInsertedUniqueChecksum;
+			updateIndex(currentIndex);
+		}
 	}
 	else
 	{
-		currentIndex.remoteRecordId = lastInsertedId;
-		currentIndex.recordDate = lastInsertedRecordDate;
-		currentIndex.uniqueChecksum = lastInsertedUniqueChecksum;
-		updateIndex(currentIndex);
+		if ( insertRecords(r) != 0 )
+		{
+			logBuff = "Error inserting queries in the database";
+			hlr_log(logBuff,&logStream,4);
+			errorComposeXml(E_URCONCENTRATOR_INSERT_RECORDS);
+			return E_URCONCENTRATOR_INSERT_RECORDS;
+		}
+		else
+		{
+			currentIndex.remoteRecordId = lastInsertedId;
+			currentIndex.recordDate = lastInsertedRecordDate;
+			currentIndex.uniqueChecksum = lastInsertedUniqueChecksum;
+			updateIndex(currentIndex);
+		}
 	}
 	insertRequestComposeXml();
 	return 0;
@@ -565,7 +584,7 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 	while ( it != r.end() )
 	{
 		insertValuesBuffer.clear();
-		for (int i=0; i < 10 || it != r.end(); i++ )
+		for (int i=0; i < recordsPerBulkInsert || it != r.end(); i++ )
 		{
 			bulkInsertRecord(hlrDb,*it);
 			lastInsertedIdBuff = (*it).id;

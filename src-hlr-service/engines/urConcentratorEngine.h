@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1.4.5 2011/05/30 14:20:15 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.6 2011/06/01 09:33:03 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -44,6 +44,8 @@ extern ofstream logStream;
 extern string acceptRecordsStartDate;
 extern string acceptRecordsEndDate;
 extern string recordsPerConnection;
+extern int recordsPerBulkInsert;
+extern bool useBulkInsert;
 extern bool checkVo;
 extern bool useMergeTables;
 

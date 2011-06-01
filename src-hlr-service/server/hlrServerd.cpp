@@ -63,6 +63,7 @@ int activeThreads = 0;
 int authErrors=0;
 int threadUsecDelay=0;
 int threadPoolUsecDelay=0;
+int recordsPerBulkInsert = 20;
 bool strictAccountCheck = false;
 bool lazyAccountCheck = false;
 bool authUserSqlQueries = false;
@@ -71,6 +72,7 @@ bool useATMVersion2 = false;
 bool checkVo = false;
 bool useMergeTables = false;
 bool deleteOnReset = true;
+bool useBulkInsert = true;
 string maxItemsPerQuery = "1000";
 string acceptRecordsStartDate ="";
 string acceptRecordsEndDate = "";
@@ -83,6 +85,7 @@ string server_contact = "";
 string hlr_gridMapFile = "/etc/grid-security/grid-mapfile";
 string hlr_user = "";
 string qtransInsertLog = "";
+
 
 bool restart;
 
@@ -351,6 +354,14 @@ int main ( int argc, char * argv[] )
 		{
 			deleteOnReset = false;
 		}
+		if ( confMap["useBulkInsert"] == "false" )
+		{
+			useBulkInsert = false;
+		}
+		if ( confMap["recordsPerBulkInsert"] != "" )
+		{
+			recordsPerBulkInsert = atoi((confMap["recordsPerBulkInsert"]).c_str());
+		}
 		logBuff = "Accepting records since (acceptRecordsStartDate):";
 		logBuff += acceptRecordsStartDate;
 		hlr_log(logBuff,&logStream,7); 
@@ -360,6 +371,12 @@ int main ( int argc, char * argv[] )
 		logBuff = "Records accepted per iteration (recordsPerConnection):";
 		logBuff += recordsPerConnection;
 		hlr_log(logBuff,&logStream,7); 
+		logBuff = "Records per bulk insert (recordsPerBulkInsert):";
+		logBuff += confMap["recordsPerBulkInsert"];
+		hlr_log(logBuff,&logStream,7);
+		logBuff = "Use bulk insert (useBulkInsert):";
+		logBuff += confMap["useBulkInsert"];
+		hlr_log(logBuff,&logStream,7);
 		serverStatus.engines="UI:CONCENTRATOR:PING";
 	}
 	serviceVersion thisServiceVersion(hlr_sql_server,
@@ -400,6 +417,8 @@ int main ( int argc, char * argv[] )
 	lStatus.acceptRecordsEndDate = acceptRecordsEndDate;
 	lStatus.recordsPerConnection = recordsPerConnection;
 	lStatus.deleteOnReset = deleteOnReset;
+	lStatus.useBulkInsert = useBulkInsert;
+	lStatus,recordsPerBulkInsert = recordsPerBulkInsert;
 	// instantiate the Socket server
 	GSISocketServer *theServer = new GSISocketServer(server_port,threadNumber);
 	theServer->LimitedProxyMode(GSISocketServer::multi);
