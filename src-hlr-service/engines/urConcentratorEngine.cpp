@@ -88,6 +88,8 @@ bool urConcentrator::authorize()
 
 int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 {
+	time_t time0 = time(NULL);
+	int actualNumberOfRecords = r.size();
 	string logBuff = "Entering insertRequestSubEngine()";
 	hlr_log(logBuff,&logStream,7);
 	urConcentratorIndex currentIndex;
@@ -152,8 +154,14 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 			updateIndex(currentIndex);
 		}
 	}
+	time_t time1 = time(NULL);
+	time_t deltaT = time1 - time0;
+	float recordsPerSecond = ((float) actualNumberOfRecords) /  ((float) deltaT);
+	logBuff = "Inserted " + int2string(actualNumberOfRecord) + " in " + int2string(deltaT) + " sec: ";
+	logBuff += int2string(recordsPerSecond) + " rec/sec";
+	hlr_log(logBuff,&logStream,6);
 	insertRequestComposeXml();
-	return 0;
+	return 0
 }
 
 int urConcentrator::removeServerRecords()

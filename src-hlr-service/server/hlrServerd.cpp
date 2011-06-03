@@ -372,10 +372,10 @@ int main ( int argc, char * argv[] )
 		logBuff += recordsPerConnection;
 		hlr_log(logBuff,&logStream,7); 
 		logBuff = "Records per bulk insert (recordsPerBulkInsert):";
-		logBuff += confMap["recordsPerBulkInsert"];
+		logBuff += int2string(recordsPerBulkInsert);
 		hlr_log(logBuff,&logStream,7);
 		logBuff = "Use bulk insert (useBulkInsert):";
-		logBuff += confMap["useBulkInsert"];
+		logBuff += ( useBulkInsert ) ? "true" : "false" ;
 		hlr_log(logBuff,&logStream,7);
 		serverStatus.engines="UI:CONCENTRATOR:PING";
 	}
