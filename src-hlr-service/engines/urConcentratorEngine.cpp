@@ -542,7 +542,7 @@ int urConcentrator::getIndex(urConcentratorIndex& indexEntry)
 
 int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 {
-	insertRecords =0;
+	insertedRecords =0;
 	//IMPORTANT should exit with !=0 just in case no records have
 	//been inserted at all.
 	string logBuff = "Entering insertRecords";
