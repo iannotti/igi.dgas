@@ -45,9 +45,9 @@ int urConcentrator::run()
 		//insertrecords subengine here
 		res = insertRequestSubEngine(r);
 		time_t time1 = time(NULL);
-		time_t deltaT = tim1-time0;
+		time_t deltaT = time1-time0;
 		float effProcessedPerSecond = ( (float)(r.size())/((float)deltaT) );
-		logBuff = "Message containing " + int2String(r.size()) + " records processed in " + int2string(deltaT);
+		logBuff = "Message containing " + int2string(r.size()) + " records processed in " + int2string(deltaT);
 		logBuff += " sec: " + int2string(effProcessedPerSecond) + " rec/sec";
 		hlr_log(logBuff,&logStream,6);
 		return res;
