@@ -157,7 +157,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	time_t time1 = time(NULL);
 	time_t deltaT = time1 - time0;
 	float recordsPerSecond = ((float) actualNumberOfRecords) /  ((float) deltaT);
-	logBuff = "Inserted " + int2string(actualNumberOfRecords) + " in " + int2string(deltaT) + " sec: ";
+	logBuff = "Inserted " + int2string(actualNumberOfRecords) + " records in " + int2string(deltaT) + " sec: ";
 	logBuff += int2string(recordsPerSecond) + " rec/sec";
 	hlr_log(logBuff,&logStream,6);
 	insertRequestComposeXml();
@@ -628,6 +628,8 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			hlr_log(logBuff,&logStream,6);
 			insertedRecords += affectedRowsBuff;
 			logBuff = "Total records inserted this bulk iteration:" + int2string(insertedRecords);
+			logBuff = "Total records received this bulk iteration:" + int2string(r.size());
+						hlr_log(logBuff,&logStream,5);
 			hlr_log(logBuff,&logStream,5);
 			lastInsertedId = lastInsertedIdBuff;
 			lastInsertedRecordDate = lastInsertedRecordDateBuff;
