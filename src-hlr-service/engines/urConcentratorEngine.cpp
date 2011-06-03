@@ -635,8 +635,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			hlr_log(logBuff,&logStream,6);
 			insertedRecords += affectedRowsBuff;
 			logBuff = "Total records inserted this bulk iteration:" + int2string(insertedRecords);
+			hlr_log(logBuff,&logStream,5);
 			logBuff = "Total records received this bulk iteration:" + int2string(r.size());
-						hlr_log(logBuff,&logStream,5);
+			hlr_log(logBuff,&logStream,5);
 			hlr_log(logBuff,&logStream,5);
 			lastInsertedId = lastInsertedIdBuff;
 			lastInsertedRecordDate = lastInsertedRecordDateBuff;
