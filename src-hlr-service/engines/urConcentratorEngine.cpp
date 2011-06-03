@@ -587,7 +587,7 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 		logBuff = "Records to be inserted this bulk step:" + int2string(recordsPerBulkInsert);
 		hlr_log(logBuff,&logStream,8);
 		int counter = 0;
-		for (int i=0; i < recordsPerBulkInsert || it != r.end(); i++ )
+		for (int i=0; (i < recordsPerBulkInsert) && (it != r.end()); i++ )
 		{
 			bulkInsertRecord(hlrDb,*it);
 			lastInsertedIdBuff = (*it).id;

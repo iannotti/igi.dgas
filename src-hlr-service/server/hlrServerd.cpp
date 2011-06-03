@@ -418,7 +418,7 @@ int main ( int argc, char * argv[] )
 	lStatus.recordsPerConnection = recordsPerConnection;
 	lStatus.deleteOnReset = deleteOnReset;
 	lStatus.useBulkInsert = useBulkInsert;
-	lStatus,recordsPerBulkInsert = recordsPerBulkInsert;
+	lStatus.recordsPerBulkInsert = recordsPerBulkInsert;
 	// instantiate the Socket server
 	GSISocketServer *theServer = new GSISocketServer(server_port,threadNumber);
 	theServer->LimitedProxyMode(GSISocketServer::multi);
