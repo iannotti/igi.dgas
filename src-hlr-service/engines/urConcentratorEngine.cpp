@@ -10,6 +10,7 @@ extern bool deleteOnReset;
 int urConcentrator::run()
 {
 	int res = 0;
+	time_t time0 = time(NULL);
 	string logBuff = "Entering urConcentrator engine";
 	hlr_log(logBuff,&logStream,4);
 	logBuff = "urSourceServer:" + c->hostName;
@@ -43,6 +44,12 @@ int urConcentrator::run()
 	{
 		//insertrecords subengine here
 		res = insertRequestSubEngine(r);
+		time_t time1 = time(NULL);
+		time_t deltaT = tim1-time0;
+		float effProcessedPerSecond = ( (float)(r.size())/((float)deltaT) );
+		logBuff = "Message containing " + int2String(r.size()) + " records processed in " + int2string(deltaT);
+		logBuff += " sec: " + int2string(effProcessedPerSecond) + " rec/sec";
+		hlr_log(logBuff,&logStream,6);
 		return res;
 	}
 	if ( requestType == "resetRecords" )
