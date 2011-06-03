@@ -573,7 +573,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 			lastInsertedId = (*it).id;
 			lastInsertedRecordDate = (*it).date;
 			lastInsertedUniqueChecksum = (*it).uniqueChecksum;
-			insertRecords++;
+			insertedRecords++;
 		}
 		it++;
 	}
