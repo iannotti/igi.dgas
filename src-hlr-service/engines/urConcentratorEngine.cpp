@@ -164,7 +164,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	time_t time1 = time(NULL);
 	time_t deltaT = time1 - time0;
 	float recordsPerSecond = ((float) actualNumberOfRecords) /  ((float) deltaT);
-	logBuff = "Inserted " + int2string(actualNumberOfRecords) + " records in " + int2string(deltaT) + " sec: ";
+	logBuff = "Inserted " + int2string(insertedRecords) + " of " + int2string(actualNumberOfRecords) + " records in " + int2string(deltaT) + " sec: ";
 	logBuff += int2string(recordsPerSecond) + " rec/sec";
 	hlr_log(logBuff,&logStream,6);
 	insertRequestComposeXml();
@@ -542,6 +542,7 @@ int urConcentrator::getIndex(urConcentratorIndex& indexEntry)
 
 int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 {
+	insertRecords =0;
 	//IMPORTANT should exit with !=0 just in case no records have
 	//been inserted at all.
 	string logBuff = "Entering insertRecords";
@@ -572,6 +573,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 			lastInsertedId = (*it).id;
 			lastInsertedRecordDate = (*it).date;
 			lastInsertedUniqueChecksum = (*it).uniqueChecksum;
+			insertRecords++;
 		}
 		it++;
 	}
@@ -580,7 +582,7 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 
 int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 {
-	int insertedRecords = 0;
+	insertedRecords = 0;
 	//FIXME go on with bulk inserts.
 	//IMPORTANT should exit with !=0 just in case no records have
 	//been inserted at all.
@@ -601,7 +603,6 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 		insertValuesBuffer.clear();
 		logBuff = "Records to be inserted this bulk step:" + int2string(recordsPerBulkInsert);
 		hlr_log(logBuff,&logStream,8);
-		int counter = 0;
 		for (int i=0; (i < recordsPerBulkInsert) && (it != r.end()); i++ )
 		{
 			bulkInsertRecord(hlrDb,*it);
@@ -609,9 +610,8 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			lastInsertedRecordDateBuff = (*it).date;
 			lastInsertedUniqueChecksumBuff = (*it).uniqueChecksum;
 			it++;
-			counter++;
 		}
-		logBuff = "Records counter for this bulk step:" + int2string(counter);
+		logBuff = "Records received for this bulk step:" + int2string(insertValuesBuffer.size());
 		hlr_log(logBuff,&logStream,8);
 		string valuesString;
 		vector<string>::iterator valuesIt = insertValuesBuffer.begin();
@@ -634,10 +634,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			logBuff = "Records inserted this bulk step:" + int2string(affectedRowsBuff);
 			hlr_log(logBuff,&logStream,6);
 			insertedRecords += affectedRowsBuff;
-			logBuff = "Total records inserted this bulk iteration:" + int2string(insertedRecords);
+			logBuff = "Total records inserted from message so far :" + int2string(insertedRecords);
 			hlr_log(logBuff,&logStream,5);
-			logBuff = "Total records received this bulk iteration:" + int2string(r.size());
-			hlr_log(logBuff,&logStream,5);
+			logBuff = "Total records received in current message:" + int2string(r.size());
 			hlr_log(logBuff,&logStream,5);
 			lastInsertedId = lastInsertedIdBuff;
 			lastInsertedRecordDate = lastInsertedRecordDateBuff;

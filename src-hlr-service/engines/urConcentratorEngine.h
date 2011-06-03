@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1.4.6 2011/06/01 09:33:03 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.7 2011/06/03 13:18:24 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -124,6 +124,7 @@ private:
 	string lastInsertedRecordDate;
 	string lastInsertedUniqueChecksum;
 	vector<string> insertValuesBuffer;//TODO buffer to store values for bulk insert
+	int insertedRecords; //counter for inserted records in bulk iteration;
 	int xmlParser(	string& requestType,
 			vector<jobTransSummary>& r);
 
