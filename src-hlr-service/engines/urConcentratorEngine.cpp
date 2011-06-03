@@ -161,7 +161,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	logBuff += int2string(recordsPerSecond) + " rec/sec";
 	hlr_log(logBuff,&logStream,6);
 	insertRequestComposeXml();
-	return 0
+	return 0;
 }
 
 int urConcentrator::removeServerRecords()
