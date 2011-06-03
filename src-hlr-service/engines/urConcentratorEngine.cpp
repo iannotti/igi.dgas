@@ -157,7 +157,7 @@ int urConcentrator::insertRequestSubEngine(vector<jobTransSummary>& r)
 	time_t time1 = time(NULL);
 	time_t deltaT = time1 - time0;
 	float recordsPerSecond = ((float) actualNumberOfRecords) /  ((float) deltaT);
-	logBuff = "Inserted " + int2string(actualNumberOfRecord) + " in " + int2string(deltaT) + " sec: ";
+	logBuff = "Inserted " + int2string(actualNumberOfRecords) + " in " + int2string(deltaT) + " sec: ";
 	logBuff += int2string(recordsPerSecond) + " rec/sec";
 	hlr_log(logBuff,&logStream,6);
 	insertRequestComposeXml();
