@@ -74,7 +74,7 @@ node parseAndRelease (node &inputNode, string _tag)
 			nodeBuff = parseImpl(&(inputNode.text), _tag);
 			if ( nodeBuff.status == 0 )
 			{
-				inputNode.release()
+				inputNode.release();
 			}
 			return nodeBuff;
 		};
