@@ -135,7 +135,7 @@ node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 node parse (string *xmlInput, string _tag, string space)
 {
 	node nodeBuff;
-	nodeBuff = parseImpl(xmlInput, _tag);
+	nodeBuff = parse(xmlInput, _tag);
 	string tag2 = "";
 	tag2 += space + ":" + _tag;
 	if (nodeBuff.status != 0)
