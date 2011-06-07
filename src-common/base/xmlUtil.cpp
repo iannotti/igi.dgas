@@ -181,7 +181,7 @@ int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_
 	if ( pos == string::npos )
 	{
 		output = "";
-		return E_PARSE_ERROR;
+		return atoi(E_PARSE_ERROR);
 	}
 	else
 	{
@@ -191,17 +191,16 @@ int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_
 		if ( pos == string::npos )
 		{
 			output = "";
-			return E_PARSE_ERROR;
+			return atoi(E_PARSE_ERROR);
 		}
 		else
 		{
 			size_t _endPos = pos + endtag.size();
 			size_t textEnd = pos;
-			string _text = xmlInput->substr(
+			output = xmlInput->substr(
 					textStart,
 					textEnd-textStart);
-			_text = stripWhite(_text);
-			buff = output;
+			output = stripWhite(output);
 			return 0;
 
 		}
