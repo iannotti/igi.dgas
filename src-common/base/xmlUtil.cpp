@@ -31,13 +31,13 @@ node parse (string *xmlInput, string _tag)
 			xmlInput->erase(pos2-1, 1);
 			string insertBuff = "</" + _tag + ">";
 			xmlInput->insert(pos2, insertBuff);
-			nodeBuff = parseImpl(xmlInput, _tag);
+			nodeBuff = parseImpl(xmlInput, _tag, pos , pos2);
 			return nodeBuff;
 			//\> type tag
 		}
 		else
 		{
-			nodeBuff = parseImpl(xmlInput, _tag);
+			nodeBuff = parseImpl(xmlInput, _tag, pos, pos2);
 			return nodeBuff;
 		}
 	}
@@ -86,7 +86,7 @@ node parseAndRelease (node &inputNode, string _tag)
 	}
 }
 
-node parseImpl(string *xmlInput, string _tag, size_t pos, size_t pos2)
+node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 {
 	string * _mainDoc = xmlInput;
 	string starttag = xmlInput->substr(pos,

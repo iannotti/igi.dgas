@@ -93,7 +93,7 @@ node parse(string *xmlInput, string _tag);
 node parse(string *xmlInput, string _tag, string space);
 //release node if successful parsing.
 node parseAndRelease(node &inputNode, string _tag);
-node parseImpl(string *xmlInput, string _tag);
+node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2);
 string tagAdd(string tag, string content);
 string tagAdd(string tag, string content, vector<attribute> );
 string tagAdd(string tag, int content);
