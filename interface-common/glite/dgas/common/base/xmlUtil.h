@@ -11,9 +11,9 @@ using namespace std;
 
 inline string float2string(float f)
 {
-        ostringstream ost;
-        ost << f;
-        return ost.str();
+	ostringstream ost;
+	ost << f;
+	return ost.str();
 }
 
 namespace glite
@@ -28,8 +28,8 @@ typedef map<string,string> attrType;
 
 struct attribute
 {
-        string key;
-        string value;
+	string key;
+	string value;
 };
 
 }
@@ -38,7 +38,7 @@ struct attribute
 }
 string timeStamp2ISO8601 (time_t t);
 string timeStamp2ISO8601 (time_t t,long int gmtOff); //gmtoff in the form 
-							//HH*MM*SS
+//HH*MM*SS
 time_t ISO86012timeStamp (string &t);
 string seconds2ISO8601  (int s);
 int ISO86012seconds (string s);
@@ -46,7 +46,7 @@ int ISO86012seconds (string s);
 
 using namespace glite::workload::dgas::common;
 class node {
-	public:
+public:
 
 	node ( string *_mainDoc = NULL, int _status = 0, string _tag = "", string _text = "", int _startPos = 0, int _endPos = 0, bool _valid = false ):
 		mainDoc(_mainDoc),
@@ -56,44 +56,46 @@ class node {
 		startPos(_startPos),
 		endPos(_endPos),
 		valid(_valid){;};
-	
-	
-	
-		//remove the node from the xml;
+
+
+
+	//remove the node from the xml;
 	int release();
 	attrType getAttributes();
-	
-	private:
+
+private:
 	string * mainDoc;
-	
-	public:	
+
+public:
 	int status;
-	
-	private:
+
+private:
 	string tag;
-	
-	public:	
+
+public:
 	string text;
-	
-	private:
+
+private:
 	int startPos;
 	int endPos;	
 	bool valid;
 
 
 
-	
+
 };
 
 
-		//retrieve the info in the node delimited by "tag"
-	node parse(string *xmlInput, string _tag);
-            //retrieve the info in the node delimited by "tag" OR
-                // "space:tag"
-        node parse(string *xmlInput, string _tag, string space);
-        node parseImpl(string *xmlInput, string _tag);
-	string tagAdd(string tag, string content);
-	string tagAdd(string tag, string content, vector<attribute> );
-	string tagAdd(string tag, int content);
-	string parseAttribute ( string a, map<string,string>& m);
+//retrieve the info in the node delimited by "tag"
+node parse(string *xmlInput, string _tag);
+//retrieve the info in the node delimited by "tag" OR
+// "space:tag"
+node parse(string *xmlInput, string _tag, string space);
+//release node if successful parsing.
+node parseAndRelease(node &inputNode, string _tag);
+node parseImpl(string *xmlInput, string _tag);
+string tagAdd(string tag, string content);
+string tagAdd(string tag, string content, vector<attribute> );
+string tagAdd(string tag, int content);
+string parseAttribute ( string a, map<string,string>& m);
 #endif

@@ -1,13 +1,13 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.1 2010/10/19 09:11:04 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.2 2011/06/07 11:56:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   :
  *  copyright : 
@@ -28,12 +28,12 @@ extern bool authUserSqlQueries;
 
 inline int urlSplit(char delim, string url_string , url_type *url_buff)
 {
-        size_t pos = 0;
-        pos = url_string.find_first_of( delim, 0);
-        url_buff->hostname=url_string.substr(0,pos);
-        url_buff->port=atoi((url_string.substr(pos+1,url_string.size()).c_str()));
-				                
-        return 0;
+	size_t pos = 0;
+	pos = url_string.find_first_of( delim, 0);
+	url_buff->hostname=url_string.substr(0,pos);
+	url_buff->port=atoi((url_string.substr(pos+1,url_string.size()).c_str()));
+
+	return 0;
 }
 
 #ifdef WITH_VOMS
@@ -56,8 +56,8 @@ string getVomsAuthQuery (string &authRole, inputData& iD, connInfo& c)
 			}
 			//ALLOW LIST:
 			if ( iD.userCertBuffer == "" ||
-				iD.userCertBuffer == c.contactString ||
-				iD.voIDBuffer == c.voname )
+					iD.userCertBuffer == c.contactString ||
+					iD.voIDBuffer == c.voname )
 			{
 				buff = " AND gridUser LIKE \"%";
 				buff += c.contactString + "%\"";
@@ -103,192 +103,192 @@ string getVomsAuthQuery (string &authRole, inputData& iD, connInfo& c)
 
 void xml2struct(inputData &out, string &xml)
 {
-  node tagBuff;
-  string logBuff = "";
- 
-  tagBuff = parse(&xml, "jobId");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.jobId = tagBuff.text;
-    }
-  tagBuff = parse(&xml, "startTid");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.startTid = tagBuff.text;
-    }
-  
-  tagBuff = parse(&xml, "USERCERTBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.userCertBuffer = tagBuff.text;
-    }
-  
-  
-  tagBuff = parse(&xml, "RESOURCEIDBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.resourceIDBuffer = tagBuff.text;
-    }
-  
-  
-  tagBuff = parse(&xml, "TIMEBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.timeBuffer = tagBuff.text;
-    }
-  
-  
-  tagBuff = parse(&xml, "GROUPIDBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.groupIDBuffer = tagBuff.text;
-    }
+	node tagBuff;
+	string logBuff = "";
 
-  
-  tagBuff = parse(&xml, "VOIDBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.voIDBuffer = tagBuff.text;
-    }
-  
-  tagBuff = parse(&xml, "VOMSROLE");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.fqanBuffer = tagBuff.text;
-    }
-  
-  tagBuff = parse(&xml, "FREQUENCYBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.frequencyBuffer = tagBuff.text;
-    }
-  
-tagBuff = parse(&xml, "AGGREGATESTRINGBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.aggregateStringBuff = tagBuff.text;
-    }
-  tagBuff = parse(&xml, "TIMEINDEXBUFF");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.timeIndexBuff = tagBuff.text;
-    }
-  
-  
-  tagBuff = parse(&xml, "DEBUG");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-     out.debug =  atoi(tagBuff.text.c_str());
-    }
+	tagBuff = parse(&xml, "jobId");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.jobId = tagBuff.text;
+	}
+	tagBuff = parse(&xml, "startTid");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.startTid = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "USERCERTBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.userCertBuffer = tagBuff.text;
+	}
 
 
-  tagBuff = parse(&xml, "AGGREGATEFLAG");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-     out.aggregateFlag = atoi(tagBuff.text.c_str());
-    }
-  
-  tagBuff = parse(&xml, "groupBy");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-     out.groupBy = tagBuff.text;
-    }
-  
-  tagBuff = parse(&xml, "siteName");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-     out.siteName = tagBuff.text;
-    }
-  
-  tagBuff = parse(&xml, "urOrigin");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-     out.urOrigin = tagBuff.text;
-    }
-  
-  tagBuff = parse(&xml, "authoriseAs");
-  if(tagBuff.status == 0)
-    {
-	logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
-	hlr_log(logBuff, &logStream, 8);
-	out.substDn = tagBuff.text;
-    }
-
-  tagBuff = parse(&xml, "orderBy");
-  if(tagBuff.status == 0)
-    {
-	logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
- 	hlr_log(logBuff, &logStream, 8);
-	out.orderBy = tagBuff.text;
-    }
-
-  tagBuff = parse(&xml, "LISTFLAG");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.listFlag = atoi(tagBuff.text.c_str());
-    }
+	tagBuff = parse(&xml, "RESOURCEIDBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.resourceIDBuffer = tagBuff.text;
+	}
 
 
-  tagBuff = parse(&xml, "QUERYTYPEBUFFER");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-     out.queryTypeBuffer = tagBuff.text;
-    }
+	tagBuff = parse(&xml, "TIMEBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.timeBuffer = tagBuff.text;
+	}
 
-  
-  tagBuff = parse(&xml, "ITSHEADING");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.itsHeading = atoi(tagBuff.text.c_str());
-    }
-  
-  tagBuff = parse(&xml, "itsFieldList");
-  if(tagBuff.status == 0)
-    {
-      logBuff = "queryENGINE, got: \"" + tagBuff.text + "\""; 
-      hlr_log(logBuff, &logStream, 8);
-      out.itsFieldList = tagBuff.text;
-    }
 
-  return;
+	tagBuff = parse(&xml, "GROUPIDBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.groupIDBuffer = tagBuff.text;
+	}
+
+
+	tagBuff = parse(&xml, "VOIDBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.voIDBuffer = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "VOMSROLE");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.fqanBuffer = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "FREQUENCYBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.frequencyBuffer = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "AGGREGATESTRINGBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.aggregateStringBuff = tagBuff.text;
+	}
+	tagBuff = parse(&xml, "TIMEINDEXBUFF");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.timeIndexBuff = tagBuff.text;
+	}
+
+
+	tagBuff = parse(&xml, "DEBUG");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.debug =  atoi(tagBuff.text.c_str());
+	}
+
+
+	tagBuff = parse(&xml, "AGGREGATEFLAG");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.aggregateFlag = atoi(tagBuff.text.c_str());
+	}
+
+	tagBuff = parse(&xml, "groupBy");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.groupBy = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "siteName");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.siteName = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "urOrigin");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.urOrigin = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "authoriseAs");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.substDn = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "orderBy");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.orderBy = tagBuff.text;
+	}
+
+	tagBuff = parse(&xml, "LISTFLAG");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.listFlag = atoi(tagBuff.text.c_str());
+	}
+
+
+	tagBuff = parse(&xml, "QUERYTYPEBUFFER");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.queryTypeBuffer = tagBuff.text;
+	}
+
+
+	tagBuff = parse(&xml, "ITSHEADING");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.itsHeading = atoi(tagBuff.text.c_str());
+	}
+
+	tagBuff = parse(&xml, "itsFieldList");
+	if(tagBuff.status == 0)
+	{
+		logBuff = "queryENGINE, got: \"" + tagBuff.text + "\"";
+		hlr_log(logBuff, &logStream, 8);
+		out.itsFieldList = tagBuff.text;
+	}
+
+	return;
 }
 int advancedQueryEngine_parse_xml (string &doc, inputData &input)
 {
@@ -299,11 +299,11 @@ int advancedQueryEngine_parse_xml (string &doc, inputData &input)
 		nodeBuff = parse(&doc, tag);
 		if ( nodeBuff.status != 0 )
 			break;
-			xml2struct(input, doc);
+		xml2struct(input, doc);
 		nodeBuff.release();
 	}
 	return 0;
-	
+
 }//advancedQueryEngine_parse_xml
 
 
@@ -384,232 +384,232 @@ bool isllHlr (connInfo& connectionInfo )
 
 string timeStamp2Broken(inputData &iD, string ts)
 {
-        struct tm * brokenTime =NULL;
-        string timeIndexBuff ="";
-        time_t timeVal = atoi(ts.c_str());
-        brokenTime = localtime(&timeVal);
-        timeIndexBuff += int2string(
-                        brokenTime->tm_year+1900) + "-"; 
-        if ( brokenTime->tm_mon >= 9 )
-        {
-         timeIndexBuff += int2string(
-                        brokenTime->tm_mon+1) + "-";
-        }
-        else 
-        {       
-                 timeIndexBuff += "0" + int2string(
-                        brokenTime->tm_mon+1) + "-";
-        }
-        if ( brokenTime->tm_mday > 9)
-        {
-                timeIndexBuff += int2string(
-                        brokenTime->tm_mday) + " ";
-        }
-        else
-        {
-                timeIndexBuff += "0" + int2string(
-                        brokenTime->tm_mday) + " ";
-        }
-        if ( brokenTime->tm_hour > 9 )
-        {
-                timeIndexBuff += int2string(
-                                brokenTime->tm_hour) + ":";
-        }
-        else
-        {
-                timeIndexBuff += "0" + int2string(
-                                brokenTime->tm_hour) + ":";
-        }
-        if ( brokenTime->tm_min > 9 )
-        {
-                timeIndexBuff += int2string(
-                                brokenTime->tm_min) + ":";
-        }
-        else 
-        {
-                timeIndexBuff += "0" + int2string(
-                                brokenTime->tm_min) + ":";
-        }
-        if (  brokenTime->tm_sec > 9)
-        {
-                timeIndexBuff += int2string(
-                                brokenTime->tm_sec);
-        }
-        else
-        {
-                timeIndexBuff += "0" + int2string(
-                                brokenTime->tm_sec);
-        }
-        return timeIndexBuff;
+	struct tm * brokenTime =NULL;
+	string timeIndexBuff ="";
+	time_t timeVal = atoi(ts.c_str());
+	brokenTime = localtime(&timeVal);
+	timeIndexBuff += int2string(
+			brokenTime->tm_year+1900) + "-";
+	if ( brokenTime->tm_mon >= 9 )
+	{
+		timeIndexBuff += int2string(
+				brokenTime->tm_mon+1) + "-";
+	}
+	else
+	{
+		timeIndexBuff += "0" + int2string(
+				brokenTime->tm_mon+1) + "-";
+	}
+	if ( brokenTime->tm_mday > 9)
+	{
+		timeIndexBuff += int2string(
+				brokenTime->tm_mday) + " ";
+	}
+	else
+	{
+		timeIndexBuff += "0" + int2string(
+				brokenTime->tm_mday) + " ";
+	}
+	if ( brokenTime->tm_hour > 9 )
+	{
+		timeIndexBuff += int2string(
+				brokenTime->tm_hour) + ":";
+	}
+	else
+	{
+		timeIndexBuff += "0" + int2string(
+				brokenTime->tm_hour) + ":";
+	}
+	if ( brokenTime->tm_min > 9 )
+	{
+		timeIndexBuff += int2string(
+				brokenTime->tm_min) + ":";
+	}
+	else
+	{
+		timeIndexBuff += "0" + int2string(
+				brokenTime->tm_min) + ":";
+	}
+	if (  brokenTime->tm_sec > 9)
+	{
+		timeIndexBuff += int2string(
+				brokenTime->tm_sec);
+	}
+	else
+	{
+		timeIndexBuff += "0" + int2string(
+				brokenTime->tm_sec);
+	}
+	return timeIndexBuff;
 }
 
 int createTmpTimesTable(inputData& iD, int seed, string &tableName)
 {
-        pid_t myself = getpid();
-        tableName = "tmpTimesTable_" + int2string(myself) +"_" + int2string(seed);
-        string queryString = "";
-        queryString = "CREATE TABLE " + tableName;
-        queryString += "( start datetime, ";
-        queryString += " end datetime, ";
-        queryString += " primary key (start,end)) TYPE=HEAP";
-        if ( iD.debug )
-        {
+	pid_t myself = getpid();
+	tableName = "tmpTimesTable_" + int2string(myself) +"_" + int2string(seed);
+	string queryString = "";
+	queryString = "CREATE TABLE " + tableName;
+	queryString += "( start datetime, ";
+	queryString += " end datetime, ";
+	queryString += " primary key (start,end)) TYPE=HEAP";
+	if ( iD.debug )
+	{
 		string logBuff = "tmpTimeTable:" + queryString;
-                hlr_log(logBuff, &logStream,8);
-        }
-        hlrGenericQuery makeTable(queryString);
-        return makeTable.query();
+		hlr_log(logBuff, &logStream,8);
+	}
+	hlrGenericQuery makeTable(queryString);
+	return makeTable.query();
 }
 
 int dropTmpTimesTable(int seed, string& tableName)
 {
-        string queryString = "";
-        queryString += "DROP TABLE " + tableName;
-        hlrGenericQuery dropTable(queryString);
-        return dropTable.query();
+	string queryString = "";
+	queryString += "DROP TABLE " + tableName;
+	hlrGenericQuery dropTable(queryString);
+	return dropTable.query();
 }
 
 int populateTmpTimesTable(inputData& iD,string start, string end, int seed)
 {
-        pid_t myself = getpid();
-        string tableName = "tmpTimesTable_" + int2string(myself) +"_" + int2string(seed);
-        string queryString = "";
-        queryString += "REPLACE INTO " + tableName;
-        queryString += " VALUES ('";
-        queryString += start +"','";
-        queryString += end +"')";
-        if ( iD.debug )
-        {
-                hlr_log(queryString,&logStream,8);
-        }
-        hlrGenericQuery populateTable(queryString);
-        return populateTable.query();
+	pid_t myself = getpid();
+	string tableName = "tmpTimesTable_" + int2string(myself) +"_" + int2string(seed);
+	string queryString = "";
+	queryString += "REPLACE INTO " + tableName;
+	queryString += " VALUES ('";
+	queryString += start +"','";
+	queryString += end +"')";
+	if ( iD.debug )
+	{
+		hlr_log(queryString,&logStream,8);
+	}
+	hlrGenericQuery populateTable(queryString);
+	return populateTable.query();
 }
 
 int produceTimeQueries(inputData& iD, string& q, string& tableName,int seed, vector<string>& startDateVector)
 {
-        int secondsPerHour = 3600;
-        int timeFactor = secondsPerHour;
+	int secondsPerHour = 3600;
+	int timeFactor = secondsPerHour;
 	string quoteBuff = "'";
 	string f = iD.frequencyBuffer;
 	string t = iD.timeBuffer;
-        if ( f == "day" )
-        {
-                timeFactor = secondsPerHour*24;
-        }
-        if ( f == "hour" )
-        {
-                timeFactor = secondsPerHour;
-        }
-        if ( f == "week" )
-        {
-                timeFactor = secondsPerHour*24*7;
-        }
-        if ( f== "month" )
-        {
-                timeFactor = secondsPerHour*24*30;
-        }
+	if ( f == "day" )
+	{
+		timeFactor = secondsPerHour*24;
+	}
+	if ( f == "hour" )
+	{
+		timeFactor = secondsPerHour;
+	}
+	if ( f == "week" )
+	{
+		timeFactor = secondsPerHour*24*7;
+	}
+	if ( f== "month" )
+	{
+		timeFactor = secondsPerHour*24*30;
+	}
 	string query = "select MIN(UNIX_TIMESTAMP(date)),MAX(UNIX_TIMESTAMP(date)) from jobTransSummary WHERE 1 ";
 	string queryAppendString = "";
 	string separator = "_";
-        if (t == "*" || t == "")//match all
-        {
-                queryAppendString = "";
-        }
+	if (t == "*" || t == "")//match all
+	{
+		queryAppendString = "";
+	}
 	if (t == "today" )
-        {
-                t =  "CURDATE()_";
-                quoteBuff = "";
-        }
-        if (t == "yesterday" )
-        {
-                t = "(CURDATE()-1)_CURDATE()";
-                quoteBuff = "";
-        }
-        if (t == "thisWeek" )
-        {
-                t = "(CURDATE()-WEEKDAY(CURDATE()))_(CURDATE()+1)";
-                quoteBuff = "";
-        }
-        if (t == "lastWeek" )
-        {
-                t =  "(CURDATE()-WEEKDAY(CURDATE())-7)_(CURDATE()-WEEKDAY(CURDATE())-1)";
-                quoteBuff = "";
-        }
-        if (t == "thisMonth" )
-        {
-                t =  "(CURDATE()-DAYOFMONTH(CURDATE())+1)_(CURDATE()+1)";
-                quoteBuff = "";
-        }
-        if (t == "lastMonth")
-        {
-                t =  "SUBDATE((CURDATE()-DAYOFMONTH(CURDATE())+1),INTERVAL 1 MONTH)_(CURDATE()-DAYOFMONTH(CURDATE()))";
-                quoteBuff = "";
-        }
-        string::size_type pos = t.find_first_of(separator);
-        if ( pos != string::npos )
-        {
-                if ( pos == 0 )//time interval
-                {
-                        // type: -timestamp
-                        queryAppendString = t.substr(pos+1);
-                        queryAppendString = "AND jobTransSummary.date <="+quoteBuff + queryAppendString + quoteBuff;
-                }
-                else
-                {
-                        if ( pos == t.length()-1 )
-                        {
-                                // type: timestamp-
-                                queryAppendString = t.substr(0,pos);
-                                queryAppendString = "AND jobTransSummary.date >"+quoteBuff + queryAppendString + quoteBuff;
-                        }
-                        else
-                        {
-                                //type timeA - time B
-                                queryAppendString = t.substr(0,pos);
-                                queryAppendString = "AND jobTransSummary.date >"+quoteBuff + queryAppendString + quoteBuff;
-                                queryAppendString += " AND jobTransSummary.date <=" +quoteBuff + t.substr(pos+1)+quoteBuff;
-                        }
-                }
-        }
+	{
+		t =  "CURDATE()_";
+		quoteBuff = "";
+	}
+	if (t == "yesterday" )
+	{
+		t = "(CURDATE()-1)_CURDATE()";
+		quoteBuff = "";
+	}
+	if (t == "thisWeek" )
+	{
+		t = "(CURDATE()-WEEKDAY(CURDATE()))_(CURDATE()+1)";
+		quoteBuff = "";
+	}
+	if (t == "lastWeek" )
+	{
+		t =  "(CURDATE()-WEEKDAY(CURDATE())-7)_(CURDATE()-WEEKDAY(CURDATE())-1)";
+		quoteBuff = "";
+	}
+	if (t == "thisMonth" )
+	{
+		t =  "(CURDATE()-DAYOFMONTH(CURDATE())+1)_(CURDATE()+1)";
+		quoteBuff = "";
+	}
+	if (t == "lastMonth")
+	{
+		t =  "SUBDATE((CURDATE()-DAYOFMONTH(CURDATE())+1),INTERVAL 1 MONTH)_(CURDATE()-DAYOFMONTH(CURDATE()))";
+		quoteBuff = "";
+	}
+	string::size_type pos = t.find_first_of(separator);
+	if ( pos != string::npos )
+	{
+		if ( pos == 0 )//time interval
+		{
+			// type: -timestamp
+			queryAppendString = t.substr(pos+1);
+			queryAppendString = "AND jobTransSummary.date <="+quoteBuff + queryAppendString + quoteBuff;
+		}
+		else
+		{
+			if ( pos == t.length()-1 )
+			{
+				// type: timestamp-
+				queryAppendString = t.substr(0,pos);
+				queryAppendString = "AND jobTransSummary.date >"+quoteBuff + queryAppendString + quoteBuff;
+			}
+			else
+			{
+				//type timeA - time B
+				queryAppendString = t.substr(0,pos);
+				queryAppendString = "AND jobTransSummary.date >"+quoteBuff + queryAppendString + quoteBuff;
+				queryAppendString += " AND jobTransSummary.date <=" +quoteBuff + t.substr(pos+1)+quoteBuff;
+			}
+		}
+	}
 	query = query + queryAppendString;
-        if (iD.debug)
-        {
+	if (iD.debug)
+	{
 		string logBuff = "produceTimeQueries:" +query;
 		hlr_log(logBuff, &logStream,8);
-        }
-        hlrGenericQuery genericQuery(query);
-        int res = genericQuery.query();
-        if ( res != 0 )
-        {
-                if (iD.debug)
-                {
-                        hlr_log("Error retrieving list of tr_stamp",&logStream,8);
-                }
-        }
-        else
-        {
-                string startString = ((genericQuery.queryResult).front())[0];
-                startString = startString.substr(0,8);
-                startString = startString+ "00";
-                int start =
-                        atoi(startString.c_str());
-                string endString = ((genericQuery.queryResult).front())[1];
-                endString = endString.substr(0,8);
-                endString = endString+ "00";
-                int end =
-                        atoi(endString.c_str());
-                if (iD.debug)
-                {
-                        string logBuff = "start:" + int2string(start) + ",end:" + int2string(end);
+	}
+	hlrGenericQuery genericQuery(query);
+	int res = genericQuery.query();
+	if ( res != 0 )
+	{
+		if (iD.debug)
+		{
+			hlr_log("Error retrieving list of tr_stamp",&logStream,8);
+		}
+	}
+	else
+	{
+		string startString = ((genericQuery.queryResult).front())[0];
+		startString = startString.substr(0,8);
+		startString = startString+ "00";
+		int start =
+				atoi(startString.c_str());
+		string endString = ((genericQuery.queryResult).front())[1];
+		endString = endString.substr(0,8);
+		endString = endString+ "00";
+		int end =
+				atoi(endString.c_str());
+		if (iD.debug)
+		{
+			string logBuff = "start:" + int2string(start) + ",end:" + int2string(end);
 			hlr_log(logBuff, &logStream,8);
-                        logBuff = "startString:" + startString + ",endString:" + endString;
+			logBuff = "startString:" + startString + ",endString:" + endString;
 			hlr_log(logBuff, &logStream,8);
-                }
-                int time = start;
+		}
+		int time = start;
 		string dateBuff ="";
-                while (time < end )
-                {
+		while (time < end )
+		{
 			dateBuff = timeStamp2Broken(iD, int2string(time));
 			populateTmpTimesTable(iD, dateBuff,timeStamp2Broken(iD,int2string(time+timeFactor)),seed);
 			if ( iD.debug )
@@ -618,9 +618,9 @@ int produceTimeQueries(inputData& iD, string& q, string& tableName,int seed, vec
 			}
 			startDateVector.push_back(dateBuff);
 			time = time+timeFactor;
-                }
+		}
 		q = " AND jobTransSummary.date>"+tableName+".start AND jobTransSummary.date <= "+tableName+".end GROUP BY "+tableName+".start";
-        }
+	}
 	return 0;
 
 }
@@ -628,81 +628,81 @@ int produceTimeQueries(inputData& iD, string& q, string& tableName,int seed, vec
 string parseTime (inputData &iD, string& t)
 {
 
-        string queryBuff = "";
+	string queryBuff = "";
 	string quoteBuff = "'";
-        if (t == "*" || t == "")//match all
-        {
-                queryBuff = "";
-        }
+	if (t == "*" || t == "")//match all
+	{
+		queryBuff = "";
+	}
 	if (t == "today" )
-        {
-                t =  "CURDATE()_";
-                quoteBuff = "";
-        }
-        if (t == "yesterday" )
-        {
-                t = "(CURDATE()-1)_CURDATE()";
-                quoteBuff = "";
-        }
-        if (t == "thisWeek" )
-        {
-                t =  "(CURDATE()-WEEKDAY(CURDATE()))_(CURDATE()+1)";
-                quoteBuff = "";
-        }
-        if (t == "lastWeek" )
-        {
-                t =  "(CURDATE()-WEEKDAY(CURDATE())-7)_(CURDATE()-WEEKDAY(CURDATE())-1)";
-                quoteBuff = "";
-        }
-        if (t == "thisMonth" )
-        {
-                t =  "(CURDATE()-DAYOFMONTH(CURDATE())+1)_(CURDATE()+1)";
-                quoteBuff = "";
-        }
-        if (t == "lastMonth" )
-        {
-                t =  "SUBDATE((CURDATE()-DAYOFMONTH(CURDATE())+1),INTERVAL 1 MONTH)_(CURDATE()-DAYOFMONTH(CURDATE()))";
-                quoteBuff = "";
-        }
-        string separator = "_";
-        string::size_type pos = t.find_first_of(separator);
-        if ( pos != string::npos )//time interval
-        {
-                if ( pos == 0 )
-                {
-                        // type: -timestamp
-                        queryBuff = t.substr(pos+1);
-                        queryBuff = "AND jobTransSummary.date <=" +quoteBuff + queryBuff + quoteBuff;
-                }
-                else
-                {
-                        if ( pos == t.length()-1 )
-                        {
-                                // type: timestamp-
-                                queryBuff = t.substr(0,pos);
-                                queryBuff = "AND jobTransSummary.date >" + quoteBuff + queryBuff +quoteBuff;
-                        }
-                        else
-                        {
-                                //type timeA - time B
-                                queryBuff = t.substr(0,pos);
+	{
+		t =  "CURDATE()_";
+		quoteBuff = "";
+	}
+	if (t == "yesterday" )
+	{
+		t = "(CURDATE()-1)_CURDATE()";
+		quoteBuff = "";
+	}
+	if (t == "thisWeek" )
+	{
+		t =  "(CURDATE()-WEEKDAY(CURDATE()))_(CURDATE()+1)";
+		quoteBuff = "";
+	}
+	if (t == "lastWeek" )
+	{
+		t =  "(CURDATE()-WEEKDAY(CURDATE())-7)_(CURDATE()-WEEKDAY(CURDATE())-1)";
+		quoteBuff = "";
+	}
+	if (t == "thisMonth" )
+	{
+		t =  "(CURDATE()-DAYOFMONTH(CURDATE())+1)_(CURDATE()+1)";
+		quoteBuff = "";
+	}
+	if (t == "lastMonth" )
+	{
+		t =  "SUBDATE((CURDATE()-DAYOFMONTH(CURDATE())+1),INTERVAL 1 MONTH)_(CURDATE()-DAYOFMONTH(CURDATE()))";
+		quoteBuff = "";
+	}
+	string separator = "_";
+	string::size_type pos = t.find_first_of(separator);
+	if ( pos != string::npos )//time interval
+	{
+		if ( pos == 0 )
+		{
+			// type: -timestamp
+			queryBuff = t.substr(pos+1);
+			queryBuff = "AND jobTransSummary.date <=" +quoteBuff + queryBuff + quoteBuff;
+		}
+		else
+		{
+			if ( pos == t.length()-1 )
+			{
+				// type: timestamp-
+				queryBuff = t.substr(0,pos);
+				queryBuff = "AND jobTransSummary.date >" + quoteBuff + queryBuff +quoteBuff;
+			}
+			else
+			{
+				//type timeA - time B
+				queryBuff = t.substr(0,pos);
 				queryBuff = "AND jobTransSummary.date >"+ quoteBuff + queryBuff;
-                                queryBuff += quoteBuff + " AND jobTransSummary.date <="+quoteBuff + t.substr(pos+1)+quoteBuff;
-                        }
-                }
-        }
+				queryBuff += quoteBuff + " AND jobTransSummary.date <="+quoteBuff + t.substr(pos+1)+quoteBuff;
+			}
+		}
+	}
 	string logBuff = "parseTime:" + queryBuff;
 	hlr_log (logBuff, &logStream,8);
-        return queryBuff;
+	return queryBuff;
 }
 
 #ifdef MERGE
 int getAvailableTables(connInfo& connectionInfo, vector<string>& tables)
 {
 	database hlrDb ( hlr_sql_server,
-                        hlr_sql_user,
-                        hlr_sql_password,
-                        hlr_sql_dbname);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
 	string logBuff;
 	mergeTables mt(hlrDb, mergeTablesDefinitions);
 	int res = mt.getDef();
@@ -734,13 +734,13 @@ int getAvailableTables(connInfo& connectionInfo, vector<string>& tables)
 
 inline string stripWhite ( string &input )
 {
-        size_t startPos = input.find_first_not_of(" \n\0");
-        if ( startPos == string::npos )
-                return "";
-        size_t endPos = input.find_last_not_of(" \n\0");
-        if ( endPos == string::npos )
-                return "";
-        return input.substr( startPos, endPos - startPos +1 );
+	size_t startPos = input.find_first_not_of(" \n\0");
+	if ( startPos == string::npos )
+		return "";
+	size_t endPos = input.find_last_not_of(" \n\0");
+	if ( endPos == string::npos )
+		return "";
+	return input.substr( startPos, endPos - startPos +1 );
 }
 
 int getSySDefTables(vector<string>& tables)
@@ -762,6 +762,13 @@ int getSySDefTables(vector<string>& tables)
 	return 0;
 }
 
+int getAuthorizedTables(vector<string>& tables)
+{
+	//FIXME complete getAuthorizedTables
+	//This method retrieves the list of "user@db.table:password" that can be queried.
+	return 0;
+}
+
 string composeQuery(inputData &iD, string& time_interval, string &tableName, connInfo &connectionInfo)
 {
 	if ( iD.aggregateStringBuff == "")
@@ -769,18 +776,18 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 		iD.aggregateStringBuff = "COUNT(dgJobId),SUM(cpuTime)/60,SUM(wallTime)/60,SUM(pmem)/1024,SUM(vmem)/1024,SUM(AMOUNT)/1000";
 	}
 	string urOriginBuff = iD.urOrigin;
-        bool voAdminQuery = false;
-        bool llHlr = false;
+	bool voAdminQuery = false;
+	bool llHlr = false;
 	bool hlrAdminQuery = isHlrAdmin(connectionInfo);
 	string logStringBuff;
 	string groupByQuery ="";
 	string certBuff = iD.resourceIDBuffer;
-	#ifdef WITH_VOMS
+#ifdef WITH_VOMS
 	string authRole = "";
-        string vomsAuthQueryString = "";
-	#endif
+	string vomsAuthQueryString = "";
+#endif
 	string authRoleLogBuff = "normalUser";
-	//AUTHZ checs here
+	//AUTHZ checks here
 	if ( !hlrAdminQuery )
 	{
 		voAdminQuery = isVoAdmin(connectionInfo, iD.voIDBuffer);
@@ -802,16 +809,16 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 			}
 			else
 			{
-				#ifdef WITH_VOMS
-					//static mappings have higher priority on
-					//voms mapping. Voms mapping here
-					//Now get hlrRole mapping from voms AC role.
-					authRole = hlrRoleGet(connectionInfo);
-					authRoleLogBuff = authRole;
-					
-				#endif
+#ifdef WITH_VOMS
+				//static mappings have higher priority on
+				//voms mapping. Voms mapping here
+				//Now get hlrRole mapping from voms AC role.
+				authRole = hlrRoleGet(connectionInfo);
+				authRoleLogBuff = authRole;
+
+#endif
 			}
-			
+
 		}
 	}
 	else
@@ -828,7 +835,7 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 	{
 		if ( maxItemsBuff.find_first_not_of("0123456789") != string::npos )
 		{
-		//not just a number. try searching for authRoleLogBuff:number string and use number as the limit value, otherwise search for "default:number" and use this as limit
+			//not just a number. try searching for authRoleLogBuff:number string and use number as the limit value, otherwise search for "default:number" and use this as limit
 			size_t startPos = maxItemsBuff.find(authRoleLogBuff);
 			if ( startPos != string::npos )
 			{
@@ -887,8 +894,8 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 	queryBuff += "jobTransSummary ";
 	queryBuff +=" WHERE 1 ";
 	if ( certBuff != "*" &&
-                certBuff != "" )
-        {
+			certBuff != "" )
+	{
 		string::size_type pos = certBuff.find("NOT ");
 		if ( pos != string::npos )
 		{
@@ -897,39 +904,39 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 		}
 		else
 		{
-	                queryBuff += " AND gridResource LIKE BINARY \""
-        	                +certBuff+"\"";
+			queryBuff += " AND gridResource LIKE BINARY \""
+					+certBuff+"\"";
 		}
-        }
+	}
 	if ( iD.fqanBuffer != "" )
-        {
-                queryBuff += " AND userFqan LIKE \"\%"
-                        + iD.fqanBuffer+ "\%\"";
-        }
+	{
+		queryBuff += " AND userFqan LIKE \"\%"
+				+ iD.fqanBuffer+ "\%\"";
+	}
 	if ( iD.voIDBuffer != "" )
-        {
-                queryBuff += " AND userVo LIKE \""
-                        + iD.voIDBuffer+ "\"";
-        }
+	{
+		queryBuff += " AND userVo LIKE \""
+				+ iD.voIDBuffer+ "\"";
+	}
 	if ( iD.groupIDBuffer != "" )
 	{
 		queryBuff += " AND hlrGroup LIKE \""
-			+ iD.groupIDBuffer + "\"";
+				+ iD.groupIDBuffer + "\"";
 	}
 	if ( iD.siteName != "" )
 	{
 		queryBuff += " AND siteName LIKE \""
-			+ iD.siteName + "\"";
+				+ iD.siteName + "\"";
 	}
 	if ( urOriginBuff != "" )
 	{
 		queryBuff += " AND urSourceServer LIKE \""
-			+ urOriginBuff + "\"";
+				+ urOriginBuff + "\"";
 	}
 	if ( iD.jobId != "" )
-        {
-	        queryBuff += " AND dgJobId LIKE BINARY \"";
-                queryBuff += iD.jobId += "\"";
+	{
+		queryBuff += " AND dgJobId LIKE BINARY \"";
+		queryBuff += iD.jobId += "\"";
 	}
 	if ( iD.userCertBuffer != "" )
 	{
@@ -956,17 +963,17 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 		//no constraints
 		normalUser = false;
 	}
-	#ifdef WITH_VOMS
+#ifdef WITH_VOMS
 	if ( authRole != "" )
 	{
 		vomsAuthQueryString = getVomsAuthQuery (
-                                                        authRole,
-                                                        iD,
-                                                        connectionInfo
-                                                        );
+				authRole,
+				iD,
+				connectionInfo
+		);
 		normalUser=false;//set to false since normaluser enforcement
-				//is done by getVomsAuthQuery  and doesn't need
-				//to be done hereafter.
+		//is done by getVomsAuthQuery  and doesn't need
+		//to be done hereafter.
 		if ( vomsAuthQueryString != "AUTHERROR" )
 		{
 			queryBuff += vomsAuthQueryString;
@@ -980,7 +987,7 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 			limit = " LIMIT " + maxItemsBuff;
 		}
 	}
-	#endif
+#endif
 	if ( normalUser )
 	{
 		//last line of defense, if no other checks are true,
@@ -997,15 +1004,15 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 	string logBuff;
 	logBuff = "composeQuery:" + queryBuff;
 	hlr_log (logBuff, &logStream,9);
-        return queryBuff;
+	return queryBuff;
 }
 
 int parseQueryType(inputData& iD)
 {
-        if ( iD.queryTypeBuffer == "resourceAggregate" ) 
-        {
-                return 0;
-        }
+	if ( iD.queryTypeBuffer == "resourceAggregate" )
+	{
+		return 0;
+	}
 	if ( iD.queryTypeBuffer == "fieldList" )
 	{
 		return 0;
@@ -1018,7 +1025,7 @@ int parseQueryType(inputData& iD)
 	{
 		return 0;
 	}
-        return 1;
+	return 1;
 }
 
 void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& outputVector, hlrGenericQuery& q)
@@ -1035,11 +1042,11 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 	bool itsHeading = iD.itsHeading;
 	string lastIdBuff;
 
-        int res = 0;
-        if ((q.queryResult).size() == 0 ) res = -1;
-	
+	int res = 0;
+	if ((q.queryResult).size() == 0 ) res = -1;
+
 	if ( queryTypeBuffer == "resourceAggregate" )
-        {
+	{
 		string aggregateStringBuff = "MIN(date),MAX(date)," + iD.aggregateStringBuff;
 		if ( iD.groupBy != "" )
 		{
@@ -1048,8 +1055,8 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 		vector<int> queryFieldsSize;
 		vector<string> queryItems;
 		itsHeading = true;
-                hlr_log("Aggregate query",&logStream,7);
-                Split(',',aggregateStringBuff, &queryItems );
+		hlr_log("Aggregate query",&logStream,7);
+		Split(',',aggregateStringBuff, &queryItems );
 		bool emptyRowsPresent =false;
 		if ( (q.queryResult).size() < startDateVector.size() && (frequencyBuffer != "") )
 		{
@@ -1057,7 +1064,7 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 		}
 		if ( (q.queryResult).size() == 0 )
 		{
-              		hlr_log("result size == 0",&logStream,4);
+			hlr_log("result size == 0",&logStream,4);
 			return;
 		}
 		if ( itsHeading )
@@ -1065,7 +1072,7 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 			ostringstream os;
 			if (debug)
 			{
-                		hlr_log("Heading...",&logStream,8);
+				hlr_log("Heading...",&logStream,8);
 			}
 			vector<string>::const_iterator heading = queryItems.begin();
 			int i =0;
@@ -1076,7 +1083,7 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 				if (debug )
 				{
 					string logBuff = "inserting:" + *heading;
-        	        		hlr_log(logBuff,&logStream,8);
+					hlr_log(logBuff,&logStream,8);
 				}
 				vector<resultRow>::const_iterator it = (q.queryResult).begin();
 				headingBuff = (*heading).size();
@@ -1106,7 +1113,7 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 		if ( emptyRowsPresent )
 		{
 			string logBuff;
-                	hlr_log("Empty rows...",&logStream,8);
+			hlr_log("Empty rows...",&logStream,8);
 			vector<string>::const_iterator date=startDateVector.begin();
 			//this loop is used only if the query retrieves
 			//less rows than it should
@@ -1125,9 +1132,9 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 						{
 							os << setw(queryFieldsSize[i]) << (*it)[i] << "|";
 						}
-                                        }
+					}
 					it++;
-                                        date ++;
+					date ++;
 					os.flush();
 					outputVector.push_back(os.str());
 					if ( debug )
@@ -1152,11 +1159,11 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 				}
 				hlr_log(logBuff,&logStream,6);
 			}
-                	hlr_log("...done.",&logStream,8);
+			hlr_log("...done.",&logStream,8);
 		}
 		else
 		{
-                	hlr_log("No Empty rows...",&logStream,8);
+			hlr_log("No Empty rows...",&logStream,8);
 			while ( it != (q.queryResult).end() )
 			{
 				ostringstream os;
@@ -1168,7 +1175,7 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 					return;
 				}
 				for ( size_t i = 0; i < (*it).size(); i++ )
-                                {
+				{
 					if ( i == 0 )	
 					{
 						os << left << setw(queryFieldsSize[i]) << (*it)[i] << right <<"|";
@@ -1177,16 +1184,16 @@ void getOutput (inputData &iD, vector<string>& startDateVector, vector<string>& 
 					{
 						os << setw(queryFieldsSize[i]) << (*it)[i] << "|";
 					}
-                                }
-                                it++;
+				}
+				it++;
 				os.flush();
 				outputVector.push_back(os.str());
 			}
-                	hlr_log("...done.",&logStream,8);
+			hlr_log("...done.",&logStream,8);
 		}
-	
-        }
-        return;
+
+	}
+	return;
 }
 
 string composeError(string message, int status)
@@ -1234,11 +1241,11 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		}
 	}
 	if ( 
-		inputStruct.queryTypeBuffer != "resourceAggregate" &&
-		inputStruct.queryTypeBuffer != "sql" &&
-		inputStruct.queryTypeBuffer != "sqlCsv" &&
-		inputStruct.queryTypeBuffer != "fieldList" && 
-		inputStruct.queryTypeBuffer != "showTables" )
+			inputStruct.queryTypeBuffer != "resourceAggregate" &&
+			inputStruct.queryTypeBuffer != "sql" &&
+			inputStruct.queryTypeBuffer != "sqlCsv" &&
+			inputStruct.queryTypeBuffer != "fieldList" &&
+			inputStruct.queryTypeBuffer != "showTables" )
 	{
 		*output = composeError("Unknown Query Type",1);
 		return 1;
@@ -1246,19 +1253,19 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 	vector<string> outputVector;
 	if ( parseQueryType(inputStruct) != 0 )
 	{
-		 hlr_log ("advancedQueryEngine: Error composing the query", 
+		hlr_log ("advancedQueryEngine: Error composing the query",
 				&logStream,1);
-		 *output = composeError("HLR Internal error:Error composing the query",2);
-		 return 2;
+		*output = composeError("HLR Internal error:Error composing the query",2);
+		return 2;
 	}
 	else	
 	{
-		 string logBuff = "advancedQueryEngine: Query Type identified:";
-		 logBuff += inputStruct.queryTypeBuffer;
-		 hlr_log (logBuff,
-                                &logStream,5);
+		string logBuff = "advancedQueryEngine: Query Type identified:";
+		logBuff += inputStruct.queryTypeBuffer;
+		hlr_log (logBuff,
+				&logStream,5);
 	}
-	#ifdef MERGE
+#ifdef MERGE
 	if ( inputStruct.queryTypeBuffer == "showTables" )
 	{
 		string logBuff;
@@ -1289,13 +1296,13 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		hlr_log("...done.", &logStream,8);
 		return 0;
 	}
-	#endif
+#endif
 	if ( inputStruct.queryTypeBuffer == "fieldList"  )
 	{
 		if ( inputStruct.itsFieldList != "1" )
 		{
 			*output = composeError("Command not supported, client too old.",3);
-			 return 3;
+			return 3;
 		}
 		//returns help info here.
 		string queryString = "DESCRIBE jobTransSummary";
@@ -1306,7 +1313,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		if ( res != 0 )
 		{
 			hlr_log ("advancedQueryEngine.Error in query.",
-			&logStream,3);
+					&logStream,3);
 			*output = composeError("Info not Found",3);
 			return 3;
 		}
@@ -1333,7 +1340,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		return 0;
 	}
 	if ( (inputStruct.queryTypeBuffer == "sql") || 
-		(inputStruct.queryTypeBuffer == "sqlCsv") )
+			(inputStruct.queryTypeBuffer == "sqlCsv") )
 	{
 		bool authz = false;
 		string appendQuery = "";
@@ -1354,7 +1361,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			}
 			else if ( authUserSqlQueries )
 			{
-				
+
 				//FIXME insert a configuration parameter to
 				//allow the administrator to disable normal 
 				//user queries.
@@ -1376,9 +1383,9 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		string queryString = inputStruct.aggregateStringBuff;
 		string queryStringBuffer = queryString;
 		for (size_t j=0; j<queryStringBuffer.length(); ++j)
- 		{
-  			queryStringBuffer[j]=toupper(queryStringBuffer[j]);
- 		}		
+		{
+			queryStringBuffer[j]=toupper(queryStringBuffer[j]);
+		}
 		string::size_type pos = 0;
 		pos = queryStringBuffer.find("SELECT");
 		if ( (pos != 0) || ( pos == string::npos ) )
@@ -1395,7 +1402,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			hlr_log (Buff, &logStream,8);
 			if ( maxItemsBuff.find_first_not_of("0123456789") != string::npos )
 			{
-			//not just a number. try searching for authRoleLogBuff:number string and use number as the limit value, otherwise search for "default:number" and use this as limit
+				//not just a number. try searching for authRoleLogBuff:number string and use number as the limit value, otherwise search for "default:number" and use this as limit
 				size_t startPos = maxItemsBuff.find(authRoleLogBuff);
 				if ( startPos != string::npos )
 				{
@@ -1428,8 +1435,8 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			{
 				string limitBuff = queryStringBuffer.substr(limitStart,limitEnd-limitStart);
 				if (atoi(limitBuff.c_str()) < atoi(maxItemsBuff.c_str()))
-				currentLimit = limitBuff;
-			
+					currentLimit = limitBuff;
+
 				queryString.erase(pos);
 			}
 			else	
@@ -1462,7 +1469,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			string logBuff = "GROUP BY:" + groupBuff;
 			hlr_log(logBuff, &logStream,6);
 		}
-		//finf FROM statement
+		//find FROM statement
 		string tablesBuffer;
 		//manage WHERE clause
 		pos = queryString.rfind("WHERE ");
@@ -1471,7 +1478,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		if ( pos != string::npos )
 		{	
 			size_t fromPos = queryString.rfind("FROM ",pos);
-				if ( fromPos == string::npos )
+			if ( fromPos == string::npos )
 				fromPos = queryString.rfind("from ",pos);
 			tablesBuffer = queryString.substr(fromPos+5,pos-fromPos-6);
 			if ( appendQuery != "" )
@@ -1480,7 +1487,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		else
 		{
 			size_t fromPos = queryString.rfind("FROM ");
-				if ( fromPos == string::npos )
+			if ( fromPos == string::npos )
 				fromPos = queryString.rfind("from ");
 			tablesBuffer = queryString.substr(fromPos+5);
 			if ( appendQuery != "" )
@@ -1490,10 +1497,11 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		hlr_log(logBuff, &logStream,8);
 		string tableList;
 		vector<string> tables;
-		#ifdef MERGE
+#ifdef MERGE
 		getAvailableTables(connectionInfo,tables);
-		#endif
+#endif
 		getSySDefTables(tables);
+		getAuthorizedTables(tables);
 		if ( tables.size() != 0 )
 		{
 			vector<string>::iterator it = tables.begin();
@@ -1513,7 +1521,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		}
 		hlr_log (tableList,&logStream,8);
 		vector<string> queryTables;
-                Split(',',tablesBuffer,&queryTables);
+		Split(',',tablesBuffer,&queryTables);
 		vector<string>::iterator it = queryTables.begin();
 		while ( it != queryTables.end() )
 		{	
@@ -1539,7 +1547,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		if ( res != 0 )
 		{
 			hlr_log ("advancedQueryEngine.Error in query.",
-			&logStream,3);
+					&logStream,3);
 			string error = "Info not found, DB error:" + genericQuery.errMsg;
 			*output = composeError(error,3);
 			return 3;
@@ -1634,35 +1642,35 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		}
 		return 0;
 	}
-		//returns help info here.
+	//returns help info here.
 	time_t seed = time(NULL);
 	string tableName;
 	vector<string> startDateVector;
 	if ( inputStruct.frequencyBuffer == "" )
-        {
+	{
 		hlr_log ("advancedQueryEngine:Frequency is not defined.", 
 				&logStream,6);
-                string timeQuery = parseTime( inputStruct, inputStruct.timeBuffer);
-                string queryString = composeQuery(  inputStruct, timeQuery,tableName, connectionInfo );
+		string timeQuery = parseTime( inputStruct, inputStruct.timeBuffer);
+		string queryString = composeQuery(  inputStruct, timeQuery,tableName, connectionInfo );
 		if ( queryString == "AUTHERROR" )
 		{
 			hlr_log ("advancedQueryEngine.Query not authorised.",
-                                &logStream,2);
+					&logStream,2);
 
-                        *output = composeError("Authorisation Error!",3);
-                         return 3;
+			*output = composeError("Authorisation Error!",3);
+			return 3;
 		}
 		hlr_log("Performing query...", &logStream,8);
-                hlrGenericQuery genericQuery(queryString);
-                int res = genericQuery.query();
+		hlrGenericQuery genericQuery(queryString);
+		int res = genericQuery.query();
 		hlr_log("... query performed", &logStream,8);
 		if ( res != 0 )
 		{
-			 hlr_log ("advancedQueryEngine.Error in query.",  
-                                &logStream,3);
-			  
-		 	*output = composeError("Info not Found",3);
-			 return 3;
+			hlr_log ("advancedQueryEngine.Error in query.",
+					&logStream,3);
+
+			*output = composeError("Info not Found",3);
+			return 3;
 		}
 		else
 		{
@@ -1671,18 +1679,18 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			hlr_log("...done.", &logStream,8);
 			string logBuffer = "advancedQueryEngine: Got rows:";
 			logBuffer += int2string(outputVector.size());
-			 hlr_log (logBuffer,&logStream,6);
+			hlr_log (logBuffer,&logStream,6);
 			if ( res >= 0 )
 			{	
 				exitCode = 0;
 			}
 		}
-        }
+	}
 	else
 	{
 		string logBuff = "advancedQueryEngine:frequency=";
-                logBuff += inputStruct.frequencyBuffer;
-                hlr_log (logBuff, &logStream,6);
+		logBuff += inputStruct.frequencyBuffer;
+		hlr_log (logBuff, &logStream,6);
 		string timeQueryBuff = "";
 		string queryStringBuff = "";
 		inputStruct.itsHeading = true;
@@ -1701,15 +1709,15 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		genericQuery.query();
 		getOutput(inputStruct, startDateVector, outputVector, genericQuery);
 		dropTmpTimesTable(seed,tableName);
-		
+
 	}
-        if ( advancedQueryEngine_compose_xml(outputVector, output, exitCode , inputStruct) != 0 )
-        {
-		#ifdef DEBUG
-	         cerr << "advancedQueryengine: Error composing the XML answer!" <<endl;
-	        #endif
+	if ( advancedQueryEngine_compose_xml(outputVector, output, exitCode , inputStruct) != 0 )
+	{
+#ifdef DEBUG
+		cerr << "advancedQueryengine: Error composing the XML answer!" <<endl;
+#endif
 		exitCode = 3;
-        }
+	}
 	hlr_log ("advancedQueryEngine: Exiting.", &logStream,4);	
 	return exitCode;
 }

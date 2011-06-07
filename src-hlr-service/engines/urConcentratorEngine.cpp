@@ -271,7 +271,7 @@ int urConcentrator::xmlParser( string& requestType,
 				if ( urNode.status == 0 )
 				{
 					node fieldNode;	
-					fieldNode = parse (&urNode.text, "dgJobId" );
+					fieldNode = parseAndRelease (urNode, "dgJobId" );
 					if ( fieldNode.status == 0 )
 					{
 						urBuff.dgJobId = fieldNode.text;
@@ -586,7 +586,7 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 	//FIXME go on with bulk inserts.
 	//IMPORTANT should exit with !=0 just in case no records have
 	//been inserted at all.
-	string logBuff = "Entering insertRecords";
+	string logBuff = "Entering bulkInsertRecords";
 	hlr_log(logBuff,&logStream,7);
 
 	lastInsertedId = "-1";

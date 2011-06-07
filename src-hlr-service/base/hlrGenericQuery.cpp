@@ -1,4 +1,4 @@
-// $Id: hlrGenericQuery.cpp,v 1.1.2.1.4.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: hlrGenericQuery.cpp,v 1.1.2.1.4.3 2011/06/07 11:56:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -23,12 +23,24 @@ extern const char * hlr_sql_user;
 extern const char * hlr_sql_password;
 extern const char * hlr_sql_dbname;
 
+hlrGenericQuery::hlrGenericQuery( string _dbname, string _dbuser, string _dbpassword, string _query )
+{
+	errNo = 0;
+	errMsg = "";
+	queryString = _query;
+	dbname = _dbname;
+	dbuser = _dbuser;
+	dbpassword = _dbpassword;
+}
+
 hlrGenericQuery::hlrGenericQuery( string _dbname, string _query )
 {
 	errNo = 0;
 	errMsg = "";
 	queryString = _query;
 	dbname = _dbname;
+	dbuser = hlr_sql_user;
+	dbpassword = hlr_sql_password;
 }
 
 hlrGenericQuery::hlrGenericQuery( string _query )
@@ -37,6 +49,8 @@ hlrGenericQuery::hlrGenericQuery( string _query )
 	errMsg = "";
 	queryString = _query;
 	dbname = hlr_sql_dbname;
+	dbuser = hlr_sql_user;
+	dbpassword = hlr_sql_password;
 }
 
 hlrGenericQuery::hlrGenericQuery()
@@ -44,13 +58,15 @@ hlrGenericQuery::hlrGenericQuery()
 	errNo = 0;
 	errMsg = "";
 	dbname = hlr_sql_dbname;
+	dbuser = hlr_sql_user;
+	dbpassword = hlr_sql_password;
 }
 
 int hlrGenericQuery::query(string _query)
 {
 	db hlrDb ( hlr_sql_server, 
-			hlr_sql_user,
-			hlr_sql_password,
+			dbuser,
+			dbpassword,
 			dbname
 		 );
 	if ( hlrDb.errNo == 0 )

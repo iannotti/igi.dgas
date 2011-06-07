@@ -1,4 +1,4 @@
-// $Id: hlrGenericQuery.h,v 1.1.2.1.4.1 2010/10/19 09:03:34 aguarise Exp $
+// $Id: hlrGenericQuery.h,v 1.1.2.1.4.2 2011/06/07 11:56:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -27,6 +27,8 @@ class hlrGenericQuery {
 	public:
 		string queryString;
 		string dbname;
+		string dbuser;
+		string dbpassword;
 		int errNo;
 		string errMsg;
 		hlrQueryResult queryResult;
@@ -34,6 +36,7 @@ class hlrGenericQuery {
 		hlrGenericQuery();
 		hlrGenericQuery(string _query ); 
 		hlrGenericQuery(string _dbname, string _query ); 
+		hlrGenericQuery(string _dbname, string_dbuser, string _dbpassword, string _query );
 
 		int query(string _query=""); //actually performs the query
 		size_t Rows(){return numRows;};
