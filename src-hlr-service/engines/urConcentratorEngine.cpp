@@ -281,31 +281,6 @@ int urConcentrator::xmlParser( string& requestType,
 					{
 						urBuff.date = fieldNode.text;
 					}
-					fieldNode = parseAndRelease (urNode, "transType" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.transType = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "thisGridId" );//backward Compatibility
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.thisGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "gridResource" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.thisGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "remoteGridId" );//backward Compatibility
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.remoteGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "gridUser" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.remoteGridId = fieldNode.text;
-					}
 					fieldNode = parseAndRelease (urNode, "userFqan" );
 					if ( fieldNode.status == 0 )
 					{
@@ -351,6 +326,43 @@ int urConcentrator::xmlParser( string& requestType,
 					{
 						urBuff.end = fieldNode.text;
 					}
+					fieldNode = parseAndRelease (urNode, "thisGridId" );//backward Compatibility
+					if ( fieldNode.status == 0 )
+					{
+						urBuff.thisGridId = fieldNode.text;
+					}
+					fieldNode = parseAndRelease (urNode, "gridResource" );
+					if ( fieldNode.status == 0 )
+					{
+						urBuff.thisGridId = fieldNode.text;
+					}
+					fieldNode = parseAndRelease (urNode, "remoteGridId" );//backward Compatibility
+					if ( fieldNode.status == 0 )
+					{
+						urBuff.remoteGridId = fieldNode.text;
+					}
+					fieldNode = parseAndRelease (urNode, "gridUser" );
+					if ( fieldNode.status == 0 )
+					{
+						urBuff.remoteGridId = fieldNode.text;
+					}
+					fieldNode = parseAndRelease (urNode, "transType" );
+					if ( fieldNode.status == 0 )
+					{
+						urBuff.transType = fieldNode.text;
+					}
+					fieldNode = parseAndRelease (urNode, "si2k" );
+					if ( fieldNode.status == 0 )//backward compatibility
+					{
+						urBuff.iBench = fieldNode.text;
+						urBuff.iBenchType = "si2k";
+					}
+					fieldNode = parseAndRelease (urNode, "sf2k" );
+					if ( fieldNode.status == 0 )//backward compatibility
+					{
+						urBuff.fBench = fieldNode.text;
+						urBuff.fBenchType = "sf2k";
+					}
 					fieldNode = parseAndRelease (urNode, "iBench" );
 					if ( fieldNode.status == 0 )
 					{
@@ -370,18 +382,6 @@ int urConcentrator::xmlParser( string& requestType,
 					if ( fieldNode.status == 0 )
 					{
 						urBuff.fBenchType = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "si2k" );
-					if ( fieldNode.status == 0 )//backward compatibility
-					{
-						urBuff.iBench = fieldNode.text;
-						urBuff.iBenchType = "si2k";
-					}
-					fieldNode = parseAndRelease (urNode, "sf2k" );
-					if ( fieldNode.status == 0 )//backward compatibility
-					{
-						urBuff.fBench = fieldNode.text;
-						urBuff.fBenchType = "sf2k";
 					}
 					fieldNode = parseAndRelease (urNode, "acl" );
 					if ( fieldNode.status == 0 )
