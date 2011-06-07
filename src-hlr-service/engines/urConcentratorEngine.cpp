@@ -270,17 +270,17 @@ int urConcentrator::xmlParser( string& requestType,
 				urNode = parse (&nodeBuff.text, "record" );
 				if ( urNode.status == 0 )
 				{
-					urBuff.dgJobId = parseAndReleaseSS (urNode, "dgJobId" );
-					urBuff.date = parseAndReleaseSS (urNode, "date" );
-					urBuff.userFqan = parseAndReleaseSS (urNode, "userFqan" );
-					urBuff.userVo = parseAndReleaseSS (urNode, "userVo" );
-					urBuff.cpuTime  = parseAndReleaseSS (urNode, "cpuTime" );
-					urBuff.wallTime  = parseAndReleaseSS (urNode, "wallTime" );
-					urBuff.pmem = parseAndReleaseSS (urNode, "pmem" );
-					urBuff.vmem  = parseAndReleaseSS (urNode, "vmem" );
-					urBuff.amount  = parseAndReleaseSS (urNode, "amount" );
-					urBuff.start  = parseAndReleaseSS (urNode, "start" );
-					urBuff.end = parseAndReleaseSS (urNode, "end" );
+					urBuff.dgJobId = parseAndReleaseS (urNode, "dgJobId" );
+					urBuff.date = parseAndReleaseS (urNode, "date" );
+					urBuff.userFqan = parseAndReleaseS (urNode, "userFqan" );
+					urBuff.userVo = parseAndReleaseS (urNode, "userVo" );
+					urBuff.cpuTime  = parseAndReleaseS (urNode, "cpuTime" );
+					urBuff.wallTime  = parseAndReleaseS (urNode, "wallTime" );
+					urBuff.pmem = parseAndReleaseS (urNode, "pmem" );
+					urBuff.vmem  = parseAndReleaseS (urNode, "vmem" );
+					urBuff.amount  = parseAndReleaseS (urNode, "amount" );
+					urBuff.start  = parseAndReleaseS (urNode, "start" );
+					urBuff.end = parseAndReleaseS (urNode, "end" );
 					urBuff.thisGridId = parseAndReleaseS (urNode, "thisGridId" );//backward Compatibility
 					if ( urBuff.thisGridId == "" )
 					{
