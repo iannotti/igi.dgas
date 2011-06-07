@@ -120,8 +120,7 @@ string parseAndReleaseS (node &inputNode, string _tag)
 	}
 	else
 	{
-		node nodeBuff(&(inputNode.text), atoi(E_PARSE_ERROR));
-		return nodeBuff;
+		return "";
 	}
 }
 
