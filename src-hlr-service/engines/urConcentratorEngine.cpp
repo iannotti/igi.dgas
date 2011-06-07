@@ -270,194 +270,64 @@ int urConcentrator::xmlParser( string& requestType,
 				urNode = parse (&nodeBuff.text, "record" );
 				if ( urNode.status == 0 )
 				{
-					node fieldNode;	
-					fieldNode = parseAndRelease (urNode, "dgJobId" );
-					if ( fieldNode.status == 0 )
+					urBuff.dgJobId = parseAndRelease (urNode, "dgJobId" );
+					urBuff.date = parseAndRelease (urNode, "date" );
+					urBuff.userFqan = parseAndRelease (urNode, "userFqan" );
+					urBuff.userVo = parseAndRelease (urNode, "userVo" );
+					urBuff.cpuTime  = parseAndRelease (urNode, "cpuTime" );
+					urBuff.wallTime  = parseAndRelease (urNode, "wallTime" );
+					urBuff.pmem = parseAndRelease (urNode, "pmem" );
+					urBuff.vmem  = parseAndRelease (urNode, "vmem" );
+					urBuff.amount  = parseAndRelease (urNode, "amount" );
+					urBuff.start  = parseAndRelease (urNode, "start" );
+					urBuff.end = parseAndRelease (urNode, "end" );
+					urBuff.thisGridId = parseAndRelease (urNode, "thisGridId" );//backward Compatibility
+					if ( urBuff.thisGridId == "" )
 					{
-						urBuff.dgJobId = fieldNode.text;
+						urBuff.thisGridId  = parseAndRelease (urNode, "gridResource" );
 					}
-					fieldNode = parseAndRelease (urNode, "date" );
-					if ( fieldNode.status == 0 )
+					urBuff.remoteGridId = parseAndRelease (urNode, "remoteGridId" );//backward Compatibility
+					if ( urBuff.remoteGridId == "" )
 					{
-						urBuff.date = fieldNode.text;
+						urBuff.remoteGridId = parseAndRelease (urNode, "gridUser" );
 					}
-					fieldNode = parseAndRelease (urNode, "userFqan" );
-					if ( fieldNode.status == 0 )
+					urBuff.transType  = parseAndRelease (urNode, "transType" );
+					urBuff.iBench  = parseAndRelease (urNode, "si2k" );
+					if ( urBuff.iBench != "" )//backward compatibility
 					{
-						urBuff.userFqan = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "userVo" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.userVo = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "cpuTime" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.cpuTime = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "wallTime" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.wallTime = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "pmem" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.pmem = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "vmem" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.vmem = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "amount" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.amount = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "start" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.start = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "end" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.end = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "thisGridId" );//backward Compatibility
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.thisGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "gridResource" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.thisGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "remoteGridId" );//backward Compatibility
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.remoteGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "gridUser" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.remoteGridId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "transType" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.transType = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "si2k" );
-					if ( fieldNode.status == 0 )//backward compatibility
-					{
-						urBuff.iBench = fieldNode.text;
 						urBuff.iBenchType = "si2k";
 					}
-					fieldNode = parseAndRelease (urNode, "sf2k" );
-					if ( fieldNode.status == 0 )//backward compatibility
+					else
 					{
-						urBuff.fBench = fieldNode.text;
+						urBuff.iBench = parseAndRelease (urNode, "iBench" );
+						urBuff.iBenchType = parseAndRelease (urNode, "iBenchType" );
+					}
+					urBuff.fBench = parseAndRelease (urNode, "sf2k" );
+					if ( urBuff.fBench != "" )//backward compatibility
+					{
 						urBuff.fBenchType = "sf2k";
 					}
-					fieldNode = parseAndRelease (urNode, "iBench" );
-					if ( fieldNode.status == 0 )
+					else
 					{
-						urBuff.iBench = fieldNode.text;
+						urBuff.fBench = parseAndRelease (urNode, "fBench" );
+						urBuff.fBenchType = parseAndRelease (urNode, "fBenchType" );
 					}
-					fieldNode = parseAndRelease (urNode, "fBench" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.fBench = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "iBenchType" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.iBenchType = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "fBenchType" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.fBenchType = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "acl" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.acl = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "id" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.id = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "lrmsId" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.lrmsId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "localUserId" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.localUserId = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "hlrGroup" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.hlrGroup = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "localGroup" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.localGroup = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "endDate" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.endDate = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "siteName" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.siteName = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "urSourceServer" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.urSourceServer = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "hlrTid" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.hlrTid = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "accountingProcedure" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.accountingProcedure = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "voOrigin" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.voOrigin = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "glueCEInfoTotalCPUs" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.glueCEInfoTotalCPUs = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "executingNodes" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.executingNodes = fieldNode.text;
-					}
-					fieldNode = parseAndRelease (urNode, "uniqueChecksum" );
-					if ( fieldNode.status == 0 )
-					{
-						urBuff.uniqueChecksum = fieldNode.text;
-					}
+					urBuff.acl = parseAndRelease (urNode, "acl" );
+					urBuff.id = parseAndRelease (urNode, "id" );
+					urBuff.lrmsId = parseAndRelease (urNode, "lrmsId" );
+					urBuff.localUserId = parseAndRelease (urNode, "localUserId" );
+					urBuff.hlrGroup  = parseAndRelease (urNode, "hlrGroup" );
+					urBuff.localGroup = parseAndRelease (urNode, "localGroup" );
+					urBuff.endDate = parseAndRelease (urNode, "endDate" );
+					urBuff.siteName = parseAndRelease (urNode, "siteName" );
+					urBuff.urSourceServer = parseAndRelease (urNode, "urSourceServer" );
+					urBuff.hlrTid  = parseAndRelease (urNode, "hlrTid" );
+					urBuff.accountingProcedure = parseAndRelease (urNode, "accountingProcedure" );
+					urBuff.voOrigin = parseAndRelease (urNode, "voOrigin" );
+					urBuff.glueCEInfoTotalCPUs = parseAndRelease (urNode, "glueCEInfoTotalCPUs" );
+					urBuff.executingNodes = parseAndRelease (urNode, "executingNodes" );
+					urBuff.uniqueChecksum = parseAndRelease (urNode, "uniqueChecksum" );
+
 					//go on with records here...
 					logBuff = "<--" + urBuff.dgJobId;
 					hlr_log(logBuff,&logStream,7);

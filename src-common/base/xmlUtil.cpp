@@ -86,6 +86,45 @@ node parseAndRelease (node &inputNode, string _tag)
 	}
 }
 
+
+string parseAndRelease (node &inputNode, string _tag)
+{
+	int pos = (inputNode.text).find("<" + _tag);
+	if ( pos == string::npos )
+	{
+		return "";
+	}
+	int pos2 = (inputNode.text).find_first_of(">", pos);
+	if ( pos2 != string::npos )
+	{
+		string buff;
+		if ( (inputNode.text).substr(pos2-1,1) == "\\" )
+		{
+			(inputNode.text).erase(pos2-1, 1);
+			string insertBuff = "</" + _tag + ">";
+			(inputNode.text).insert(pos2, insertBuff);
+
+			int res = parseImpl(&(inputNode.text), buff, _tag, pos, pos2);
+			return buff;
+			//\> type tag
+		}
+		else
+		{
+			int res = parseImpl(&(inputNode.text),buff, _tag, pos, pos2);
+			if ( buff == 0 )
+			{
+				inputNode.release();
+			}
+			return buff;
+		};
+	}
+	else
+	{
+		node nodeBuff(&(inputNode.text), atoi(E_PARSE_ERROR));
+		return nodeBuff;
+	}
+}
+
 node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 {
 	string * _mainDoc = xmlInput;
@@ -131,6 +170,47 @@ node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 	}
 
 }
+
+int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_t pos2)
+{
+	string * _mainDoc = xmlInput;
+	string starttag = xmlInput->substr(pos,
+			pos2-pos+1);
+	string endtag = "</" + _tag + ">";
+	//topstring buffer;
+	pos = xmlInput->find( starttag );
+	if ( pos == string::npos )
+	{
+		output = "";
+		return E_PARSE_ERROR;
+	}
+	else
+	{
+		size_t _startPos = pos;
+		size_t textStart = pos + starttag.size();
+		pos = xmlInput->find( endtag );
+		if ( pos == string::npos )
+		{
+			output = "";
+			return E_PARSE_ERROR;
+		}
+		else
+		{
+			size_t _endPos = pos + endtag.size();
+			size_t textEnd = pos;
+			string _text = xmlInput->substr(
+					textStart,
+					textEnd-textStart);
+			_text = stripWhite(_text);
+			buff = output;
+			return 0;
+
+		}
+
+	}
+
+}
+
 
 node parse (string *xmlInput, string _tag, string space)
 {
