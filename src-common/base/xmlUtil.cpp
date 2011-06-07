@@ -87,7 +87,7 @@ node parseAndRelease (node &inputNode, string _tag)
 }
 
 
-string parseAndRelease (node &inputNode, string _tag)
+string parseAndReleaseS (node &inputNode, string _tag)
 {
 	int pos = (inputNode.text).find("<" + _tag);
 	if ( pos == string::npos )

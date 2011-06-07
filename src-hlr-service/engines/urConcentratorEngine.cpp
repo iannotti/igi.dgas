@@ -270,63 +270,63 @@ int urConcentrator::xmlParser( string& requestType,
 				urNode = parse (&nodeBuff.text, "record" );
 				if ( urNode.status == 0 )
 				{
-					urBuff.dgJobId = parseAndRelease (urNode, "dgJobId" );
-					urBuff.date = parseAndRelease (urNode, "date" );
-					urBuff.userFqan = parseAndRelease (urNode, "userFqan" );
-					urBuff.userVo = parseAndRelease (urNode, "userVo" );
-					urBuff.cpuTime  = parseAndRelease (urNode, "cpuTime" );
-					urBuff.wallTime  = parseAndRelease (urNode, "wallTime" );
-					urBuff.pmem = parseAndRelease (urNode, "pmem" );
-					urBuff.vmem  = parseAndRelease (urNode, "vmem" );
-					urBuff.amount  = parseAndRelease (urNode, "amount" );
-					urBuff.start  = parseAndRelease (urNode, "start" );
-					urBuff.end = parseAndRelease (urNode, "end" );
-					urBuff.thisGridId = parseAndRelease (urNode, "thisGridId" );//backward Compatibility
+					urBuff.dgJobId = parseAndReleaseSS (urNode, "dgJobId" );
+					urBuff.date = parseAndReleaseSS (urNode, "date" );
+					urBuff.userFqan = parseAndReleaseSS (urNode, "userFqan" );
+					urBuff.userVo = parseAndReleaseSS (urNode, "userVo" );
+					urBuff.cpuTime  = parseAndReleaseSS (urNode, "cpuTime" );
+					urBuff.wallTime  = parseAndReleaseSS (urNode, "wallTime" );
+					urBuff.pmem = parseAndReleaseSS (urNode, "pmem" );
+					urBuff.vmem  = parseAndReleaseSS (urNode, "vmem" );
+					urBuff.amount  = parseAndReleaseSS (urNode, "amount" );
+					urBuff.start  = parseAndReleaseSS (urNode, "start" );
+					urBuff.end = parseAndReleaseSS (urNode, "end" );
+					urBuff.thisGridId = parseAndReleaseS (urNode, "thisGridId" );//backward Compatibility
 					if ( urBuff.thisGridId == "" )
 					{
-						urBuff.thisGridId  = parseAndRelease (urNode, "gridResource" );
+						urBuff.thisGridId  = parseAndReleaseS (urNode, "gridResource" );
 					}
-					urBuff.remoteGridId = parseAndRelease (urNode, "remoteGridId" );//backward Compatibility
+					urBuff.remoteGridId = parseAndReleaseS (urNode, "remoteGridId" );//backward Compatibility
 					if ( urBuff.remoteGridId == "" )
 					{
-						urBuff.remoteGridId = parseAndRelease (urNode, "gridUser" );
+						urBuff.remoteGridId = parseAndReleaseS (urNode, "gridUser" );
 					}
-					urBuff.transType  = parseAndRelease (urNode, "transType" );
-					urBuff.iBench  = parseAndRelease (urNode, "si2k" );
+					urBuff.transType  = parseAndReleaseS (urNode, "transType" );
+					urBuff.iBench  = parseAndReleaseS (urNode, "si2k" );
 					if ( urBuff.iBench != "" )//backward compatibility
 					{
 						urBuff.iBenchType = "si2k";
 					}
 					else
 					{
-						urBuff.iBench = parseAndRelease (urNode, "iBench" );
-						urBuff.iBenchType = parseAndRelease (urNode, "iBenchType" );
+						urBuff.iBench = parseAndReleaseS (urNode, "iBench" );
+						urBuff.iBenchType = parseAndReleaseS (urNode, "iBenchType" );
 					}
-					urBuff.fBench = parseAndRelease (urNode, "sf2k" );
+					urBuff.fBench = parseAndReleaseS (urNode, "sf2k" );
 					if ( urBuff.fBench != "" )//backward compatibility
 					{
 						urBuff.fBenchType = "sf2k";
 					}
 					else
 					{
-						urBuff.fBench = parseAndRelease (urNode, "fBench" );
-						urBuff.fBenchType = parseAndRelease (urNode, "fBenchType" );
+						urBuff.fBench = parseAndReleaseS (urNode, "fBench" );
+						urBuff.fBenchType = parseAndReleaseS (urNode, "fBenchType" );
 					}
-					urBuff.acl = parseAndRelease (urNode, "acl" );
-					urBuff.id = parseAndRelease (urNode, "id" );
-					urBuff.lrmsId = parseAndRelease (urNode, "lrmsId" );
-					urBuff.localUserId = parseAndRelease (urNode, "localUserId" );
-					urBuff.hlrGroup  = parseAndRelease (urNode, "hlrGroup" );
-					urBuff.localGroup = parseAndRelease (urNode, "localGroup" );
-					urBuff.endDate = parseAndRelease (urNode, "endDate" );
-					urBuff.siteName = parseAndRelease (urNode, "siteName" );
-					urBuff.urSourceServer = parseAndRelease (urNode, "urSourceServer" );
-					urBuff.hlrTid  = parseAndRelease (urNode, "hlrTid" );
-					urBuff.accountingProcedure = parseAndRelease (urNode, "accountingProcedure" );
-					urBuff.voOrigin = parseAndRelease (urNode, "voOrigin" );
-					urBuff.glueCEInfoTotalCPUs = parseAndRelease (urNode, "glueCEInfoTotalCPUs" );
-					urBuff.executingNodes = parseAndRelease (urNode, "executingNodes" );
-					urBuff.uniqueChecksum = parseAndRelease (urNode, "uniqueChecksum" );
+					urBuff.acl = parseAndReleaseS (urNode, "acl" );
+					urBuff.id = parseAndReleaseS (urNode, "id" );
+					urBuff.lrmsId = parseAndReleaseS (urNode, "lrmsId" );
+					urBuff.localUserId = parseAndReleaseS (urNode, "localUserId" );
+					urBuff.hlrGroup  = parseAndReleaseS (urNode, "hlrGroup" );
+					urBuff.localGroup = parseAndReleaseS (urNode, "localGroup" );
+					urBuff.endDate = parseAndReleaseS (urNode, "endDate" );
+					urBuff.siteName = parseAndReleaseS (urNode, "siteName" );
+					urBuff.urSourceServer = parseAndReleaseS (urNode, "urSourceServer" );
+					urBuff.hlrTid  = parseAndReleaseS (urNode, "hlrTid" );
+					urBuff.accountingProcedure = parseAndReleaseS (urNode, "accountingProcedure" );
+					urBuff.voOrigin = parseAndReleaseS (urNode, "voOrigin" );
+					urBuff.glueCEInfoTotalCPUs = parseAndReleaseS (urNode, "glueCEInfoTotalCPUs" );
+					urBuff.executingNodes = parseAndReleaseS (urNode, "executingNodes" );
+					urBuff.uniqueChecksum = parseAndReleaseS (urNode, "uniqueChecksum" );
 
 					//go on with records here...
 					logBuff = "<--" + urBuff.dgJobId;
