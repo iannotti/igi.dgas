@@ -110,8 +110,8 @@ string parseAndReleaseS (node &inputNode, string _tag)
 		}
 		else
 		{
-			int res = parseImpl(&(inputNode.text),buff, _tag, pos, pos2);
-			if ( buff == 0 )
+			int res = parseImpl(&(inputNode.text), buff, _tag, pos, pos2);
+			if ( res == 0 )
 			{
 				inputNode.release();
 			}
