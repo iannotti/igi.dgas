@@ -265,7 +265,8 @@ int urConcentrator::xmlParser( string& requestType,
 		{
 			//there are records attached
 			node urNode;
-			while ( urNode.status == 0 )
+			bool haveRecords = true;
+			while ( haveRecords )
 			{
 				jobTransSummary urBuff;
 				urNode = parse (&nodeBuff.text, "record" );
@@ -334,6 +335,10 @@ int urConcentrator::xmlParser( string& requestType,
 					hlr_log(logBuff,&logStream,7);
 					r.push_back(urBuff);
 					urNode.release();
+				}
+				else
+				{
+					haveRecords = false;
 				}
 			}
 			nodeBuff.release();
