@@ -26,6 +26,7 @@ int urConcentrator::run()
 	}
 	string requestType;
 	vector<jobTransSummary> r;
+	r.capacity(6000);
 	res = xmlParser(requestType, r);
 	if ( res != 0 )
 	{
@@ -247,7 +248,7 @@ int urConcentrator::xmlParser( string& requestType,
 	node nodeBuff;
 	while ( nodeBuff.status == 0 )
 	{
-		node nodeBuff = parse(input, "requestType");
+		nodeBuff = parse(input, "requestType");
 		if ( nodeBuff.status == 0 )
 		{
 			requestType = nodeBuff.text;

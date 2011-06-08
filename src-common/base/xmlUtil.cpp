@@ -60,7 +60,7 @@ node parseAndRelease (node &inputNode, string _tag)
 	int pos2 = (inputNode.text).find_first_of(">", pos);
 	if ( pos2 != string::npos )
 	{
-		if ( (inputNode.text).substr(pos2-1,1) == "\\" )
+		if ( (inputNode.text).substr(pos2-1,1) == "\\" )//FIXME this should be adjusted to treat "/>" terminator instead of the wrong "\>" one
 		{
 			(inputNode.text).erase(pos2-1, 1);
 			string insertBuff = "</" + _tag + ">";
@@ -98,7 +98,8 @@ string parseAndReleaseS (node &inputNode, string _tag)
 	if ( pos2 != string::npos )
 	{
 		string buff;
-		if ( (inputNode.text).substr(pos2-1,1) == "\\" )
+		buff.resserve(2048);
+		if ( (inputNode.text).substr(pos2-1,1) == "\\" )//FIXME this should be adjusted to treat "/>" terminator instead of the wrong "\>" one
 		{
 			(inputNode.text).erase(pos2-1, 1);
 			string insertBuff = "</" + _tag + ">";
@@ -172,7 +173,6 @@ node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 
 int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_t pos2)
 {
-	string * _mainDoc = xmlInput;
 	string starttag = xmlInput->substr(pos,
 			pos2-pos+1);
 	string endtag = "</" + _tag + ">";
@@ -185,7 +185,6 @@ int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_
 	}
 	else
 	{
-		size_t _startPos = pos;
 		size_t textStart = pos + starttag.size();
 		pos = xmlInput->find( endtag );
 		if ( pos == string::npos )
@@ -195,11 +194,10 @@ int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_
 		}
 		else
 		{
-			size_t _endPos = pos + endtag.size();
-			size_t textEnd = pos;
+			//size_t textEnd = pos;
 			output = xmlInput->substr(
 					textStart,
-					textEnd-textStart);
+					pos-textStart);
 			output = stripWhite(output);
 			return 0;
 
