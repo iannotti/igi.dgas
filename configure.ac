@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.21 $])
+AC_REVISION([$Revision: 1.1.2.5.4.22 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -105,6 +105,12 @@ AC_MSG_RESULT(["ACTIVEMQ_CPP_LIB found $have_activemq_cpp_lib"])
 #AC_SUBST(CFLAGS)
 #AC_SUBST(LDFLAGS)
 
+CXXFLAGS="-g -Wall -O0 -pg -fprofile-arcs -fbranch-probabilities"
+CFLAGS="-g -O0 -Wall -W -pg -fprofile-arcs -fbranch-probabilities"
+LDFLAGS="-fprofile-arcs -fbranch-probabilities -lgcov"
+AC_SUBST(CXXFLAGS)
+AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
 
 # Configuration items
 AC_PREFIX_DEFAULT([/usr])

@@ -248,7 +248,7 @@ int urConcentrator::xmlParser( string& requestType,
 	node nodeBuff;
 	while ( nodeBuff.status == 0 )
 	{
-		nodeBuff = parse(input, "requestType");
+		node nodeBuff = parse(input, "requestType");
 		if ( nodeBuff.status == 0 )
 		{
 			requestType = nodeBuff.text;
