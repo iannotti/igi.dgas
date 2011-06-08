@@ -98,7 +98,6 @@ string parseAndReleaseS (node &inputNode, string _tag)
 	if ( pos2 != string::npos )
 	{
 		string buff;
-		buff.reserve(2048);
 		if ( (inputNode.text).substr(pos2-1,1) == "\\" )//FIXME this should be adjusted to treat "/>" terminator instead of the wrong "\>" one
 		{
 			(inputNode.text).erase(pos2-1, 1);

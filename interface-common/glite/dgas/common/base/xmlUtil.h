@@ -55,11 +55,7 @@ public:
 		text(_text),
 		startPos(_startPos),
 		endPos(_endPos),
-		valid(_valid)
-	{
-		mainDoc->reserve(64000);
-		text.reserve(2048);
-	};
+		valid(_valid){;};
 
 
 
