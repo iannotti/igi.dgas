@@ -26,7 +26,7 @@ int urConcentrator::run()
 	}
 	string requestType;
 	vector<jobTransSummary> r;
-	r.capacity(6000);
+	r.reserve(6000);
 	res = xmlParser(requestType, r);
 	if ( res != 0 )
 	{
