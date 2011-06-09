@@ -272,29 +272,29 @@ int urConcentrator::xmlParser( string& requestType,
 				urNode = parse (&nodeBuff.text, "record" );
 				if ( urNode.status == 0 )
 				{
-					urBuff.dgJobId = parseAndReleaseS (urNode, "dgJobId" );
-					urBuff.date = parseAndReleaseS (urNode, "date" );
-					urBuff.userFqan = parseAndReleaseS (urNode, "userFqan" );
-					urBuff.userVo = parseAndReleaseS (urNode, "userVo" );
-					urBuff.cpuTime  = parseAndReleaseS (urNode, "cpuTime" );
-					urBuff.wallTime  = parseAndReleaseS (urNode, "wallTime" );
-					urBuff.pmem = parseAndReleaseS (urNode, "pmem" );
-					urBuff.vmem  = parseAndReleaseS (urNode, "vmem" );
-					urBuff.amount  = parseAndReleaseS (urNode, "amount" );
-					urBuff.start  = parseAndReleaseS (urNode, "start" );
-					urBuff.end = parseAndReleaseS (urNode, "end" );
-					urBuff.thisGridId = parseAndReleaseS (urNode, "thisGridId" );//backward Compatibility
+					if ( urBuff.dgJobId == "" ) urBuff.dgJobId = parseAndReleaseS (urNode, "dgJobId" );
+					if ( urBuff.date == "" ) urBuff.date = parseAndReleaseS (urNode, "date" );
+					if ( urBuff.userFqan == "") urBuff.userFqan = parseAndReleaseS (urNode, "userFqan" );
+					if ( urBuff.userVo == "") urBuff.userVo = parseAndReleaseS (urNode, "userVo" );
+					if ( urBuff.cpuTime == "") urBuff.cpuTime  = parseAndReleaseS (urNode, "cpuTime" );
+					if ( urBuff.wallTime == "") urBuff.wallTime  = parseAndReleaseS (urNode, "wallTime" );
+					if ( urBuff.pmem == "") urBuff.pmem = parseAndReleaseS (urNode, "pmem" );
+					if ( urBuff.vmem == "") urBuff.vmem  = parseAndReleaseS (urNode, "vmem" );
+					if ( urBuff.amount == "") urBuff.amount  = parseAndReleaseS (urNode, "amount" );
+					if ( urBuff.start == "") urBuff.start  = parseAndReleaseS (urNode, "start" );
+					if ( urBuff.end == "") urBuff.end = parseAndReleaseS (urNode, "end" );
+					if ( urBuff.thisGridId == "") urBuff.thisGridId = parseAndReleaseS (urNode, "thisGridId" );//backward Compatibility
 					if ( urBuff.thisGridId == "" )
 					{
 						urBuff.thisGridId  = parseAndReleaseS (urNode, "gridResource" );
 					}
-					urBuff.remoteGridId = parseAndReleaseS (urNode, "remoteGridId" );//backward Compatibility
+					if ( urBuff.remoteGridId == "") urBuff.remoteGridId = parseAndReleaseS (urNode, "remoteGridId" );//backward Compatibility
 					if ( urBuff.remoteGridId == "" )
 					{
 						urBuff.remoteGridId = parseAndReleaseS (urNode, "gridUser" );
 					}
-					urBuff.transType  = parseAndReleaseS (urNode, "transType" );
-					urBuff.iBench  = parseAndReleaseS (urNode, "si2k" );
+					if ( urBuff.transType == "") urBuff.transType  = parseAndReleaseS (urNode, "transType" );
+					if ( urBuff.iBench == "") urBuff.iBench  = parseAndReleaseS (urNode, "si2k" );
 					if ( urBuff.iBench != "" )//backward compatibility
 					{
 						urBuff.iBenchType = "si2k";
@@ -304,7 +304,7 @@ int urConcentrator::xmlParser( string& requestType,
 						urBuff.iBench = parseAndReleaseS (urNode, "iBench" );
 						urBuff.iBenchType = parseAndReleaseS (urNode, "iBenchType" );
 					}
-					urBuff.fBench = parseAndReleaseS (urNode, "sf2k" );
+					if ( urBuff.fBench == "") urBuff.fBench = parseAndReleaseS (urNode, "sf2k" );
 					if ( urBuff.fBench != "" )//backward compatibility
 					{
 						urBuff.fBenchType = "sf2k";
@@ -314,21 +314,21 @@ int urConcentrator::xmlParser( string& requestType,
 						urBuff.fBench = parseAndReleaseS (urNode, "fBench" );
 						urBuff.fBenchType = parseAndReleaseS (urNode, "fBenchType" );
 					}
-					urBuff.acl = parseAndReleaseS (urNode, "acl" );
-					urBuff.id = parseAndReleaseS (urNode, "id" );
-					urBuff.lrmsId = parseAndReleaseS (urNode, "lrmsId" );
-					urBuff.localUserId = parseAndReleaseS (urNode, "localUserId" );
-					urBuff.hlrGroup  = parseAndReleaseS (urNode, "hlrGroup" );
-					urBuff.localGroup = parseAndReleaseS (urNode, "localGroup" );
-					urBuff.endDate = parseAndReleaseS (urNode, "endDate" );
-					urBuff.siteName = parseAndReleaseS (urNode, "siteName" );
-					urBuff.urSourceServer = parseAndReleaseS (urNode, "urSourceServer" );
-					urBuff.hlrTid  = parseAndReleaseS (urNode, "hlrTid" );
-					urBuff.accountingProcedure = parseAndReleaseS (urNode, "accountingProcedure" );
-					urBuff.voOrigin = parseAndReleaseS (urNode, "voOrigin" );
-					urBuff.glueCEInfoTotalCPUs = parseAndReleaseS (urNode, "glueCEInfoTotalCPUs" );
-					urBuff.executingNodes = parseAndReleaseS (urNode, "executingNodes" );
-					urBuff.uniqueChecksum = parseAndReleaseS (urNode, "uniqueChecksum" );
+					if ( urBuff.acl == "") urBuff.acl = parseAndReleaseS (urNode, "acl" );
+					if ( urBuff.id == "") urBuff.id = parseAndReleaseS (urNode, "id" );
+					if ( urBuff.lrmsId == "") urBuff.lrmsId = parseAndReleaseS (urNode, "lrmsId" );
+					if ( urBuff.localUserId == "") urBuff.localUserId = parseAndReleaseS (urNode, "localUserId" );
+					if ( urBuff.hlrGroup == "") urBuff.hlrGroup  = parseAndReleaseS (urNode, "hlrGroup" );
+					if ( urBuff.localGroup == "") urBuff.localGroup = parseAndReleaseS (urNode, "localGroup" );
+					if ( urBuff.endDate == "") urBuff.endDate = parseAndReleaseS (urNode, "endDate" );
+					if ( urBuff.siteName == "") urBuff.siteName = parseAndReleaseS (urNode, "siteName" );
+					if ( urBuff.urSourceServer == "") urBuff.urSourceServer = parseAndReleaseS (urNode, "urSourceServer" );
+					if ( urBuff.hlrTid == "") urBuff.hlrTid  = parseAndReleaseS (urNode, "hlrTid" );
+					if ( urBuff.accountingProcedure == "") urBuff.accountingProcedure = parseAndReleaseS (urNode, "accountingProcedure" );
+					if ( urBuff.voOrigin == "") urBuff.voOrigin = parseAndReleaseS (urNode, "voOrigin" );
+					if ( urBuff.glueCEInfoTotalCPUs == "") urBuff.glueCEInfoTotalCPUs = parseAndReleaseS (urNode, "glueCEInfoTotalCPUs" );
+					if ( urBuff.executingNodes == "") urBuff.executingNodes = parseAndReleaseS (urNode, "executingNodes" );
+					if ( urBuff.uniqueChecksum == "") urBuff.uniqueChecksum = parseAndReleaseS (urNode, "uniqueChecksum" );
 
 					//go on with records here...
 					logBuff = "<--" + urBuff.dgJobId;
