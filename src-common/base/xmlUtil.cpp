@@ -20,7 +20,8 @@ node parse (string *xmlInput, string _tag)
 	int pos = xmlInput->find("<" + _tag);
 	if ( pos == string::npos )
 	{
-		node nodeBuff(xmlInput, atoi(E_PARSE_ERROR));
+		nodeBuff.mainDoc = xmlInput;
+		nodeBuff.status = atoi(E_PARSE_ERROR);
 		return nodeBuff;
 	}
 	int pos2 = xmlInput->find_first_of(">", pos);
@@ -43,7 +44,8 @@ node parse (string *xmlInput, string _tag)
 	}
 	else
 	{
-		node nodeBuff(xmlInput, atoi(E_PARSE_ERROR));
+		nodeBuff.mainDoc = xmlInput;
+		nodeBuff.status = atoi(E_PARSE_ERROR);
 		return nodeBuff;
 	}
 }
@@ -54,7 +56,8 @@ node parseAndRelease (node &inputNode, string _tag)
 	int pos = (inputNode.text).find("<" + _tag);
 	if ( pos == string::npos )
 	{
-		node nodeBuff(&(inputNode.text), atoi(E_PARSE_ERROR));
+		nodeBuff.mainDoc = &(inputNode.text);
+		nodeBuff.status = atoi(E_PARSE_ERROR);
 		return nodeBuff;
 	}
 	int pos2 = (inputNode.text).find_first_of(">", pos);
@@ -81,7 +84,8 @@ node parseAndRelease (node &inputNode, string _tag)
 	}
 	else
 	{
-		node nodeBuff(&(inputNode.text), atoi(E_PARSE_ERROR));
+		nodeBuff.mainDoc = &(inputNode.text);
+		nodeBuff.status = atoi(E_PARSE_ERROR);
 		return nodeBuff;
 	}
 }

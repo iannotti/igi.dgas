@@ -268,10 +268,11 @@ int urConcentrator::xmlParser( string& requestType,
 			bool haveRecords = true;
 			while ( haveRecords )
 			{
-				jobTransSummary urBuff;
+
 				urNode = parse (&nodeBuff.text, "record" );
 				if ( urNode.status == 0 )
 				{
+					jobTransSummary urBuff;
 					if ( urBuff.dgJobId == "" ) urBuff.dgJobId = parseAndReleaseS (urNode, "dgJobId" );
 					if ( urBuff.date == "" ) urBuff.date = parseAndReleaseS (urNode, "date" );
 					if ( urBuff.userFqan == "") urBuff.userFqan = parseAndReleaseS (urNode, "userFqan" );

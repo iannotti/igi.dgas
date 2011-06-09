@@ -63,10 +63,8 @@ public:
 	int release();
 	attrType getAttributes();
 
-private:
-	string * mainDoc;
-
 public:
+	string * mainDoc;
 	int status;
 
 private:
