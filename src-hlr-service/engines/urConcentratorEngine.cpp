@@ -268,9 +268,9 @@ int urConcentrator::xmlParser( string& requestType,
 			bool haveRecords = true;
 			while ( haveRecords )
 			{
-				logBuff = "Persing:\n\n" + nodeBuff.text + "\n\n";
-				hlr_log(logBuff,&logStream,9);
 				urNode = parse (&nodeBuff.text, "record" );
+				logBuff = "Persing:\n\n" + nodeNode.text + "\n\n";
+				hlr_log(logBuff,&logStream,9);
 				if ( urNode.status == 0 )
 				{
 					jobTransSummary urBuff;
