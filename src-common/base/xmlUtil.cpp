@@ -91,7 +91,7 @@ node parseAndRelease (node &inputNode, string& _tag)
 }
 
 
-string parseAndReleaseS (node &inputNode, string& _tag)
+string parseAndReleaseS (node &inputNode, char* _tag)
 {
 	int pos = (inputNode.text).find("<" + _tag);
 	if ( pos == string::npos )
@@ -128,7 +128,7 @@ string parseAndReleaseS (node &inputNode, string& _tag)
 	}
 }
 
-node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
+node parseImpl(string *xmlInput, char* _tag, size_t pos, size_t pos2)
 {
 	string * _mainDoc = xmlInput;
 	string starttag = xmlInput->substr(pos,
@@ -174,7 +174,7 @@ node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 
 }
 
-int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_t pos2)
+int parseImpl(string *xmlInput, string& output , char* _tag, size_t pos, size_t pos2)
 {
 	string starttag = xmlInput->substr(pos,
 			pos2-pos+1);
@@ -211,7 +211,7 @@ int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_
 }
 
 
-node parse (string *xmlInput, string& _tag, string space)
+node parse (string *xmlInput, char* _tag, string space)
 {
 	node nodeBuff;
 	nodeBuff = parse(xmlInput, _tag);
