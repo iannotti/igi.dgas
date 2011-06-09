@@ -85,16 +85,16 @@ private:
 
 
 //retrieve the info in the node delimited by "tag"
-node parse(string *xmlInput, string& _tag);
+node parse(string *xmlInput, string _tag);
 //retrieve the info in the node delimited by "tag" OR
 // "space:tag"
-node parse(string *xmlInput, char* _tag, string space);
+node parse(string *xmlInput, string _tag, string space);
 //release node if successful parsing.
-node parseAndRelease(node &inputNode, char* _tag);
-string parseAndReleaseS(node &inputNode, char* _tag);
+node parseAndRelease(node &inputNode, string _tag);
+string parseAndReleaseS(node &inputNode, string _tag);
 
-node parseImpl(string *xmlInput, char* _tag, size_t pos, size_t pos2);
-int parseImpl(string *xmlInput, string& output , char* _tag, size_t pos, size_t pos2);
+node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2);
+int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_t pos2);
 string tagAdd(string tag, string content);
 string tagAdd(string tag, string content, vector<attribute> );
 string tagAdd(string tag, int content);

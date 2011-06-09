@@ -148,8 +148,7 @@ node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 		pos = xmlInput->find( endtag );
 		if ( pos == string::npos )
 		{
-			nodeBuff.mainDoc = _mainDoc;
-			nodeBuff.status = atoi(E_PARSE_ERROR);
+			node nodeBuff(_mainDoc, atoi(E_PARSE_ERROR));
 			return nodeBuff;
 		}
 		else
