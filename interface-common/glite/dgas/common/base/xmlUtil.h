@@ -85,7 +85,7 @@ private:
 
 
 //retrieve the info in the node delimited by "tag"
-node parse(string *xmlInput, char* _tag);
+node parse(string *xmlInput, string& _tag);
 //retrieve the info in the node delimited by "tag" OR
 // "space:tag"
 node parse(string *xmlInput, char* _tag, string space);

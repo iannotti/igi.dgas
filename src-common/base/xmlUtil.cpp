@@ -17,14 +17,14 @@ inline string stripWhite ( string &input )
 node parse (string *xmlInput, string& _tag)
 {
 	node nodeBuff;
-	int pos = xmlInput->find("<" + _tag);
+	size_t pos = xmlInput->find("<" + _tag);
 	if ( pos == string::npos )
 	{
 		nodeBuff.mainDoc = xmlInput;
 		nodeBuff.status = atoi(E_PARSE_ERROR);
 		return nodeBuff;
 	}
-	int pos2 = xmlInput->find_first_of(">", pos);
+	size_t pos2 = xmlInput->find_first_of(">", pos);
 	if ( pos2 != string::npos )
 	{
 		if ( xmlInput->substr(pos2-1,1) == "\\" )
@@ -60,7 +60,7 @@ node parseAndRelease (node &inputNode, string& _tag)
 		nodeBuff.status = atoi(E_PARSE_ERROR);
 		return nodeBuff;
 	}
-	int pos2 = (inputNode.text).find_first_of(">", pos);
+	size_t pos2 = (inputNode.text).find_first_of(">", pos);
 	if ( pos2 != string::npos )
 	{
 		if ( (inputNode.text).substr(pos2-1,1) == "\\" )//FIXME this should be adjusted to treat "/>" terminator instead of the wrong "\>" one
@@ -93,7 +93,7 @@ node parseAndRelease (node &inputNode, string& _tag)
 
 string parseAndReleaseS (node &inputNode, char* _tag)
 {
-	int pos = (inputNode.text).find("<" + _tag);
+	size_t pos = (inputNode.text).find( "<" + _tag);
 	if ( pos == string::npos )
 	{
 		return "";
