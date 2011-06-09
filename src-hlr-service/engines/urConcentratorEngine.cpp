@@ -269,7 +269,7 @@ int urConcentrator::xmlParser( string& requestType,
 			while ( haveRecords )
 			{
 				urNode = parse (&nodeBuff.text, "record" );
-				logBuff = "Persing:\n\n" + nodeNode.text + "\n\n";
+				logBuff = "Persing:\n\n" + urNode.text + "\n\n";
 				hlr_log(logBuff,&logStream,9);
 				if ( urNode.status == 0 )
 				{
