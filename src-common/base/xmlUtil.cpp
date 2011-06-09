@@ -14,7 +14,7 @@ inline string stripWhite ( string &input )
 }
 
 
-node parse (string *xmlInput, string _tag)
+node parse (string *xmlInput, string& _tag)
 {
 	node nodeBuff;
 	int pos = xmlInput->find("<" + _tag);
@@ -50,7 +50,7 @@ node parse (string *xmlInput, string _tag)
 	}
 }
 
-node parseAndRelease (node &inputNode, string _tag)
+node parseAndRelease (node &inputNode, string& _tag)
 {
 	node nodeBuff;
 	int pos = (inputNode.text).find("<" + _tag);
@@ -91,7 +91,7 @@ node parseAndRelease (node &inputNode, string _tag)
 }
 
 
-string parseAndReleaseS (node &inputNode, string _tag)
+string parseAndReleaseS (node &inputNode, string& _tag)
 {
 	int pos = (inputNode.text).find("<" + _tag);
 	if ( pos == string::npos )
@@ -211,7 +211,7 @@ int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_
 }
 
 
-node parse (string *xmlInput, string _tag, string space)
+node parse (string *xmlInput, string& _tag, string space)
 {
 	node nodeBuff;
 	nodeBuff = parse(xmlInput, _tag);
