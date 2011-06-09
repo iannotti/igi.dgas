@@ -93,8 +93,8 @@ node parse(string *xmlInput, char* _tag, string space);
 node parseAndRelease(node &inputNode, char* _tag);
 string parseAndReleaseS(node &inputNode, char* _tag);
 
-node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2);
-int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_t pos2);
+node parseImpl(string *xmlInput, char* _tag, size_t pos, size_t pos2);
+int parseImpl(string *xmlInput, string& output , char* _tag, size_t pos, size_t pos2);
 string tagAdd(string tag, string content);
 string tagAdd(string tag, string content, vector<attribute> );
 string tagAdd(string tag, int content);
