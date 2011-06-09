@@ -174,7 +174,7 @@ node parseImpl(string *xmlInput, string& _tag, size_t pos, size_t pos2)
 
 }
 
-int parseImpl(string *xmlInput, string& output , string& _tag, size_t pos, size_t pos2)
+int parseImpl(string *xmlInput, string& output , char* _tag, size_t pos, size_t pos2)
 {
 	string starttag = xmlInput->substr(pos,
 			pos2-pos+1);
