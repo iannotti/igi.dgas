@@ -90,9 +90,11 @@ thread_number = "20"
 maxItemsPerQuery = "5000"
 
 #This flag specifies whether a normal user can issue SQL queries to the database
-#using the glite-dgas-query command or not.
+#using the glite-dgas-query command or not
 authUserSqlQueries = "false"
 
+#This is the lock file for the dgas-translatedb command. 
+masterLock = "/usr/var/dgas/hlrTranslateDb.lock"
 
 #If this parameter is set to true, records older than acceptRecordsStartDate 
 #will be automatically deleted from the jobTransSummary table. Default: false

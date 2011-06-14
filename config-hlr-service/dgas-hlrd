@@ -34,6 +34,7 @@ fi
 eval DGAS_VAR_DIR=`grep dgas_var_dir $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval HLR_USER=`grep hlr_user $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval HLHLR=`grep is2ndLevelHlr $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval TDB_LOCK=`grep masterLock $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 
 if [ -z $HLHLR ]
 then
@@ -80,8 +81,18 @@ eval urForward_LOCK=`grep urForwardLock $HLRD_CONF | grep "^#" -v | cut -d'"' -f
 startMain()
 {
 	echo -n $"Initializing DGAS HLR...."
-	$PREFIX/sbin/dgas-hlr-translatedb -M
-        RETVAL=0
+	[ -e $TDB_LOCK ] && ps auxw | grep dgas-hlr-translatedb &> /dev/null
+		if [ "$?" -eq 0 ]
+		then
+			echo -n " Another instance of dgas-hlr-translatedb is already running lock:$TDB_LOCK"
+		else
+			if [ -e $TDB_LOCK ] 
+			then
+				rm -f $TDB_LOCK
+			fi 
+			$PREFIX/sbin/dgas-hlr-translatedb -M
+		fi
+    RETVAL=0
 	echo -n $"Starting $prog:"
 	[ -e $HLRD_LOCK ] && HLRD_PID=`cat $HLRD_LOCK` && ps auxw | grep $HLRD_PID | grep dgas &> /dev/null
         if [ "$?" -eq 0 ]

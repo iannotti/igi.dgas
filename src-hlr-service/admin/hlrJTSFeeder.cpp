@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.4 2011/05/13 09:48:22 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.5 2011/06/14 08:27:49 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -10,7 +10,6 @@
  *             
  *  
  ***************************************************************************/
-
 
 #include <iostream>
 #include <fstream>
@@ -28,7 +27,7 @@
 #include "dbWaitress.h"
 #include "../base/serviceVersion.h"
 
-#define OPTION_STRING "C:DmvrhcM"
+#define OPTION_STRING "C:DhM"
 #define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
@@ -41,25 +40,10 @@ const char * hlr_sql_password;
 const char * hlr_sql_dbname;
 const char * hlr_tmp_sql_dbname;
 ofstream logStream;
-string confFileName = DGAS_DEF_CONF_FILE;
-string hlr_logFileName;
-string userCertBuffer = "";
-string resourceIDBuffer = "";
-string mergeTablesDefinitions = "";
-string mergeTablesFile = "";
-string queryTypeBuffer = "";
 string masterLock = "";
-string cfFileName = "";
 int mergeTablesPastMonths = 3;
 int system_log_level = 7;
-int queryLenght =100;
 bool debug = false;
-bool mergeReset = false;
-bool needs_help = false;
-bool checkVo = false;
-bool putMasterLock = false;
-bool putCFLock = false;
-bool is2ndLevelHlr = false;
 
 int I = 0;
 int J = 0;
@@ -90,7 +74,7 @@ struct hlrLogRecords {
 	string atmEngineVersion;
 	string accountingProcedure;
 	string localGroupId;
-	string siteName;//in th elog seacrh for SiteName
+	string siteName;//in the log seacrh for SiteName
 	string hlrTid;//trans_{in,out} original tid.
 	string voOrigin;//trans_{in,out} original tid.
 	string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
@@ -98,31 +82,39 @@ struct hlrLogRecords {
 	string ceCertificateSubject;
 };
 
-int options ( int argc, char **argv )
+struct cmdLineOptions {
+	bool debug;
+	bool needsHelp;
+	bool putMasterLock;
+	string confFileName;
+};
+
+
+int options ( int argc, char **argv, cmdLineOptions& opt )
 {
+	opt.confFileName = DGAS_DEF_CONF_FILE;
+	opt.debug = false;
+	opt.putMasterLock = false;
+	opt.needsHelp = false;
 	int option_char;
 	int option_index = 0;
 	static struct option long_options[] =
 	{
-		{"Conf",1,0,'C'},
-		{"debug",0,0,'D'},
-		{"mergeReset",0,0,'m'},
-		{"checkvo",0,0,'v'},
-		{"masterLock",0,0,'M'},
-		{"help",0,0,'h'},
-		{0,0,0,0}
+			{"Conf",1,0,'C'},
+			{"debug",0,0,'D'},
+			{"masterLock",0,0,'M'},
+			{"help",0,0,'h'},
+			{0,0,0,0}
 	};
 	while (( option_char = getopt_long( argc, argv, OPTION_STRING,
-					long_options, &option_index)) != EOF)
+			long_options, &option_index)) != EOF)
 		switch (option_char)
 		{
-			case 'C': confFileName = optarg; break;
-			case 'D': debug = true; break;
-			case 'm': mergeReset =true;; break;		  
-			case 'v': checkVo =true;; break;
-			case 'M': putMasterLock =true;; break;
-			case 'h': needs_help =true;; break;		  
-			default : break;
+		case 'C': opt.confFileName = optarg; break;
+		case 'D': opt.debug = true; break;
+		case 'M': opt.putMasterLock =true;; break;
+		case 'h': opt.needs_help =true;; break;
+		default : break;
 		}
 	return 0;
 }
@@ -130,22 +122,20 @@ int options ( int argc, char **argv )
 int help (const char *progname)
 {
 	cerr << "\n " << progname << endl;
-        cerr << " Version: "<< VERSION << endl;
-        cerr << " Author: Andrea Guarise " << endl;
-        cerr << " 26/03/2008 " << endl <<endl;
+	cerr << " Version: "<< VERSION << endl;
+	cerr << " Author: Andrea Guarise " << endl;
 	cerr << " Updates a reference table used in queries to the database." << endl;
-        cerr << " usage: " << endl;
-        cerr << " " << progname << " [OPTIONS] " << endl;
-        cerr << setw(30) << left << "-D --debug"<<"Ask for debug output" << endl;
+	cerr << " usage: " << endl;
+	cerr << " " << progname << " [OPTIONS] " << endl;
+	cerr << setw(30) << left << "-D --debug"<<"Ask for debug output" << endl;
 	cerr << setw(30) << left << "-C --Conf"<<"HLR configuration file, if not the default: " << DGAS_DEF_CONF_FILE << endl;
-	cerr << setw(30) << left << "-v --checkvo"<<"Try to fix most common source of problems determining user vo." << endl;
 	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
-        cerr << setw(30) << left <<"-h --help"<<"This help" << endl;
-        cerr << endl;
+	cerr << setw(30) << left <<"-h --help"<<"This help" << endl;
+	cerr << endl;
 	return 0;	
 }
 
-int CFremove(string& fileName)
+int masterLockRemove(string& fileName)
 {
 	int res = unlink ( fileName.c_str());
 	if ( res != 0 )
@@ -158,23 +148,8 @@ int CFremove(string& fileName)
 	}
 }
 
-int CFcreate(string& fileName)
-{
-	if (putMasterLock) return 0;//masterLock has precedence.
-	fstream cfStream(fileName.c_str(), ios::out);
-	if ( !cfStream )
-	{
-		return 1;
-	}
-	else
-	{
-		cfStream.close();
-		return 0;
-	}
-}
 
-
-int MLcreate(string& fileName)
+int masterLockCreate(string& fileName)
 {
 	fstream cfStream(fileName.c_str(), ios::out);
 	if ( !cfStream )
@@ -188,7 +163,7 @@ int MLcreate(string& fileName)
 	}
 }
 
-bool CFexists(string& fileName)
+bool masterLockExists(string& fileName)
 {
 	ifstream cfStream (fileName.c_str(), ios::in);
 	if ( !cfStream )
@@ -213,35 +188,35 @@ int computeIterationsNo (int confIterations, int lastProcessedTid )
 	}
 	else
 	{
-			int records = atoi((((iterQuery.queryResult).front())[0]).c_str());
-			if ( records < 5000 )
+		int records = atoi((((iterQuery.queryResult).front())[0]).c_str());
+		if ( records < 5000 )
+		{
+			if ( debug ) cout << "Just one iteration is sufficient." << endl;
+			return 1;
+		}
+		else
+		{
+			int iBuff = records/80000;
+			if ( debug )
 			{
-				if ( debug ) cout << "Just one iteration is sufficient." << endl; 
-				return 1;
+				cout << "From configuration: " << int2string(confIterations) << endl;
+				cout << "From number of transactions: " << int2string(iBuff) << endl;
 			}
-			else
-			{
-				int iBuff = records/80000;
-				if ( debug )
-				{
-					cout << "From configuration: " << int2string(confIterations) << endl;
-					cout << "From number of transactions: " << int2string(iBuff) << endl;
-				}
-				return ( iBuff >= confIterations ) ? iBuff : confIterations;
-			}
+			return ( iBuff >= confIterations ) ? iBuff : confIterations;
+		}
 	}
 	return 0;
-	
+
 }
 
 string composeQuery(int first, int last)
 {
 	string queryBuff = "SELECT * FROM ";
-        queryBuff += "trans_in,transInLog";
-        queryBuff +=" WHERE trans_in.dgJobId=transInLog.dgJobId "; 
+	queryBuff += "trans_in,transInLog";
+	queryBuff +=" WHERE trans_in.dgJobId=transInLog.dgJobId ";
 	queryBuff += " AND trans_in.tid >" +int2string(first);//do not use >=
-						//since 'first' is already 
-						//present in DB.
+	//since 'first' is already
+	//present in DB.
 	queryBuff += " AND trans_in.tid <=" +int2string(last);
 	queryBuff += " AND NOT trans_in.rid AND NOT trans_in.gid";
 	if (debug)
@@ -256,7 +231,7 @@ int parseLog(string logString, hlrLogRecords& records)
 {
 	vector<string> buffV;
 	Split (',',logString, &buffV );
-        vector<string>::const_iterator it = buffV.begin();
+	vector<string>::const_iterator it = buffV.begin();
 	map<string,string> logMap;
 	while ( it != buffV.end() )
 	{
@@ -268,7 +243,7 @@ int parseLog(string logString, hlrLogRecords& records)
 			logMap.insert(
 					map<string,string>::
 					value_type (param,value)
-				);	
+			);
 		}	
 		it++;
 	}
@@ -298,37 +273,37 @@ int parseLog(string logString, hlrLogRecords& records)
 	records.jobName = logMap["jobName"];
 	records.accountingProcedure = logMap["accountingProcedure"];
 	if ( logMap["start"] != "" )
-        {
-        	records.start = logMap["start"];
-        }
-        else
-        {
-        	records.start = "0";
-        }
+	{
+		records.start = logMap["start"];
+	}
+	else
+	{
+		records.start = "0";
+	}
 	if ( logMap["end"] != "" )
-        {
-        	records.end = logMap["end"];
-        }
-        else
-        {
-        	records.end = "0";
-        }
+	{
+		records.end = logMap["end"];
+	}
+	else
+	{
+		records.end = "0";
+	}
 	if ( logMap["qtime"] != "" && logMap["qtime"] != "qtime" )
-        {
-        	records.qtime = logMap["qtime"];
-        }
-        else
-        {
-        	records.qtime = "0";
-        }
+	{
+		records.qtime = logMap["qtime"];
+	}
+	else
+	{
+		records.qtime = "0";
+	}
 	if ( logMap["ctime"] != "" && logMap["ctime"] != "ctime" )
-        {
-        	records.ctime = logMap["ctime"];
-        }
-        else
-        {
-        	records.ctime = "0";
-        }
+	{
+		records.ctime = logMap["ctime"];
+	}
+	else
+	{
+		records.ctime = "0";
+	}
 	records.fqan = logMap["userFqan"];
 	records.siteName = logMap["SiteName"];
 	records.atmEngineVersion = logMap["atmEngineVersion"];
@@ -406,7 +381,7 @@ int parseLog(string logString, hlrLogRecords& records)
 	return 0;
 }
 
-int populateJobTransSummaryTable ( const hlrGenericQuery& q )
+int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 {
 	int res = 0;
 	if ((q.queryResult).size() == 0 ) res = 1;
@@ -418,14 +393,13 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 	int i = 0;
 	int j = 0;
 	int counter = 0;
-        int records = (q.queryResult).size();
+	int records = (q.queryResult).size();
 	I += records;
-        int step = records/40;
+	int step = records/40;
 	string currentTid;
 	string dgJobId;
 	string thisGridId;
 	string remoteGridId;
-//	string remoteHlr;
 	string acl;
 	string amount;
 	string date;//start date
@@ -463,8 +437,8 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		else
 		{
 			if ( logBuff.qtime != "" 
-				&& logBuff.qtime != "0" 
-				&& logBuff.qtime != "qtime" )
+					&& logBuff.qtime != "0"
+							&& logBuff.qtime != "qtime" )
 			{
 				//there isn't a start value in the LRMS record
 				//but there is a queue value. Use it as the
@@ -474,8 +448,8 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 			else
 			{
 				if ( logBuff.ctime != "" 
-					&& logBuff.ctime != "0" 
-					&& logBuff.ctime != "ctime" ) 
+						&& logBuff.ctime != "0"
+								&& logBuff.ctime != "ctime" )
 				{
 					//ok, let's try with ctime (submit time for LSF)
 					date = "FROM_UNIXTIME("+ logBuff.ctime +")";	
@@ -503,8 +477,8 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 			else
 			{
 				if ( logBuff.qtime != "" 
-					&& logBuff.qtime != "0"  
-					&& logBuff.qtime != "qtime" )
+						&& logBuff.qtime != "0"
+								&& logBuff.qtime != "qtime" )
 				{
 					//assume job end == job queue time!
 					endDate = "FROM_UNIXTIME("+ logBuff.qtime +")";
@@ -532,18 +506,6 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		if ( logBuff.wallTime < 0 ) logBuff.wallTime = 0;//PBS Exit_status=-4 negative wall time workaround.
 		string wallTime = int2string(logBuff.wallTime);
 		amount = (*it)[4];
-		if ( checkVo )
-		{
-			string buff;
-			logBuff.userVo = checkUserVo(logBuff.userVo,
-					logBuff.fqan,
-					logBuff.localUserId,
-					buff);
-			if ( debug )
-			{
-				cout << "userVo:" << buff << endl;
-			}
-		}
 		if ( logBuff.accountingProcedure == "" )
 		{
 			logBuff.accountingProcedure = "grid";
@@ -560,17 +522,22 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		valuesBuffer += logBuff.start;
 		valuesBuffer += wallTime;
 		valuesBuffer += cpuTime;
-		uniqueS = "";
-		makeUniqueString (valuesBuffer,uniqueS);
-		queryBuffer = "";
-		queryBuffer += "SET uniqueChecksum='";
-		queryBuffer += uniqueS;
-		queryBuffer += "',accountingProcedure='";
-		queryBuffer += logBuff.accountingProcedure;
-		queryBuffer += "' WHERE tid=" + currentTid;
-		valuesTransInV.push_back(queryBuffer);
-		// compute unique strings
-
+		if ( (*it)[7] == "" )//if uniqueChecksum is not defined in trans_in (old record not already updated)
+		{
+			uniqueS = "";
+			makeUniqueString (valuesBuffer,uniqueS);//compute unique strings
+			queryBuffer = "";
+			queryBuffer += "SET uniqueChecksum='";
+			queryBuffer += uniqueS;
+			queryBuffer += "',accountingProcedure='";
+			queryBuffer += logBuff.accountingProcedure;
+			queryBuffer += "' WHERE tid=" + currentTid;
+			valuesTransInV.push_back(queryBuffer);
+		}
+		else
+		{
+			uniqueS = (*it)[7];
+		}
 		queryBuffer = "('";
 		queryBuffer += dgJobId;
 		queryBuffer += "',";
@@ -638,12 +605,12 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		i++;
 		counter++;
 		valuesCounter++;
-                if (counter >= step )
-                {
-                        cout << indicator << flush;
-                        counter = 0;
+		if (counter >= step )
+		{
+			cout << indicator << flush;
+			counter = 0;
 			indicator = "#";
-                }
+		}
 		j++;
 		if ( valuesCounter == queryLenght )
 		{
@@ -673,21 +640,21 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 				queryBuffer = "UPDATE trans_in " + *queryUTIIT;
 				dbResult resultUTI = hlrDb.query(queryBuffer);
 				if ( hlrDb.errNo == 0 )
-                       	 	{
+				{
 					/*
                                	 	if ( debug )
                                	 	{
                                         	cerr <<queryBuffer << endl;
                                 	}*/
-                        	}
-                        	else
-                        	{
-                                	if ( debug )
-                                	{
-                                       	 	cerr << "ERROR: " <<queryBuffer << "; errNo:" << int2string(hlrDb.errNo) << endl;
-                                	}
+				}
+				else
+				{
+					if ( debug )
+					{
+						cerr << "ERROR: " <<queryBuffer << "; errNo:" << int2string(hlrDb.errNo) << endl;
+					}
 					indicator = "E";
-                        	}
+				}
 				queryUTIIT++;
 			}
 			valuesTransInV.clear();
@@ -695,7 +662,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 		}
 		it++;
 	}
-        //manage trailing elements in queryResult vector.	
+	//manage trailing elements in queryResult vector.
 	if ( valuesCounter != 0 )
 	{
 		if ( debug )
@@ -720,34 +687,34 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q )
 				cerr << "ERROR: " <<queryBuffer <<"; errNo:"<< int2string(hlrDb.errNo) << endl;
 			}
 		}
-			//trans_in
-			vector<string>::iterator queryUTIIT = valuesTransInV.begin();
-			while ( queryUTIIT != valuesTransInV.end() )
+		//trans_in
+		vector<string>::iterator queryUTIIT = valuesTransInV.begin();
+		while ( queryUTIIT != valuesTransInV.end() )
+		{
+			queryBuffer = "UPDATE trans_in " + *queryUTIIT;
+			dbResult resultUTI = hlrDb.query(queryBuffer);
+			if ( hlrDb.errNo == 0 )
 			{
-				queryBuffer = "UPDATE trans_in " + *queryUTIIT;
-				dbResult resultUTI = hlrDb.query(queryBuffer);
-				if ( hlrDb.errNo == 0 )
-                       	 	{
-                               	 	/*if ( debug )
+				/*if ( debug )
                                	 	{
                                         	cerr <<queryBuffer << endl;
                                 	}*/
-                        	}
-                        	else
-                        	{
-                                	if ( debug )
-                                	{
-                                       	 	cerr << "ERROR:" <<queryBuffer << endl;
-                                	}
-                        	}
-				queryUTIIT++;
 			}
+			else
+			{
+				if ( debug )
+				{
+					cerr << "ERROR:" <<queryBuffer << endl;
+				}
+			}
+			queryUTIIT++;
+		}
 
 	}
-	
+
 	if ( debug )
 	{
-		cout << "In " << queryTypeBuffer << " Found " << i << " transactions, processed:" << j << endl;
+		cout << " Found " << i << " transactions, processed:" << j << endl;
 	}
 	J += j;
 	return 0;
@@ -852,124 +819,68 @@ bool isTableUpToDate (string dbName, string tableName, string &fieldList)
 	return false;
 }
 
-int cleanUpOld(string startDate)
-{
-	string checkString = "SELECT UNIX_TIMESTAMP(\"" + startDate +"\")";
-	if ( debug )
-	{
-		cerr << checkString << endl;
-	}
-	hlrGenericQuery check(checkString);
-	check.query();
-	if ( check.errNo != 0)
-	{
-		cerr << "Error in query checkin for date validity." << endl;
-		return 1;
-	}
-	if ( (check.queryResult).front()[0] == "0" )
-	{
-		cerr << "startDate is not correctly setup in the conf file. Bailing out from cleanup." << endl;
-		return 1;
-	}
-	string queryString = "DELETE FROM jobTransSummary WHERE date < '";
-	queryString += startDate + "'";
-	if ( debug )	
-	{
-		cerr << queryString << endl;
-	}	
-	hlrGenericQuery q(queryString);
-	q.query();
-	if ( q.errNo != 0 )
-	{
-		cerr << "Error cleaning up jobTransSummary for jobs older than:" 			<< startDate << endl;
-		return 1; 
-	}
-	return 0;
-}
-
 void doNothing ( int sig )
 {
 	cerr << "The command can't be killed, Please be patient..." << endl;
 	signal (sig, doNothing) ;
 }
 
-void Exit (int exitStatus )
-{
-	if ( putMasterLock ) CFremove ( masterLock );
-	if ( putCFLock ) CFremove ( cfFileName );
-	exit(exitStatus);
-}
 
 int main (int argc, char **argv)
 {
-	options ( argc, argv );
-        map <string,string> confMap;
-        if ( dgas_conf_read ( confFileName, &confMap ) != 0 )
+	cmdLineOptions Options;
+	options ( argc, argv, Options );
+	debug = Options.debug;
+	map <string,string> confMap;
+	if ( dgas_conf_read ( Options.confFileName, &confMap ) != 0 )
 	{
 		cerr << "Couldn't open configuration file: " <<
-			confFileName << endl;
+				Options.confFileName << endl;
+	}
+	if (Options.needs_help)
+	{
+		help(argv[0]);
+		exit(0);
 	}
 	signal (SIGTERM, doNothing);
 	signal (SIGINT, doNothing);
-        hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
-        hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
-        hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
-        hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
-        hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
-	hlr_logFileName = confMap["hlr_def_log"];
+	hlr_sql_server = (confMap["hlr_sql_server"]).c_str();
+	hlr_sql_user = (confMap["hlr_sql_user"]).c_str();
+	hlr_sql_password = (confMap["hlr_sql_password"]).c_str();
+	hlr_sql_dbname = (confMap["hlr_sql_dbname"]).c_str();
+	hlr_tmp_sql_dbname = (confMap["hlr_tmp_sql_dbname"]).c_str();
+	string hlr_logFileName = confMap["hlr_def_log"];
 	int stepNumber = 5;
+	int queryLenght =100;
 	string stepNumberStr = (confMap["translateStepNumber"]);
-	string acceptRecordsStartDate = "";
-	bool autoDeleteOldRecords = false;
-	string rulesFile;
-	if ( ( confMap["autoDeleteOldRecords"] == "true" ) || 
-		( confMap["autoDeleteOldRecords"] == "yes" )  )
-	{
-		autoDeleteOldRecords = true;
-	}
-	if ( confMap["stopTranslateFile"] != "" )
-	{
-		cfFileName = (confMap["stopTranslateFile"]).c_str();
-	}
-	else
-	{
-		cfFileName = dgasLocation() + "/var/dgas/stopTranslateDb";
-	}
 	if ( confMap["masterLock"] != "" )
 	{
-		masterLock = (confMap["masterLock"]).c_str();
+		masterLock = confMap["masterLock"];
 	}
 	else
 	{
-		masterLock = dgasLocation() + "/var/dgas/hlrTranslateDb.lock";
+		masterLock = "/usr/var/dgas/hlrTranslateDb.lock";
 	}
 	if ( confMap["systemLogLevel"] != "" )
 	{
 		system_log_level = atoi((confMap["systemLogLevel"]).c_str());
 	}
-	if ( CFexists( masterLock ) )
+	if ( masterLockExists( masterLock ) )
 	{
-		cout << "Another instance of hlr-translatedb put a lock. Exiting." << endl;
+		cout << "Another instance of the command put a lock. Exiting." << endl;
 		exit(0);
-	}
-	if ( putMasterLock )
-	{
-		cout << "Locking other instances out." << endl;
-		MLcreate ( masterLock );
 	}
 	int res = bootstrapLog(hlr_logFileName, &logStream);
 	if ( res != 0 )
 	{
 		cerr << "Error bootstrapping the Log file:" << endl;
 		cerr << hlr_logFileName<< endl;
-		Exit(1);
+		exit(1);
 	}
-	if ( confMap["acceptRecordsStartDate"] != "" )
+	if ( Options.putMasterLock )
 	{
-		if ( autoDeleteOldRecords)
-		{
-			acceptRecordsStartDate = confMap["acceptRecordsStartDate"];
-		}
+		cout << "Locking other instances out." << endl;
+		masterLockCreate( masterLock );
 	}
 	if ( stepNumberStr != "" )
 	{
@@ -983,12 +894,14 @@ int main (int argc, char **argv)
 	{
 		queryLenght = atoi((confMap["translateQueryLenght"]).c_str());
 	}
-	is2ndLevelHlr = false;
+	bool is2ndLevelHlr = false;
 	if ( confMap["is2ndLevelHlr"] == "true" )
 	{
 		is2ndLevelHlr =true;
 	}
-	#ifdef MERGE
+#ifdef MERGE
+	string mergeTablesDefinitions = "";
+	string mergeTablesFile = "";
 	bool useMergeTables = false;
 	database DB(hlr_sql_server,
 			hlr_sql_user,
@@ -1014,48 +927,36 @@ int main (int argc, char **argv)
 			mergeTablesDefinitions,
 			mergeTablesFile,
 			mergeTablesPastMonths);
-	if ( mergeReset ) mt.reset = true;
-	#endif
+#endif
 	/*END merge tables definition*/
-	if ( confMap["rulesFile"] != "" )
-	{
-		rulesFile = confMap["rulesFile"];
-	}
-	if (needs_help)
-	{
-		help(argv[0]);
-		Exit(0);
-	}
-	if ( CFexists(cfFileName ) )
-	{
-		cout << "Found file:" << cfFileName << " ,which is a request to not perform any operation. Probably this is set by another instance of this command. Do not remove it unless you know what you are doing." << endl;
-		 Exit(0);
-	}
 	serviceVersion thisServiceVersion(hlr_sql_server,
-				hlr_sql_user,
-				hlr_sql_password,
-				hlr_sql_dbname);
-		if ( !thisServiceVersion.tableExists() )
-		{
-			thisServiceVersion.tableCreate();
-		}
-		thisServiceVersion.setService("dgas-hlr-populateJobTransSummary");
-		thisServiceVersion.setVersion(VERSION);
-		thisServiceVersion.setHost("localhost");
-		thisServiceVersion.setConfFile(confFileName);
-		thisServiceVersion.setLockFile(masterLock);
-		thisServiceVersion.setLogFile(hlr_logFileName);
-		thisServiceVersion.write();
-		thisServiceVersion.updateStartup();
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
+	if ( !thisServiceVersion.tableExists() )
+	{
+		thisServiceVersion.tableCreate();
+	}
+	thisServiceVersion.setService("dgas-hlr-populateJobTransSummary");
+	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.setHost("localhost");
+	thisServiceVersion.setConfFile(confFileName);
+	thisServiceVersion.setLockFile(masterLock);
+	thisServiceVersion.setLogFile(hlr_logFileName);
+	thisServiceVersion.write();
+	thisServiceVersion.updateStartup();
 	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
 	if ( !isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields ) )
 	{
-		Exit(1);
+		cerr << "The jobTransSummary table needs a schema update. Run dgas-hlr-translatedb command first." << endl;
+		if ( Options.putMasterLock ) masterLockRemove ( masterLock );
+		exit(1);
 	}
 	if ( is2ndLevelHlr )
 	{
 		cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
-		Exit(0);
+		if ( Options.putMasterLock ) masterLockRemove ( masterLock );
+		exit(0);
 		//if this is a 2nd level HLR we can bail out here...
 	}
 	//otherwise we must go on...
@@ -1064,7 +965,7 @@ int main (int argc, char **argv)
 	time_t time0;
 	time_t time1;
 	time_t eta = 0;
-	I =0;
+	I = 0;
 	J = 0;
 	int resLastTid = 0;
 	int maxResTid;
@@ -1090,22 +991,23 @@ int main (int argc, char **argv)
 			step = (maxResTid-resLastTid)/stepNumber;
 		}
 		if (step <= 0 ) step = 1;
+		int res = 0;
 		for (int i=0; i<stepNumber; i++)
 		{
 			time0 = time(NULL);
 			percentage = ((i+1)*100)/stepNumber;
-			string queryString_res = composeQuery(resLastTid,resLastTid+step);
-			hlrGenericQuery genericQuery_res(queryString_res);
-   			int res = genericQuery_res.query();
+			string queryString = composeQuery(resLastTid,resLastTid+step);
+			hlrGenericQuery insertQuery(queryString);
+			res = insertQuery.query();
 			if ( res != 0 )
 			{
 				cout << "Warning: problem in query.";
 				if ( debug )
 				{
-					cout << int2string(res) << ":" << queryString_res << endl;
+					cout << int2string(res) << ":" << queryString << endl;
 				}
 			}
-			populateJobTransSummaryTable ( genericQuery_res );
+			populateJobTransSummaryTable ( insertQuery );
 			resLastTid = resLastTid+step;
 			if ( i == stepNumber-1 ) percentage = 100;
 			time1 = time(NULL);
@@ -1117,15 +1019,16 @@ int main (int argc, char **argv)
 			oldPercentage = percentage;
 		}
 	}
-	cout << "Found " << I << " transactions, processed:" << J << endl;
-	#ifdef MERGE
+	cout << "Found " << I << " raw records, inserted in jobTransSummary:" << J << endl;
+#ifdef MERGE
 	if ( useMergeTables )
 	{
 		mt.exec();
 		mt.addIndex("date","recordDate");
 	}
-	#endif
+#endif
 	/*merge tables exec end*/
 	cout << "Done." << endl;
-	Exit(0);
+	if ( Options.putMasterLock ) masterLockRemove ( masterLock );
+	exit(0);
 }

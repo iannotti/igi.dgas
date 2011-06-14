@@ -12,7 +12,7 @@ void makeUniqueString(string &logEntries, string& uniqueString)
         uniqueString = md5sum(logEntries);
         return;
 }
-
+/*FIXME remove
 string checkUserVo (string& currentUserVo, string& userFqan ,string& localUserId, string& voSource)
 {
         //used to fix records with userVohaving well
@@ -165,3 +165,4 @@ string checkUserVo (string& currentUserVo, string& userFqan ,string& localUserId
         voSource = "We use the VO received from the caller:" + currentUserVo; 
         return currentUserVo;
 }
+*/

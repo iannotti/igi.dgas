@@ -9,5 +9,5 @@ using namespace std;
 
 void makeUniqueString (string &logEntries, string& uniqueString);
 
-string checkUserVo (string& currentUserVo, string& userFqan ,string& localUserId, string& voSource);
+//string checkUserVo (string& currentUserVo, string& userFqan ,string& localUserId, string& voSource);FIXME
 #endif

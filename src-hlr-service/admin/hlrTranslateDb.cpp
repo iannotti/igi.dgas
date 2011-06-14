@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.16 2011/05/20 11:52:39 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.17 2011/06/14 08:27:49 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -28,7 +28,7 @@
 #include "dbWaitress.h"
 #include "../base/serviceVersion.h"
 
-#define OPTION_STRING "C:DmvrhcTM"
+#define OPTION_STRING "C:DmrhcTM"
 #define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
@@ -57,7 +57,6 @@ bool debug = false;
 bool reset = false;
 bool mergeReset = false;
 bool needs_help = false;
-bool checkVo = false;
 bool checkDuplicate = false;
 bool translationRules = false;
 bool putMasterLock = false;
@@ -111,7 +110,6 @@ int options ( int argc, char **argv )
 			{"debug",0,0,'D'},
 			{"reset",0,0,'r'},
 			{"mergeReset",0,0,'m'},
-			{"checkvo",0,0,'v'},
 			{"checkDuplicate",0,0,'c'},
 			{"masterLock",0,0,'M'},
 			{"useTranslationRules",0,0,'T'},
@@ -126,7 +124,6 @@ int options ( int argc, char **argv )
 		case 'D': debug = true; break;
 		case 'r': reset =true;; break;
 		case 'm': mergeReset =true;; break;
-		case 'v': checkVo =true;; break;
 		case 'c': checkDuplicate =true;; break;
 		case 'M': putMasterLock =true;; break;
 		case 'T': translationRules = true;; break;
@@ -148,7 +145,6 @@ int help (const char *progname)
 	cerr << setw(30) << left << "-D --debug"<<"Ask for debug output" << endl;
 	cerr << setw(30) << left << "-C --Conf"<<"HLR configuration file, if not the default: " << DGAS_DEF_CONF_FILE << endl;
 	cerr << setw(30) << left << "-r --reset"<<"Clean up the query tables and recreates them from raw database info." << endl;
-	cerr << setw(30) << left << "-v --checkvo"<<"Try to fix most common source of problems determining user vo." << endl;
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Search for duplicate entries and expunge the one with less information." << endl;
 	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Perform database translation rules defined in the rules.conf file" << endl;
@@ -1215,7 +1211,7 @@ int main (int argc, char **argv)
 	}
 	else
 	{
-		masterLock = dgasLocation() + "/var/dgas/hlrTranslateDb.lock";
+		masterLock = "/usr/var/dgas/hlrTranslateDb.lock";
 	}
 	if ( confMap["systemLogLevel"] != "" )
 	{
