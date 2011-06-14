@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.5 2011/06/14 08:27:49 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.6 2011/06/14 09:33:07 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -112,8 +112,8 @@ int options ( int argc, char **argv, cmdLineOptions& opt )
 		{
 		case 'C': opt.confFileName = optarg; break;
 		case 'D': opt.debug = true; break;
-		case 'M': opt.putMasterLock =true;; break;
-		case 'h': opt.needs_help =true;; break;
+		case 'M': opt.putMasterLock =true; break;
+		case 'h': opt.needsHelp =true; break;
 		default : break;
 		}
 	return 0;
@@ -837,7 +837,7 @@ int main (int argc, char **argv)
 		cerr << "Couldn't open configuration file: " <<
 				Options.confFileName << endl;
 	}
-	if (Options.needs_help)
+	if (Options.needsHelp)
 	{
 		help(argv[0]);
 		exit(0);
