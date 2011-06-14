@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.7 2011/06/14 09:37:48 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.8 2011/06/14 09:46:52 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1007,7 +1007,7 @@ int main (int argc, char **argv)
 					cout << int2string(res) << ":" << queryString << endl;
 				}
 			}
-			populateJobTransSummaryTable ( insertQuery );
+			populateJobTransSummaryTable ( insertQuery , queryLenght);
 			resLastTid = resLastTid+step;
 			if ( i == stepNumber-1 ) percentage = 100;
 			time1 = time(NULL);
