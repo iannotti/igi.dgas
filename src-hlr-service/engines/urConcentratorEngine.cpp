@@ -560,20 +560,7 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 {
 	int res = 0;
 	string logBuff;
-	if ( checkVo )
-	{
-		string buff = "";
-		r.userVo = checkUserVo(r.userVo,
-				r.userFqan,
-				r.localUserId,
-				buff);
-		if ( buff != "" )
-		{
-			hlr_log (buff, &logStream,4);
-		}
-
-	}
-	string recordId;//taken from id field in jobTransSummary.
+	//string recordId;//taken from id field in jobTransSummary.
 	/*
 	if ( checkExistsOutOfBand(r, recordId) )
 	{
