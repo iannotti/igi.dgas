@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.6 2011/06/14 09:33:07 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.7 2011/06/14 09:37:48 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -940,7 +940,7 @@ int main (int argc, char **argv)
 	thisServiceVersion.setService("dgas-hlr-populateJobTransSummary");
 	thisServiceVersion.setVersion(VERSION);
 	thisServiceVersion.setHost("localhost");
-	thisServiceVersion.setConfFile(confFileName);
+	thisServiceVersion.setConfFile(Options.confFileName);
 	thisServiceVersion.setLockFile(masterLock);
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
