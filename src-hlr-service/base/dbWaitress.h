@@ -190,7 +190,6 @@ public:
 		tableDef += "gridUser varchar(160), ";
 		tableDef += "userFqan varchar(255), ";
 		tableDef += "userVo varchar(160), ";
-		tableDef += "remoteHlr varchar(160), ";
 		tableDef += "cpuTime int(10) unsigned default 0, ";
 		tableDef += "wallTime int(10) unsigned default 0, ";
 		tableDef += "pmem int(10) unsigned default 0, ";
@@ -242,6 +241,7 @@ private:
 	//int getCurrentDef();
 	std::string tableDef;
 	std::string engine;
+	bool is2ndLevelHlr;
 };
 
 #endif
