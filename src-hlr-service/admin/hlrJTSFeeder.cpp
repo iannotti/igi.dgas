@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.8 2011/06/14 09:46:52 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.9 2011/06/15 08:30:55 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -27,7 +27,7 @@
 #include "dbWaitress.h"
 #include "../base/serviceVersion.h"
 
-#define OPTION_STRING "C:DhM"
+#define OPTION_STRING "C:Dh"
 #define DGAS_DEF_CONF_FILE "/etc/dgas/dgas_hlr.conf"
 
 using namespace std;
@@ -85,7 +85,6 @@ struct hlrLogRecords {
 struct cmdLineOptions {
 	bool debug;
 	bool needsHelp;
-	bool putMasterLock;
 	string confFileName;
 };
 
@@ -94,7 +93,6 @@ int options ( int argc, char **argv, cmdLineOptions& opt )
 {
 	opt.confFileName = DGAS_DEF_CONF_FILE;
 	opt.debug = false;
-	opt.putMasterLock = false;
 	opt.needsHelp = false;
 	int option_char;
 	int option_index = 0;
@@ -102,7 +100,6 @@ int options ( int argc, char **argv, cmdLineOptions& opt )
 	{
 			{"Conf",1,0,'C'},
 			{"debug",0,0,'D'},
-			{"masterLock",0,0,'M'},
 			{"help",0,0,'h'},
 			{0,0,0,0}
 	};
@@ -112,7 +109,6 @@ int options ( int argc, char **argv, cmdLineOptions& opt )
 		{
 		case 'C': opt.confFileName = optarg; break;
 		case 'D': opt.debug = true; break;
-		case 'M': opt.putMasterLock =true; break;
 		case 'h': opt.needsHelp =true; break;
 		default : break;
 		}
@@ -877,11 +873,8 @@ int main (int argc, char **argv)
 		cerr << hlr_logFileName<< endl;
 		exit(1);
 	}
-	if ( Options.putMasterLock )
-	{
-		cout << "Locking other instances out." << endl;
-		masterLockCreate( masterLock );
-	}
+	cout << "Locking other instances out." << endl;
+	masterLockCreate( masterLock );
 	if ( stepNumberStr != "" )
 	{
 		stepNumber = atoi(stepNumberStr.c_str());
@@ -949,13 +942,13 @@ int main (int argc, char **argv)
 	if ( !isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields ) )
 	{
 		cerr << "The jobTransSummary table needs a schema update. Run dgas-hlr-translatedb command first." << endl;
-		if ( Options.putMasterLock ) masterLockRemove ( masterLock );
+		masterLockRemove ( masterLock );
 		exit(1);
 	}
 	if ( is2ndLevelHlr )
 	{
 		cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
-		if ( Options.putMasterLock ) masterLockRemove ( masterLock );
+		masterLockRemove ( masterLock );
 		exit(0);
 		//if this is a 2nd level HLR we can bail out here...
 	}
@@ -1029,6 +1022,6 @@ int main (int argc, char **argv)
 #endif
 	/*merge tables exec end*/
 	cout << "Done." << endl;
-	if ( Options.putMasterLock ) masterLockRemove ( masterLock );
+	masterLockRemove ( masterLock );
 	exit(0);
 }
