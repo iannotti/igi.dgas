@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.19 2011/06/15 13:59:59 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.20 2011/06/15 15:13:22 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -144,6 +144,65 @@ int help (const char *progname)
 	cerr << setw(30) << left << "-h --help"<<"This help" << endl;
 	cerr << endl;
 	return 0;	
+}
+
+int upgrade_R_3_4_0_23()
+{
+	int res = 0;
+	bool update = false;
+	string queryBuffer = "describe jobTransSummary uniqueChecksum";
+	hlrGenericQuery describe(queryBuffer);
+	res = describe.query();
+	if ( res != 0 )
+	{
+		cerr << "Error in query:" << queryBuffer << endl;
+	}
+	else
+	{
+		if ( describe.errNo == 0 )
+	        {
+	                vector<resultRow>::const_iterator it = (describe.queryResult).begin();
+	                while ( it != (describe.queryResult).end() )
+	                {
+				if ( (*it)[0] == "uniqueChecksum" )
+				{
+       		                 	if ( (*it)[3] != "PRI" ) 
+					{
+						update = true;
+					}
+				}
+                	        it++;
+                	}
+		}
+	}
+	if ( update )
+	{
+		cout << "Table jobTransSummary needs an index update" << endl;
+		cout << "Table jobTransSummary: dropping primary index..." << endl;
+		string queryBuffer = "alter table jobTransSummary drop primary key";
+		hlrGenericQuery dropQuery(queryBuffer);
+		res = dropQuery.query();
+		if ( res != 0 )
+		{
+			cerr << "Error in query:" << queryBuffer << endl;
+			return res;
+		}
+		else
+		{
+			cout << "Table jobTransSummary: creating new primary index..." << endl;
+	
+			string queryBuffer2 = "alter table jobTransSummary ADD primary key (dgJobId,uniqueChecksum)";
+			hlrGenericQuery addQuery(queryBuffer2);
+			res = addQuery.query();
+			if ( res != 0 )
+			{
+				cerr << "Error in query:" << queryBuffer2 << endl;
+				return res;
+			}
+		}
+		cout << "Table jobTransSummary: Index creation done." << endl;
+	}
+	return res;
 }
 
 int masterLockRemove(string& fileName)
@@ -339,19 +398,6 @@ int addField(string table, string fieldDesc)
 	string queryString = "ALTER TABLE " + table +" ADD " + fieldDesc;
 	hlrGenericQuery createIndex(queryString);
 	int res = createIndex.query();
-	if ( debug )
-	{
-		cerr << queryString << endl;
-		cerr << "Exited with:" << res << endl;
-	}
-	return res;
-}
-
-int flushTables()
-{
-	string queryString = "FLUSH TABLES";
-	hlrGenericQuery flush(queryString);
-	int res = flush.query();
 	if ( debug )
 	{
 		cerr << queryString << endl;
@@ -1383,12 +1429,9 @@ int main (int argc, char **argv)
 		if ( useMergeTables ) mt.dropAll();
 #endif
 		dropTable ("jobTransSummary");
-		if (checkTable("jobTransSummaryIndex") ) 
-			dropTable ("jobTransSummaryIndex");
 	}
 	if (!checkTable("jobTransSummary"))
 	{
-		flushTables();
 		if ( !createJobTransSummaryTable() )
 		{
 			cerr << "Error creating jobTransSummary table." << endl;
@@ -1411,6 +1454,7 @@ int main (int argc, char **argv)
 			Exit(1);
 		}
 	}
+	upgrade_R_3_4_0_23();
 	if ( is2ndLevelHlr )
 	{
 		doOnSecondLevel(acceptRecordsStartDate, rulesFile);

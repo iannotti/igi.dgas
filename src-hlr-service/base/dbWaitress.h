@@ -84,6 +84,7 @@ public:
 	int removeRecords(std::string& whereClause);
 	int unlinkBuffer(std::string fileBuff = HLRDB_BUFF_FILE);
 	int drop();
+	int checkAgainst(string &fieldList);
 	int lock();
 	int unlock();
 	string lockOwner();
@@ -97,15 +98,18 @@ protected:
 class recordsTables {
 public:
 	recordsTables ( database& _DB,
+	bool _is2ndLevelHlr,
 			int _monthsNumber = 3 )
 	{
 		DB = _DB;
 		monthsNumber = _monthsNumber; 
+		is2ndLevelHlr = _is2ndLevelHlr;
 		hlr_log("recordsTables()", &logStream, 7);
 	};
 
 	database DB;
 	int monthsNumber;
+	bool is2ndLevelHlr;
 
 	int createCurrentMonth();
 	int createPastMonths();
@@ -115,10 +119,13 @@ public:
 
 int getYearMonth(database& DB,std::string& yearMonth,int i = 0);
 
+int execTranslationRules(database& DB, string& rulesFile);
+
 class mergeTables {
 public:
 	mergeTables( database& _DB,
 			std::string _defFile,
+			bool _is2ndLevelHlr,
 			std::string _mergeTablesFile = dgasLocation() + DBW_MT_MTFILE,
 			int _months = DBW_MT_DEF_MONTHS)
 	{
@@ -127,6 +134,7 @@ public:
 		mergeTablesFile = _mergeTablesFile;
 		months = _months;
 		reset = false;
+		is2ndLevelHlr = _is2ndLevelHlr;
 		hlr_log("mergeTables()", &logStream, 7);
 	};
 
@@ -153,6 +161,7 @@ private:
 	std::string defFile;
 	std::string mergeTablesFile;
 	int months; 
+	bool is2ndLevelHlr; 
 	//create the MERGE tables from the definitions in *defFile*
 	//previously created *MERGE* tables found in *megeTablesFile* are
 	//expunged.
@@ -172,7 +181,7 @@ private:
 
 class JTS {
 public:
-	JTS(database& _DB, std::string _jtsTableName, std::string _engine = "TYPE=MyISAM")
+	JTS(database& _DB, std::string _jtsTableName, bool _is2ndLevelHlr, std::string _engine = "TYPE=MyISAM")
 	{
 		tableDef = "CREATE TABLE " +_jtsTableName;
 		tableDef += " (dgJobId varchar(160), ";
@@ -206,10 +215,17 @@ public:
 		tableDef += "accountingProcedure varchar(32), ";//! 3.1.10
 		tableDef += "voOrigin varchar(16), ";//! 3.1.10
 		tableDef += "GlueCEInfoTotalCPUs smallint(5) unsigned, ";//! 3.1.10
+		tableDef += "executingNodes varchar(255), ";//! 3.4.0
 		tableDef += "uniqueChecksum char(32), ";//! 3.3.0
-		tableDef += "primary key (dgJobId), key(date), key(userVo), key (id), key(lrmsId), key(siteName), key(urSourceServer), key(hlrTid), key(uniqueChecksum)) ";
+		tableDef += "primary key (dgJobId,uniqueChecksum), key(date), key(endDate), key(userVo), key (id), key(siteName), key(urSourceServer)";
+		if ( !_is2ndLevelHlr )
+		{
+			tableDef += " , key(lrmsId), key(hlrTid)";
+		}
+		tableDef += ") ";
 		tableDef += _engine;
 		engine = _engine;
+		is2ndLevelHlr = _is2ndLevelHlr; 
 		DB = _DB;
 		hlr_log("JTS()", &logStream, 8);
 	};
