@@ -83,6 +83,11 @@ public:
 	int read(std::string& writeWhereClause,int& readLines ,std::string fileBuff = HLRDB_BUFF_FILE);
 	int removeRecords(std::string& whereClause);
 	int unlinkBuffer(std::string fileBuff = HLRDB_BUFF_FILE);
+	int addIndex( std::string index, bool primary = false);
+	int dropIndex(string index);
+	bool checkIndex(string index);
+	int disableKeys();
+	int enableKeys();
 	int drop();
 	int checkAgainst(string &fieldList);
 	int lock();
@@ -244,4 +249,53 @@ private:
 	bool is2ndLevelHlr;
 };
 
+struct hlrLogRecords {
+        int wallTime;
+        int cpuTime;
+        string mem;
+        string vMem;
+        int cePriceTime;
+        string userVo;
+        string processors;
+        string urCreation;
+        string lrmsId;
+        string localUserId;
+        string jobName;
+        string start;
+        string end;
+        string ctime;
+        string qtime;
+        string etime;
+        string fqan;
+        string iBench;
+        string iBenchType;
+        string fBench;
+        string fBenchType;
+        string ceId;
+        string atmEngineVersion;
+        string accountingProcedure;
+        string localGroupId;
+        string siteName;//in th elog seacrh for SiteName
+        string hlrTid;//trans_{in,out} original tid.
+        string voOrigin;//trans_{in,out} original tid.
+        string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
+        string executingNodes; //hostname of the executing nodes.
+};
+
+class JTSManager 
+{
+	public:
+	JTSManager (database& _DB, std::string _jtsTableName = "jobTransSummary")
+	{
+		DB = _DB;
+		jtsTableName = _jtsTableName;
+		hlr_log("JTSManager()", &logStream, 7);
+	};
+	database DB;
+	string jtsTableName;
+	int removeDuplicated ( string whereClause = "");
+	int parseTransLog (string logString, hlrLogRecords& records);
+	private:
+	
+};
 #endif

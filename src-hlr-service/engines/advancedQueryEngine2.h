@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.h,v 1.1.2.1.4.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: advancedQueryEngine2.h,v 1.1.2.1.4.3 2011/06/15 15:36:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -78,29 +78,7 @@ struct inputData
 	string itsFieldList;
 };
 
-struct hlrLogRecords {
-        int wallTime;
-        int cpuTime;
-        int mem;
-        int vMem;
-        int cePriceTime;
-        string userVo;
-        string processors;
-        string urCreation;
-        string lrmsId;
-        string localUserId;
-        string jobName;
-        string start;
-        string end;
-        string ctime;
-        string qtime;
-        string etime;
-        string fqan;
-        string si2k;
-        string sf2k;
-        string tz;
-        string ceId;
-};
+
 
 //get the xml object from the daemon and parse the information contained in
 //the request. Trigger the retrieve of a price for the corresponding resource.
