@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.18 2011/06/15 08:30:55 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.19 2011/06/15 13:59:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -318,7 +318,7 @@ bool createJobTransSummaryTable()
 	queryString += "GlueCEInfoTotalCPUs smallint(5) unsigned, ";//! 3.1.10
 	queryString += "executingNodes varchar(255), ";//! 3.4.0
 	queryString += "uniqueChecksum char(32), ";//! 3.3.0
-	queryString += "primary key (dgJobId), key (id))"; 
+	queryString += "primary key (dgJobId,uniqueChecksum), key (id))";
 	if ( debug )
 	{
 		cerr << queryString << endl;

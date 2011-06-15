@@ -21,7 +21,7 @@ CREATE TABLE trans_queue (
   status_time int(11) default NULL,
   type varchar(32) NOT NULL default '',
   PRIMARY KEY  (transaction_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Dumping data for table 'trans_queue'

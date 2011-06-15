@@ -16,13 +16,13 @@ CREATE TABLE trans_in (
   uniqueChecksum char(32) default NULL,
   accountingProcedure varchar(32) default NULL,
   PRIMARY KEY  (tid), key (rid), key (dgJobId), key (uniqueChecksum)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 CREATE TABLE transInLog (
   dgJobId varchar(160) NOT NULL default '',
   log blob NOT NULL,
   PRIMARY KEY  (dgJobId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 # Table structure for table 'acctdesc'
 #
@@ -35,13 +35,13 @@ CREATE TABLE acctdesc (
   acl blob default NULL,
   gid varchar(128) default NULL,
   PRIMARY KEY  (id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 CREATE TABLE hlrAdmin (
   acl blob NOT NULL,
   PRIMARY KEY (acl(255))
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 # deprecated
@@ -49,5 +49,5 @@ CREATE TABLE voAdmin (
   vo_id varchar(160) NOT NULL,
   acl blob NOT NULL,
   PRIMARY KEY (vo_id,acl(255))
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
