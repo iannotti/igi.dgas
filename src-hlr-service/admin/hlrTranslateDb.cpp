@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.21 2011/06/16 08:34:54 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.22 2011/06/16 08:50:33 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -44,7 +44,6 @@ ofstream logStream;
 string confFileName = DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
 string masterLock = "";
-int mergeTablesPastMonths = 3;
 int system_log_level = 7;
 bool debug = false;
 bool reset = false;
@@ -840,57 +839,8 @@ int RGV2ACCTDESC ()
 	return res;
 }
 
-int upgradeRGV ()
-{
-	int res = 0;
-	string query = "SELECT rid,gid from resource_group_vo";
-	if ( debug )
-	{
-		cerr << query << endl;
-	}
-	hlrGenericQuery select1(hlr_sql_dbname, query);
-	select1.query();
-	if ( select1.errNo == 0 )
-	{
-		if ( (select1.queryResult).size() != 0 )
-		{
 
-			vector<resultRow>::iterator it = (select1.queryResult).begin();
-			while ( it != (select1.queryResult).end() )
-			{
-				query = "UPDATE acctdesc SET gid='";
-				query += (*it)[1] + "' WHERE id ='";
-				query += (*it)[0] + "'";
-				if ( debug )
-				{
-					cout << query << endl;
-				}
-				hlrGenericQuery replace1(hlr_sql_dbname, query);
-				replace1.query();
-				if ( replace1.errNo != 0 )
-				{
-					cerr << "Warning error in:" << query << endl;
-				}
-				it++;
-			}
-			dropTable ("resource_group_vo");
-		}
-		else
-		{
-			//No results???
-			cerr << "Warning: no results in RGV." << endl;
-		} 	
-	}
-	else
-	{
-		cerr << "Error in query upgrading RGV (SELECT step 1)." << endl;
-		cerr << query << ":" << int2string(select1.errNo) << endl;
-		res = 1;
-	}
-	return res;
-}
-
-int upgradeADSchema ()
+int upgradeADSchema (database& DB)
 {
 	int res = 0;
 	table acctdesc(DB, "acctdesc");
@@ -1082,11 +1032,11 @@ void Exit (int exitStatus )
 	exit(exitStatus);
 }
 
-void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile)
+void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database& DB)
 {
 	cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
 	if(!checkTable("urConcentratorIndex")){
-		if(!createUrConcentratorTable()){
+		if(!createUrConcentratorTable(DB)){
 			cerr << "Error creating the  table urConcentratorIndex!" << endl;
 			Exit(1);
 		}
@@ -1252,6 +1202,9 @@ int main (int argc, char **argv)
 	}
 #ifdef MERGE
 	bool useMergeTables = false;
+	string mergeTablesFile = "";
+	string mergeTablesDefinitions = "";
+	int mergeTablesPastMonths = 3;
 	database DB(hlr_sql_server,
 			hlr_sql_user,
 			hlr_sql_password,
