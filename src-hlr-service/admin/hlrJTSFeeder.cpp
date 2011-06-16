@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.11 2011/06/16 09:40:59 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.12 2011/06/16 15:50:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -922,6 +922,7 @@ int main (int argc, char **argv)
 		//if this is a 2nd level HLR we can bail out here...
 	}
 	//otherwise we must go on...
+	time_t totalTime0 = time(NULL);
 	int percentage = 0;
 	int oldPercentage = 0;
 	time_t time0;
@@ -981,7 +982,12 @@ int main (int argc, char **argv)
 			oldPercentage = percentage;
 		}
 	}
+	time_t totalTime1 = time(NULL);
+	time_t elapsed = totalTime1-totalTime0;
+	float recSec = 0.0;
+	if ( elapsed != 0 ) recSec = (float)J/float(elapsed);
 	cout << "Found " << I << " raw records, inserted in jobTransSummary:" << J << endl;
+	cout << "Elapsed time:" << int2string(elapsed) << " Rec/sec:" << int2string(recSec) << endl;
 #ifdef MERGE
 	if ( useMergeTables )
 	{
