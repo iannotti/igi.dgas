@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.25 2011/06/16 12:37:35 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.26 2011/06/16 12:44:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -872,15 +872,15 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 
 
 	//clean up database from tables not needed on 2lhlr.
-	table acctdesc (JTSdb, "acctdesc");
+	table acctdesc (DB, "acctdesc");
 	if (acctdesc.exists()) acctdesc.drop();
-	table resource_group_vo (JTSdb, "resource_group_vo");
+	table resource_group_vo (DB, "resource_group_vo");
 	if (resource_group_vo.exists()) resource_group_vo.drop();
-	table transInInfo (JTSdb, "transInInfo");
+	table transInInfo (DB, "transInInfo");
 	if (transInInfo.exists()) transInInfo.drop();
-	table transInLog (JTSdb, "transInLog");
+	table transInLog (DB, "transInLog");
 	if (transInLog.exists()) transInLog.drop();
-	table trans_in (JTSdb, "trans_in");
+	table trans_in (DB, "trans_in");
 	if (trans_in.exists()) trans_in.drop();
 
 	//now add recordDate index on date field to records_*
@@ -893,7 +893,7 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 		execTranslationRules(rulesFile);
 
 	//cleanup Indexes that are not useful on 2L hlr
-	table urConcentratorIndex (DB, "jobTransSummary");
+	table jobTransSummary (DB, "jobTransSummary");
 	if ( jobTransSummary.checkIndex( "lrmsId" ) )
 		jobTransSummary.dropIndex( "lrmsId" );
 	if ( jobTransSummary.checkIndex( "hlrTid") )
