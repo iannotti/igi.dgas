@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.2 2011/06/07 11:56:35 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.3 2011/06/16 07:43:31 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -704,7 +704,7 @@ int getAvailableTables(connInfo& connectionInfo, vector<string>& tables)
 			hlr_sql_password,
 			hlr_sql_dbname);
 	string logBuff;
-	mergeTables mt(hlrDb, mergeTablesDefinitions);
+	mergeTables mt(hlrDb, mergeTablesDefinitions, false);
 	int res = mt.getDef();
 	if ( res != 0 )
 	{
