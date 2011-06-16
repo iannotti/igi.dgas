@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.23 2011/06/16 09:26:18 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.24 2011/06/16 12:19:56 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -103,7 +103,7 @@ int help (const char *progname)
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Search for duplicate entries and expunge the one with less information." << endl;
 	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
 	cerr << setw(30) << left << "-T --useTranslationRules"<<"Perform database translation rules defined in the rules.conf file" << endl;
-	
+
 	cerr << setw(30) << left << "-h --help"<<"This help" << endl;
 	cerr << endl;
 	return 0;	
@@ -123,19 +123,19 @@ int upgrade_R_3_4_0_23()
 	else
 	{
 		if ( describe.errNo == 0 )
-	        {
-	                vector<resultRow>::const_iterator it = (describe.queryResult).begin();
-	                while ( it != (describe.queryResult).end() )
-	                {
+		{
+			vector<resultRow>::const_iterator it = (describe.queryResult).begin();
+			while ( it != (describe.queryResult).end() )
+			{
 				if ( (*it)[0] == "uniqueChecksum" )
 				{
-       		                 	if ( (*it)[3] != "PRI" ) 
+					if ( (*it)[3] != "PRI" )
 					{
 						update = true;
 					}
 				}
-                	        it++;
-                	}
+				it++;
+			}
 		}
 	}
 	if ( update )
@@ -153,7 +153,7 @@ int upgrade_R_3_4_0_23()
 		else
 		{
 			cout << "Table jobTransSummary: creating new primary index..." << endl;
-	
+
 			string queryBuffer2 = "alter table jobTransSummary ADD primary key (dgJobId,uniqueChecksum)";
 			hlrGenericQuery addQuery(queryBuffer2);
 			res = addQuery.query();
@@ -209,145 +209,12 @@ bool masterLockExists(string& fileName)
 	}
 }
 
-
-//check the existence of the table.
-bool checkTable(string tableName)
-{
-	string queryString = "SHOW TABLES LIKE '" + tableName + "'";
-	hlrGenericQuery checkTableQuery(queryString);
-	checkTableQuery.query();
-	if ((checkTableQuery.queryResult).size() == 0 ) 
-	{
-		if ( debug )
-		{
-			cerr << queryString << ":false" << endl;
-		}
-		return false;
-	}
-	else
-	{
-		if ( debug)
-		{
-			cerr << queryString << ":" << endl;
-		}
-		return true;
-	}
-}
-
-int addIndex(string dbName, string table, string index, bool primary = false)
-{
-	string queryString;
-	if ( primary )
-	{
-		queryString = "CREATE UNIQUE INDEX " + index +" on " + table + " ("+index+ ")";
-	}
-	else
-	{
-		queryString = "CREATE INDEX " + index +" on " + table + " ("+index+ ")";
-	}
-	if ( debug )
-	{
-		cerr << queryString << endl;
-	}
-	hlrGenericQuery createIndex(dbName, queryString);
-	int res = createIndex.query();
-	if ( debug )
-	{
-		cerr << "Exited with:" << res << endl;
-	}
-	return res;
-}
-
-int dropIndex(string dbName, string table, string index)
-{
-	string queryString;
-	if ( index == "PRIMARY" )
-	{
-		queryString = "ALTER TABLE " + table + " DROP PRIMRY KEY";
-	}
-	else
-	{
-		queryString = "ALTER TABLE " + table + " DROP INDEX "+index;
-	}
-	hlrGenericQuery dropIndex(queryString);
-	int res = dropIndex.query();
-	if ( debug )
-	{
-		cerr << queryString << endl;
-		cerr << "Exited with:" << res << endl;
-	}
-	return res;
-}
-
-bool checkIndex(string dbName, string table, string index)
-{
-	string queryString = "DESCRIBE " + dbName + "." + table;
-	hlrGenericQuery describe(queryString);
-	describe.query();
-	if ( debug )
-	{
-		cerr << queryString << endl;
-	}
-	if ( describe.errNo == 0 )
-	{
-		vector<resultRow>::const_iterator it = (describe.queryResult).begin();
-		while ( it != (describe.queryResult).end() )
-		{
-			if ( (*it)[0] == index )
-			{
-				if ( (*it)[3] != "" ) return true;
-			}
-			it++;
-		}
-	}
-	return false;
-}
-
 bool createJobTransSummaryTable(database& DB)
 {
 	table jobTransSummary(DB, "jobTransSummary");
 	JTS jts(DB, "jobTransSummary", is2ndLevelHlr);
 	jts.create();
 	return jobTransSummary.exists();
-}
-
-int addField(string table, string fieldDesc)
-{
-	string queryString = "ALTER TABLE " + table +" ADD " + fieldDesc;
-	hlrGenericQuery createIndex(queryString);
-	int res = createIndex.query();
-	if ( debug )
-	{
-		cerr << queryString << endl;
-		cerr << "Exited with:" << res << endl;
-	}
-	return res;
-}
-
-int disableKeys(string dbName, string table)
-{
-	string queryString = "ALTER TABLE " + table + " DISABLE KEYS";
-	hlrGenericQuery disable(dbName, queryString);
-	int res = disable.query();
-	if ( debug )
-	{
-		cerr << queryString << endl;
-		cerr << "Exited with:" << res << endl;
-	}
-	return res;
-}
-
-int enableKeys(string dbName, string table)
-{
-	string queryString = "ALTER TABLE " + table + " ENABLE KEYS";
-	hlrGenericQuery disable(dbName, queryString);
-	int res = disable.query();
-	if ( debug )
-	{
-		cerr << queryString << endl;
-		cerr << "Exited with:" << res << endl;
-	}
-	return res;
 }
 
 bool createUrConcentratorTable(database& DB)
@@ -370,7 +237,6 @@ bool createUrConcentratorTable(database& DB)
 	makeTable.query();
 	return urConcentratorIndex.exists();
 }
-
 
 bool createRolesTable(database & DB)
 {
@@ -409,62 +275,6 @@ bool createVomsAuthMapTable(database & DB)
 	hlrGenericQuery makeTable(queryString);
 	makeTable.query();
 	return vomsAuthMap.exists();
-}
-
-bool isTableUpToDate (string dbName, string tableName, string &fieldList)
-{
-	string queryString = "DESCRIBE " + tableName;
-	if ( debug )
-	{
-		cerr << "On DB:" << dbName << ":" << queryString << endl;
-	}	
-	hlrGenericQuery q(dbName, queryString);
-	q.query(); 
-	if ( q.errNo == 0 )
-	{
-		string checkBuffer;
-		vector<resultRow>::iterator it = (q.queryResult).begin();
-		while ( it != (q.queryResult).end() )
-		{
-			checkBuffer += (*it)[0];
-			it++;	
-		}
-		size_t x = fieldList.find(";");
-		while ( x < string::npos )
-		{
-			fieldList.erase(x,1);
-			x = fieldList.find(";");
-		}
-		if ( debug )
-		{
-			cerr << "Checking: " << checkBuffer << endl;
-			cerr << "against : " << fieldList << endl;
-		}
-		if ( checkBuffer == fieldList ) 
-		{
-			if ( debug ) cerr << " result: true" << endl;
-			return true;
-		}
-	}
-	if ( debug ) cerr << " result: false" << endl;
-	return false;
-}
-
-int dropTable (string tableName )
-{
-	string queryString = "DROP TABLE " + tableName;
-	if ( debug )
-	{
-		cerr << queryString << endl;
-	}
-	hlrGenericQuery q(queryString);
-	int res = q.query();
-	if ( res != 0 )
-	{
-		cerr << "Error dropping table " << tableName << ":" << int2string(res) << endl;
-		return res;
-	}
-	return 0;
 }
 
 int cleanUpOld(string startDate)
@@ -511,14 +321,12 @@ void doNothing ( int sig )
 int upgradeJTSSchema (table& jobTransSummary)
 {
 	int res = 0;
-
 	jobTransSummary.dropIndex( "date" );
 	jobTransSummary.dropIndex( "endDate" );
 	jobTransSummary.dropIndex( "lrmsId" );
 	jobTransSummary.dropIndex( "urSourceServer" );
 	jobTransSummary.dropIndex( "hlrTid" );
 	jobTransSummary.dropIndex( "uniqueChecksum" );
-	enableKeys ( hlr_sql_dbname, "jobTransSummary");
 	string upgradeQuery = "ALTER TABLE jobTransSummary ";
 	upgradeQuery += "CHANGE thisGridId gridResource varchar(160), ";
 	upgradeQuery += "CHANGE remoteGridId gridUser varchar(160), ";
@@ -804,7 +612,7 @@ int RGV2ACCTDESC ()
 	{
 		if ( (select1.queryResult).size() != 0 )
 		{
-			
+
 			vector<resultRow>::iterator it = (select1.queryResult).begin();
 			while ( it != (select1.queryResult).end() )
 			{
@@ -1035,7 +843,9 @@ void Exit (int exitStatus )
 void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database& DB)
 {
 	cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
-	if(!checkTable("urConcentratorIndex")){
+
+	table urConcentratorIndex (JTSdb, "urConcentratorIndex");
+	if(!urConcentratorIndex.exists()){
 		if(!createUrConcentratorTable(DB)){
 			cerr << "Error creating the  table urConcentratorIndex!" << endl;
 			Exit(1);
@@ -1043,12 +853,14 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 	}
 
 	string urConcentratorIndexFieldsRel4 = "urSourceServer;urSourceServerDN;remoteRecordId;recordDate;recordInsertDate;uniqueChecksum";
-	if(!isTableUpToDate(hlr_sql_dbname, "urConcentratorIndex", urConcentratorIndexFieldsRel4)){
+	if ( !urConcentratorIndex.checkAgainst( urConcentratorIndexFieldsRel4 ) )
+	{
 		cout << "Adding uniqueChecksum to urConcentratorIndex" << endl;
 		if(upgradeURCI() != 0){
 			cerr << "WARNING: error upgrading urConcentratorIndex schema for release 4" << endl;
 		}
 	}
+
 
 	//cleanup entries older than the expected period.
 	if(acceptRecordsStartDate != ""){
@@ -1058,21 +870,18 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 		}
 	}
 
+
 	//clean up database from tables not needed on 2lhlr.
-	if(checkTable("acctdesc"))
-		dropTable("acctdesc");
-
-	if(checkTable("resource_group_vo"))
-		dropTable("resource_group_vo");
-
-	if(checkTable("transInInfo"))
-		dropTable("transInInfo");
-
-	if(checkTable("transInLog"))
-		dropTable("transInLog");
-
-	if(checkTable("trans_in"))
-		dropTable("trans_in");
+	table acctdesc (JTSdb, "acctdesc");
+	if (acctdesc.exists()) acctdesc.drop();
+	table resource_group_vo (JTSdb, "resource_group_vo");
+	if (resource_group_vo.exists()) resource_group_vo.drop();
+	table transInInfo (JTSdb, "transInInfo");
+	if (transInInfo.exists()) transInInfo.drop();
+	table transInLog (JTSdb, "transInLog");
+	if (transInLog.exists()) transInLog.drop();
+	table trans_in (JTSdb, "trans_in");
+	if (trans_in.exists()) trans_in.drop();
 
 	//now add recordDate index on date field to records_*
 	//tables
@@ -1084,12 +893,10 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 		execTranslationRules(rulesFile);
 
 	//cleanup Indexes that are not useful on 2L hlr
-	if(checkIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId")){
-		dropIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId");
-	}
-	if(checkIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid")){
-		dropIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid");
-	}
+	if ( jobTransSummary.checkIndex( "lrmsId" ) )
+		jobTransSummary.dropIndex( "lrmsId" );
+	if ( jobTransSummary.checkIndex( "hlrTid") )
+		jobTransSummary.dropIndex( "hlrTid" );
 }
 
 int main (int argc, char **argv)
@@ -1150,13 +957,13 @@ int main (int argc, char **argv)
 		Exit(1);
 	}
 	database JTSdb(hlr_sql_server,
-                        hlr_sql_user,
-                        hlr_sql_password,
-                        hlr_sql_dbname);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_sql_dbname);
 	database TMPdb(hlr_sql_server,
-                        hlr_sql_user,
-                        hlr_sql_password,
-                        hlr_tmp_sql_dbname);
+			hlr_sql_user,
+			hlr_sql_password,
+			hlr_tmp_sql_dbname);
 	//Now put a lock on jobTransSummary table. If the table is being maintained, other commands won't use it.
 	//This is a lock on the table, not on this command.
 	if ( !translationRules )
@@ -1251,11 +1058,11 @@ int main (int argc, char **argv)
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
 	thisServiceVersion.updateStartup();
-	
+
 	JTSManager jtsManager(JTSdb, "jobTransSummary");
 	table jobTransSummary(JTSdb, "jobTransSummary");
 	table trans_in(JTSdb, "trans_in");
-	
+
 	cout << "Initializing database, this operation can take several minutes." << endl;
 	if ( !jobTransSummary.checkIndex( "date") ) jobTransSummary.addIndex("date");
 	if ( !jobTransSummary.checkIndex( "id") ) jobTransSummary.addIndex("id");
