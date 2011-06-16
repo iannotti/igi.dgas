@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.24 2011/06/16 12:19:56 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.25 2011/06/16 12:37:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -844,7 +844,7 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 {
 	cout << "2ndLevelHlr is set to \"true\" in the conf file." << endl;
 
-	table urConcentratorIndex (JTSdb, "urConcentratorIndex");
+	table urConcentratorIndex (DB, "urConcentratorIndex");
 	if(!urConcentratorIndex.exists()){
 		if(!createUrConcentratorTable(DB)){
 			cerr << "Error creating the  table urConcentratorIndex!" << endl;
@@ -893,6 +893,7 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 		execTranslationRules(rulesFile);
 
 	//cleanup Indexes that are not useful on 2L hlr
+	table urConcentratorIndex (DB, "jobTransSummary");
 	if ( jobTransSummary.checkIndex( "lrmsId" ) )
 		jobTransSummary.dropIndex( "lrmsId" );
 	if ( jobTransSummary.checkIndex( "hlrTid") )
