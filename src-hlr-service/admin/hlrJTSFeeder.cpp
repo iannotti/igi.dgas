@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.10 2011/06/16 08:34:54 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.11 2011/06/16 09:40:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -886,6 +886,7 @@ int main (int argc, char **argv)
 	}
 	mergeTables mt(DB,
 			mergeTablesDefinitions,
+			is2ndLevelHlr,
 			mergeTablesFile,
 			mergeTablesPastMonths);
 #endif

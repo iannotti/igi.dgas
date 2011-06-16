@@ -280,6 +280,7 @@ struct hlrLogRecords {
         string voOrigin;//trans_{in,out} original tid.
         string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
         string executingNodes; //hostname of the executing nodes.
+        string ceCertificateSubject;
 };
 
 class JTSManager 
