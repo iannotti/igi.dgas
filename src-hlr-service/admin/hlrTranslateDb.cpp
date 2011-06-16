@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.20 2011/06/15 15:13:22 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.21 2011/06/16 08:34:54 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -43,11 +43,6 @@ const char * hlr_tmp_sql_dbname;
 ofstream logStream;
 string confFileName = DGAS_DEF_CONF_FILE;
 string hlr_logFileName;
-string userCertBuffer = "";
-string resourceIDBuffer = "";
-string mergeTablesDefinitions = "";
-string mergeTablesFile = "";
-string queryTypeBuffer = "";
 string masterLock = "";
 int mergeTablesPastMonths = 3;
 int system_log_level = 7;
@@ -62,39 +57,7 @@ bool is2ndLevelHlr = false;
 int I = 0;
 int J = 0;
 
-struct hlrLogRecords {
-	int wallTime;
-	int cpuTime;
-	string mem;
-	string vMem;
-	int cePriceTime;
-	string userVo;
-	string processors;
-	string urCreation;
-	string lrmsId;
-	string localUserId;
-	string jobName;
-	string start;
-	string end;
-	string ctime;
-	string qtime;
-	string etime;
-	string fqan;
-	string iBench;
-	string iBenchType;
-	string fBench;
-	string fBenchType;
-	string ceId;
-	string atmEngineVersion;
-	string accountingProcedure;
-	string localGroupId;
-	string siteName;//in th elog seacrh for SiteName
-	string hlrTid;//trans_{in,out} original tid.
-	string voOrigin;//trans_{in,out} original tid.
-	string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
-	string executingNodes; //hostname of the executing nodes.
-	string ceCertificateSubject;
-};
+
 
 int options ( int argc, char **argv )
 {
@@ -140,7 +103,8 @@ int help (const char *progname)
 	cerr << setw(30) << left << "-r --reset"<<"Clean up the query tables and recreates them from raw database info." << endl;
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Search for duplicate entries and expunge the one with less information." << endl;
 	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
-	cerr << setw(30) << left << "-c --checkDuplicate"<<"Perform database translation rules defined in the rules.conf file" << endl;
+	cerr << setw(30) << left << "-T --useTranslationRules"<<"Perform database translation rules defined in the rules.conf file" << endl;
+	
 	cerr << setw(30) << left << "-h --help"<<"This help" << endl;
 	cerr << endl;
 	return 0;	
@@ -150,7 +114,7 @@ int upgrade_R_3_4_0_23()
 {
 	int res = 0;
 	bool update = false;
-	string queryBuffer = "describe jobTransSummary uniqueChecksum";
+	string queryBuffer = "DESCRIBE jobTransSummary uniqueChecksum";
 	hlrGenericQuery describe(queryBuffer);
 	res = describe.query();
 	if ( res != 0 )
@@ -340,57 +304,12 @@ bool checkIndex(string dbName, string table, string index)
 	return false;
 }
 
-bool createJobTransSummaryTable()
+bool createJobTransSummaryTable(database& DB)
 {
-	string queryString = "";
-	queryString = "CREATE TABLE jobTransSummary";
-	queryString += " (dgJobId varchar(160), ";
-	queryString += "date datetime, ";
-	queryString += "gridResource varchar(160), ";  
-	queryString += "gridUser varchar(160), ";  
-	queryString += "userFqan varchar(255), ";  
-	queryString += "userVo varchar(160), ";  
-	//queryString += "remoteHlr varchar(160), ";  
-	queryString += "cpuTime int(10) unsigned default 0, ";  
-	queryString += "wallTime int(10) unsigned default 0, ";  
-	queryString += "pmem int(10) unsigned default 0, ";  
-	queryString += "vmem int(10) unsigned default 0, ";  
-	queryString += "amount smallint(5) unsigned default 0, ";  
-	queryString += "start int(10) unsigned default 0, ";  
-	queryString += "end int(10) unsigned default 0, ";  
-	queryString += "iBench mediumint(8) unsigned, ";//! 3.3.0  
-	queryString += "iBenchType varchar(16), ";  //!3.3.0
-	queryString += "fBench mediumint(8) unsigned, "; //!/3.3.0 
-	queryString += "fBenchType varchar(16), "; //!3.3.0
-	queryString += "acl varchar(160), ";  
-	queryString += "id bigint(20) unsigned auto_increment, ";//!  
-	queryString += "lrmsId varchar(160), ";//! 3.1.3 
-	queryString += "localUserId varchar(32), ";//! 3.1.3 
-	queryString += "hlrGroup varchar(128), ";//! 3.1.3 
-	queryString += "localGroup varchar(160), ";//! 3.1.3 
-	queryString += "endDate datetime, ";//! 3.1.3 
-	queryString += "siteName varchar(160), ";//! 3.1.3 
-	queryString += "urSourceServer varchar(255), ";//! 3.1.3 
-	queryString += "hlrTid bigint(20) unsigned, ";//! 3.1.10
-	queryString += "accountingProcedure varchar(32), ";//! 3.1.10
-	queryString += "voOrigin varchar(16), ";//! 3.1.10
-	queryString += "GlueCEInfoTotalCPUs smallint(5) unsigned, ";//! 3.1.10
-	queryString += "executingNodes varchar(255), ";//! 3.4.0
-	queryString += "uniqueChecksum char(32), ";//! 3.3.0
-	queryString += "primary key (dgJobId,uniqueChecksum), key (id))";
-	if ( debug )
-	{
-		cerr << queryString << endl;
-	} 
-	hlrGenericQuery makeTable(queryString);
-	makeTable.query();
-	addIndex(hlr_sql_dbname, "jobTransSummary", "date");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "endDate");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "urSourceServer");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "uniqueChecksum");
-	if ( !is2ndLevelHlr) addIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId");
-	if ( !is2ndLevelHlr) addIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid");
-	return checkTable("jobTransSummary");
+	table jobTransSummary(DB, "jobTransSummary");
+	JTS jts(DB, "jobTransSummary", is2ndLevelHlr);
+	jts.create();
+	return jobTransSummary.exists();
 }
 
 int addField(string table, string fieldDesc)
@@ -432,8 +351,9 @@ int enableKeys(string dbName, string table)
 	return res;
 }
 
-bool createUrConcentratorTable()
+bool createUrConcentratorTable(database& DB)
 {
+	table urConcentratorIndex(DB,"urConcentratorIndex");
 	string queryString = "";
 	queryString = "CREATE TABLE urConcentratorIndex";
 	queryString += " (urSourceServer varchar(255), ";
@@ -449,12 +369,13 @@ bool createUrConcentratorTable()
 	}
 	hlrGenericQuery makeTable(queryString);
 	makeTable.query();
-	return checkTable("urConcentratorIndex");
+	return urConcentratorIndex.exists();
 }
 
 
-bool createRolesTable()
+bool createRolesTable(database & DB)
 {
+	table roles(DB,"roles");
 	string queryString = "";
 	queryString = "CREATE TABLE roles";
 	queryString += " (id int(11), ";
@@ -470,11 +391,12 @@ bool createRolesTable()
 	}
 	hlrGenericQuery makeTable(queryString);
 	makeTable.query();
-	return checkTable("roles");
+	return roles.exists();
 }
 
-bool createVomsAuthMapTable()
+bool createVomsAuthMapTable(database & DB)
 {
+	table vomsAuthMap(DB,"vomsAuthMap");
 	string queryString = "";
 	queryString = "CREATE TABLE vomsAuthMap";
 	queryString += " (vo_id varchar(255), ";
@@ -487,7 +409,7 @@ bool createVomsAuthMapTable()
 	}
 	hlrGenericQuery makeTable(queryString);
 	makeTable.query();
-	return checkTable("vomsAuthMap");
+	return vomsAuthMap.exists();
 }
 
 bool isTableUpToDate (string dbName, string tableName, string &fieldList)
@@ -587,16 +509,16 @@ void doNothing ( int sig )
 	signal (sig, doNothing) ;
 }
 
-int upgradeJTSSchema ()
+int upgradeJTSSchema (table& jobTransSummary)
 {
 	int res = 0;
 
-	dropIndex(hlr_sql_dbname, "jobTransSummary", "date" );
-	dropIndex(hlr_sql_dbname, "jobTransSummary", "endDate" );
-	dropIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId" );
-	dropIndex(hlr_sql_dbname, "jobTransSummary", "urSourceServer" );
-	dropIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid" );
-	dropIndex(hlr_sql_dbname, "jobTransSummary", "uniqueChecksum" );
+	jobTransSummary.dropIndex( "date" );
+	jobTransSummary.dropIndex( "endDate" );
+	jobTransSummary.dropIndex( "lrmsId" );
+	jobTransSummary.dropIndex( "urSourceServer" );
+	jobTransSummary.dropIndex( "hlrTid" );
+	jobTransSummary.dropIndex( "uniqueChecksum" );
 	enableKeys ( hlr_sql_dbname, "jobTransSummary");
 	string upgradeQuery = "ALTER TABLE jobTransSummary ";
 	upgradeQuery += "CHANGE thisGridId gridResource varchar(160), ";
@@ -784,25 +706,15 @@ int upgradeJTSSchema ()
 	}
 	if ( debug )
 	{
-		cout << "Total: found " << I << " transactions, processed:" << J << endl;
+		cout << "Total: found " << I << " records, processed:" << J << endl;
 	}
-	/*
-	disableKeys ( hlr_sql_dbname, "jobTransSummary");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "date");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "endDate");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "lrmsId");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "urSourceServer");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "hlrTid");
-	addIndex(hlr_sql_dbname, "jobTransSummary", "uniqueChecksum");
-	 */
-	enableKeys ( hlr_sql_dbname, "jobTransSummary");
 	return res;
 }
 
-int upgradeTINSchema ()
+int upgradeTINSchema (database& DB)
 {
 	int res = 0;
-	disableKeys(hlr_sql_dbname, "trans_in");
+	table trans_in(DB, "trans_in");
 	string upgradeQuery = "ALTER TABLE trans_in ";
 	upgradeQuery += "CHANGE tid tid bigint(20) unsigned NOT NULL auto_increment, ";
 	upgradeQuery += "CHANGE amount amount smallint(5) unsigned, ";
@@ -823,15 +735,14 @@ int upgradeTINSchema ()
 		cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
 		res = 1;
 	}
-	addIndex(hlr_sql_dbname, "trans_in", "uniqueChecksum");
-	enableKeys(hlr_sql_dbname, "trans_in");
+	trans_in.addIndex( "uniqueChecksum");
 	return res;
 }
 
-int upgradeTQSchema ()
+int upgradeTQSchema (database& DB)
 {
 	int res = 0;
-	disableKeys(hlr_tmp_sql_dbname, "trans_queue");
+	table trans_queue(DB, "trans_queue");
 	string upgradeQuery = "ALTER TABLE trans_queue ";
 	upgradeQuery += "CHANGE from_cert_subject gridUser varchar(160), ";
 	upgradeQuery += "CHANGE to_cert_subject gridResource varchar(160), ";
@@ -855,9 +766,8 @@ int upgradeTQSchema ()
 		cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
 		res = 1;
 	}
-	addIndex(hlr_tmp_sql_dbname, "trans_queue", "uniqueChecksum", true);
-	dropIndex(hlr_tmp_sql_dbname, "trans_queue", "PRIMARY" );
-	enableKeys(hlr_tmp_sql_dbname,"trans_queue");
+	trans_queue.addIndex( "uniqueChecksum", true);
+	trans_queue.dropIndex( "PRIMARY" );
 	return res;
 }
 
@@ -876,6 +786,55 @@ int upgradeURCI ()
 	{
 		cerr << "Error in query upgrading urConcentratorIndex (CHANGE step 1)." << endl;
 		cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
+		res = 1;
+	}
+	return res;
+}
+
+int RGV2ACCTDESC ()
+{
+	int res = 0;
+	string query = "SELECT rid,gid from resource_group_vo";
+	if ( debug )
+	{
+		cerr << query << endl;
+	}
+	hlrGenericQuery select1(hlr_sql_dbname, query);
+	select1.query();
+	if ( select1.errNo == 0 )
+	{
+		if ( (select1.queryResult).size() != 0 )
+		{
+			
+			vector<resultRow>::iterator it = (select1.queryResult).begin();
+			while ( it != (select1.queryResult).end() )
+			{
+				query = "UPDATE acctdesc SET gid='";
+				query += (*it)[1] + "' WHERE id ='";
+				query += (*it)[0] + "'";
+				if ( debug )
+				{
+					cout << query << endl;
+				}
+				hlrGenericQuery replace1(hlr_sql_dbname, query);
+				replace1.query();
+				if ( replace1.errNo != 0 )
+				{
+					cerr << "Warning error in:" << query << endl;
+				}
+				it++;
+			}
+		}
+		else
+		{
+			//No results???
+			cerr << "Warning: no results in RGV." << endl;
+		} 	
+	}
+	else
+	{
+		cerr << "Error in query upgrading RGV (SELECT step 1)." << endl;
+		cerr << query << ":" << int2string(select1.errNo) << endl;
 		res = 1;
 	}
 	return res;
@@ -934,7 +893,7 @@ int upgradeRGV ()
 int upgradeADSchema ()
 {
 	int res = 0;
-	disableKeys(hlr_sql_dbname, "acctdesc");
+	table acctdesc(DB, "acctdesc");
 	string upgradeQuery = "ALTER TABLE acctdesc ";
 	upgradeQuery += "CHANGE cert_subject ceId varchar(160)";
 	if ( debug )
@@ -977,13 +936,13 @@ int upgradeADSchema ()
 		cerr << upgradeQuery << ":" << int2string(upgrade2.errNo) << endl;
 		res = 3;
 	}
-	enableKeys(hlr_sql_dbname,"acctdesc");
 	return res;
 }
 
-int createVoStorageRecordsTable ()
+int createVoStorageRecordsTable (database& DB)
 {
-	if ( checkTable("voStorageRecords") )
+	table voStorageRecords(DB, "voStorageRecords");
+	if ( voStorageRecords.exists() )
 	{
 		if ( debug )
 		{
@@ -1012,7 +971,7 @@ int createVoStorageRecordsTable ()
 	}
 	hlrGenericQuery makeTable(queryString);
 	makeTable.query();
-	return checkTable("voStorageRecords");
+	return voStorageRecords.exists();
 }
 
 
@@ -1186,6 +1145,11 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile)
 int main (int argc, char **argv)
 {
 	options ( argc, argv );
+	if (needs_help)
+	{
+		help(argv[0]);
+		Exit(0);
+	}
 	map <string,string> confMap;
 	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )
 	{
@@ -1205,11 +1169,6 @@ int main (int argc, char **argv)
 	string acceptRecordsStartDate = "";
 	bool autoDeleteOldRecords = false;
 	string rulesFile;
-	if (needs_help)
-	{
-		help(argv[0]);
-		Exit(0);
-	}
 	if ( ( confMap["autoDeleteOldRecords"] == "true" ) || 
 			( confMap["autoDeleteOldRecords"] == "yes" )  )
 	{
@@ -1240,6 +1199,14 @@ int main (int argc, char **argv)
 		cerr << "Error bootstrapping the Log file:" << hlr_logFileName << endl;
 		Exit(1);
 	}
+	database JTSdb(hlr_sql_server,
+                        hlr_sql_user,
+                        hlr_sql_password,
+                        hlr_sql_dbname);
+	database TMPdb(hlr_sql_server,
+                        hlr_sql_user,
+                        hlr_sql_password,
+                        hlr_tmp_sql_dbname);
 	//Now put a lock on jobTransSummary table. If the table is being maintained, other commands won't use it.
 	//This is a lock on the table, not on this command.
 	if ( !translationRules )
@@ -1308,6 +1275,7 @@ int main (int argc, char **argv)
 	}
 	mergeTables mt(DB,
 			mergeTablesDefinitions,
+			is2ndLevelHlr,
 			mergeTablesFile,
 			mergeTablesPastMonths);
 	if ( mergeReset || reset ) mt.reset = true;
@@ -1330,19 +1298,26 @@ int main (int argc, char **argv)
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
 	thisServiceVersion.updateStartup();
+	
+	JTSManager jtsManager(JTSdb, "jobTransSummary");
+	table jobTransSummary(JTSdb, "jobTransSummary");
+	table trans_in(JTSdb, "trans_in");
+	
 	cout << "Initializing database, this operation can take several minutes." << endl;
-	if ( !checkIndex(hlr_sql_dbname, "jobTransSummary","date") ) addIndex(hlr_sql_dbname, "jobTransSummary","date");
-	if ( !checkIndex(hlr_sql_dbname, "jobTransSummary","id") ) addIndex(hlr_sql_dbname, "jobTransSummary","id");
-	if ( !checkIndex(hlr_sql_dbname, "jobTransSummary","endDate") ) addIndex(hlr_sql_dbname, "jobTransSummary","endDate");
-	if ( !checkIndex(hlr_sql_dbname, "jobTransSummary","urSourceServer") ) addIndex(hlr_sql_dbname, "jobTransSummary","urSourceServer");
-	if ( !checkIndex(hlr_sql_dbname, "jobTransSummary","uniqueChecksum") ) addIndex(hlr_sql_dbname, "jobTransSummary","uniqueChecksum");
-	if ( !checkIndex(hlr_sql_dbname, "trans_in","rid") ) addIndex(hlr_sql_dbname, "trans_in","rid");
-	if ( !checkIndex(hlr_sql_dbname, "trans_in","dgJobId")) addIndex(hlr_sql_dbname, "trans_in","dgJobId");
-	if ( !checkIndex(hlr_sql_dbname, "trans_in","uniqueChecksum")) addIndex(hlr_sql_dbname, "trans_in","uniqueChecksum");
-	if ( (!checkIndex(hlr_sql_dbname, "jobTransSummary","lrmsId")) && ( !is2ndLevelHlr ) ) addIndex(hlr_sql_dbname, "jobTransSummary","lrmsId");
-	if ( (!checkIndex(hlr_sql_dbname, "jobTransSummary","hlrTid")) && ( !is2ndLevelHlr ) ) addIndex(hlr_sql_dbname, "jobTransSummary","hlrTid");
+	if ( !jobTransSummary.checkIndex( "date") ) jobTransSummary.addIndex("date");
+	if ( !jobTransSummary.checkIndex( "id") ) jobTransSummary.addIndex("id");
+	if ( !jobTransSummary.checkIndex( "endDate") ) jobTransSummary.addIndex("endDate");
+	if ( !jobTransSummary.checkIndex( "urSourceServer") ) jobTransSummary.addIndex("urSourceServer");
+	if ( !jobTransSummary.checkIndex( "uniqueChecksum") ) jobTransSummary.addIndex("uniqueChecksum");
+	if ( !jobTransSummary.checkIndex( "rid" ) ) trans_in.addIndex("rid");
+	if ( !jobTransSummary.checkIndex( "dgJobId" ) ) trans_in.addIndex("dgJobId");
+	if ( !jobTransSummary.checkIndex( "uniqueChecksum" ) ) trans_in.addIndex("uniqueChecksum");
+	if ( (!jobTransSummary.checkIndex( "lrmsId" ) ) && ( !is2ndLevelHlr ) ) jobTransSummary.addIndex("lrmsId");
+	if ( (!jobTransSummary.checkIndex( "hlrTid" ) ) && ( !is2ndLevelHlr ) ) jobTransSummary.addIndex("hlrTid");
 	//create storage records table if it doesn't exists yet.
-	createVoStorageRecordsTable();
+	table roles(JTSdb, "roles");
+	table vomsAuthMap(JTSdb, "vomsAuthMap");
+	createVoStorageRecordsTable(JTSdb);
 
 
 	//try to update the table without recreating it
@@ -1350,13 +1325,13 @@ int main (int argc, char **argv)
 	//from a database already containing previous updates otherwise
 	//a reset will occur)
 	string jobTransSummaryFields = "dgJobId;date;transType;thisGridId;remoteGridId;userFqan;userVo;remoteHlr;cpuTime;wallTime;pmem;vmem;amount;start;end;si2k;sf2k;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs";
-	if ( !reset && isTableUpToDate(hlr_sql_dbname ,"jobTransSummary", jobTransSummaryFields ) )
+	if ( !reset && jobTransSummary.checkAgainst(jobTransSummaryFields) )
 	{
 		if ( !reset && is2ndLevelHlr )
 		{
 			cout << "Updating jobTransSummary. This operation requires several minutes." << endl;
 			//add the field
-			res = upgradeJTSSchema();
+			res = upgradeJTSSchema(jobTransSummary);
 			if ( res != 0 )
 			{
 				cerr << "Error upgrading database! Please contact dgas-support@to.infn.it" << endl;
@@ -1370,35 +1345,37 @@ int main (int argc, char **argv)
 
 	}
 	string trans_inFields = "tid;rid;gid;from_dn;from_url;amount;tr_stamp;dg_jobid";
-	if ( isTableUpToDate(hlr_sql_dbname, "trans_in", trans_inFields ) )
+	if ( trans_in.checkAgainst( trans_inFields ) )
 	{
 		cout << "Updating trans_in. This operation requires several minutes, no progress bar." << endl;
 		cout << "This operation is performed just once." << endl;
-		res = upgradeTINSchema();
+		res = upgradeTINSchema(JTSdb);
 		if ( res != 0 )
 		{
 			cerr << "Error upgrading database! Please contact dgas-support@to.infn.it" << endl;
 			Exit(1);
 		}
 	}
+	table trans_queue(TMPdb, "trans_queue");
 	string trans_queueFields = "transaction_id;from_cert_subject;to_cert_subject;from_hlr_url;to_hlr_url;amount;timestamp;log_data;priority;status_time;type";
-	if ( isTableUpToDate(hlr_tmp_sql_dbname, "trans_queue", trans_queueFields ) )
+	if ( trans_queue.checkAgainst( trans_queueFields ) )
 	{
 		cout << "Updating trans_queue schema. This operation requires several minutes, no progress bar will be showed during the upgrade." << endl;
 		cout << "This operation is performed just once." << endl;
-		res = upgradeTQSchema();
+		res = upgradeTQSchema(TMPdb);
 		if ( res != 0 )
 		{
 			cerr << "Error upgrading database structure! Please contact dgas-support@to.infn.it" << endl;
 			Exit(1);
 		}
 	}
+	table acctdesc (JTSdb, "acctdesc");
 	string acctdescFields = "id;a_type;email;descr;cert_subject;acl";
-	if ( isTableUpToDate(hlr_sql_dbname, "acctdesc", acctdescFields ) )
+	if ( acctdesc.checkAgainst( acctdescFields ) )
 	{
 		cout << "Updating acctdesc schema." << endl;
 		cout << "This operation is performed just once." << endl;
-		res = upgradeADSchema();
+		res = upgradeADSchema(JTSdb);
 		if ( res != 0 )
 		{
 			cerr << "Error upgrading database! Please contact dgas-support@to.infn.it" << endl;
@@ -1406,19 +1383,24 @@ int main (int argc, char **argv)
 		}
 		else
 		{
-			if (checkTable("resource_group_vo"))
+			table resource_group_vo (JTSdb, "resource_group_vo");
+			if (resource_group_vo.exists())
 			{
-				res = upgradeRGV();
+				res = RGV2ACCTDESC();
 				if ( res != 0 )
 				{
 					cerr << "Error upgrading database! Please contact dgas-support@to.infn.it" << endl;
 					Exit(1);
+				}
+				else
+				{
+					resource_group_vo.drop();
 				}	
 			}
 		}
 	}
 	jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
-	if ( (!is2ndLevelHlr) && (!isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields )) )
+	if ( (!is2ndLevelHlr) && (!jobTransSummary.checkAgainst(jobTransSummaryFields )) )
 	{
 		reset = true;
 	}
@@ -1428,27 +1410,27 @@ int main (int argc, char **argv)
 		if ( useMergeTables ) mt.drop();
 		if ( useMergeTables ) mt.dropAll();
 #endif
-		dropTable ("jobTransSummary");
+		jobTransSummary.drop();
 	}
-	if (!checkTable("jobTransSummary"))
+	if (!jobTransSummary.exists() )
 	{
-		if ( !createJobTransSummaryTable() )
+		if ( !createJobTransSummaryTable(JTSdb) )
 		{
 			cerr << "Error creating jobTransSummary table." << endl;
 			Exit(1);
 		}
 	}
-	if (!checkTable("roles"))
+	if ( !roles.exists() )
 	{
-		if ( !createRolesTable() )
+		if ( !createRolesTable(JTSdb) )
 		{
 			cerr << "Error creating the roles table." << endl;
 			Exit(1);
 		}
 	}
-	if (!checkTable("vomsAuthMap"))
+	if (!vomsAuthMap.exists())
 	{
-		if (!createVomsAuthMapTable())
+		if (!createVomsAuthMapTable(JTSdb))
 		{
 			cerr << "Error creating the vomsAuthMap table." << endl;
 			Exit(1);

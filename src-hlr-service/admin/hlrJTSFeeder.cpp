@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.9 2011/06/15 08:30:55 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.10 2011/06/16 08:34:54 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -48,39 +48,7 @@ bool debug = false;
 int I = 0;
 int J = 0;
 
-struct hlrLogRecords {
-	int wallTime;
-	int cpuTime;
-	string mem;
-	string vMem;
-	int cePriceTime;
-	string userVo;
-	string processors;
-	string urCreation;
-	string lrmsId;
-	string localUserId;
-	string jobName;
-	string start;
-	string end;
-	string ctime;
-	string qtime;
-	string etime;
-	string fqan;
-	string iBench;
-	string iBenchType;
-	string fBench;
-	string fBenchType;
-	string ceId;
-	string atmEngineVersion;
-	string accountingProcedure;
-	string localGroupId;
-	string siteName;//in the log seacrh for SiteName
-	string hlrTid;//trans_{in,out} original tid.
-	string voOrigin;//trans_{in,out} original tid.
-	string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
-	string executingNodes; //hostname of the executing nodes.
-	string ceCertificateSubject;
-};
+
 
 struct cmdLineOptions {
 	bool debug;
