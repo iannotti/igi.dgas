@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.22 2011/06/16 08:50:33 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.23 2011/06/16 09:26:18 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1392,7 +1392,7 @@ int main (int argc, char **argv)
 	upgrade_R_3_4_0_23();
 	if ( is2ndLevelHlr )
 	{
-		doOnSecondLevel(acceptRecordsStartDate, rulesFile);
+		doOnSecondLevel(acceptRecordsStartDate, rulesFile, JTSdb);
 		Exit(0);
 		//if this is a 2nd level HLR we can bail out here...
 	}
