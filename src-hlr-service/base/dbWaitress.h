@@ -186,7 +186,7 @@ private:
 
 class JTS {
 public:
-	JTS(database& _DB, std::string _jtsTableName, bool _is2ndLevelHlr, std::string _engine = "TYPE=MyISAM")
+	JTS(database& _DB, std::string _jtsTableName, bool _is2ndLevelHlr, std::string _engine = "ENGINE=MyISAM")
 	{
 		tableDef = "CREATE TABLE " +_jtsTableName;
 		tableDef += " (dgJobId varchar(160), ";
