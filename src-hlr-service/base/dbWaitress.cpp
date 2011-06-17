@@ -470,7 +470,7 @@ int mergeTables::exec()
 		{
 			return res;
 		}
-		//produce JTS tabls for past "months" months.
+		//produce JTS tables for past "months" months.
 		recordsTables rTables(DB,months);
 		res = rTables.createCurrentMonth();
 		if ( res != 0 )

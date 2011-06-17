@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.14 2011/06/17 08:56:40 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.15 2011/06/17 12:55:07 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -376,13 +376,17 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 	vector<string> valuesV;
 	vector<string> valuesTransInfoV;
 	vector<string> valuesTransInV;
+	valuesTransInV.allocate(queryLength+1);
+	valuesTransInfoV.allocate(queryLength+1);
+	valuesV.allocate(queryLength+1);
 	int valuesCounter = 0;
 	db hlrDb (hlr_sql_server,
 			hlr_sql_user,
 			hlr_sql_password,
 			hlr_sql_dbname);
 	vector<resultRow>::const_iterator it = (q.queryResult).begin();
-	while ( it != (q.queryResult).end() )
+	vector<resultRow>::const_iterator end = (q.queryResult).end();
+	while ( it != end )
 	{
 		currentTid = (*it)[0];
 		dgJobId = (*it)[6];
@@ -474,20 +478,21 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		{
 			logBuff.accountingProcedure = "grid";
 		}
-		//compute unique Strings
-		string valuesBuffer = "";
-		vector<string> ceIdBuff;
-		Split (':', thisGridId, &ceIdBuff);        
-		if (ceIdBuff.size() > 0)
-		{
-			valuesBuffer  = ceIdBuff[0];//FIXME can't we find something else?
-		}
-		valuesBuffer += logBuff.lrmsId;
-		valuesBuffer += logBuff.start;
-		valuesBuffer += wallTime;
-		valuesBuffer += cpuTime;
+
 		if ( (*it)[7] == "" )//if uniqueChecksum is not defined in trans_in (old record not already updated)
 		{
+			//compute unique Strings
+			string valuesBuffer = "";
+			vector<string> ceIdBuff;
+			Split (':', thisGridId, &ceIdBuff);
+			if (ceIdBuff.size() > 0)
+			{
+				valuesBuffer  = ceIdBuff[0];//FIXME can't we find something else?
+			}
+			valuesBuffer += logBuff.lrmsId;
+			valuesBuffer += logBuff.start;
+			valuesBuffer += wallTime;
+			valuesBuffer += cpuTime;
 			uniqueS = "";
 			makeUniqueString (valuesBuffer,uniqueS);//compute unique strings
 			queryBuffer = "";
@@ -599,7 +604,8 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 			}
 			valuesV.clear();
 			vector<string>::iterator queryUTIIT = valuesTransInV.begin();
-			while ( queryUTIIT != valuesTransInV.end() )
+			vector<string>::iterator queryUTIITend = valuesTransInV.end();
+			while ( queryUTIIT != queryUTIITend )
 			{
 				queryBuffer = "UPDATE trans_in " + *queryUTIIT;
 				dbResult resultUTI = hlrDb.query(queryBuffer);
@@ -635,9 +641,10 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		}
 		queryBuffer = "INSERT INTO jobTransSummary VALUES ";
 		vector<string>::const_iterator valuesIt = valuesV.begin();
+		vector<string>::const_iterator valuesItend = valuesV.end();
 		queryBuffer += *valuesIt;
 		valuesIt++;
-		while ( valuesIt != valuesV.end() )
+		while ( valuesIt != valuesItend )
 		{
 			queryBuffer += ",";
 			queryBuffer += *valuesIt;
