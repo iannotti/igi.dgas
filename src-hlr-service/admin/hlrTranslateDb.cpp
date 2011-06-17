@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.26 2011/06/16 12:44:35 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.27 2011/06/17 08:56:40 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -932,9 +932,9 @@ int main (int argc, char **argv)
 	{
 		autoDeleteOldRecords = true;
 	}
-	if ( confMap["masterLock"] != "" )
+	if ( confMap["jtsCommandLock"] != "" )
 	{
-		masterLock = confMap["masterLock"];
+		masterLock = confMap["jtsCommandLock"];
 	}
 	else
 	{

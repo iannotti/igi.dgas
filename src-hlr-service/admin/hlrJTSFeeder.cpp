@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.13 2011/06/17 08:42:48 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.14 2011/06/17 08:56:40 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -817,9 +817,9 @@ int main (int argc, char **argv)
 	int stepNumber = 5;
 	int queryLenght =100;
 	string stepNumberStr = (confMap["translateStepNumber"]);
-	if ( confMap["masterLock"] != "" )
+	if ( confMap["jtsCommandLock"] != "" )
 	{
-		masterLock = confMap["masterLock"];
+		masterLock = confMap["jtsCommandLock"];
 	}
 	else
 	{

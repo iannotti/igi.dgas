@@ -94,7 +94,7 @@ maxItemsPerQuery = "5000"
 authUserSqlQueries = "false"
 
 #This is the lock file for the dgas-translatedb command. 
-masterLock = "/usr/var/dgas/hlrTranslateDb.lock"
+jtsCommandLock = "/usr/var/dgas/hlrTranslateDb.lock"
 
 #If this parameter is set to true, records older than acceptRecordsStartDate 
 #will be automatically deleted from the jobTransSummary table. Default: false
