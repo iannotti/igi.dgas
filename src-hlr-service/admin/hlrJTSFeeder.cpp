@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.12 2011/06/16 15:50:41 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.13 2011/06/17 08:42:48 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -960,8 +960,8 @@ int main (int argc, char **argv)
 			time0 = time(NULL);
 			percentage = ((i+1)*100)/stepNumber;
 			string queryString = composeQuery(resLastTid,resLastTid+step);
-			hlrGenericQuery insertQuery(queryString);
-			res = insertQuery.query();
+			hlrGenericQuery selectQuery(queryString);
+			res = selectQuery.query();
 			if ( res != 0 )
 			{
 				cout << "Warning: problem in query.";
@@ -970,7 +970,7 @@ int main (int argc, char **argv)
 					cout << int2string(res) << ":" << queryString << endl;
 				}
 			}
-			populateJobTransSummaryTable ( insertQuery , queryLenght);
+			populateJobTransSummaryTable ( selectQuery , queryLenght);
 			resLastTid = resLastTid+step;
 			if ( i == stepNumber-1 ) percentage = 100;
 			time1 = time(NULL);
