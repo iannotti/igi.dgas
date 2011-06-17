@@ -1,4 +1,4 @@
-// $Id: dbResult.cpp,v 1.1.2.2 2010/12/13 10:18:36 aguarise Exp $
+// $Id: dbResult.cpp,v 1.1.2.3 2011/06/17 14:57:13 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -21,9 +21,11 @@ dbResult::dbResult (MYSQL_RES * res)
 		Rows = mysql_num_rows(res);
 		Fields = mysql_num_fields(res);
 		MYSQL_ROW row_buff;
+		Row Row_buff;
+		Row_buff.reserve(Fields);
+		Result.reserve(Rows);
 		while (( row_buff = mysql_fetch_row(res)))
 		{
-			Row Row_buff;
 			for (size_t i = 0; i < Fields; i++)
 			{
 				if ( row_buff[i] != NULL) 
@@ -36,8 +38,10 @@ dbResult::dbResult (MYSQL_RES * res)
 				}
 			}
 			Result.push_back(Row_buff);
+			Row_buff.clear();
 		}
 		MYSQL_FIELD *field;
+		fieldNames.reserve(Fields);
 		while((field = mysql_fetch_field(res)))
 		{
 			fieldNames.push_back(field->name);

@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.16 2011/06/17 13:05:45 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.17 2011/06/17 14:57:13 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -153,14 +153,14 @@ int computeIterationsNo (int confIterations, int lastProcessedTid )
 	else
 	{
 		int records = atoi((((iterQuery.queryResult).front())[0]).c_str());
-		if ( records < 5000 )
+		if ( records < 100000 )
 		{
 			if ( debug ) cout << "Just one iteration is sufficient." << endl;
 			return 1;
 		}
 		else
 		{
-			int iBuff = records/80000;
+			int iBuff = records/100000;
 			if ( debug )
 			{
 				cout << "From configuration: " << int2string(confIterations) << endl;
@@ -194,10 +194,12 @@ string composeQuery(int first, int last)
 int parseLog(string logString, hlrLogRecords& records)
 {
 	vector<string> buffV;
+	buffV.reserve(80);
 	Split (',',logString, &buffV );
 	vector<string>::const_iterator it = buffV.begin();
+	vector<string>::const_iterator buffVend = buffV.end();
 	map<string,string> logMap;
-	while ( it != buffV.end() )
+	while ( it != buffVend )
 	{
 		size_t pos = (*it).find_first_of("=");
 		if ( pos != string::npos )
