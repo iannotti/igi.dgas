@@ -26,7 +26,7 @@ int urConcentrator::run()
 	}
 	string requestType;
 	vector<jobTransSummary> r;
-	r.reserve(6000);
+	r.reserve(atoi(recordsPerConnection.c_str()));
 	res = xmlParser(requestType, r);
 	if ( res != 0 )
 	{
@@ -424,7 +424,8 @@ int urConcentrator::insertRecords(vector<jobTransSummary>& r)
 			hlr_sql_password,
 			hlr_sql_dbname);
 	vector<jobTransSummary>::iterator it = r.begin();
-	while ( it != r.end() )
+	vector<jobTransSummary>::iterator r_end = r.end();
+	while ( it != r_end )
 	{
 		if ( insertRecord(hlrDb,*it) != 0 )
 		{
@@ -469,7 +470,9 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 			hlr_sql_password,
 			hlr_sql_dbname);
 	vector<jobTransSummary>::iterator it = r.begin();
-	while ( it != r.end() )
+	vector<jobTransSummary>::iterator r_end = r.end();
+	insertValuesBuffer.reserve(recordsPerBulkInsert);
+	while ( it != r_end )
 	{
 		insertValuesBuffer.clear();
 		logBuff = "Records to be inserted this bulk step:" + int2string(recordsPerBulkInsert);
@@ -485,10 +488,13 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 		logBuff = "Records received for this bulk step:" + int2string(insertValuesBuffer.size());
 		hlr_log(logBuff,&logStream,8);
 		string valuesString;
+		valuesString.reserve(4096*(insertValuesBuffer.size()));
 		vector<string>::iterator valuesIt = insertValuesBuffer.begin();
-		while ( valuesIt != insertValuesBuffer.end() )
+		vector<string>::iterator valuesIt_begin = insertValuesBuffer.begin();
+		vector<string>::iterator valuesIt_end = insertValuesBuffer.end();
+		while ( valuesIt !=  valuesIt_end )
 		{
-			if ( valuesIt != insertValuesBuffer.begin() )
+			if ( valuesIt != valuesIt_begin )
 			{
 				valuesString += ",";
 			}

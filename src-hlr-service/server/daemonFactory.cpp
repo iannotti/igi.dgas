@@ -23,6 +23,7 @@ extern bool restart;
 extern int defConnTimeOut;
 extern int authErrors;
 extern int threadUsecDelay;
+extern int messageReservedMemory;
 extern listenerStatus lStatus;
 
 #ifdef WITH_VOMS
@@ -167,6 +168,7 @@ void* thrLoop(void *param)
 	activeThreads++;
 	threadStruct *tstruct = (threadStruct*) param;
 	string xml_input ="";
+	xml_input.reserve(messageReservedMemory);
 	string xml_output ="";
 	string logString = "";
 	pid_t processPid = getpid ();

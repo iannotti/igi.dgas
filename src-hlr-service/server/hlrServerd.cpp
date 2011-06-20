@@ -64,6 +64,7 @@ int authErrors=0;
 int threadUsecDelay=0;
 int threadPoolUsecDelay=0;
 int recordsPerBulkInsert = 20;
+int messageReservedMemory = 8196000;
 bool strictAccountCheck = false;
 bool lazyAccountCheck = false;
 bool authUserSqlQueries = false;
@@ -326,13 +327,17 @@ int main ( int argc, char * argv[] )
 	{
 		threadPoolUsecDelay = atoi((confMap["threadPoolUsecDelay"]).c_str());
 	}
+	if ( confMap["messageReservedMemory"] != ""  )
+	{
+		messageReservedMemory = atoi((confMap["messageReservedMemory"]).c_str());
+	}
 	//check for 2ndLevelHlr
 	if ( confMap["is2ndLevelHlr"] == "true" )
 	{
 		is2ndLevelHlr = true;
 		logBuff = "is2ndLevelHlr set to \"true\"";
 		hlr_log(logBuff,&logStream,6);
-		logBuff = "HLR initialised as concentrator (2nd level)";
+		logBuff = "HLR initialized as concentrator (2nd level)";
 		hlr_log(logBuff,&logStream,5);
 		if ( confMap["checkUserVo"] == "true" )
 		{
