@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.18 2011/06/20 08:21:52 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.19 2011/06/20 16:23:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -582,7 +582,6 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 			counter = 0;
 			indicator = "#";
 		}
-		j++;
 		if ( valuesCounter == queryLenght )
 		{
 			queryBuffer = "INSERT INTO jobTransSummary VALUES ";
@@ -604,6 +603,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 				}
 				indicator = "E";
 			}
+			j += hlrDb.getAffectedRows();
 			valuesV.clear();
 			vector<string>::iterator queryUTIIT = valuesTransInV.begin();
 			vector<string>::iterator queryUTIITend = valuesTransInV.end();
@@ -660,6 +660,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 				cerr << "ERROR: " <<queryBuffer <<"; errNo:"<< int2string(hlrDb.errNo) << endl;
 			}
 		}
+		j += hlrDb.getAffectedRows();
 		//trans_in
 		vector<string>::iterator queryUTIIT = valuesTransInV.begin();
 		while ( queryUTIIT != valuesTransInV.end() )
@@ -987,7 +988,7 @@ int main (int argc, char **argv)
 			{
 				eta = (time1-time0)*(100-percentage)/((percentage-oldPercentage)*60);
 			}
-			cout << " [" << setw(3) << int2string(percentage) << "%] E:"<< int2string(time1-time0) << " ETA:"<< int2string(eta) << endl;
+			cout << " [" << setw(3) << int2string(percentage) << "%] E:"<< int2string(time1-time0) << " sec ETA:"<< int2string(eta) << " min"<<endl;
 			oldPercentage = percentage;
 		}
 	}
