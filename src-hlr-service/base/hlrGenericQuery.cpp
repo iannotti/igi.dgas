@@ -1,4 +1,4 @@
-// $Id: hlrGenericQuery.cpp,v 1.1.2.1.4.3 2011/06/07 11:56:35 aguarise Exp $
+// $Id: hlrGenericQuery.cpp,v 1.1.2.1.4.4 2011/06/20 08:21:52 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -82,9 +82,11 @@ int hlrGenericQuery::query(string _query)
 				return NO_RECORD;
 				errNo = NO_RECORD;
 			}
+			queryResult.reserve(numRows);
 			queryResult = result.getData();
-			fieldNames = result.fieldNames;
 			numColumns = result.numFields();
+			fieldNames.reserve(numColumns);
+			fieldNames = result.fieldNames;
 			return 0;
 		 }
 		 else

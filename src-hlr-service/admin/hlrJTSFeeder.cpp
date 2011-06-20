@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.17 2011/06/17 14:57:13 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.18 2011/06/20 08:21:52 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -371,6 +371,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 	string date;//start date
 	string endDate;
 	string queryBuffer;
+	queryBuffer.reserve(4096*queryLenght);
 	string valuesBuffer;
 	string uniqueS;
 	string indicator = "#";
@@ -380,7 +381,6 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 	vector<string> valuesTransInV;
 	valuesTransInV.reserve(queryLenght+1);
 	valuesTransInfoV.reserve(queryLenght+1);
-	valuesV.reserve(queryLenght+1);
 	int valuesCounter = 0;
 	db hlrDb (hlr_sql_server,
 			hlr_sql_user,
