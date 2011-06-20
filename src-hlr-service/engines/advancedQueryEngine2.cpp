@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.3 2011/06/16 07:43:31 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.4 2011/06/20 13:18:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -24,6 +24,7 @@
 
 extern ofstream logStream;
 extern string  maxItemsPerQuery;
+wxtern string authQueryTables;
 extern bool authUserSqlQueries; 
 
 inline int urlSplit(char delim, string url_string , url_type *url_buff)
@@ -764,6 +765,15 @@ int getSySDefTables(vector<string>& tables)
 
 int getAuthorizedTables(vector<string>& tables)
 {
+	vector<string> buffer;
+	Split(';',authQueryTables, &buffer );
+	vector<string>::iterator it = buffer.begin();
+	vector<string>::iterator it_end = buffer.end();
+	while ( it != it_end )
+	{
+		tables.push_back(stripWhite(*it));
+		it++;
+	}
 	//FIXME complete getAuthorizedTables
 	//This method retrieves the list of "user@db.table:password" that can be queried.
 	return 0;

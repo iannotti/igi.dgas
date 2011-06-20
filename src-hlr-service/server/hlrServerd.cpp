@@ -86,6 +86,7 @@ string server_contact = "";
 string hlr_gridMapFile = "/etc/grid-security/grid-mapfile";
 string hlr_user = "";
 string qtransInsertLog = "";
+string authQueryTables = "jobTransSummary";
 
 
 bool restart;
@@ -306,6 +307,10 @@ int main ( int argc, char * argv[] )
 	if ( confMap["authUserSqlQueries"] == "true" )
 	{
 		authUserSqlQueries = true;
+	}
+	if ( confMap["authQueryTables"] != "" )
+	{
+		authQueryTables = confMap["authQueryTables"];
 	}
 	if ( confMap["useMergeTables"] == "true" )
 	{
