@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.19 2011/06/20 16:23:14 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.20 2011/06/21 08:59:04 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -377,10 +377,9 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 	string indicator = "#";
 	cout << setw(19) << "writing records: ";
 	vector<string> valuesV;
-	vector<string> valuesTransInfoV;
 	vector<string> valuesTransInV;
+	valuesV.reserve(queryLenght+1);
 	valuesTransInV.reserve(queryLenght+1);
-	valuesTransInfoV.reserve(queryLenght+1);
 	int valuesCounter = 0;
 	db hlrDb (hlr_sql_server,
 			hlr_sql_user,
@@ -586,9 +585,10 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		{
 			queryBuffer = "INSERT INTO jobTransSummary VALUES ";
 			vector<string>::const_iterator valuesIt = valuesV.begin();
+			vector<string>::const_iterator valuesIt_end = valuesV.end();
 			queryBuffer += *valuesIt;
 			valuesIt++;
-			while ( valuesIt != valuesV.end() )
+			while ( valuesIt != valuesIt_end )
 			{
 				queryBuffer += ",";
 				queryBuffer += *valuesIt;
@@ -663,7 +663,8 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		j += hlrDb.getAffectedRows();
 		//trans_in
 		vector<string>::iterator queryUTIIT = valuesTransInV.begin();
-		while ( queryUTIIT != valuesTransInV.end() )
+		vector<string>::iterator queryUTIIT_end = valuesTransInV.end();
+		while ( queryUTIIT != queryUTIIT_end )
 		{
 			queryBuffer = "UPDATE trans_in " + *queryUTIIT;
 			dbResult resultUTI = hlrDb.query(queryBuffer);
