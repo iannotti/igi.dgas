@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.21 2011/06/21 09:38:16 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.22 2011/06/21 12:17:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -183,7 +183,6 @@ string composeQuery(int first, int last)
 	//since 'first' is already
 	//present in DB.
 	queryBuff += " AND trans_in.tid <=" +int2string(last);
-	queryBuff += " AND NOT trans_in.rid AND NOT trans_in.gid";
 	if (debug)
 	{
 		cout << "From >" << first << "to <=" << last << endl;
@@ -584,7 +583,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		}
 		if ( valuesCounter == queryLenght )
 		{
-			queryBuffer = "INSERT INTO jobTransSummary VALUES ";
+			queryBuffer = "INSERT IGNORE INTO jobTransSummary VALUES ";
 			vector<string>::const_iterator valuesIt = valuesV.begin();
 			vector<string>::const_iterator valuesIt_end = valuesV.end();
 			queryBuffer += *valuesIt;
@@ -642,7 +641,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		{
 			cerr << int2string(valuesCounter) << " trailing elements." << endl;
 		}
-		queryBuffer = "INSERT INTO jobTransSummary VALUES ";
+		queryBuffer = "INSERT IGNORE INTO jobTransSummary VALUES ";
 		vector<string>::const_iterator valuesIt = valuesV.begin();
 		vector<string>::const_iterator valuesItend = valuesV.end();
 		queryBuffer += *valuesIt;

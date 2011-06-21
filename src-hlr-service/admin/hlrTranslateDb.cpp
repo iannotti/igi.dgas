@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.27 2011/06/17 08:56:40 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.28 2011/06/21 12:17:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -597,6 +597,26 @@ int upgradeURCI ()
 	}
 	return res;
 }
+
+int deleteTransInNULL()
+{
+	int res = 0;
+		string upgradeQuery = "DELETE FROM trans_in WHERE rid IS NULL";
+		if ( debug )
+		{
+			cerr << upgradeQuery << endl;
+		}
+		hlrGenericQuery upgrade1(hlr_sql_dbname, upgradeQuery);
+		upgrade1.query();
+		if ( upgrade1.errNo != 0)
+		{
+			cerr << "Error in query deleting from trans_in NULL values (DELETE step 1)." << endl;
+			cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
+			res = 1;
+		}
+		return res;
+}
+
 
 int RGV2ACCTDESC ()
 {
@@ -1197,6 +1217,7 @@ int main (int argc, char **argv)
 			Exit(1);
 		}
 	}
+	deleteTransInNULL();
 	upgrade_R_3_4_0_23();
 	if ( is2ndLevelHlr )
 	{
