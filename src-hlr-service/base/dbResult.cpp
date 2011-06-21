@@ -1,4 +1,4 @@
-// $Id: dbResult.cpp,v 1.1.2.3 2011/06/17 14:57:13 aguarise Exp $
+// $Id: dbResult.cpp,v 1.1.2.4 2011/06/21 13:01:26 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -16,14 +16,16 @@
 #ifndef WITH_UNIXODBC
 dbResult::dbResult (MYSQL_RES * res)
 {
+	Rows = 0;
+	Fields = 0;
 	if (res != NULL)
 	{
 		Rows = mysql_num_rows(res);
 		Fields = mysql_num_fields(res);
 		MYSQL_ROW row_buff;
 		Row Row_buff;
-		Row_buff.reserve(Fields);
-		Result.reserve(Rows);
+		if ( Fields != 0) Row_buff.reserve(Fields);
+		if ( Rows != 0) Result.reserve(Rows);
 		while (( row_buff = mysql_fetch_row(res)))
 		{
 			for (size_t i = 0; i < Fields; i++)
@@ -41,7 +43,7 @@ dbResult::dbResult (MYSQL_RES * res)
 			Row_buff.clear();
 		}
 		MYSQL_FIELD *field;
-		fieldNames.reserve(Fields);
+		if ( Fields != 0) fieldNames.reserve(Fields);
 		while((field = mysql_fetch_field(res)))
 		{
 			fieldNames.push_back(field->name);
