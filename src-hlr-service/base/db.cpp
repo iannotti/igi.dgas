@@ -1,4 +1,4 @@
-// $Id: db.cpp,v 1.1.2.4 2011/03/02 12:42:26 aguarise Exp $
+// $Id: db.cpp,v 1.1.2.5 2011/06/21 12:44:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -32,6 +32,7 @@ db::db ( string serverI,
 	passwd = passwdI;//s
         dbName = dbNameI;//s
 	unsigned int retry = 0;//s
+	affectedRows = 0;
 	dbhandle = new MYSQL;  
 	do {
 		errNo = 0;//s
@@ -73,12 +74,14 @@ dbResult::dbResult db::query ( string queryString )
 	{
 		errNo=mysql_errno(dbhandle);
 		errMsg = mysql_error(dbhandle);
+		affectedRows =0;
 		return NULL;
 	}
 	else
 	{
 		errNo=0;
 		errMsg = "";
+		affectedRows = mysql_affected_rows(dbhandle);
 		return mysql_store_result(dbhandle);
 	}
 }
