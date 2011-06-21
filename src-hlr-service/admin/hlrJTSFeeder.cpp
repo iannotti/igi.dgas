@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.20 2011/06/21 08:59:04 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.21 2011/06/21 09:38:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -44,6 +44,7 @@ string masterLock = "";
 int mergeTablesPastMonths = 3;
 int system_log_level = 7;
 bool debug = false;
+volatile sig_atomic_t keep_going = 1;
 
 int I = 0;
 int J = 0;
@@ -387,7 +388,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 			hlr_sql_dbname);
 	vector<resultRow>::const_iterator it = (q.queryResult).begin();
 	vector<resultRow>::const_iterator end = (q.queryResult).end();
-	while ( it != end )
+	while ( keep_going && ( it != end ) )
 	{
 		currentTid = (*it)[0];
 		dgJobId = (*it)[6];
@@ -635,7 +636,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		it++;
 	}
 	//manage trailing elements in queryResult vector.
-	if ( valuesCounter != 0 )
+	if ( keep_going && ( valuesCounter != 0 ) )
 	{
 		if ( debug )
 		{
@@ -796,10 +797,10 @@ bool isTableUpToDate (string dbName, string tableName, string &fieldList)
 
 void doNothing ( int sig )
 {
-	cerr << "The command can't be killed, Please be patient..." << endl;
+	cerr << "The command is being killed, Please be patient..." << endl;
+	keep_going = 0;
 	signal (sig, doNothing) ;
 }
-
 
 int main (int argc, char **argv)
 {
@@ -966,7 +967,7 @@ int main (int argc, char **argv)
 		}
 		if (step <= 0 ) step = 1;
 		int res = 0;
-		for (int i=0; i<stepNumber; i++)
+		for (int i=0; keep_going && ( i<stepNumber ); i++)
 		{
 			time0 = time(NULL);
 			percentage = ((i+1)*100)/stepNumber;
