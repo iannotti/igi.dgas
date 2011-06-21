@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.9 2011/06/21 09:16:10 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.10 2011/06/21 09:22:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1594,12 +1594,12 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 				lenght_it++;
 			}
 			size_t lineSize = 0;
-			vector<size_t>::iterator it = fieldsSize.begin();
-			vector<size_t>::iterator it_end = fieldsSize.end();
-			while ( it != it_end )
+			vector<size_t>::iterator fieldsSizeIt = fieldsSize.begin();
+			vector<size_t>::iterator fieldsSizeIt_end = fieldsSize.end();
+			while ( fieldsSizeIt != fieldsSizeIt_end )
 			{
-				lineSize+=*it;
-				it++;
+				lineSize+=*fieldsSizeIt;
+				fieldsSizeIt++;
 			}
 			stringstream buf2;
 			bool csv = false;
