@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.5 2011/06/21 07:19:51 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.6 2011/06/21 08:51:56 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -314,7 +314,8 @@ int advancedQueryEngine_compose_xml(vector<string> &queryResult ,string *output,
 	*output += "<BODY>\n";
 	*output += "<queryResult>";
 	vector<string>::iterator it = queryResult.begin();
-	while ( it != queryResult.end() )
+	vector<string>::iterator it_end = queryResult.end();
+	while ( it != it_end )
 	{	
 		*output += "\n<lineString>";
 		*output += *it;
@@ -328,7 +329,6 @@ int advancedQueryEngine_compose_xml(vector<string> &queryResult ,string *output,
 	*output += "<STATUS>";
 	*output += int2string(status);
 	*output += "</STATUS>";
-	//vector unwind here!
 	*output += "</BODY>\n";
 	*output += "</HLR>\n";
 	return 0;
@@ -1019,6 +1019,10 @@ string composeQuery(inputData &iD, string& time_interval, string &tableName, con
 
 int parseQueryType(inputData& iD)
 {
+	if ( iD.queryTypeBuffer == "sql" || iD.queryTypeBuffer == "sqlCsv" )
+	{
+		return 0;
+	}
 	if ( iD.queryTypeBuffer == "resourceAggregate" )
 	{
 		return 0;
@@ -1028,10 +1032,6 @@ int parseQueryType(inputData& iD)
 		return 0;
 	}
 	if ( iD.queryTypeBuffer == "showTables" )
-	{
-		return 0;
-	}
-	if ( iD.queryTypeBuffer == "sql" || iD.queryTypeBuffer == "sqlCsv" )
 	{
 		return 0;
 	}
@@ -1225,7 +1225,7 @@ string composeError(string message, int status)
 //get the xml object from the daemon, parse the information 
 int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *output )
 {
-	hlr_log ("advancedQueryEngine: Entering.", &logStream,4);
+	hlr_log ("advancedQueryEngine: Entering.", &logStream,5);
 	int exitCode = 0;
 	inputData inputStruct;
 	if ( advancedQueryEngine_parse_xml (inputXML, inputStruct) != 0)
@@ -1273,7 +1273,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		string logBuff = "advancedQueryEngine: Query Type identified:";
 		logBuff += inputStruct.queryTypeBuffer;
 		hlr_log (logBuff,
-				&logStream,5);
+				&logStream,6);
 	}
 #ifdef MERGE
 	if ( inputStruct.queryTypeBuffer == "showTables" )
@@ -1281,6 +1281,13 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		string logBuff;
 		vector<string> tables;
 		int res = getAvailableTables(connectionInfo,tables);
+		if ( res != 0 )
+		{
+			logBuff = "Error retrieving table list:" + int2string(res);
+			tables.push_back("jobTransSummary");
+			hlr_log(logBuff,&logStream,6);
+		}
+		int res = getAuthorizedTables(tables);
 		if ( res != 0 )
 		{
 			logBuff = "Error retrieving table list:" + int2string(res);
@@ -1515,7 +1522,8 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		if ( tables.size() != 0 )
 		{
 			vector<string>::iterator it = tables.begin();
-			while ( it != tables.end() )
+			vector<string>::iterator it_end = tables.end();
+			while ( it != it_end )
 			{
 				tableList += *it + " ; ";
 				it++;
@@ -1568,10 +1576,11 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			*output = "<HLR type=\"advancedQuery_answer\">\n";
 			*output += "<BODY>\n";
 			*output += "<queryResult>";
-			vector<size_t> fieldsSize;
+			vector<size_t> fieldsSize
 			vector<resultRow>::const_iterator lenght_it = (genericQuery.queryResult).begin();
+			vector<resultRow>::const_iterator lenght_it_end = (genericQuery.queryResult).end();
 			size_t buff;
-			while (lenght_it != (genericQuery.queryResult).end())
+			while (lenght_it != lenght_it_end)
 			{
 				for (size_t i=0; i<(*lenght_it).size(); i++)
 				{
@@ -1584,15 +1593,24 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 				}
 				lenght_it++;
 			}
+			size_t lineSize = 0;
+			vector<size_t>::iterator it = fieldsSize.begin();
+			vector<size_t>::iterator it_end = fieldSize,end();
+			while ( it != it_end )
+			{
+				lineSize+=*it;
+				it++;
+			}
 			stringstream buf2;
 			bool csv = false;
 			if ( (inputStruct.queryTypeBuffer == "sql") )
 			{
 				vector<string>::const_iterator h_it= (genericQuery.fieldNames).begin();
+				vector<string>::const_iterator h_it_end= (genericQuery.fieldNames).end();
 				stringstream buf;
 				buf2.fill('-');
 				int i =0;
-				while ( h_it != (genericQuery.fieldNames).end() )
+				while ( h_it != h_it_end )
 				{
 					if ( fieldsSize[i] < (*h_it).size() ) fieldsSize[i] = (*h_it).size();
 					buf << left << setw(fieldsSize[i]) << *h_it << right << "|";
@@ -1614,14 +1632,17 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			{
 				csv = true;
 			}
+			output->reserve( ((genericQuery.queryResult).size())*lineSize );
 			vector<resultRow>::const_iterator it = (genericQuery.queryResult).begin();
-			while ( it != (genericQuery.queryResult).end() )
+			vector<resultRow>::const_iterator it_end = (genericQuery.queryResult).end();
+			while ( it != it_end )
 			{
 				*output += "\n<lineString>|";
 				vector<string>::const_iterator l_it=(*it).begin();
+				vector<string>::const_iterator l_it_end=(*it).end();
 				stringstream buf;
 				int i =0;
-				while ( l_it != (*it).end() )
+				while ( l_it != l_it_end )
 				{
 					if ( csv )
 					{
