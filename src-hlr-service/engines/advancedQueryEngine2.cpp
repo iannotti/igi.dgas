@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.10 2011/06/21 09:22:10 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.11 2011/06/21 14:45:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1407,8 +1407,12 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 		pos = queryStringBuffer.find("SELECT");
 		if ( (pos != 0) || ( pos == string::npos ) )
 		{	
-			*output = composeError("Command not allowed: queries MUST begin with SELECT ",3);
-			return 3;
+			pos = queryStringBuffer.find("EXPLAIN");
+			if ( (pos != 0) || ( pos == string::npos ) )
+			{
+				*output = composeError("Command not allowed: queries MUST begin with SELECT or EXPLAIN ",3);
+				return 3;
+			}
 		}
 		//manage LIMIT clause
 		string maxItemsBuff = maxItemsPerQuery;
