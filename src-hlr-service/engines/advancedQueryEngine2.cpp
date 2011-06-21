@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.6 2011/06/21 08:51:56 aguarise Exp $
+// $Id: advancedQueryEngine2.cpp,v 1.1.2.1.4.7 2011/06/21 09:07:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1287,7 +1287,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			tables.push_back("jobTransSummary");
 			hlr_log(logBuff,&logStream,6);
 		}
-		int res = getAuthorizedTables(tables);
+		res = getAuthorizedTables(tables);
 		if ( res != 0 )
 		{
 			logBuff = "Error retrieving table list:" + int2string(res);
@@ -1576,7 +1576,7 @@ int advancedQueryEngine( string &inputXML, connInfo &connectionInfo, string *out
 			*output = "<HLR type=\"advancedQuery_answer\">\n";
 			*output += "<BODY>\n";
 			*output += "<queryResult>";
-			vector<size_t> fieldsSize
+			vector<size_t> fieldsSize;
 			vector<resultRow>::const_iterator lenght_it = (genericQuery.queryResult).begin();
 			vector<resultRow>::const_iterator lenght_it_end = (genericQuery.queryResult).end();
 			size_t buff;
