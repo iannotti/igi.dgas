@@ -226,13 +226,14 @@ int mergeTables::createMergeTable(std::string& mergeTableName, std::string& unio
 	table currentTable( DB, mergeTableName );
 	if ( currentTable.exists() )
 	{
+		hlr_log("Table wxists. Comparing with new UNION definition.",&logStream,8);
 		std::string newUnionDef;
 		std::string existingUnionDef;
 		db hlrDb ( DB.sqlServer,
 				DB.sqlUser,
 				DB.sqlPassword,
 				DB.sqlDbName );
-		std::string showCreate = "show create table ";
+		std::string showCreate = "SHOW CREATE TABLE ";
 		showCreate += mergeTableName;
 		dbResult result = hlrDb.query(showCreate);
 		if ( hlrDb.errNo == 0 )
@@ -245,6 +246,7 @@ int mergeTables::createMergeTable(std::string& mergeTableName, std::string& unio
 			}
 			else
 			{
+				hlr_log("Current table is not a merge table.",&logStream,8);
 				return E_DBW_GETUDEF;	
 			}
 		}
@@ -260,6 +262,7 @@ int mergeTables::createMergeTable(std::string& mergeTableName, std::string& unio
 		}
 		else
 		{
+			hlr_log("Error within new UNION definition.",&logStream,8);
 			return E_DBW_GETUDEF;	
 		}
 		std::string logBuff = "Checking " + newUnionDef + " against " + existingUnionDef;
