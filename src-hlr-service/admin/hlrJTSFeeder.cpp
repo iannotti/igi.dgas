@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.24 2011/06/22 09:24:20 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.25 2011/06/22 14:26:18 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -41,7 +41,6 @@ const char * hlr_sql_dbname;
 const char * hlr_tmp_sql_dbname;
 ofstream logStream;
 string masterLock = "";
-int mergeTablesPastMonths = 3;
 int system_log_level = 7;
 bool debug = false;
 volatile sig_atomic_t keep_going = 1;
@@ -871,6 +870,7 @@ int main (int argc, char **argv)
 	{
 		is2ndLevelHlr =true;
 	}
+	int mergeTablesPastMonths = 3;
 	string mergeTablesDefinitions = "";
 	string mergeTablesFile = "";
 	bool useMergeTables = false;

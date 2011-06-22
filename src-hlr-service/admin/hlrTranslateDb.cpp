@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.33 2011/06/22 14:26:18 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.34 2011/06/22 14:30:02 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1057,6 +1057,10 @@ int main (int argc, char **argv)
 	{
 		mergeTablesPastMonths = atoi((confMap["mergeTablesPastMonths"]).c_str());
 	}
+	database DB(hlr_sql_server,
+				hlr_sql_user,
+				hlr_sql_password,
+				hlr_sql_dbname);
 	mergeTables mt(DB,
 			mergeTablesDefinitions,
 			is2ndLevelHlr,
