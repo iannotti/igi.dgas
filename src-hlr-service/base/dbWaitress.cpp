@@ -437,10 +437,8 @@ int mergeTables::exec()
 	{
 		return E_DBW_DBLOCKED;
 	}
-	cout << "#####";
 	//if needed restore MyISAM jobTransSummary.
 	res = restoreMyISAMJTS();
-	cout << "#####";
 	if ( res != 0 )
 	{
 		string logBuff = "Error restoring jobTransSummary to MyISAM:" + int2string(res);
@@ -449,7 +447,6 @@ int mergeTables::exec()
 	}
 	//get current Year and Month
 	res = getYearMonth(DB,yearMonthBuff);
-	cout << "#####";
 	if ( res != 0 )
 	{
 		return E_DBW_GETDATE;
@@ -477,17 +474,6 @@ int mergeTables::exec()
 			return res;
 		}
 		/*
-		//produce JTS tables for past "months" months.
-		recordsTables rTables(DB,months);
-		res = rTables.createCurrentMonth();
-		if ( res != 0 )
-		{
-			//there was an error creating the records table
-			//for the current month.
-			return res;
-		}
-		 */
-		/*
 		res = rTables.createPastMonths();
 		if ( res != 0 )
 		{
@@ -497,7 +483,6 @@ int mergeTables::exec()
 		}
 		 */
 	}
-	cout << "#####";
 	//check if records table for current month exists.
 	table currMonthRecords(DB,"records_" + yearMonthBuff );
 	if ( !currMonthRecords.exists() )
@@ -512,10 +497,8 @@ int mergeTables::exec()
 			return res;
 		}
 	}	
-	cout << "#####";
 	hlr_log ("Entering mergeTables::create().",&logStream,8);
 	res = create();//mergeTables::create();
-	cout << "#####" << endl;
 	if ( res != 0 )
 	{
 		hlr_log ("Error in mergeTables::create().",&logStream,8);

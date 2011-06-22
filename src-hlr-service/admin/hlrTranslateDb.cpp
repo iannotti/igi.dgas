@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.29 2011/06/22 11:30:14 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.30 2011/06/22 13:33:54 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -601,20 +601,20 @@ int upgradeURCI ()
 int deleteTransInNULL()
 {
 	int res = 0;
-		string upgradeQuery = "DELETE FROM trans_in WHERE rid IS NULL";
-		if ( debug )
-		{
-			cerr << upgradeQuery << endl;
-		}
-		hlrGenericQuery upgrade1(hlr_sql_dbname, upgradeQuery);
-		upgrade1.query();
-		if ( upgrade1.errNo != 0)
-		{
-			cerr << "Error in query deleting from trans_in NULL values (DELETE step 1)." << endl;
-			cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
-			res = 1;
-		}
-		return res;
+	string upgradeQuery = "DELETE FROM trans_in WHERE rid IS NULL";
+	if ( debug )
+	{
+		cerr << upgradeQuery << endl;
+	}
+	hlrGenericQuery upgrade1(hlr_sql_dbname, upgradeQuery);
+	upgrade1.query();
+	if ( upgrade1.errNo != 0)
+	{
+		cerr << "Error in query deleting from trans_in NULL values (DELETE step 1)." << endl;
+		cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
+		res = 1;
+	}
+	return res;
 }
 
 
@@ -1037,6 +1037,28 @@ int main (int argc, char **argv)
 	{
 		thisServiceVersion.tableCreate();
 	}
+	if ( confMap["useMergeTables"] == "true" )
+	{
+		useMergeTables = true;
+	}
+	if ( confMap["mergeTablesDefinitions"] != "" )
+	{
+		mergeTablesDefinitions = confMap["mergeTablesDefinitions"];
+	}
+	if ( confMap["mergeTablesFile"] != "" )
+	{
+		mergeTablesFile = confMap["mergeTablesFile"];
+	}
+	if ( confMap["mergeTablesPastMonths"] != "" )
+	{
+		mergeTablesPastMonths = atoi((confMap["mergeTablesPastMonths"]).c_str());
+	}
+	mergeTables mt(DB,
+			mergeTablesDefinitions,
+			is2ndLevelHlr,
+			mergeTablesFile,
+			mergeTablesPastMonths);
+	/*END merge tables definition*/
 	thisServiceVersion.setService("dgas-hlr-translatedb");
 	thisServiceVersion.setVersion(VERSION);
 	thisServiceVersion.setHost("localhost");
@@ -1155,7 +1177,7 @@ int main (int argc, char **argv)
 	{
 		jobTransSummary.drop();
 	}
-	if (!jobTransSummary.exists() )
+	if (!jobTransSummary.exists() && !useMergeTables)
 	{
 		if ( !createJobTransSummaryTable(JTSdb) )
 		{
