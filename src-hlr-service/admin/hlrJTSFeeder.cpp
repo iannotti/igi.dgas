@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.23 2011/06/22 08:11:46 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.24 2011/06/22 09:24:20 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -916,6 +916,10 @@ int main (int argc, char **argv)
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
 	thisServiceVersion.updateStartup();
+	if ( useMergeTables )
+	{
+		mt.exec();
+	}
 	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
 	if ( !isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields ) )
 	{
@@ -997,11 +1001,6 @@ int main (int argc, char **argv)
 	if ( elapsed != 0 ) recSec = (float)J/float(elapsed);
 	cout << "Found " << I << " raw records, inserted in jobTransSummary:" << J << endl;
 	cout << "Elapsed time:" << int2string(elapsed) << " Rec/sec:" << int2string(recSec) << endl;
-	if ( useMergeTables )
-	{
-		mt.exec();
-		mt.addIndex("date","recordDate");
-	}
 	/*merge tables exec end*/
 	cout << "Done." << endl;
 	masterLockRemove ( masterLock );

@@ -67,8 +67,11 @@ int mergeTables::readDefFile()
 	definitions.push_back(jobTransSummary);
 	if ( !inFile )
 	{
-		hlr_log("Error opening definition file.", &logStream, 6);
-		return E_DBW_OPENFILE;
+		string logBuff = "Error opening definition file:" + defFile;
+		hlr_log(logBuff, &logStream, 3);
+		logBuff += "Just jobTransSummary merge definition will be present";
+		hlr_log(logBuff, &logStream, 3);
+		return 0;
 	}
 	std::string textLine;
 	std::string logBuff = "Reading merge definitions from:" + defFile;
