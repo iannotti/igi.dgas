@@ -499,7 +499,7 @@ int mergeTables::exec()
 	table currMonthRecords(DB,"records_" + yearMonthBuff );
 	if ( !currMonthRecords.exists() )
 	{
-		recordsTables rTables(DB,months);
+		recordsTables rTables(DB,is2ndLevelHlr,months);
 		res = rTables.createCurrentMonth();
 		if ( res != 0 )
 		{

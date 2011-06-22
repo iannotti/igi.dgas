@@ -103,7 +103,7 @@ protected:
 class recordsTables {
 public:
 	recordsTables ( database& _DB,
-	bool _is2ndLevelHlr,
+			bool _is2ndLevelHlr,
 			int _monthsNumber = 3 )
 	{
 		DB = _DB;
@@ -250,42 +250,42 @@ private:
 };
 
 struct hlrLogRecords {
-        int wallTime;
-        int cpuTime;
-        string mem;
-        string vMem;
-        int cePriceTime;
-        string userVo;
-        string processors;
-        string urCreation;
-        string lrmsId;
-        string localUserId;
-        string jobName;
-        string start;
-        string end;
-        string ctime;
-        string qtime;
-        string etime;
-        string fqan;
-        string iBench;
-        string iBenchType;
-        string fBench;
-        string fBenchType;
-        string ceId;
-        string atmEngineVersion;
-        string accountingProcedure;
-        string localGroupId;
-        string siteName;//in th elog seacrh for SiteName
-        string hlrTid;//trans_{in,out} original tid.
-        string voOrigin;//trans_{in,out} original tid.
-        string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
-        string executingNodes; //hostname of the executing nodes.
-        string ceCertificateSubject;
+	int wallTime;
+	int cpuTime;
+	string mem;
+	string vMem;
+	int cePriceTime;
+	string userVo;
+	string processors;
+	string urCreation;
+	string lrmsId;
+	string localUserId;
+	string jobName;
+	string start;
+	string end;
+	string ctime;
+	string qtime;
+	string etime;
+	string fqan;
+	string iBench;
+	string iBenchType;
+	string fBench;
+	string fBenchType;
+	string ceId;
+	string atmEngineVersion;
+	string accountingProcedure;
+	string localGroupId;
+	string siteName;//in th elog seacrh for SiteName
+	string hlrTid;//trans_{in,out} original tid.
+	string voOrigin;//trans_{in,out} original tid.
+	string glueCEInfoTotalCPUs; //number of CPUs available in the cluster.
+	string executingNodes; //hostname of the executing nodes.
+	string ceCertificateSubject;
 };
 
 class JTSManager 
 {
-	public:
+public:
 	JTSManager (database& _DB, std::string _jtsTableName = "jobTransSummary")
 	{
 		DB = _DB;
@@ -296,7 +296,7 @@ class JTSManager
 	string jtsTableName;
 	int removeDuplicated ( string whereClause = "");
 	int parseTransLog (string logString, hlrLogRecords& records);
-	private:
-	
+private:
+
 };
 #endif
