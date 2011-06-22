@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.22 2011/06/21 12:17:12 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.23 2011/06/22 08:11:46 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -796,7 +796,7 @@ bool isTableUpToDate (string dbName, string tableName, string &fieldList)
 
 void doNothing ( int sig )
 {
-	cerr << "The command is being killed, Please be patient..." << endl;
+	cerr << endl << "The command is being killed, Please be patient..." << endl;
 	keep_going = 0;
 	signal (sig, doNothing) ;
 }
@@ -871,7 +871,6 @@ int main (int argc, char **argv)
 	{
 		is2ndLevelHlr =true;
 	}
-#ifdef MERGE
 	string mergeTablesDefinitions = "";
 	string mergeTablesFile = "";
 	bool useMergeTables = false;
@@ -900,7 +899,6 @@ int main (int argc, char **argv)
 			is2ndLevelHlr,
 			mergeTablesFile,
 			mergeTablesPastMonths);
-#endif
 	/*END merge tables definition*/
 	serviceVersion thisServiceVersion(hlr_sql_server,
 			hlr_sql_user,
@@ -999,13 +997,11 @@ int main (int argc, char **argv)
 	if ( elapsed != 0 ) recSec = (float)J/float(elapsed);
 	cout << "Found " << I << " raw records, inserted in jobTransSummary:" << J << endl;
 	cout << "Elapsed time:" << int2string(elapsed) << " Rec/sec:" << int2string(recSec) << endl;
-#ifdef MERGE
 	if ( useMergeTables )
 	{
 		mt.exec();
 		mt.addIndex("date","recordDate");
 	}
-#endif
 	/*merge tables exec end*/
 	cout << "Done." << endl;
 	masterLockRemove ( masterLock );

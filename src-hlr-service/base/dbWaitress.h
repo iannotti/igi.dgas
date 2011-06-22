@@ -140,7 +140,7 @@ public:
 		months = _months;
 		reset = false;
 		is2ndLevelHlr = _is2ndLevelHlr;
-		hlr_log("mergeTables()", &logStream, 7);
+		hlr_log("mergeTables()", &logStream, 8);
 	};
 
 	database DB;	

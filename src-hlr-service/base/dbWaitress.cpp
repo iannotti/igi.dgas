@@ -470,6 +470,7 @@ int mergeTables::exec()
 		{
 			return res;
 		}
+		/*
 		//produce JTS tables for past "months" months.
 		recordsTables rTables(DB,months);
 		res = rTables.createCurrentMonth();
@@ -479,6 +480,8 @@ int mergeTables::exec()
 			//for the current month.
 			return res;
 		}
+		*/
+		/*
 		res = rTables.createPastMonths();
 		if ( res != 0 )
 		{
@@ -486,6 +489,7 @@ int mergeTables::exec()
 			//for the past months.
 			return res;
 		}
+		*/
 	}
 	cout << "#####";
 	//check if records table for current month exists.
