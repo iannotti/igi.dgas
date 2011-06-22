@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.31 2011/06/22 14:16:06 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.32 2011/06/22 14:21:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -945,6 +945,8 @@ int main (int argc, char **argv)
 	int stepNumber = 5;
 	string stepNumberStr = (confMap["translateStepNumber"]);
 	string acceptRecordsStartDate = "";
+	string mergeTablesDefinitions = "";
+	string mergeTablesFile = "";
 	bool autoDeleteOldRecords = false;
 	bool useMergeTables = false;
 	string rulesFile;
