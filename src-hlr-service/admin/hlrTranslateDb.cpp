@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.28 2011/06/21 12:17:12 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.29 2011/06/22 11:30:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1028,40 +1028,6 @@ int main (int argc, char **argv)
 	{
 		rulesFile = confMap["rulesFile"];
 	}
-#ifdef MERGE
-	bool useMergeTables = false;
-	string mergeTablesFile = "";
-	string mergeTablesDefinitions = "";
-	int mergeTablesPastMonths = 3;
-	database DB(hlr_sql_server,
-			hlr_sql_user,
-			hlr_sql_password,
-			hlr_sql_dbname);
-
-	if ( confMap["useMergeTables"] == "true" )
-	{
-		useMergeTables = true;
-	}
-	if ( confMap["mergeTablesDefinitions"] != "" )
-	{
-		mergeTablesDefinitions = confMap["mergeTablesDefinitions"];
-	}
-	if ( confMap["mergeTablesFile"] != "" )
-	{
-		mergeTablesFile = confMap["mergeTablesFile"];
-	}
-	if ( confMap["mergeTablesPastMonths"] != "" )
-	{
-		mergeTablesPastMonths = atoi((confMap["mergeTablesPastMonths"]).c_str());
-	}
-	mergeTables mt(DB,
-			mergeTablesDefinitions,
-			is2ndLevelHlr,
-			mergeTablesFile,
-			mergeTablesPastMonths);
-	if ( mergeReset || reset ) mt.reset = true;
-	/*END merge tables definition*/
-#endif
 
 	serviceVersion thisServiceVersion(hlr_sql_server,
 			hlr_sql_user,
@@ -1187,10 +1153,6 @@ int main (int argc, char **argv)
 	}
 	if ( reset ) 
 	{
-#ifdef MERGE
-		if ( useMergeTables ) mt.drop();
-		if ( useMergeTables ) mt.dropAll();
-#endif
 		jobTransSummary.drop();
 	}
 	if (!jobTransSummary.exists() )
