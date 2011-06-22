@@ -480,7 +480,7 @@ int mergeTables::exec()
 			//for the current month.
 			return res;
 		}
-		*/
+		 */
 		/*
 		res = rTables.createPastMonths();
 		if ( res != 0 )
@@ -489,7 +489,7 @@ int mergeTables::exec()
 			//for the past months.
 			return res;
 		}
-		*/
+		 */
 	}
 	cout << "#####";
 	//check if records table for current month exists.
@@ -800,20 +800,20 @@ int table::addIndex( string index, bool primary)
 			DB.sqlPassword,
 			DB.sqlDbName );
 	string queryString;
-        if ( primary )
-        {
-                queryString = "CREATE UNIQUE INDEX " + index +" on " + tableName + " ("+index+ ")";
-        }
-        else
-        {
-                queryString = "CREATE INDEX " + index +" on " + tableName + " ("+index+ ")";
-        }
-        hlr_log(queryString,&logStream,9);
-        hlrDb.query(queryString);
-        int res = hlrDb.errNo;
-        string logBuff = "Exited with:" + int2string(res);
+	if ( primary )
+	{
+		queryString = "CREATE UNIQUE INDEX " + index +" on " + tableName + " ("+index+ ")";
+	}
+	else
+	{
+		queryString = "CREATE INDEX " + index +" on " + tableName + " ("+index+ ")";
+	}
+	hlr_log(queryString,&logStream,9);
+	hlrDb.query(queryString);
+	int res = hlrDb.errNo;
+	string logBuff = "Exited with:" + int2string(res);
 	hlr_log(logBuff,&logStream,9);
-        return res;
+	return res;
 }
 
 int table::dropIndex(string index)
@@ -823,20 +823,20 @@ int table::dropIndex(string index)
 			DB.sqlPassword,
 			DB.sqlDbName );
 	string queryString;
-        if ( index == "PRIMARY" )
-        {
-                queryString = "ALTER TABLE " + tableName + " DROP PRIMRY KEY";
-        }
-        else
-        {
-                queryString = "ALTER TABLE " + tableName + " DROP INDEX "+index;
-        }
-        hlr_log(queryString,&logStream,9);
-        hlrDb.query(queryString);
-        int res = hlrDb.errNo;
-        string logBuff = "Exited with:" + int2string(res);
+	if ( index == "PRIMARY" )
+	{
+		queryString = "ALTER TABLE " + tableName + " DROP PRIMRY KEY";
+	}
+	else
+	{
+		queryString = "ALTER TABLE " + tableName + " DROP INDEX "+index;
+	}
+	hlr_log(queryString,&logStream,9);
+	hlrDb.query(queryString);
+	int res = hlrDb.errNo;
+	string logBuff = "Exited with:" + int2string(res);
 	hlr_log(logBuff,&logStream,9);
-        return res;
+	return res;
 }
 
 bool table::checkIndex(string index)
@@ -859,7 +859,7 @@ bool table::checkIndex(string index)
 			}
 		}	
 	}
-        return false;
+	return false;
 }
 
 int table::disableKeys()
@@ -871,12 +871,12 @@ int table::disableKeys()
 			DB.sqlPassword,
 			DB.sqlDbName );
 	string queryString = "ALTER TABLE " + tableName + " DISABLE KEYS";	
-        hlr_log(queryString,&logStream,9);
-        hlrDb.query(queryString);
-        int res = hlrDb.errNo;
-        logBuff = "Exited with:" + int2string(res);
+	hlr_log(queryString,&logStream,9);
+	hlrDb.query(queryString);
+	int res = hlrDb.errNo;
+	logBuff = "Exited with:" + int2string(res);
 	hlr_log(logBuff,&logStream,9);
-        return res;
+	return res;
 }
 
 int table::enableKeys()
@@ -888,12 +888,12 @@ int table::enableKeys()
 			DB.sqlPassword,
 			DB.sqlDbName );
 	string queryString = "ALTER TABLE " + tableName + " ENABLE KEYS";	
-        hlr_log(queryString,&logStream,9);
-        hlrDb.query(queryString);
-        int res = hlrDb.errNo;
-        logBuff = "Exited with:" + int2string(res);
+	hlr_log(queryString,&logStream,9);
+	hlrDb.query(queryString);
+	int res = hlrDb.errNo;
+	logBuff = "Exited with:" + int2string(res);
 	hlr_log(logBuff,&logStream,9);
-        return res;
+	return res;
 }
 
 
@@ -901,39 +901,39 @@ int table::enableKeys()
 int table::checkAgainst(string &fieldList)
 {
 	string queryString = "DESCRIBE " + tableName;
-        string logBuff = "DB:" + DB.sqlDbName + ":" + queryString;
+	string logBuff = "DB:" + DB.sqlDbName + ":" + queryString;
 	hlr_log(logBuff,&logStream,9);
 	db hlrDb ( DB.sqlServer,
 			DB.sqlUser,
 			DB.sqlPassword,
 			DB.sqlDbName );
 	dbResult queryResult = hlrDb.query(queryString);
-        if ( hlrDb.errNo == 0 )
-        {
-                string checkBuffer;
+	if ( hlrDb.errNo == 0 )
+	{
+		string checkBuffer;
 		int numRows = queryResult.numRows();
 		for ( int i = 0; i < numRows; i++ )
 		{
 			checkBuffer += queryResult.getItem(i,0);
 		}
-                size_t x = fieldList.find(";");
-                while ( x < string::npos )
-                {
-                        fieldList.erase(x,1);
-                        x = fieldList.find(";");
-                }
-                logBuff = "Checking: " + checkBuffer;
+		size_t x = fieldList.find(";");
+		while ( x < string::npos )
+		{
+			fieldList.erase(x,1);
+			x = fieldList.find(";");
+		}
+		logBuff = "Checking: " + checkBuffer;
 		hlr_log(logBuff,&logStream,9);
-                logBuff = "against : " + fieldList;
+		logBuff = "against : " + fieldList;
 		hlr_log(logBuff,&logStream,9);
-                if ( checkBuffer == fieldList )
-                {
+		if ( checkBuffer == fieldList )
+		{
 			hlr_log("Result: match.",&logStream,9);
-                        return true;
-                }
-        }
-			hlr_log("Result: don't match.",&logStream,9);
-        return false;
+			return true;
+		}
+	}
+	hlr_log("Result: don't match.",&logStream,9);
+	return false;
 }
 
 int getYearMonth(database &DB,std::string& yearMonth, int i)
@@ -1085,6 +1085,9 @@ int recordsTables::createCurrentMonth()
 	{
 		return res;
 	}
+	hlr_log("Exiting create current Month.",&logStream,6);
+	return 0;
+	/*
 	table currentMonthTable(DB,tableName);
 	table oldRecordsTable(DB,"oldRecords");
 	std::string whereClause = " date >= \"" + currYear + "-";
@@ -1128,6 +1131,7 @@ int recordsTables::createCurrentMonth()
 		//records mismatch
 		return E_DBW_LINESMISMATCH;
 	}
+	 */
 }
 
 int table::unlock()
@@ -1159,36 +1163,36 @@ int table::lock()
 
 std::string table::getTableLock() const
 {
-    return tableLock;
+	return tableLock;
 }
 
 void table::setTableLock(std::string tableLock)
 {
-    this->tableLock = tableLock;
+	this->tableLock = tableLock;
 }
 
 string table::lockOwner()
 {
 	ifstream cfStream (tableLock.c_str(), ios::in);
-		if ( !cfStream )
+	if ( !cfStream )
+	{
+		string logBuff = tableName + " is not locked";
+		hlr_log(logBuff, &logStream, 8);
+		return "";
+	}
+	else
+	{
+		string returnBuffer;
+		string textLine;
+		while ( getline (cfStream, textLine, '\n'))
 		{
-			string logBuff = tableName + " is not locked";
-			hlr_log(logBuff, &logStream, 8);
-			return "";
+			returnBuffer += textLine;
 		}
-		else
-		{
-			string returnBuffer;
-			string textLine;
-			while ( getline (cfStream, textLine, '\n'))
-			{
-				returnBuffer += textLine;
-			}
-			string logBuff = tableName + " locked contents:" + returnBuffer;
-			hlr_log(logBuff, &logStream, 8);
-			cfStream.close();
-			return returnBuffer;
-		}
+		string logBuff = tableName + " locked contents:" + returnBuffer;
+		hlr_log(logBuff, &logStream, 8);
+		cfStream.close();
+		return returnBuffer;
+	}
 }
 
 bool table::locked()
@@ -1212,241 +1216,241 @@ bool table::locked()
 int JTSManager::parseTransLog(string logString, hlrLogRecords& records)
 {
 	vector<string> buffV;
-        Split (',',logString, &buffV );        
+	Split (',',logString, &buffV );
 	vector<string>::const_iterator it = buffV.begin();
-        map<string,string> logMap;        
+	map<string,string> logMap;
 	while ( it != buffV.end() )
-        {                
+	{
 		size_t pos = (*it).find_first_of("=");
-                if ( pos != string::npos )                
+		if ( pos != string::npos )
 		{
-                        string param = (*it).substr(0,pos);                        
+			string param = (*it).substr(0,pos);
 			string value = (*it).substr(pos+1);
-                        logMap.insert(                                        
+			logMap.insert(
 					map<string,string>::value_type (param,value)
-					);
-                }                       
+			);
+		}
 		it++;
-        }        
+	}
 	records.cpuTime = atoi(logMap["CPU_TIME"].c_str());
-        records.wallTime = atoi(logMap["WALL_TIME"].c_str());        
+	records.wallTime = atoi(logMap["WALL_TIME"].c_str());
 	records.ceId = logMap["CE_ID"];
-        records.userVo = logMap["userVo"];
-        records.processors = logMap["processors"];
-        records.urCreation = logMap["urCreation"];
-        records.localUserId = logMap["localUserId"];
-        records.localGroupId = logMap["localGroup"];
-        records.lrmsId = logMap["lrmsId"];
-        records.jobName = logMap["jobName"];
-        records.accountingProcedure = logMap["accountingProcedure"];
-        if ( logMap["start"] != "" )
-        {
-                records.start = logMap["start"];
-        }
-        else
-        {
-                records.start = "0";
-        }
-        if ( logMap["end"] != "" )
-        {
-                records.end = logMap["end"];
-        }
-        else
-        {
-                records.end = "0";
-        }
+	records.userVo = logMap["userVo"];
+	records.processors = logMap["processors"];
+	records.urCreation = logMap["urCreation"];
+	records.localUserId = logMap["localUserId"];
+	records.localGroupId = logMap["localGroup"];
+	records.lrmsId = logMap["lrmsId"];
+	records.jobName = logMap["jobName"];
+	records.accountingProcedure = logMap["accountingProcedure"];
+	if ( logMap["start"] != "" )
+	{
+		records.start = logMap["start"];
+	}
+	else
+	{
+		records.start = "0";
+	}
+	if ( logMap["end"] != "" )
+	{
+		records.end = logMap["end"];
+	}
+	else
+	{
+		records.end = "0";
+	}
 	if ( logMap["qtime"] != "" && logMap["qtime"] != "qtime" )
-        {
-                records.qtime = logMap["qtime"];
-        }
-        else
-        {
-                records.qtime = "0";
-        }
-        if ( logMap["ctime"] != "" && logMap["ctime"] != "ctime" )
-        {
-                records.ctime = logMap["ctime"];
-        }
-        else
-        {
-                records.ctime = "0";
-        }
-        records.fqan = logMap["userFqan"];
-        records.siteName = logMap["SiteName"];
-        records.atmEngineVersion = logMap["atmEngineVersion"];
-        records.voOrigin = logMap["voOrigin"];
-        records.executingNodes = logMap["execHost"];
-        records.glueCEInfoTotalCPUs = logMap["glueCEInfoTotalCPUs"];
-        if ( logMap["specInt2000"] != "" )//backwardCompatibility
-        {
-                records.iBench = logMap["specInt2000"];
-                records.iBenchType = "si2k";
-        }
-        if ( logMap["specFloat2000"] != "" )//backwardCompatibility
-        {
-                records.fBench = logMap["specFloat2000"];
-                records.fBenchType = "sf2k";
-        }
-        if ( logMap["iBench"] != "" )
-        {
-                records.iBench = logMap["iBench"];
-        }
-        if ( logMap["fBench"] != "" )
-        {
-                records.fBench = logMap["fBench"];
-        }
-        if ( logMap["iBenchType"] != "" )
-        {
-                records.iBenchType = logMap["iBenchType"];
-        }
+	{
+		records.qtime = logMap["qtime"];
+	}
+	else
+	{
+		records.qtime = "0";
+	}
+	if ( logMap["ctime"] != "" && logMap["ctime"] != "ctime" )
+	{
+		records.ctime = logMap["ctime"];
+	}
+	else
+	{
+		records.ctime = "0";
+	}
+	records.fqan = logMap["userFqan"];
+	records.siteName = logMap["SiteName"];
+	records.atmEngineVersion = logMap["atmEngineVersion"];
+	records.voOrigin = logMap["voOrigin"];
+	records.executingNodes = logMap["execHost"];
+	records.glueCEInfoTotalCPUs = logMap["glueCEInfoTotalCPUs"];
+	if ( logMap["specInt2000"] != "" )//backwardCompatibility
+	{
+		records.iBench = logMap["specInt2000"];
+		records.iBenchType = "si2k";
+	}
+	if ( logMap["specFloat2000"] != "" )//backwardCompatibility
+	{
+		records.fBench = logMap["specFloat2000"];
+		records.fBenchType = "sf2k";
+	}
+	if ( logMap["iBench"] != "" )
+	{
+		records.iBench = logMap["iBench"];
+	}
+	if ( logMap["fBench"] != "" )
+	{
+		records.fBench = logMap["fBench"];
+	}
+	if ( logMap["iBenchType"] != "" )
+	{
+		records.iBenchType = logMap["iBenchType"];
+	}
 	if ( logMap["fBenchType"] != "" )
-        {
-                records.fBenchType = logMap["fBenchType"];
-        }
-        string buff = logMap["VMEM"];
-        size_t pos = buff.find("k");
-        if ( pos != string::npos )
-        {
-                buff = buff.substr(0,pos);
-        }
-        if ( buff != "" && buff != "vmem" )
-        {
-                records.vMem = buff;
-        }
-        else
-        {
-                records.vMem = "0";
-        }
-        buff = logMap["MEM"];
-        pos = buff.find("k");
-        if ( pos != string::npos )
-        {
-                buff = buff.substr(0,pos);
-        }
-        if ( buff != "" && buff != "mem" )
-        {
-                records.mem = buff;
-        }
-        else
-        {
-                records.mem = "0";
-        }
-        return 0;
+	{
+		records.fBenchType = logMap["fBenchType"];
+	}
+	string buff = logMap["VMEM"];
+	size_t pos = buff.find("k");
+	if ( pos != string::npos )
+	{
+		buff = buff.substr(0,pos);
+	}
+	if ( buff != "" && buff != "vmem" )
+	{
+		records.vMem = buff;
+	}
+	else
+	{
+		records.vMem = "0";
+	}
+	buff = logMap["MEM"];
+	pos = buff.find("k");
+	if ( pos != string::npos )
+	{
+		buff = buff.substr(0,pos);
+	}
+	if ( buff != "" && buff != "mem" )
+	{
+		records.mem = buff;
+	}
+	else
+	{
+		records.mem = "0";
+	}
+	return 0;
 }
 
 int JTSManager::removeDuplicated(string whereClause)
 {
-		db hlrDb ( DB.sqlServer,
-                        DB.sqlUser,
-                        DB.sqlPassword,
-                        DB.sqlDbName );
-                string logBuff = "Checking for duplicate entries.";
-                hlr_log(logBuff,&logStream,6);
-                string queryString = "";
-                queryString = "SELECT uniqueChecksum,count(dgJobId) FROM " + jtsTableName + " " + whereClause + " GROUP BY uniqueChecksum HAVING count(dgJobId) > 1";
-                logBuff = "Query:" + queryString;
-                hlr_log(logBuff,&logStream,9);
-		dbResult getChecksum = hlrDb.query(queryString);
-        	if ( hlrDb.errNo != 0 )
-        	{
-                	return E_DBW_SELECT;
-        	}
-		else
+	db hlrDb ( DB.sqlServer,
+			DB.sqlUser,
+			DB.sqlPassword,
+			DB.sqlDbName );
+	string logBuff = "Checking for duplicate entries.";
+	hlr_log(logBuff,&logStream,6);
+	string queryString = "";
+	queryString = "SELECT uniqueChecksum,count(dgJobId) FROM " + jtsTableName + " " + whereClause + " GROUP BY uniqueChecksum HAVING count(dgJobId) > 1";
+	logBuff = "Query:" + queryString;
+	hlr_log(logBuff,&logStream,9);
+	dbResult getChecksum = hlrDb.query(queryString);
+	if ( hlrDb.errNo != 0 )
+	{
+		return E_DBW_SELECT;
+	}
+	else
+	{
+		if ( getChecksum.numRows() > 0 )
 		{
-			if ( getChecksum.numRows() > 0 )
+			int numRows = getChecksum.numRows();
+			for (int i=0; i<numRows; i++)
 			{
-				int numRows = getChecksum.numRows();
-				for (int i=0; i<numRows; i++)
-				{
-					string uniqueChecksum = getChecksum.getItem(i,0);
-                        		string multiplicity = getChecksum.getItem(i,1);
-					logBuff = "Found:"+ uniqueChecksum+ ",entries:"+ multiplicity;
-                        		hlr_log(logBuff,&logStream,7);
-                        		queryString = "DELETE FROM " + jtsTableName + " WHERE uniqueChecksum='";
-                        		queryString += uniqueChecksum + "' AND accountingProcedure='outOfBand'";
-                        		logBuff = "Removing:" + uniqueChecksum + ",outOfBand.";
-                        		hlr_log(logBuff,&logStream,6);
-                        		hlrDb.query(queryString);
-				}
+				string uniqueChecksum = getChecksum.getItem(i,0);
+				string multiplicity = getChecksum.getItem(i,1);
+				logBuff = "Found:"+ uniqueChecksum+ ",entries:"+ multiplicity;
+				hlr_log(logBuff,&logStream,7);
+				queryString = "DELETE FROM " + jtsTableName + " WHERE uniqueChecksum='";
+				queryString += uniqueChecksum + "' AND accountingProcedure='outOfBand'";
+				logBuff = "Removing:" + uniqueChecksum + ",outOfBand.";
+				hlr_log(logBuff,&logStream,6);
+				hlrDb.query(queryString);
 			}
-
 		}
-                //hlrGenericQuery getChecksums(queryString);
-                //getChecksums.query();
-                //vector<resultRow>::const_iterator it = (getChecksums.queryResult).begin();
-                //while ( it != (getChecksums.queryResult).end() )
-                //{
-                  //      logBuff = "Found:"+(*it)[0]+ ",entries:"+ (*it)[1];
-                    //    hlr_log(logBuff,&logStream,7);
-                        //string queryString = "SELECT dgJobId,accountingProcedure FROM " + jtsTableName + " WHERE uniqueChecksum='";
-                        //queryString += (*it)[0] + "'";
-                        //logBuff = "Query:" + queryString;
-                        //hlr_log(logBuff,&logStream,9);
-                        //hlrGenericQuery getInfo(queryString);
-                        //getInfo.query();
-                        //vector<resultRow>::const_iterator it2 = (getInfo.queryResult).begin();
-                        //while ( it2 != (getInfo.queryResult).end() )
-                        //{
-                        //       if ( debug )
-                        //      {
-                        //                cerr << (*it2)[0] << ":" << (*it2)[1] << endl;
-                        //        }
-                        //        it2++;
-                        //}
-                       // queryString = "DELETE FROM " + jtsTableName + " WHERE uniqueChecksum='";
-                       // queryString += (*it)[0] + "' AND accountingProcedure='outOfBand'";
-                       // logBuff = "Removing:" + (*it)[0] + ",outOfBand.";
-                       // hlr_log(logBuff,&logStream,6);
-                       // hlrGenericQuery delOOB(queryString);
-                       // delOOB.query();
-                       // it++;
-                //}
-                return 0;
+
+	}
+	//hlrGenericQuery getChecksums(queryString);
+	//getChecksums.query();
+	//vector<resultRow>::const_iterator it = (getChecksums.queryResult).begin();
+	//while ( it != (getChecksums.queryResult).end() )
+	//{
+	//      logBuff = "Found:"+(*it)[0]+ ",entries:"+ (*it)[1];
+	//    hlr_log(logBuff,&logStream,7);
+	//string queryString = "SELECT dgJobId,accountingProcedure FROM " + jtsTableName + " WHERE uniqueChecksum='";
+	//queryString += (*it)[0] + "'";
+	//logBuff = "Query:" + queryString;
+	//hlr_log(logBuff,&logStream,9);
+	//hlrGenericQuery getInfo(queryString);
+	//getInfo.query();
+	//vector<resultRow>::const_iterator it2 = (getInfo.queryResult).begin();
+	//while ( it2 != (getInfo.queryResult).end() )
+	//{
+	//       if ( debug )
+	//      {
+	//                cerr << (*it2)[0] << ":" << (*it2)[1] << endl;
+	//        }
+	//        it2++;
+	//}
+	// queryString = "DELETE FROM " + jtsTableName + " WHERE uniqueChecksum='";
+	// queryString += (*it)[0] + "' AND accountingProcedure='outOfBand'";
+	// logBuff = "Removing:" + (*it)[0] + ",outOfBand.";
+	// hlr_log(logBuff,&logStream,6);
+	// hlrGenericQuery delOOB(queryString);
+	// delOOB.query();
+	// it++;
+	//}
+	return 0;
 }
 
 int execTranslationRules(database& DB, string& rulesFile)
 {
 	db dataBase ( DB.sqlServer,
-                        DB.sqlUser,
-                        DB.sqlPassword,
-                        DB.sqlDbName );
-        //With great power comes great responsibility.
-        ifstream inFile(rulesFile.c_str());
-        if ( !inFile ) return 1;
-        string logBuff = "Automatic translation rules requested.";
-        hlr_log(logBuff,&logStream,3);
-        logBuff = "With great power comes great responsibility.";
-        hlr_log(logBuff,&logStream,4);
-        string rule;        int line = 0;
-        while ( getline (inFile, rule, '\n') )
-        {                line++;
-                if ( rule[0] == '#' )
-                {
-                        continue;
-                }
-                size_t pos = rule.find("rule:");
-                if ( pos == string::npos )
-                {
-                        continue;
-                }
-                else
-                {
-                        string ruleBuff = rule.substr(pos+5);
-                        if ( ( rule.find("DROP") != string::npos ) || ( rule.find("DELETE") != string::npos) )
-                        {
-                                string logBuff = "Sir hadn't you better buckle up? Ah, buckle this! LUDICROUS SPEED! *GO!*";
-				hlr_log(logBuff,&logStream,2);
-                        }
-                        dataBase.query(ruleBuff);
-                        int res = dataBase.errNo;
-			if ( res != 0 )
-                        {
-                                cerr << "Error in query:" << ruleBuff << ":"<< int2string(res) << endl;
-                        }
-                        string logBuff = "Executing:" + ruleBuff;
-                        hlr_log(logBuff,&logStream,4);
-                }
-        }
-        inFile.close();
-        return 0;
+			DB.sqlUser,
+			DB.sqlPassword,
+			DB.sqlDbName );
+	//With great power comes great responsibility.
+	ifstream inFile(rulesFile.c_str());
+	if ( !inFile ) return 1;
+	string logBuff = "Automatic translation rules requested.";
+	hlr_log(logBuff,&logStream,3);
+	logBuff = "With great power comes great responsibility.";
+	hlr_log(logBuff,&logStream,4);
+	string rule;        int line = 0;
+	while ( getline (inFile, rule, '\n') )
+	{                line++;
+	if ( rule[0] == '#' )
+	{
+		continue;
+	}
+	size_t pos = rule.find("rule:");
+	if ( pos == string::npos )
+	{
+		continue;
+	}
+	else
+	{
+		string ruleBuff = rule.substr(pos+5);
+		if ( ( rule.find("DROP") != string::npos ) || ( rule.find("DELETE") != string::npos) )
+		{
+			string logBuff = "Sir hadn't you better buckle up? Ah, buckle this! LUDICROUS SPEED! *GO!*";
+			hlr_log(logBuff,&logStream,2);
+		}
+		dataBase.query(ruleBuff);
+		int res = dataBase.errNo;
+		if ( res != 0 )
+		{
+			cerr << "Error in query:" << ruleBuff << ":"<< int2string(res) << endl;
+		}
+		string logBuff = "Executing:" + ruleBuff;
+		hlr_log(logBuff,&logStream,4);
+	}
+	}
+	inFile.close();
+	return 0;
 }
