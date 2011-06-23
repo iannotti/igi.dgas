@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.29 2011/06/23 12:50:06 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.30 2011/06/23 13:10:51 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -389,6 +389,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 	vector<resultRow>::const_iterator end = (q.queryResult).end();
 	while ( keep_going && ( it != end ) )
 	{
+		numNodes = 1;
 		currentTid = (*it)[0];
 		dgJobId = (*it)[6];
 		remoteGridId = (*it)[3];
