@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.35 2011/06/23 08:07:17 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.36 2011/06/23 08:24:27 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1155,7 +1155,7 @@ int main (int argc, char **argv)
 	{
 		jobTransSummary.drop();
 	}
-	if (!jobTransSummary.exists() && !useMergeTables)
+	if (!jobTransSummary.exists())
 	{
 		if ( !createJobTransSummaryTable(JTSdb) )
 		{
