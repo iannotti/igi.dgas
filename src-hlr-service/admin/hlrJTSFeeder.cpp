@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.28 2011/06/23 12:14:07 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.29 2011/06/23 12:50:06 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -509,9 +509,10 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 			uniqueS = (*it)[7];
 		}
 		size_t posPlus = 0;
-		while ( (posPlus = (logBuff.executingNodes).find_first_of('+',posPlus+1)) != string::npos )
+		while (  posPlus != string::npos )
 		{
-			numNodes++;
+			posPlus = (logBuff.executingNodes).find_first_of('+',posPlus+1);
+			if (posPlus != string::npos) numNodes++;
 		}
 		queryBuffer = "('";
 		queryBuffer += dgJobId;
