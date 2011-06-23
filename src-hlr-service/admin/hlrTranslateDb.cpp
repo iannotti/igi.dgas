@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.36 2011/06/23 08:24:27 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.37 2011/06/23 12:08:01 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -164,6 +164,32 @@ int upgrade_R_3_4_0_23()
 			}
 		}
 		cout << "Table jobTransSummary: Index creation done." << endl;
+	}
+	return res;
+}
+
+int upgrade_R_4_0_0(database& DB)
+{
+	int res = 0;
+	table jobTransSummary(DB, "jobTransSummary");
+	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
+	if ( jobTransSummary.checkAgainst(jobTransSummaryFields ) )//schema of 3_4_0_25
+	{
+		//needs upgrade
+		string upgradeQuery = "ALTER TABLE jobTransSummary ";
+		upgradeQuery += "ADD numNodes smallint(5) unsigned AFTER executingNodes";
+		if ( debug )
+		{
+			cerr << upgradeQuery << endl;
+		}
+		hlrGenericQuery upgrade1(upgradeQuery);
+		upgrade1.query();
+		if ( upgrade1.errNo != 0)
+		{
+			cerr << "Error in query upgrading jobTransSummary (ADD step 1)." << endl;
+			cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
+			res = 1;
+		}
 	}
 	return res;
 }
@@ -1091,6 +1117,7 @@ int main (int argc, char **argv)
 		}
 
 	}
+	upgrade_R_4_0_0(JTSdb);
 	string trans_inFields = "tid;rid;gid;from_dn;from_url;amount;tr_stamp;dg_jobid";
 	if ( trans_in.checkAgainst( trans_inFields ) )
 	{
@@ -1146,7 +1173,7 @@ int main (int argc, char **argv)
 			}
 		}
 	}
-	jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
+	jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;numNodes;uniqueChecksum";
 	if ( (!is2ndLevelHlr) && (!jobTransSummary.checkAgainst(jobTransSummaryFields )) )
 	{
 		reset = true;

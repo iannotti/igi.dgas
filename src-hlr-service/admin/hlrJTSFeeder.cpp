@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.26 2011/06/23 08:07:17 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.27 2011/06/23 12:08:01 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -373,6 +373,7 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 	queryBuffer.reserve(4096*queryLenght);
 	string valuesBuffer;
 	string uniqueS;
+	string numNodes =1;
 	string indicator = "#";
 	cout << setw(19) << "writing records: ";
 	vector<string> valuesV;
@@ -507,6 +508,11 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		{
 			uniqueS = (*it)[7];
 		}
+		size_t posPlus = 0;
+		while ( (posPlus = (logBuff.executingNodes).find_first_of('+',posPlus+1)) != string::npos )
+		{
+			numNodes++;
+		}
 		queryBuffer = "('";
 		queryBuffer += dgJobId;
 		queryBuffer += "',";
@@ -567,7 +573,9 @@ int populateJobTransSummaryTable ( const hlrGenericQuery& q , int queryLenght )
 		queryBuffer += logBuff.glueCEInfoTotalCPUs;
 		queryBuffer += "','";
 		queryBuffer += logBuff.executingNodes;
-		queryBuffer += "','";
+		queryBuffer += "',";
+		queryBuffer += numNodes;
+		queryBuffer += ",'";
 		queryBuffer += uniqueS;
 		queryBuffer += "')";
 		valuesV.push_back(queryBuffer);
@@ -886,7 +894,7 @@ int main (int argc, char **argv)
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
 	thisServiceVersion.updateStartup();
-	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
+	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;numNodes;uniqueChecksum";
 	if ( !isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields ) )
 	{
 		cerr << "The jobTransSummary table needs a schema update. Run dgas-hlr-translatedb command first." << endl;
