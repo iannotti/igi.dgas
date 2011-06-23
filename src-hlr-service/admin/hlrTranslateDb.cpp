@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.34 2011/06/22 14:30:02 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.35 2011/06/23 08:07:17 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -945,11 +945,7 @@ int main (int argc, char **argv)
 	int stepNumber = 5;
 	string stepNumberStr = (confMap["translateStepNumber"]);
 	string acceptRecordsStartDate = "";
-	string mergeTablesDefinitions = "";
-	string mergeTablesFile = "";
-	int mergeTablesPastMonths = 3;
 	bool autoDeleteOldRecords = false;
-	bool useMergeTables = false;
 	string rulesFile;
 	if ( ( confMap["autoDeleteOldRecords"] == "true" ) || 
 			( confMap["autoDeleteOldRecords"] == "yes" )  )
@@ -1041,32 +1037,6 @@ int main (int argc, char **argv)
 	{
 		thisServiceVersion.tableCreate();
 	}
-	if ( confMap["useMergeTables"] == "true" )
-	{
-		useMergeTables = true;
-	}
-	if ( confMap["mergeTablesDefinitions"] != "" )
-	{
-		mergeTablesDefinitions = confMap["mergeTablesDefinitions"];
-	}
-	if ( confMap["mergeTablesFile"] != "" )
-	{
-		mergeTablesFile = confMap["mergeTablesFile"];
-	}
-	if ( confMap["mergeTablesPastMonths"] != "" )
-	{
-		mergeTablesPastMonths = atoi((confMap["mergeTablesPastMonths"]).c_str());
-	}
-	database DB(hlr_sql_server,
-				hlr_sql_user,
-				hlr_sql_password,
-				hlr_sql_dbname);
-	mergeTables mt(DB,
-			mergeTablesDefinitions,
-			is2ndLevelHlr,
-			mergeTablesFile,
-			mergeTablesPastMonths);
-	/*END merge tables definition*/
 	thisServiceVersion.setService("dgas-hlr-translatedb");
 	thisServiceVersion.setVersion(VERSION);
 	thisServiceVersion.setHost("localhost");

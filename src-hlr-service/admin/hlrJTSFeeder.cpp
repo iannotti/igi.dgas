@@ -1,4 +1,4 @@
-//$Id: hlrJTSFeeder.cpp,v 1.1.2.25 2011/06/22 14:26:18 aguarise Exp $
+//$Id: hlrJTSFeeder.cpp,v 1.1.2.26 2011/06/23 08:07:17 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -870,36 +870,6 @@ int main (int argc, char **argv)
 	{
 		is2ndLevelHlr =true;
 	}
-	int mergeTablesPastMonths = 3;
-	string mergeTablesDefinitions = "";
-	string mergeTablesFile = "";
-	bool useMergeTables = false;
-	database DB(hlr_sql_server,
-			hlr_sql_user,
-			hlr_sql_password,
-			hlr_sql_dbname);
-	if ( confMap["useMergeTables"] == "true" )
-	{
-		useMergeTables = true;
-	}
-	if ( confMap["mergeTablesDefinitions"] != "" )
-	{
-		mergeTablesDefinitions = confMap["mergeTablesDefinitions"];
-	}
-	if ( confMap["mergeTablesFile"] != "" )
-	{
-		mergeTablesFile = confMap["mergeTablesFile"];
-	}
-	if ( confMap["mergeTablesPastMonths"] != "" )
-	{
-		mergeTablesPastMonths = atoi((confMap["mergeTablesPastMonths"]).c_str());
-	}
-	mergeTables mt(DB,
-			mergeTablesDefinitions,
-			is2ndLevelHlr,
-			mergeTablesFile,
-			mergeTablesPastMonths);
-	/*END merge tables definition*/
 	serviceVersion thisServiceVersion(hlr_sql_server,
 			hlr_sql_user,
 			hlr_sql_password,
@@ -916,10 +886,6 @@ int main (int argc, char **argv)
 	thisServiceVersion.setLogFile(hlr_logFileName);
 	thisServiceVersion.write();
 	thisServiceVersion.updateStartup();
-	if ( useMergeTables )
-	{
-		mt.exec();
-	}
 	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
 	if ( !isTableUpToDate(hlr_sql_dbname, "jobTransSummary", jobTransSummaryFields ) )
 	{
