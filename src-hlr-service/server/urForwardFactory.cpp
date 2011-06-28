@@ -26,7 +26,8 @@ int urForward::run()
 		return E_NO_SERVERSFILE;
 	}
 	vector<string>::iterator it = serverList.begin();
-	while ( keep_going && it != serverList.end() )
+	vector<string>::iterator it_end = serverList.end();
+	while ( keep_going && it != it_end )
 	{
 		//FIXME manage JTS lock here.
 		table jobTransSummary(dBase, "jobTransSummary");
@@ -335,8 +336,11 @@ int urForward::urBurst2XML(hlrGenericQuery& q, string& message)
 	{
 		string jobTransSummaryBuff = "";
 		string recordBuff = "";
+		recordBuff.reserve(4096);
+		jobTransSummaryBuff.reserve(4096*((q.queryResult).size()));
 		vector<resultRow>::iterator it = (q.queryResult).begin();
-		while ( it != (q.queryResult).end() )
+		vector<resultRow>::iterator it_end = (q.queryResult).end();
+		while ( it != it_end )
 		{
 			//build record tag.
 			recordBuff = tagAdd( "dgJobId", (*it)[0] );
@@ -351,24 +355,12 @@ int urForward::urBurst2XML(hlrGenericQuery& q, string& message)
 			recordBuff += tagAdd( "amount", (*it)[10] );
 			recordBuff += tagAdd( "start", (*it)[11] );
 			recordBuff += tagAdd( "end", (*it)[12] );
-			//backward compatibility: new forward old concentrator
-			if ( usedParameters.serverVersion == "3.4.0" )
-			{
-				recordBuff += tagAdd( "gridResource", (*it)[2] );
-				recordBuff += tagAdd( "gridUser", (*it)[3] );
-				recordBuff += tagAdd( "iBench", (*it)[13] );
-				recordBuff += tagAdd( "iBenchType", (*it)[14] );
-				recordBuff += tagAdd( "fBench", (*it)[15] );
-				recordBuff += tagAdd( "fBenchType", (*it)[16] );
-			}
-			else
-			{
-				recordBuff += tagAdd( "thisGridId", (*it)[2] );
-				recordBuff += tagAdd( "remoteGridId", (*it)[3] );
-				recordBuff += tagAdd( "transType", "resource" );
-				recordBuff += tagAdd( "si2k", (*it)[13] );
-				recordBuff += tagAdd( "sf2k", (*it)[15] );
-			}
+			recordBuff += tagAdd( "gridResource", (*it)[2] );
+			recordBuff += tagAdd( "gridUser", (*it)[3] );
+			recordBuff += tagAdd( "iBench", (*it)[13] );
+			recordBuff += tagAdd( "iBenchType", (*it)[14] );
+			recordBuff += tagAdd( "fBench", (*it)[15] );
+			recordBuff += tagAdd( "fBenchType", (*it)[16] );
 			recordBuff += tagAdd( "acl", (*it)[17] );
 			recordBuff += tagAdd( "id", (*it)[18] );
 			recordBuff += tagAdd( "lrmsId", (*it)[19] );
@@ -383,11 +375,13 @@ int urForward::urBurst2XML(hlrGenericQuery& q, string& message)
 			recordBuff += tagAdd( "voOrigin", (*it)[28] );
 			recordBuff += tagAdd( "glueCEInfoTotalCPUs", (*it)[29] );
 			recordBuff += tagAdd( "executingNodes", (*it)[30] );
-			recordBuff += tagAdd( "uniqueChecksum", (*it)[31] );
+			recordBuff += tagAdd( "numNodes", (*it)[31] );
+			recordBuff += tagAdd( "uniqueChecksum", (*it)[32] );
 			//add record to jobTransSummary tag.
 			jobTransSummaryBuff += tagAdd( "record", recordBuff );
 			it++;
 		}
+		message.reserve(jobTransSummaryBuff.size()+1024);
 		message = "<HLR type=\"urConcentrator\">\n";
 		message += tagAdd( "requestType", "insertRecords" );
 		message += tagAdd( "jobTransSummary", jobTransSummaryBuff );
@@ -559,7 +553,7 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 			else
 			{
 				//error parsing answer
-				logBuff = "getInfo():error parsing answer.";
+				logBuff = "getInfo():ERROR parsing answer.";
 				hlr_log(logBuff,&logStream,3);
 				return 1;
 			}
@@ -568,7 +562,7 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 		else
 		{
 			//error contacting server
-			logBuff = "getInfo():error contacting server.";
+			logBuff = "getInfo():ERROR contacting server.";
 			hlr_log(logBuff,&logStream,3);
 			return 2;
 		}
@@ -576,7 +570,7 @@ int urForward::getInfo(hlrLocation &s, serverParameters& serverParms)
 	else
 	{
 		//error composing message
-		logBuff = "getInfo():error composing message.";
+		logBuff = "getInfo():ERROR composing message.";
 		hlr_log(logBuff,&logStream,3);
 		return 3;
 	}
@@ -851,7 +845,7 @@ int urForward::reset()
 	}
 	if ( thereAreErrors )
 	{
-		logBuff = "There where errors sending reset requests to one or more of the 2L HLR servers, see above messages for details!";
+		logBuff = "ERROR sending reset requests to one or more of the 2L HLR servers, see above messages for details!";
 		hlr_log(logBuff,&logStream,2);
 		return E_ERROR_IN_RESET;
 	}

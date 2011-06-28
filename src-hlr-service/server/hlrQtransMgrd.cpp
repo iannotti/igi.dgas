@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.8 2011/05/27 12:10:14 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.9 2011/06/28 15:28:57 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -282,15 +282,15 @@ void mainLoop( int hlr_qmgr_tPerIter )
 	int i = 0;
 	while ( (i < hlr_qmgr_tPerIter) && keep_going)
 	{
+		time_t time0 = time(NULL);
 		vector<string> keys;
 		if ( qTrans::get(i, keys) == 0 && keep_going )
 		{
-			logBuff = "hlr_qMgr::mainLoop():Record priority:" + int2string(i);
+			logBuff = "hlr_qMgr::mainLoop():priority:" + int2string(i);
 			hlr_log( logBuff, &logStream, 7);
-
-
 			vector<string>::const_iterator it = keys.begin();
-			while ( (it != keys.end()) && keep_going )
+			vector<string>::const_iterator it_end = keys.end();
+			while ( (it != it_end) && keep_going )
 			{
 				logBuff = "hlr_qMgr::mainLoop():Processing:" + *it;
 				hlr_log( logBuff, &logStream, 4);
@@ -369,7 +369,7 @@ void mainLoop( int hlr_qmgr_tPerIter )
 				alarm(0);
 				if ( res != 0 )
 				{
-					logBuff = "Can't process:" + t.id + ",ERROR:" +int2string(res);
+					logBuff = "ERROR processing:" + t.id + ":" +int2string(res);
 					hlr_log( logBuff, &logStream, 1);
 					if ( ( res == atoi(ATM_E_DUPLICATED_A) ) || ( res == atoi(ATM_E_DUPLICATED_B) ))
 					{
@@ -406,6 +406,11 @@ void mainLoop( int hlr_qmgr_tPerIter )
 			}
 		}
 		i++;
+		time_t time1 = time(NULL);
+		float recSec = 0.0;
+		if ( (time1-time0) != 0 ) recSec = ((float)i)/((float)(time1 - time0))
+		string logBuff = "Elapsed:" + time1-time0 + "secs.Processed:" + i + " records, with:" + recSec " rec/sec";
+		hlr_log( logBuff, &logStream, 5);
 	}
 	return;
 }

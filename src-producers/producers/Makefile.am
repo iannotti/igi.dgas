@@ -16,7 +16,8 @@ libexec_PROGRAMS = dgas-amqProducer \
 	dgas-legacyCpuComposer
 
 libexec_SCRIPTS = \
-	dgas-ogfurComposer	
+	dgas-ogfurComposer	\
+	dgas-discard-record-filter.pl
 
 
 libdgas_amqProducer_la_SOURCES = \

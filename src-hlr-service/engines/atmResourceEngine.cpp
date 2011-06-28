@@ -1,13 +1,13 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.4 2011/02/15 09:47:50 aguarise Exp $
+// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.5 2011/06/28 15:28:56 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   :
  *  copyright : 
@@ -43,18 +43,18 @@ namespace ATMResource{
 
 inline int urlSplit(char delim, string url_string , url_type *url_buff)
 {
-        size_t pos = 0;
-        pos = url_string.find_first_of( delim, 0);
-        url_buff->hostname=url_string.substr(0,pos);
-        url_buff->port=atoi((url_string.substr(pos+1,url_string.size()).c_str()));
-				                
-        return 0;
+	size_t pos = 0;
+	pos = url_string.find_first_of( delim, 0);
+	url_buff->hostname=url_string.substr(0,pos);
+	url_buff->port=atoi((url_string.substr(pos+1,url_string.size()).c_str()));
+
+	return 0;
 }
 
 bool authorize(string& contactString)
 {
-        roles rolesBuff(contactString, "recordSource" );
-        return rolesBuff.exists();
+	roles rolesBuff(contactString, "recordSource" );
+	return rolesBuff.exists();
 }
 
 int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
@@ -138,7 +138,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 		bool goOn = true;
 		while ( goOn )
 		{
-		 	node jobInfoNode;
+			node jobInfoNode;
 			jobInfoNode = parse(&nodeBuff.text, "dgas:item");
 			string logBuff = "";
 			if ( jobInfoNode.status == 0 )
@@ -147,7 +147,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 				attributes = jobInfoNode.getAttributes();
 				string buffer = "";
 				buffer =
-					parseAttribute ("USER", attributes);
+						parseAttribute ("USER", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found USER=" + buffer;
@@ -155,7 +155,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("PROCESSORS", attributes);
+						parseAttribute ("PROCESSORS", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found PROCESSORS=" + buffer;
@@ -163,7 +163,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("URCREATION", attributes);
+						parseAttribute ("URCREATION", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found URCREATION=" + buffer;
@@ -171,7 +171,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("jobName", attributes);
+						parseAttribute ("jobName", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found jobName=" + buffer;
@@ -179,7 +179,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("group", attributes);
+						parseAttribute ("group", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found group=" + buffer;
@@ -187,7 +187,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("execHost", attributes);
+						parseAttribute ("execHost", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found execHost=" + buffer;
@@ -195,7 +195,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("SiteName", attributes);
+						parseAttribute ("SiteName", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found SiteName=" + buffer;
@@ -203,7 +203,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("LRMSID", attributes);
+						parseAttribute ("LRMSID", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found lrmsId=" + buffer;
@@ -211,7 +211,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("start", attributes);
+						parseAttribute ("start", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found start=" + buffer;
@@ -219,7 +219,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("end", attributes);
+						parseAttribute ("end", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found end=" + buffer;
@@ -227,7 +227,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("ctime", attributes);
+						parseAttribute ("ctime", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found ctime=" + buffer;
@@ -235,7 +235,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("qtime", attributes);
+						parseAttribute ("qtime", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found qtime=" + buffer;
@@ -243,7 +243,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("etime", attributes);
+						parseAttribute ("etime", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found etime=" + buffer;
@@ -251,7 +251,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("fqan", attributes);
+						parseAttribute ("fqan", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found fqan=" + buffer;
@@ -259,7 +259,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("si2k", attributes);
+						parseAttribute ("si2k", attributes);
 				if ( buffer != "")//backwardCompatibility
 				{
 					logBuff = "ATMengine: found si2k=" + buffer;
@@ -268,7 +268,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("sf2k", attributes);
+						parseAttribute ("sf2k", attributes);
 				if ( buffer != "")//backwardCompatibility
 				{
 					logBuff = "ATMengine: found sf2k=" + buffer;
@@ -277,7 +277,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("iBench", attributes);
+						parseAttribute ("iBench", attributes);
 				if ( buffer != "")//backwardCompatibility
 				{
 					logBuff = "ATMengine: found iBench=" + buffer;
@@ -285,7 +285,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("fBench", attributes);
+						parseAttribute ("fBench", attributes);
 				if ( buffer != "")//backwardCompatibility
 				{
 					logBuff = "ATMengine: found fBench=" + buffer;
@@ -293,7 +293,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("iBenchType", attributes);
+						parseAttribute ("iBenchType", attributes);
 				if ( buffer != "")//backwardCompatibility
 				{
 					logBuff = "ATMengine: found iBenchType=" + buffer;
@@ -301,7 +301,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("fBenchType", attributes);
+						parseAttribute ("fBenchType", attributes);
 				if ( buffer != "")//backwardCompatibility
 				{
 					logBuff = "ATMengine: found fBenchType=" + buffer;
@@ -309,7 +309,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("tz", attributes);
+						parseAttribute ("tz", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found tz=" + buffer;
@@ -317,7 +317,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("accountingProcedure", attributes);
+						parseAttribute ("accountingProcedure", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found accountingProcedure=" + buffer;
@@ -325,7 +325,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("atmClientVersion", attributes);
+						parseAttribute ("atmClientVersion", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found atmClientVersion=" + buffer;
@@ -333,7 +333,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("userVo", attributes);
+						parseAttribute ("userVo", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found userVo=" + buffer;
@@ -341,7 +341,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("ceHostName", attributes);
+						parseAttribute ("ceHostName", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found ceHostName=" + buffer;
@@ -349,7 +349,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer = 
-					parseAttribute ("ceCertificateSubject", attributes);
+						parseAttribute ("ceCertificateSubject", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found ceCertificateSubject=" + buffer;
@@ -357,7 +357,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer =
-					parseAttribute ("execCe", attributes);
+						parseAttribute ("execCe", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found execCe=" + buffer;
@@ -365,7 +365,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer =
-					parseAttribute ("submitHost", attributes);
+						parseAttribute ("submitHost", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found submitHost=" + buffer;
@@ -373,7 +373,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer =
-					parseAttribute ("lrmsServer", attributes);
+						parseAttribute ("lrmsServer", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found lrmsServer=" + buffer;
@@ -381,7 +381,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer =
-					parseAttribute ("voOrigin", attributes);
+						parseAttribute ("voOrigin", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found voOrigin=" + buffer;
@@ -389,7 +389,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 					hlr_log(logBuff, &logStream, 7);
 				}
 				buffer =
-					parseAttribute ("GlueCEInfoTotalCPUs", attributes);
+						parseAttribute ("GlueCEInfoTotalCPUs", attributes);
 				if ( buffer != "")
 				{
 					logBuff = "ATMengine: found GlueCEInfoTotalCPUs=" + buffer;
@@ -406,7 +406,7 @@ int ATMResource_parse_xml (string &doc, ATM_job_record *usage_info)
 		nodeBuff.release();
 	}
 	return 0;
-	
+
 }//ATM_parse_xml (string &doc, ATM_job_data *job_data, ATM_usage_info *usage_info)
 
 string composeLogData(ATM_job_record  &usage_info)
@@ -421,17 +421,17 @@ string composeLogData(ATM_job_record  &usage_info)
 	//to fix it a-posteriori on translateDb, but data coming from sensors should be
 	//inserted as they are (a part workarounds for known bugs 
 	//on underliyng components such as LRMS)		
-	
+
 
 	//workaround for PBS bug with walltime < 0 on exit_status= -4
 	if ( usage_info.wall_time < 0 ) usage_info.wall_time = 0;
-        urBuff = "WALL_TIME=" + int2string(usage_info.wall_time);
+	urBuff = "WALL_TIME=" + int2string(usage_info.wall_time);
 	if ( usage_info.cpu_time < 0 ) usage_info.cpu_time = 0;
-        urBuff += ",CPU_TIME=" + int2string(usage_info.cpu_time);
-        urBuff += ",CE_ID=" + usage_info.res_grid_id;
-        urBuff += ",CE_PRICE_TIME=" + int2string(usage_info.time);
-        urBuff += ",MEM=" + usage_info.mem;
-        urBuff += ",VMEM=" + usage_info.vmem;
+	urBuff += ",CPU_TIME=" + int2string(usage_info.cpu_time);
+	urBuff += ",CE_ID=" + usage_info.res_grid_id;
+	urBuff += ",CE_PRICE_TIME=" + int2string(usage_info.time);
+	urBuff += ",MEM=" + usage_info.mem;
+	urBuff += ",VMEM=" + usage_info.vmem;
 	urBuff += ",processors=" +usage_info.processors;
 	urBuff += ",urCreation=" +usage_info.urCreation;
 	if ( usage_info.lrmsId != "" )
@@ -475,15 +475,15 @@ string composeLogData(ATM_job_record  &usage_info)
 	if ( usage_info.accountingProcedure != "" )
 		urBuff += ",accountingProcedure=" + usage_info.accountingProcedure;
 	if ( usage_info.atmClientVersion != "" )
-	        urBuff += ",atmClientVersion=" + usage_info.atmClientVersion;
+		urBuff += ",atmClientVersion=" + usage_info.atmClientVersion;
 	if ( usage_info.userVo != "" )
-                urBuff += ",userVo=" + usage_info.userVo;
+		urBuff += ",userVo=" + usage_info.userVo;
 	if ( usage_info.voOrigin != "" )
 		urBuff += ",voOrigin=" + usage_info.voOrigin;
 	if ( usage_info.ceHostName != "" )
-                urBuff += ",ceHostName=" + usage_info.ceHostName;
+		urBuff += ",ceHostName=" + usage_info.ceHostName;
 	if ( usage_info.siteName != "" )
-                urBuff += ",SiteName=" + usage_info.siteName;
+		urBuff += ",SiteName=" + usage_info.siteName;
 	if ( usage_info.execCe != "" )
 		urBuff += ",execCe=" + usage_info.execCe;
 	if ( usage_info.submitHost != "" )
@@ -533,9 +533,9 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 	if ( ATMResource_parse_xml(input, &usage_info) != 0 )
 	{
 		//something went wrong parsing the input DGASML
-		 hlr_log ("ATM Engine: Error parsing the XML, reporting error.", &logStream,1);
-		 code = atoi(E_PARSE_ERROR);
-		 success = false;
+		hlr_log ("ATM Engine: Error parsing the XML, reporting error.", &logStream,1);
+		code = atoi(E_PARSE_ERROR);
+		success = false;
 	} 
 	else
 	{
@@ -556,7 +556,7 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 			success = r.exists("resource",connectionInfo.contactString);
 			if ( !success )
 			{
-				hlr_log ("ATM Engine: Operation not allowed, certificate DN isn't asociated to a valid resource in DB", &logStream,2);
+				hlr_log ("ATM Engine: Operation not allowed, certificate DN isn't associated to a valid resource in DB", &logStream,2);
 				code = atoi(E_STRICT_AUTH);
 			}
 			else
@@ -565,8 +565,8 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 				{
 					hlr_log ("ATM Engine: strictAccountCheck", &logStream,4);
 					hlrResource rBuff;
-       	 			        rBuff.ceId=usage_info.res_grid_id;
-   				       	success = rBuff.exists();
+					rBuff.ceId=usage_info.res_grid_id;
+					success = rBuff.exists();
 					if ( !success )
 					{
 						code = atoi(E_STRICT_AUTH);
@@ -578,10 +578,10 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 		{
 			//DN check here
 			if ( !authorize(connectionInfo.contactString) )
-        		{
-		                success = false;
-                		code = atoi(ATM_E_AUTH);
-        		}
+			{
+				success = false;
+				code = atoi(ATM_E_AUTH);
+			}
 		}
 	}
 	hlrTransaction t;
@@ -589,25 +589,25 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 	bool possibleResubmission = true;
 	if ( success )
 	{
-		 hlr_log ("ATMEngine: Processing record", &logStream,6);
-		 time_t currTime;
-		 time (&currTime);
-		 usage_info.time = currTime;
-		 if ( usage_info.end == "" )
-		 {
+		hlr_log ("ATMEngine: Processing record", &logStream,6);
+		time_t currTime;
+		time (&currTime);
+		usage_info.time = currTime;
+		if ( usage_info.end == "" )
+		{
 			//if job end time is not available use current time!
 			usage_info.end = int2string(currTime);
-		 }
-	  	string logBuff ="ATMEngine: gridJobId: " + usage_info.dgJobId + " submitted by " + usage_info.user_CertSubject;
+		}
+		string logBuff ="ATMEngine: gridJobId: " + usage_info.dgJobId + " submitted by " + usage_info.user_CertSubject;
 		hlr_log ( logBuff, &logStream,4);
 		//check for duplicated transaction
 		string previousJobId;
 		urBuff = composeLogData(usage_info);
 		code = checkDuplicate(usage_info,
-			success,
-			possibleResubmission, 
-			previousJobId,
-			uniqueChecksum);
+				success,
+				possibleResubmission,
+				previousJobId,
+				uniqueChecksum);
 		if ( code != 0 ) possibleResubmission = false;//duplicated, so not resubmission.
 		t.id = usage_info.dgJobId;
 		if ( previousJobId != "" )
@@ -617,7 +617,7 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 		//Resubmission check below
 		if ( possibleResubmission && t.exists() && success )//success still necessary
 		{
-			 hlr_log ("ATMEngine: Warning: record dgJobId already present, resubmission.", &logStream,3);
+			hlr_log ("ATMEngine: Warning: record dgJobId already present, resubmission.", &logStream,3);
 			//if ( t.get() != 0 )
 			//{
 			//	hlr_log ("ATMEngine: Error retrieving record", &logStream,1);
@@ -626,57 +626,57 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 			//}
 			//else
 			//{	
-				db hlrDb ( hlr_sql_server,
+			db hlrDb ( hlr_sql_server,
 					hlr_sql_user,
 					hlr_sql_password,
 					hlr_sql_dbname
-					);
-				if ( hlrDb.errNo == 0 )
+			);
+			if ( hlrDb.errNo == 0 )
+			{
+				string dgJobIdBuff = usage_info.dgJobId;
+				size_t pos = dgJobIdBuff.find("_");
+				if ( pos != string::npos )
 				{
-					string dgJobIdBuff = usage_info.dgJobId;
-					size_t pos = dgJobIdBuff.find("_");
-					if ( pos != string::npos )
+					//there's an unwanted wildchar inside the dgJobId. quote it
+					while ( pos != string::npos )
 					{
-						//there's an unwanted wildchar inside the dgJobId. quote it
-						while ( pos != string::npos )
-						{
-							dgJobIdBuff.insert(pos,"\\");
-							pos = dgJobIdBuff.find("_",pos+2);
-						}
+						dgJobIdBuff.insert(pos,"\\");
+						pos = dgJobIdBuff.find("_",pos+2);
 					}
+				}
 
-					string queryString = "SELECT * FROM trans_in WHERE dgJobId LIKE '";
-					queryString += dgJobIdBuff + "%' ";
-					hlr_log (queryString, &logStream,9);
-					dbResult result = hlrDb.query(queryString);
-					if ( hlrDb.errNo == 0)
+				string queryString = "SELECT * FROM trans_in WHERE dgJobId LIKE '";
+				queryString += dgJobIdBuff + "%' ";
+				hlr_log (queryString, &logStream,9);
+				dbResult result = hlrDb.query(queryString);
+				if ( hlrDb.errNo == 0)
+				{
+					if ( result.numRows() != 0 )
 					{
-						if ( result.numRows() != 0 )
-						{
-							//real resub
-							hlr_log ("ATM Engine: got accounting request for resubmission", &logStream,4);
-							string logBuff = "ATM Engine:"+ t.id + "," + usage_info.dgJobId + "/";
-							logBuff += t.logData + "," + urBuff;
-							hlr_log (logBuff, &logStream,4);
-							logBuff = "ATM Engine: got keys:"+ int2string(result.numRows());
-							hlr_log (logBuff, &logStream,5);
-							usage_info.dgJobId = usage_info.dgJobId + "/" + int2string(result.numRows());
-							success = true;
-						}
-					}
-					else
-					{
-						hlr_log ("ATM Engine: Error in query!", &logStream,3);
-						success = false;
-						code = atoi(INFO_NOT_FOUND);
+						//real resub
+						hlr_log ("ATM Engine: got accounting request for resubmission", &logStream,4);
+						string logBuff = "ATM Engine:"+ t.id + "," + usage_info.dgJobId + "/";
+						logBuff += t.logData + "," + urBuff;
+						hlr_log (logBuff, &logStream,4);
+						logBuff = "ATM Engine: got keys:"+ int2string(result.numRows());
+						hlr_log (logBuff, &logStream,5);
+						usage_info.dgJobId = usage_info.dgJobId + "/" + int2string(result.numRows());
+						success = true;
 					}
 				}
 				else
 				{
+					hlr_log ("ATM Engine: Error in query!", &logStream,3);
 					success = false;
-					hlr_log ("ATM Engine: Error opening DB!", &logStream,1);
-					code = atoi(E_NO_DB);
+					code = atoi(INFO_NOT_FOUND);
 				}
+			}
+			else
+			{
+				success = false;
+				hlr_log ("ATM Engine: Error opening DB!", &logStream,1);
+				code = atoi(E_NO_DB);
+			}
 			//}
 		}
 		//end of resubmission check.
@@ -685,14 +685,14 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 	{
 		usage_info.uniqueChecksum = uniqueChecksum;
 		string logBuff ="Inserting: " +
-			usage_info.dgJobId + "," + 
-			usage_info.user_CertSubject + "," +
-			usage_info.res_grid_id + "," +
-			usage_info.res_acct_bank_id+","+
-			usage_info.uniqueChecksum+","+
-			usage_info.accountingProcedure;
-			hlr_log (logBuff, &logStream,6);
-		 //put the transactuion in the queue;
+				usage_info.dgJobId + "," +
+				usage_info.user_CertSubject + "," +
+				usage_info.res_grid_id + "," +
+				usage_info.res_acct_bank_id+","+
+				usage_info.uniqueChecksum+","+
+				usage_info.accountingProcedure;
+		hlr_log (logBuff, &logStream,6);
+		//put the transactuion in the queue;
 		qTransaction qt( usage_info.dgJobId,
 				usage_info.user_CertSubject,
 				usage_info.res_grid_id,
@@ -703,7 +703,7 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 				time(NULL),
 				usage_info.uniqueChecksum,
 				usage_info.accountingProcedure
-			       );
+		);
 		int qtRes = qt.put();
 		if ( qtRes != 0 )
 		{
@@ -720,24 +720,24 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 		}
 	}
 	string message;
-        if (success)
-        {
+	if (success)
+	{
 		message += "<dgas:info status=\"ok\"\\>\n";
-        }
+	}
 	else
 	{
 		message += "<dgas:info status=\"failed\"\\>\n";
 		message += "<errMsg>";
-        	message += e.error[int2string(code)];
-        	message += "</errMsg>";
+		message += e.error[int2string(code)];
+		message += "</errMsg>";
 	}
 	message += "<CODE>\n";
 	message += int2string(code);
 	message += "\n</CODE>\n";
-        if ( ATM_compose_xml(usage_info, message, output) != 0 )
-        {
-	         hlr_log ( "ATM_engine: Error composing the XML answer!",&logStream,3);
-        }
+	if ( ATM_compose_xml(usage_info, message, output) != 0 )
+	{
+		hlr_log ( "ATM_engine: Error composing the XML answer!",&logStream,3);
+	}
 	hlr_log ("ATM Engine: Exiting.", &logStream,4);	
 	return code;
 } //ATMEngine( string doc, connInfo &connectionInfo, string *output )

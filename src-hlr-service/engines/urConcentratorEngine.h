@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: urConcentratorEngine.h,v 1.1.2.1.4.7 2011/06/03 13:18:24 aguarise Exp $
+// $Id: urConcentratorEngine.h,v 1.1.2.1.4.8 2011/06/28 15:28:57 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -90,6 +90,7 @@ struct jobTransSummary {
 	string voOrigin;
 	string glueCEInfoTotalCPUs;
 	string executingNodes;
+	string numNodes;
 	string uniqueChecksum;
 };
 

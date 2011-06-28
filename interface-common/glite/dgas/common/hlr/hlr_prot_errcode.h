@@ -1,6 +1,6 @@
 /* DGAS (DataGrid Accounting System)
  * definition of error codes.
-// $Id: hlr_prot_errcode.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
+// $Id: hlr_prot_errcode.h,v 1.1.2.1.4.2 2011/06/28 15:28:55 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -229,7 +229,7 @@ class hlrError {
 				"atmResourceEngine: Error inserting the transaction in hlr trans_queue. The trans_queue table is not present or mysql is down on the resource HLR. Notify the administrator."));
 			error.insert(mval::value_type (
 				ATM_E_TRANS_C,
-				"atmiResourceEngine: Another isntance for this transaction is waiting to be processed on the resource HLR trans_queue."));
+				"atmiResourceEngine: Another instance for this transaction is waiting to be processed on the resource HLR trans_queue."));
 			error.insert(mval::value_type (
 				ATM_E_DUPLICATED,
 				"atmEngine: This record is already present in the HLR database!."));
@@ -244,7 +244,7 @@ class hlrError {
 				"atmResourceEngine: Transaction Exists in the database but was impossble to retrieve more info on it. This Should never happen. Notify the problem to the _resource_ HLR administrator specifying the jobId."));
 			error.insert(mval::value_type (
 				ATM_E_DUPLICATED_D,
-				"atmResourceEngine: While checking for resubmission, The transaction is already present in the database."));
+				"atmResourceEngine: While checking for re-submission, The transaction is already present in the database."));
 			error.insert(mval::value_type (
 				E_STRICT_AUTH,
 				"atmEngine: The resoure is not registered on the HLR with the correct DN, or the _resource_ account specified in this UR does not exists in the specified resource HLR. Contact the HLR system Manager."));

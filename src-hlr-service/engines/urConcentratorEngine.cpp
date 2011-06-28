@@ -328,6 +328,7 @@ int urConcentrator::xmlParser( string& requestType,
 					if ( urBuff.voOrigin == "") urBuff.voOrigin = parseAndReleaseS (urNode, "voOrigin" );
 					if ( urBuff.glueCEInfoTotalCPUs == "") urBuff.glueCEInfoTotalCPUs = parseAndReleaseS (urNode, "glueCEInfoTotalCPUs" );
 					if ( urBuff.executingNodes == "") urBuff.executingNodes = parseAndReleaseS (urNode, "executingNodes" );
+					if ( urBuff.numNodes == "") urBuff.executingNodes = parseAndReleaseS (urNode, "numNodes" );
 					if ( urBuff.uniqueChecksum == "") urBuff.uniqueChecksum = parseAndReleaseS (urNode, "uniqueChecksum" );
 
 					//go on with records here...
@@ -657,7 +658,8 @@ int urConcentrator::insertRecord(db& hlrDb, jobTransSummary& r)
 	queryString += r.accountingProcedure + "','";
 	queryString += r.voOrigin + "','";
 	queryString += r.glueCEInfoTotalCPUs + "','";
-	queryString += r.executingNodes+ "','";
+	queryString += r.executingNodes+ "',";
+	queryString += r.numNodes+ ",'";
 	queryString += r.uniqueChecksum + "')";
 	dbResult result = hlrDb.query(queryString);
 	if ( hlrDb.errNo == 0 )
@@ -793,7 +795,8 @@ int urConcentrator::bulkInsertRecord(db& hlrDb, jobTransSummary& r)
 	queryString += r.accountingProcedure + "','";
 	queryString += r.voOrigin + "','";
 	queryString += r.glueCEInfoTotalCPUs + "','";
-	queryString += r.executingNodes+ "','";
+	queryString += r.executingNodes+ "',";
+	queryString += r.numNodes+ ",'";
 	queryString += r.uniqueChecksum + "')";
 	insertValuesBuffer.push_back(queryString);
 	return 0;
