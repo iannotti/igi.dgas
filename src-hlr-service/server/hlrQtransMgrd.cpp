@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.9 2011/06/28 15:28:57 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.10 2011/06/28 15:47:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -408,7 +408,7 @@ void mainLoop( int hlr_qmgr_tPerIter )
 		i++;
 		time_t time1 = time(NULL);
 		float recSec = 0.0;
-		if ( (time1-time0) != 0 ) recSec = ((float)i)/((float)(time1 - time0))
+		if ( (time1-time0) != 0 ) recSec = ((float)i)/((float)(time1 - time0));
 		string logBuff = "Elapsed:" + time1-time0 + "secs.Processed:" + i + " records, with:" + recSec " rec/sec";
 		hlr_log( logBuff, &logStream, 5);
 	}
