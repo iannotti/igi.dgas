@@ -1,5 +1,15 @@
 #!/usr/bin/perl -w
 
+#usage composerCommand | dgas-record-filter.pl [!]matchRule1 [!]matchRule2 ... [!]matchRuleN  [file:matchRuleFile] "producerCommand" [exitWith:exitStatusNumber]
+#Producer command is invoked just if one of the specified rules (as regexps) is NOT matched on the record coming in stdin from the composer command.
+#If no rules get matched then the UsageRecord is sent to the producer and thus arrives to the HLR. 
+#If any rule is matched the record is not passed on to the producer and and 'exitStatusNumber' is returned. If exitStatusNumber is not specified, 'zero' is returned
+#by default. You shold take kare of instructing sensors configuration to consider exitStatusNumber as succesfull for deletion from the queue, otherwies those records matched
+#to be ignored would remain in the queue forever.
+#rules can be specifiaed one per line also in files defined by file:matchRuleFile
+#logic of regexp rules can be inverted prepending a ! character to the rule itself.
+
+
 use strict;
 use Getopt::Long;
 
