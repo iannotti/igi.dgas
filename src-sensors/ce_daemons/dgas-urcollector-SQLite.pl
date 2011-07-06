@@ -1361,9 +1361,9 @@ sub callAtmClient
         		my $arguments = $cmd;
 			$exe = $recordComposer . " ". $arguments . " | ". $recordProducer;
 			&printLog ( 8, "Writing: $exe");
-	        	$arguments =~ s/\"/\\\"/g;
+	        	#$arguments =~ s/\"/\\\"/g;
         		my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'$transportLayer','$recordComposer','$arguments','$recordProducer','$urGridInfo{start}', '$urGridInfo{lrmsId}',0)";
-			    my $sth = dbh->prepare("INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'$transportLayer',?,?,?,'$urGridInfo{start}', '$urGridInfo{lrmsId}',0)");
+			    my $sth = $dbh->prepare("INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'$transportLayer',?,?,?,'$urGridInfo{start}', '$urGridInfo{lrmsId}',0)");
 			my $querySuccesfull = 1;
 			my $queryCounter = 0;
 			while ($keepGoing && $querySuccesfull)
@@ -1396,14 +1396,15 @@ sub callAtmClient
 	    		$exe = $legacyCmd . $cmd;
 			&printLog ( 8, "Writing: $exe");
 			my $arguments = $cmd;
-        		$arguments =~ s/\"/\\\"/g;
+        		#$arguments =~ s/\"/\\\"/g;
         		my $sqlStatement = "INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Legacy','$legacyCmd','$arguments','','$urGridInfo{start}', '$urGridInfo{lrmsId}','')";
+			    my $sth = $dbh->prepare("INSERT INTO commands (key, transport, composer, arguments, producer, recordDate, lrmsId, commandStatus) VALUES (NULL,'Legacy',?,?,'','$urGridInfo{start}', '$urGridInfo{lrmsId}','')");
     			my $querySuccesfull = 1;
 			my $queryCounter = 0;
 			while ($keepGoing && $querySuccesfull)
 			{
 				eval {
-        				my $res = $dbh->do( $sqlStatement );
+        				my $res = $sth->execute( $legacyCmd,$arguments );
 				};
 				if ( $@ )
 				{
@@ -1583,7 +1584,7 @@ sub numCPUs
 		if ($line =~ /GlueCEUniqueID=(.*)$queue,/)
 		{
 			my $innerline;
-                        &printLog ($line,9);
+                        &printLog (9,$line);
                         while ($innerline = <LDIF>)
                         {
                                 if ( $innerline =~ /GlueCEInfoTotalCPUs:\s?(.*)$/ )
@@ -1613,7 +1614,7 @@ sub searchForNumCpus
 		&numCPUs($file,$queue,$numCPUs);
 		if ($numCPUs != 0)
 		{
-			&printLog ( "Found in: $file",9);
+			&printLog ( 9, "Found in: $file");
 			$_[2] =$numCPUs;
 		}
 	}
