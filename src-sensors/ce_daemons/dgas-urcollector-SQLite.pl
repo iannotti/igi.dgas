@@ -1255,7 +1255,7 @@ sub callAtmClient {
 
 	if ( exists( $urGridInfo{queue} ) ) {
 		&searchForNumCpus( $configValues{gipDynamicTmpCEFiles},
-			$urGridInfo{queue}, $urGridInfo{numCPUs} );
+			$urGridInfo{queue}, $urGridInfo{end} , $urGridInfo{numCPUs} );
 	}
 
 	# building command:
@@ -1758,10 +1758,16 @@ sub gip2numCPUs {
 }
 
 sub searchForNumCpus {
+	my $curtime = time;
+	if ( $curtime - $_[2] > 864000 ) ##CPU Number info for jobs older than 10 days can't be considered as valid.
+	{
+		$_[3] = 0;
+		return;
+	}
 	if ( $_[0] =~ /^ldap:\/\/(.*):(\d*)$/ )
 	{
 		&printLog(7, "Using LDAP: $1:$2");
-		my $curtime = time;
+		
 		if ( exists $numCpus{$_[1]} )
 		{
 			if ( $curtime -$numCpusTS{$_[1]} > 7200 )#current value xeceeded TTL
@@ -1770,13 +1776,13 @@ sub searchForNumCpus {
 				&gip2numCPUs($1,$2,$_[1],$numCpusBuff);
 				$numCpus{$_[1]} = $numCpusBuff;
 				$numCpusTS{$_[1]} = $curtime;
-				$_[2] = $numCpus{$_[1]};
+				$_[3] = $numCpus{$_[1]};
 				&printLog(8,"numCpus: $numCpus{$_[1]}, queue: $_[1], TS: $curtime");
 				return;
 			}
 			else
 			{
-				$_[2] = $numCpus{$_[1]};
+				$_[3] = $numCpus{$_[1]};
 				&printLog(8,"numCpus, cache: $numCpus{$_[1]}, queue: $_[1], TS: $numCpusTS{$_[1]}");
 				return;
 			}
@@ -1787,7 +1793,7 @@ sub searchForNumCpus {
 				&gip2numCPUs($1,$2,$_[1],$numCpusBuff);
 				$numCpus{$_[1]} = $numCpusBuff;
 				$numCpusTS{$_[1]} = $curtime;
-				$_[2] = $numCpus{$_[1]};
+				$_[3] = $numCpus{$_[1]};
 				&printLog(8,"numCpus: $numCpus{$_[1]}, queue: $_[1], TS: $curtime");
 				return;
 		}
@@ -1802,7 +1808,7 @@ sub searchForNumCpus {
 				&numCPUs( $file, $queue, $numCpusBuff );
 				if ( $numCpusBuff != 0 ) {
 					&printLog( 9, "Found in: $file" );
-					$_[2] = $numCpusBuff;
+					$_[3] = $numCpusBuff;
 				}
 			}
 		}
