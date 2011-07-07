@@ -1764,7 +1764,7 @@ sub searchForNumCpus {
 		my $curtime = time;
 		if ( exists $numCpus{$_[1]} )
 		{
-			if ( $curtime -$numCpusTS{$_[1]} > 86400 )#current value xeceeded TTL
+			if ( $curtime -$numCpusTS{$_[1]} > 7200 )#current value xeceeded TTL
 			{
 				my $numCpusBuff = 0;
 				&gip2numCPUs($1,$2,$_[1],$numCpusBuff);
