@@ -1732,16 +1732,16 @@ sub gip2numCPUs {
 	my $hostname = $_[0];
 	my $port = $_[1];
 	my $queue    = $_[2];
-
-	#$_[2] -> numCpus
-	my $cmd = "ldapsearch -LLL -x -h $hostname -p2170";
+	&printLog(6,"Searching LDAP: $hostname,$port,$queue");
+	#$_[3] -> numCpus
+	my $cmd = "/usr/bin/ldapsearch -LLL -x -h $hostname -p $port  -b o=grid";
 	open( LDIF, "$cmd |" );
 	while ( my $line = <LDIF> ) {
-
+		printLog(9,$line);
 		#if (/^dn:\sGlueCEUniqueID=(.*)$queue,(.*)$/)
 		if ( $line =~ /GlueCEUniqueID=(.*)$queue,/ ) {
 			my $innerline;
-			&printLog( 9, $line );
+			&printLog( 8, $line );
 			while ( $innerline = <LDIF> ) {
 				if ( $innerline =~ /GlueCEInfoTotalCPUs:\s?(.*)$/ ) {
 					if ( $1 != 0 ) {
@@ -1760,6 +1760,7 @@ sub gip2numCPUs {
 sub searchForNumCpus {
 	if ( $_[0] =~ /^ldap:\/\/(.*):(\d*)$/ )
 	{
+		&printLog(7, "Using LDAP: $1:$2");
 		my $curtime = time;
 		if ( exists $numCpus{$_[1]} )
 		{
@@ -1770,11 +1771,13 @@ sub searchForNumCpus {
 				$numCpus{$_[1]} = $numCpusBuff;
 				$numCpusTS{$_[1]} = $curtime;
 				$_[2] = $numCpus{$_[1]};
+				&printLog(8,"numCpus: $numCpus{$_[1]}, queue: $_[1], TS: $curtime");
 				return;
 			}
 			else
 			{
 				$_[2] = $numCpus{$_[1]};
+				&printLog(8,"numCpus, cache: $numCpus{$_[1]}, queue: $_[1], TS: $numCpusTS{$_[1]}");
 				return;
 			}
 		}
@@ -1785,6 +1788,7 @@ sub searchForNumCpus {
 				$numCpus{$_[1]} = $numCpusBuff;
 				$numCpusTS{$_[1]} = $curtime;
 				$_[2] = $numCpus{$_[1]};
+				&printLog(8,"numCpus: $numCpus{$_[1]}, queue: $_[1], TS: $curtime");
 				return;
 		}
 	} 
