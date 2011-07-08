@@ -487,6 +487,7 @@ MAIN: while ($keepGoing) {
 		if ( $currentTS - $glueStoredTS > 7200 )#every two hours
 		{
 			$glueStoredTS = &getGLUEAttributesFromLdap($1,$2);
+			$ldifModTimestamp = $glueStoredTS;
 		}
 	}
 	else
