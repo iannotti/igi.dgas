@@ -183,6 +183,8 @@ else {
 		"Considering pool accounts determining the VOs of out-of-band jobs." );
 }
 
+my $glueStoredTS = 0;
+
 my $voToProcess = $configValues{voToProcess};
 my $keepGoing   = 1;
 my $start       = time();                       ##  time init
@@ -479,8 +481,18 @@ MAIN: while ($keepGoing) {
 	}
 
 	# see whether the GLUE attributes are available and have changed
-	$ldifModTimestamp = &getGLUEAttributesFromLdif();
-
+	if ( $glueLdifFile =~ /^ldap:\/\/(.*):(\d*)$/  )
+	{
+		my $currentTS = time();
+		if ( $currentTS - $glueStoredTS > 7200 )#every two hours
+		{
+			$glueStoredTS = &getGLUEAttributesFromLdap($1,$2);
+		}
+	}
+	else
+	{
+		$ldifModTimestamp = &getGLUEAttributesFromLdif();
+	}
 	# this is the main processing part:
 	if ( $lrmsType ne "condor" ) {
 
@@ -1128,7 +1140,7 @@ sub callAtmClient {
 	elsif ( $urGridInfo{lrmsType} eq "pbs" ) {
 		$urGridInfo{lrmsServer} = $urGridInfo{server};
 	}
-	if ( $urGridInfo{lrmsType} eq "sge" )   #SGE doesnt provid LRMS server info.
+	if ( $urGridInfo{lrmsType} eq "sge" )   #SGE doesn't provide LRMS server info.
 	{
 		$urGridInfo{server} = $localHostname;  #default. Not working on multi CE
 		if ( exists( $configValues{useCEHostName} )
@@ -3366,6 +3378,66 @@ sub searchForNumCpus {
 				$modTStamp = $thisTStamp - $DEF_LDIF_VALIDITY;
 			}
 		}
+		return $modTStamp;
+	}
+	
+	
+	sub getGLUEAttributesFromLdap 
+	{
+		my $modTStamp = 0;    # returns 0 if no valid attributes found!
+		                      # otherwise returns the timestamp of the last
+		                      # modification of the file!
+
+		# to be stored in %glueAttributes
+		%glueAttributes = ();    # first empty everything
+		my $ldapServer = $_[0];
+		my $ldapPort = $_[1];
+		my @keys = split( /,/, $keyList );
+
+		if ( !@keys ) {
+			&printLog( 3,
+"Warning: No GLUE attributes will be added to usage records (reason: no keyList in configuration file)!"
+			);
+			return 0;                            # no keys -> no benchmarks
+		}
+
+			&printLog( 8,
+				"Trying to get GLUE benchmarks from LDAP server: $ldapServer:$ldapPort" );
+
+			if ( !open( GLUEFILE, "/usr/bin/ldapsearch -LLL -x -h $ldapServer -p $ldapPort  -b o=grid |" ) ) 
+			{
+				&printLog( 5, "Warning: could not open the LDAP server ... skipping!" );
+				return 0;
+			}
+			
+			my $foundSomething = 0;
+			my $line;
+			while ( $line = <GLUEFILE> ) {
+				my $key;
+				my $logBuff;
+				foreach $key (@keys) {
+					if (   ( $line =~ /^$key:\s?(.*)$/ )
+						|| ( $line =~ /^$key=(.*)$/ )
+						|| ( $line =~ /^${key}_(.*)$/ ) )
+					{
+
+		   # accept stuff like "GlueHostBenchmarkSI00: 955" and
+		   # "GlueHostApplicationSoftwareRunTimeEnvironment: SI00MeanPerCPU=955"
+		   # "GlueHostApplicationSoftwareRunTimeEnvironment: SI00MeanPerCPU_955"
+						$glueAttributes{$key} = $1;
+						my $logBuff .= "found: $key=$1; ";
+						&printLog( 8, "$logBuff" );
+						$foundSomething = 1;
+					}
+				}
+			}
+
+			close(GLUEFILE);
+
+			if ($foundSomething) {
+					# get timestamp of file:
+					$modTStamp = time();    #mtime in sec. after epoch
+			}
 		return $modTStamp;
 	}
 
