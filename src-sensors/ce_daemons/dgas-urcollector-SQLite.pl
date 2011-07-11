@@ -78,7 +78,7 @@ my %configValues   = (
 	havePoolAccounts          => "yes",
 	poolAccountPatternFile    => "",
 	systemLogLevel            => 7,
-	gipDynamicTmpCEFiles => "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*",
+	gipDynamicTmpCEFiles => "ldap://`hostname`:2170",
 	useUrKeyDefFile      => "no",
 	urKeyDefFile         => "/etc/dgas/dgas_sensors.conf",
 	voToProcess          => "",
@@ -98,7 +98,7 @@ my %configValues   = (
 	keyList              =>
 "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00,GlueHostApplicationSoftwareRunTimeEnvironment: SI00MeanPerCPU,GlueHostApplicationSoftwareRunTimeEnvironment: SF00MeanPerCPU",
 	ldifDefaultFiles      => "",
-	glueLdifFile          => "/etc/gip/ldif/static-file-Cluster.ldif",
+	glueLdifFile          => "ldap://`hostname`:2170",
 	collectorLockFileName => $dgasLocation . "/var/dgas_urcollector.lock",
 	collectorLogFileName  => $dgasLocation
 	  . "/var/log/dgas/dgas_urcollector.log",

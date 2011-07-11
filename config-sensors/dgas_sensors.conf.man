@@ -8,7 +8,7 @@ dgas_sensors.conf Configuration file
 .B dgas_sensors.conf
 This is the configuration file for the Distributed Grid Accounting System Sensors.
 .SH SITE SPECIFIC OPTIONS
-These ptions need to be explicitely configured by the system manager in order for
+These options need to be explicitely configured by the system manager in order for
 the DGAS sensors to start retrieving records.
 .IP siteName
 siteName parameter can be used to assign to the UsageRecord a tag identifying
