@@ -12,6 +12,6 @@ chkconfig --add dgas-hlrd
 
 if [ -f /opt/glite/etc/dgas_hlr.conf ] ; then
 	if [ ! -f /etc/dgas/dgas_hlr.conf ] ; then
-		mv /opt/glite/etc/dgas/dgas_hlr.conf /etc/dgas/
+		mv /opt/glite/etc/dgas_hlr.conf /etc/dgas/
 	fi 
 fi
