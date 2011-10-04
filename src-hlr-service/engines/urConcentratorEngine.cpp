@@ -48,7 +48,7 @@ int urConcentrator::run()
 		time_t time1 = time(NULL);
 		time_t deltaT = time1-time0;
 		float effProcessedPerSecond = ( (float)(r.size())/((float)deltaT) );
-		logBuff = "Message containing " + int2string(r.size()) + " records processed in " + int2string(deltaT);
+		logBuff = c->contactString + ":Message containing " + int2string(r.size()) + " records processed in " + int2string(deltaT);
 		logBuff += " sec: " + int2string(effProcessedPerSecond) + " rec/sec";
 		hlr_log(logBuff,&logStream,6);
 		return res;
