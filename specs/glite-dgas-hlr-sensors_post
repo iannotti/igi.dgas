@@ -35,6 +35,6 @@ if [ -f $DGAS_LOCATION/sbin/dgas-urcollector ]; then
 fi
 
 if [ -d /opt/glite/var ]; then
-	cp /opt/glite/var/dgasCollectorBuffer.* /usr/var/
+	cp /opt/glite/var/dgasCollectorBuffer.* /usr/var/ &> /dev/null
 fi
 exit 0
