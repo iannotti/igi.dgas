@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.39 2011/11/03 14:59:00 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.40 2011/11/03 15:42:02 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -198,6 +198,10 @@ int upgrade_R_4_0_0(database& DB)
 int upgrade_R_4_0_0(database& DB)
 {
 	int res = 0;
+	int stepNumber = 1;
+	int percentage = 0;
+	long int records = 0;
+	long int resLastTid = 0;
 	table jobTransSummary(DB, "jobTransSummary");
 	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
 	if ( jobTransSummary.checkAgainst(jobTransSummaryFields ) )//schema of 3_4_0_25
@@ -244,8 +248,8 @@ int upgrade_R_4_0_0(database& DB)
 		}
 		else
 		{
-			long int resLastTid = atoi((((upgrade3.queryResult).front())[0]).c_str());
-			long int records = atoi((((upgrade3.queryResult).front())[1]).c_str()) - resLastTid;
+			resLastTid = atoi((((upgrade3.queryResult).front())[0]).c_str());
+			records = atoi((((upgrade3.queryResult).front())[1]).c_str()) - resLastTid;
 			if ( records <= 80000 )
 			{
 				if ( debug ) cout << "Just one iteration is sufficient." << endl;
