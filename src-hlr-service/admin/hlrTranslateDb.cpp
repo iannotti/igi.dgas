@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.38 2011/11/03 14:50:56 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.39 2011/11/03 14:59:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -167,7 +167,7 @@ int upgrade_R_3_4_0_23()
 	}
 	return res;
 }
-
+/*
 int upgrade_R_4_0_0(database& DB)
 {
 	int res = 0;
@@ -193,6 +193,7 @@ int upgrade_R_4_0_0(database& DB)
 	}
 	return res;
 }
+*/
 
 int upgrade_R_4_0_0(database& DB)
 {
