@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.45 2011/11/04 12:45:46 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.46 2011/11/04 12:51:03 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -202,7 +202,8 @@ int upgrade_R_4_0_0(database& DB)
 	int percentage = 0;
 	int oldPercentage = 0;
 	long int records = 0;
-	long int resLastTid = 0;
+	long int firstTid = 0;
+	long int lastTid = 0;
 	table jobTransSummary(DB, "jobTransSummary");
 	string jobTransSummaryFields = "dgJobId;date;gridResource;gridUser;userFqan;userVo;cpuTime;wallTime;pmem;vmem;amount;start;end;iBench;iBenchType;fBench;fBenchType;acl;id;lrmsId;localUserId;hlrGroup;localGroup;endDate;siteName;urSourceServer;hlrTid;accountingProcedure;voOrigin;GlueCEInfoTotalCPUs;executingNodes;uniqueChecksum";
 	if ( jobTransSummary.checkAgainst(jobTransSummaryFields ) )//schema of 3_4_0_25
