@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.42 2011/11/04 09:45:10 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.43 2011/11/04 10:08:47 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -263,6 +263,7 @@ int upgrade_R_4_0_0(database& DB)
 				{
 					cout << "Number of records: " << int2string(records) << endl;
 					cout << "First Id: " << int2string(resLastTid) << endl;
+					cout << "Last Id: " << ((upgrade3.queryResult).front())[1] << endl;
 					cout << "From configuration: " << int2string(stepNumber) << endl;
 					cout << "From number of transactions: " << int2string(iBuff) << endl;
 				}
@@ -281,7 +282,7 @@ int upgrade_R_4_0_0(database& DB)
 
 			time_t time0 = time(NULL);
 			percentage = ((i+1)*100)/stepNumber;
-			upgradeQuery = "SELECT *,NULL INTO JTS_tmp from jobTransSummary WHERE id>=" + int2string(resLastTid) + "AND id<" + int2string(resLastTid+step);
+			upgradeQuery = "SELECT *,NULL INTO JTS_tmp from jobTransSummary WHERE id>=" + int2string(resLastTid) + " AND id<" + int2string(resLastTid+step);
 			if ( debug )
 			{
 				cerr << upgradeQuery << endl;
