@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.52 2011/11/04 14:28:06 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.53 2011/11/04 15:27:38 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -281,10 +281,11 @@ int upgrade_R_4_0_0(database& DB)
 		// if (step <= 0 ) step = 1;
 		int x = 0;
 		int barCounter = 0;
+		time_t time0 = time(NULL);
 		for (int i=0; i<stepNumber; i++)
 		{
 
-			time_t time0 = time(NULL);
+
 			percentage = ((i+1)*100)/stepNumber;
 			upgradeQuery = "INSERT INTO JTS_tmp SELECT *,NULL FROM jobTransSummary WHERE id>=" + int2string(firstTid) + " AND id<" + int2string(firstTid+step);
 			if ( debug )
@@ -308,9 +309,9 @@ int upgrade_R_4_0_0(database& DB)
 				time_t eta = 0;
 				time_t time1 = 0;
 
-				if ( barCounter < 20 )
+				if ( barCounter < 40 )
 				{
-					cout << "#";
+					cout << "#" << flush;
 					barCounter++;
 				}
 				else
@@ -323,6 +324,7 @@ int upgrade_R_4_0_0(database& DB)
 					cout << " [" << setw(3) << int2string(percentage) << "%] E:"<< int2string(time1-time0) << " ETA:"<< int2string(eta) << endl;
 					oldPercentage = percentage;
 					barCounter = 0;
+					time0 = time(NULL);
 				}
 			}
 
