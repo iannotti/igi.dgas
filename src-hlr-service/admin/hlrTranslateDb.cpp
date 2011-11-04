@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.48 2011/11/04 13:17:09 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.49 2011/11/04 13:52:02 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -280,6 +280,7 @@ int upgrade_R_4_0_0(database& DB)
 		int step = (records/stepNumber) +1;
 		// if (step <= 0 ) step = 1;
 		int x = 0;
+		int barCounter = 0;
 		for (int i=0; i<stepNumber; i++)
 		{
 
@@ -307,9 +308,18 @@ int upgrade_R_4_0_0(database& DB)
 				time_t eta = 0;
 				if ( (percentage-oldPercentage) !=0 )
 				{
-					eta = (time1-time0)*(100-percentage)/((percentage-oldPercentage)*60);
+					if ( barCounter < 20 )
+					{
+						cout << "#";
+						eta = (time1-time0)*(100-percentage)/((percentage-oldPercentage)*60);
+						barCounter++;
+					}
+					else
+					{
+						cout << " [" << setw(3) << int2string(percentage) << "%] E:"<< int2string(time1-time0) << " ETA:"<< int2string(eta) << endl;
+						barCounter = 0;
+					}
 				}
-				cout << " [" << setw(3) << int2string(percentage) << "%] E:"<< int2string(time1-time0) << " ETA:"<< int2string(eta) << endl;
 				oldPercentage = percentage;
 			}
 		}
