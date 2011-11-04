@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.41 2011/11/04 09:04:42 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.42 2011/11/04 09:45:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -234,7 +234,7 @@ int upgrade_R_4_0_0(database& DB)
 			cerr << upgradeQuery << ":" << int2string(upgrade2.errNo) << endl;
 			res = 1;
 		}
-		upgradeQuery = "SELECT min(id),max(id) from JobTransSummary";
+		upgradeQuery = "SELECT min(id),max(id) from jobTransSummary";
 		if ( debug )
 		{
 			cerr << upgradeQuery << endl;
@@ -281,7 +281,7 @@ int upgrade_R_4_0_0(database& DB)
 
 			time_t time0 = time(NULL);
 			percentage = ((i+1)*100)/stepNumber;
-			upgradeQuery = "SELECT *,NULL INTO JTS_tmp from JobTransSummary WHERE id>=" + int2string(resLastTid) + "AND id<" + int2string(resLastTid+step);
+			upgradeQuery = "SELECT *,NULL INTO JTS_tmp from jobTransSummary WHERE id>=" + int2string(resLastTid) + "AND id<" + int2string(resLastTid+step);
 			if ( debug )
 			{
 				cerr << upgradeQuery << endl;
