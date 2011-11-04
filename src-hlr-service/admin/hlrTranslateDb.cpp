@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.44 2011/11/04 10:18:57 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.45 2011/11/04 12:45:46 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -200,6 +200,7 @@ int upgrade_R_4_0_0(database& DB)
 	int res = 0;
 	int stepNumber = 1;
 	int percentage = 0;
+	int oldPercentage = 0;
 	long int records = 0;
 	long int resLastTid = 0;
 	table jobTransSummary(DB, "jobTransSummary");
@@ -234,7 +235,7 @@ int upgrade_R_4_0_0(database& DB)
 			cerr << upgradeQuery << ":" << int2string(upgrade2.errNo) << endl;
 			res = 1;
 		}
-		upgradeQuery = "SELECT min(id),max(id) from jobTransSummary";
+		upgradeQuery = "SELECT min(id),max(id),count(*) from jobTransSummary";
 		if ( debug )
 		{
 			cerr << upgradeQuery << endl;
@@ -249,8 +250,9 @@ int upgrade_R_4_0_0(database& DB)
 		}
 		else
 		{
-			resLastTid = atoi((((upgrade3.queryResult).front())[0]).c_str());
-			records = atoi((((upgrade3.queryResult).front())[1]).c_str()) - resLastTid;
+			firstTid = ((upgrade3.queryResult).front())[0];
+			lastTid = ((upgrade3.queryResult).front())[1];
+			records = atoi((((upgrade3.queryResult).front())[2]).c_str());
 			if ( records <= 80000 )
 			{
 				if ( debug ) cout << "Just one iteration is sufficient." << endl;
@@ -262,15 +264,14 @@ int upgrade_R_4_0_0(database& DB)
 				if ( debug )
 				{
 					cout << "Number of records: " << int2string(records) << endl;
-					cout << "First Id: " << int2string(resLastTid) << endl;
-					cout << "Last Id: " << ((upgrade3.queryResult).front())[1] << endl;
+					cout << "First Id: " << firstTid << endl;
+					cout << "Last Id: " << lastTid << endl;
 					cout << "From configuration: " << int2string(stepNumber) << endl;
 					cout << "From number of transactions: " << int2string(iBuff) << endl;
 				}
 				stepNumber = ( iBuff >= stepNumber ) ? iBuff : stepNumber;
 			}
 		}
-		percentage = 0;
 		if ( debug )
 		{
 			cout << "Dividing operation in " << int2string(stepNumber) << " steps." << endl;
@@ -282,7 +283,7 @@ int upgrade_R_4_0_0(database& DB)
 
 			time_t time0 = time(NULL);
 			percentage = ((i+1)*100)/stepNumber;
-			upgradeQuery = "INSERT INTO JTS_tmp SELECT *,NULL FROM jobTransSummary WHERE id>=" + int2string(resLastTid) + " AND id<" + int2string(resLastTid+step);
+			upgradeQuery = "INSERT INTO JTS_tmp SELECT *,NULL FROM jobTransSummary WHERE id>=" + int2string(firstTid) + " AND id<" + int2string(firstTid+step);
 			if ( debug )
 			{
 				cerr << upgradeQuery << endl;
@@ -297,7 +298,16 @@ int upgrade_R_4_0_0(database& DB)
 			}
 			else
 			{
-				resLastTid = resLastTid+step;
+				firstTid = firstTid+step;
+				if ( x == stepNumber-1 ) percentage = 100;
+				time_t time1 = time(NULL);
+				int time_t = 0;
+				if ( (percentage-oldPercentage) !=0 )
+				{
+					eta = (time1-time0)*(100-percentage)/((percentage-oldPercentage)*60);
+				}
+				cout << " [" << setw(3) << int2string(percentage) << "%] E:"<< int2string(time1-time0) << " ETA:"<< int2string(eta) << endl;
+				oldPercentage = percentage;
 			}
 		}
 	}
