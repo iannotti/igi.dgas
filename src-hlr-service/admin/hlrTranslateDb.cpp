@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.53 2011/11/04 15:27:38 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.54 2011/11/07 12:42:23 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -236,10 +236,46 @@ int upgrade_R_4_0_0(database& DB)
 			cerr << upgradeQuery << ":" << int2string(upgrade2.errNo) << endl;
 			res = 1;
 		}
-		upgradeQuery = "SELECT min(id),max(id),count(*) from jobTransSummary";
+		string checkQuery = "SELECT uniqueChecksum from JTS_tmp ORDER by id DESC LIMIT 1";
 		if ( debug )
 		{
-			cerr << upgradeQuery << endl;
+			cerr << checkQuery << endl;
+		}
+		hlrGenericQuery check1(upgradeQuery);
+		check1.query();
+		if ( check1.errNo != 0)
+		{
+			upgradeQuery = "SELECT min(id),max(id),count(*) from jobTransSummary";
+			if ( debug )
+			{
+				cerr << upgradeQuery << endl;
+			}
+		}
+		else
+		{
+			cout << "Operation interrupted in previous run. Continuing from record:"  << ((check1.queryResult).front())[0] << endl;
+			checkQuery = "SELECT id from jobTransSummary WHERE uniqueChecksum=\""+ ((check1.queryResult).front())[0] + "\"";
+			if ( debug )
+			{
+				cerr << checkQuery << endl;
+			}
+			hlrGenericQuery check2(checkQuery);
+			check2.query();
+			if ( check2.errNo != 0)
+			{
+				cerr << "Error in query upgrading jobTransSummary (CHECK step 2)." << endl;
+				cerr << checkQuery << ":" << int2string(check2.errNo) << endl;
+				res = 1;
+			}
+			else
+			{
+				upgradeQuery = "SELECT min(id),max(id),count(*) from jobTransSummary WHERE id>=" + ((check2.queryResult).front())[0];
+				if ( debug )
+				{
+					cerr << upgradeQuery << endl;
+				}
+			}
+
 		}
 		hlrGenericQuery upgrade3(upgradeQuery);
 		upgrade3.query();
@@ -309,7 +345,7 @@ int upgrade_R_4_0_0(database& DB)
 				time_t eta = 0;
 				time_t time1 = 0;
 
-				if ( barCounter < 40 )
+				if ( barCounter < 50 )
 				{
 					cout << "#" << flush;
 					barCounter++;
