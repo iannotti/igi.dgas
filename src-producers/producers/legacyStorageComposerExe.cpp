@@ -2,6 +2,7 @@
 #include <iostream>
 #include <getopt.h>
 #include <vector>
+#include <cstdio>
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/int2string.h"
@@ -53,7 +54,7 @@ int options ( int argc, char **argv )
 		{0,0,0,0}
 	};
 	while (( option_char = getopt_long( argc, argv, OPTION_STRING,
-					long_options, &option_index)) != EOF)
+					long_options, &option_index)) != EOF )
 		switch (option_char)
 		{
 			case 'v': verbosity=atoi(optarg); break;
