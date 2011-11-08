@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.h,v 1.1.2.2 2010/12/23 12:19:53 aguarise Exp $
+// $Id: amqProducer.h,v 1.1.2.3 2011/11/08 13:40:24 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -24,6 +24,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <memory>
 
 #define AMQ_PRODUCER_VERSION "protoA"
 
