@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <cstdlib>
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 
 using namespace std;
