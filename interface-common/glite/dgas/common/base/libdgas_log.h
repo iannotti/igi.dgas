@@ -1,4 +1,4 @@
-// $Id: libdgas_log.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
+// $Id: libdgas_log.h,v 1.1.2.1.4.2 2011/11/08 09:14:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -22,6 +22,7 @@
 
 //#include <stdio.h>
 #include <ctime>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <vector>

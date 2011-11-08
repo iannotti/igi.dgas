@@ -1,4 +1,4 @@
-// $Id: dgas_lock.h,v 1.1.2.1.4.1 2010/10/19 09:00:16 aguarise Exp $
+// $Id: dgas_lock.h,v 1.1.2.1.4.2 2011/11/08 09:14:11 aguarise Exp $
 // // -------------------------------------------------------------------------
 // // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // // All rights reserved. See LICENSE file for details.
@@ -17,6 +17,7 @@
 #include <string>
 #include <map>
 #include <unistd.h>
+#include <cstdlib>
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 
 using namespace std;

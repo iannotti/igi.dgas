@@ -1,4 +1,4 @@
-// $Id: dgas_config.h,v 1.1.2.1.4.2 2010/12/21 14:34:41 aguarise Exp $
+// $Id: dgas_config.h,v 1.1.2.1.4.3 2011/11/08 09:14:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -20,6 +20,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <cstdlib>
 
 using namespace std;
 
