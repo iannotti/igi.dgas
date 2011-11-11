@@ -2,7 +2,7 @@
 <xsd:schema attributeFormDefault="qualified"
 	elementFormDefault="qualified" targetNamespace="http://eu-emi.eu/namespaces/2011/10/computerecord"
 	xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:urf="http://schema.ogf.org/urf/2003/09/urf"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Q1="http://eu-emi.eu/namespaces/2011/10/computerecord">
 	<xsd:annotation>
 		<xsd:documentation xml:lang="en">EMI Compute Accounting
 			Record Working Group XML Schema definition</xsd:documentation>
@@ -18,21 +18,29 @@
 	</xsd:complexType>
 	<xsd:complexType name="UsageRecordType">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="1" ref="urf:RecordIdentity" />
+			<xsd:element maxOccurs="1" minOccurs="1"
+				ref="urf:RecordIdentity" />
 			<xsd:element type="urf:JobIdentityType" ref="JobIdentity"
-				maxOccurs="1" minOccurs="1"></xsd:element>
+				maxOccurs="1" minOccurs="1">
+			</xsd:element>
 
-			<xsd:element maxOccurs="unbounded" minOccurs="0"
+			<xsd:element maxOccurs="1" minOccurs="1"
 				ref="urf:UserIdentity" />
 			<xsd:element maxOccurs="1" minOccurs="0" ref="urf:JobName" />
 			<xsd:element maxOccurs="1" minOccurs="0" ref="urf:Charge" />
 			<xsd:element maxOccurs="1" minOccurs="1" ref="urf:Status" />
+			<xsd:element name="ExitStatus" type="xsd:integer"
+				maxOccurs="1" minOccurs="0">
+			</xsd:element>
 			<xsd:choice maxOccurs="unbounded" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation>The elements grouped together in this choice may
-						be represented within a usage record multiple times. Each of these
-						appearances must be differentiated by the metric and/or type
-						associated with the element.</xsd:documentation>
+					<xsd:documentation>
+						The elements grouped together in this choice may
+						be represented within a usage record multiple
+						times. Each of these appearances must be
+						differentiated by the metric and/or type
+						associated with the element.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:element ref="urf:Disk" />
 				<xsd:element ref="urf:Memory" />
@@ -43,23 +51,33 @@
 				<xsd:element ref="urf:ServiceLevel" />
 			</xsd:choice>
 			<xsd:choice maxOccurs="unbounded" minOccurs="0">
-				<xsd:element maxOccurs="1" minOccurs="1" ref="urf:WallDuration" />
+				<xsd:element maxOccurs="1" minOccurs="1"
+					ref="urf:WallDuration" />
 				<xsd:sequence maxOccurs="1" minOccurs="1">
-					<xsd:element maxOccurs="1" minOccurs="3" ref="urf:CpuDuration" />
+					<xsd:element maxOccurs="1" minOccurs="3"
+						ref="urf:CpuDuration" />
 				</xsd:sequence>
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:NodeCount" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:Processors" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:EndTime" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:StartTime" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:MachineName" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:SubmitHost" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="urf:Queue" />
+				<xsd:element maxOccurs="1" minOccurs="0"
+					ref="urf:NodeCount" />
+				<xsd:element maxOccurs="1" minOccurs="0"
+					ref="urf:Processors" />
+				<xsd:element maxOccurs="1" minOccurs="1"
+					ref="urf:EndTime" />
+				<xsd:element maxOccurs="1" minOccurs="1"
+					ref="urf:StartTime" />
+				<xsd:element maxOccurs="1" minOccurs="0"
+					ref="urf:MachineName" />
+				<xsd:element maxOccurs="1" minOccurs="0"
+					ref="urf:SubmitHost" />
+				<xsd:element maxOccurs="unbounded" minOccurs="1"
+					ref="urf:Queue" />
 				<xsd:sequence maxOccurs="1" minOccurs="0">
 					<xsd:element maxOccurs="unbounded" minOccurs="0"
 						ref="urf:ProjectName" />
 				</xsd:sequence>
 				<xsd:sequence maxOccurs="1" minOccurs="0">
-					<xsd:element maxOccurs="unbounded" minOccurs="0" ref="urf:Host" />
+					<xsd:element maxOccurs="unbounded" minOccurs="0"
+						ref="urf:Host" />
 				</xsd:sequence>
 				<xsd:sequence maxOccurs="1" minOccurs="0">
 					<xsd:choice maxOccurs="unbounded" minOccurs="0">
@@ -69,12 +87,12 @@
 						<xsd:element ref="urf:ConsumableResource" />
 					</xsd:choice>
 				</xsd:sequence>
-			</xsd:choice>
+			</xsd:choice>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:element abstract="true" name="Usage" type="urf:UsageRecordType" />
 	<xsd:element name="UsageRecord" substitutionGroup="urf:Usage"
-		type="urf:UsageRecordType" />
+		type="Q1:UsageRecordType" />
 	<xsd:element name="JobUsageRecord" substitutionGroup="urf:Usage">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -187,7 +205,7 @@
 			</xsd:simpleContent>
 		</xsd:complexType>
 	</xsd:element>
-	<!-- This element should appear at most twice within a usage record, with 
+	<!-- This element should appear at most three times within a usage record, with 
 		differing values for usageType for each appearance -->
 	<xsd:element name="CpuDuration">
 		<xsd:complexType>
@@ -248,8 +266,9 @@
 	<xsd:element name="SubmitHost">
 		<xsd:complexType>
 			<xsd:simpleContent>
-				<xsd:extension base="urf:domainNameType">
+				<xsd:extension base="xsd:string">
 					<xsd:attribute ref="urf:description" use="optional" />
+					<xsd:attribute name="type" type="xsd:string" use="required" />
 				</xsd:extension>
 			</xsd:simpleContent>
 		</xsd:complexType>
@@ -268,7 +287,7 @@
 		<xsd:complexType>
 			<xsd:simpleContent>
 				<xsd:extension base="xsd:string">
-					<xsd:attribute ref="urf:description" use="optional" />
+					<xsd:attribute ref="urf:description" use="required" />
 				</xsd:extension>
 			</xsd:simpleContent>
 		</xsd:complexType>
@@ -308,19 +327,7 @@
 				</xsd:extension>
 			</xsd:simpleContent>
 		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="Charge">
-		<xsd:complexType>
-			<xsd:simpleContent>
-				<xsd:extension base="xsd:float">
-					<xsd:attribute ref="urf:description" use="optional" />
-					<xsd:attribute ref="urf:unit" use="required" />
-					<xsd:attribute name=" formula " type="xsd:string"
-						use="required" />
-				</xsd:extension>
-			</xsd:simpleContent>
-		</xsd:complexType>
-	</xsd:element>
+	</xsd:element>
 	<!-- identity elements -->
 	<xsd:element name="JobIdentity">
 		<xsd:complexType>
@@ -335,34 +342,7 @@
 				</xsd:sequence>
 			</xsd:sequence>
 		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="UserIdentity">
-		<xsd:complexType>
-			<xsd:sequence maxOccurs="1" minOccurs="1">
-				<xsd:element maxOccurs="1" minOccurs="1" name="LocalUserId"
-					type="xsd:string" />
-				<xsd:element maxOccurs="1" minOccurs="0" name="GlobalUserName"
-					type="xsd:string" />
-				<xsd:element maxOccurs="1" minOccurs="0" name="LocalGroup"
-					type="xsd:string" />
-				<xsd:element maxOccurs="1" minOccurs="0" name="Group"
-					type="xsd:string" />
-				<xsd:element maxOccurs="unbounded" minOccurs="0"
-					name="GroupAttribute" type="car:groupAttributeType" />
-				<xsd:element maxOccurs="1" minOccurs="0" ref="ds:KeyInfo" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="RecordIdentity">
-		<xsd:complexType>
-			<xsd:sequence maxOccurs="1" minOccurs="1">
-				<xsd:element ref="ds:KeyInfo" />
-			</xsd:sequence>
-			<xsd:attribute name="recordId" type="xsd:token" use="required" />
-			<xsd:attribute name="createTime" type="xsd:dateTime"
-				use="required" />
-		</xsd:complexType>
-	</xsd:element>
+	</xsd:element>
 	<!-- Extensibility Framework -->
 	<xsd:element name="
 				Resource " type="urf:ResourceType" />
@@ -440,4 +420,47 @@
 			<xsd:maxLength value="255" />
 		</xsd:restriction>
 	</xsd:simpleType>
+
+
+
+
+	<xsd:complexType name="UserIdentityType">
+		<xsd:sequence>
+			<xsd:element name="LocalUserID" type="xsd:string"
+				maxOccurs="1" minOccurs="1">
+			</xsd:element>
+			<xsd:element name="GlobalUserName" type="xsd:string"
+				maxOccurs="1" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="LocalGroup" type="xsd:string"
+				maxOccurs="1" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="Group" type="xsd:string"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="GroupAttribute" type="xsd:string"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RecordIdentityType">
+		<xsd:sequence minOccurs="1" maxOccurs="1">
+			<xsd:element ref="ds:KeyInfo"></xsd:element>
+		</xsd:sequence>
+		<xsd:attribute use="required" name="recordId"
+			type="xsd:token">
+		</xsd:attribute>
+		<xsd:attribute use="required" name="createTime"
+			type="xsd:dateTime">
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="ChargeComplexType">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:float">
+				<xsd:attribute use="optional" ref="urf:description"></xsd:attribute>
+				<xsd:attribute use="required" ref="urf:unit"></xsd:attribute>
+				<xsd:attribute use="required" name="formula"
+					type="xsd:string">
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
 </xsd:schema>
