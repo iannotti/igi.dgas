@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urf:UsageRecord xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/computerecord car_v0.7.xsd ">
+  <urf:RecordIdentity urf:createTime="2001-12-31T12:00:00" urf:recordId="token"/>
+  <urf:JobIdentity>
+    <urf:LocalJobId>urf:LocalJobId</urf:LocalJobId>
+  </urf:JobIdentity>
+  <urf:UserIdentity>
+    <urf:LocalUserId>urf:LocalUserId</urf:LocalUserId>
+  </urf:UserIdentity>
+  <urf:Status urf:description="">token</urf:Status>
+  <urf:Infrastructure urf:description="" urf:type="local"/>
+  <urf:WallDuration urf:description="">P1D</urf:WallDuration>
+  <urf:CpuDuration urf:description="" urf:usageType="all">P1D</urf:CpuDuration>
+  <urf:ServiceLevel urf:type="si2k">2150</urf:ServiceLevel>
+  <urf:EndTime urf:description="">2001-12-31T12:00:00</urf:EndTime>
+  <urf:StartTime urf:description="">2001-12-31T12:00:00</urf:StartTime>
+  <urf:SubmitHost urf:description="" urf:type="">http://tempuri.org</urf:SubmitHost>
+  <urf:Queue urf:description="">urf:Queue</urf:Queue>
+  <urf:SiteName urf:type="">urf:SiteName</urf:SiteName>
+</urf:UsageRecord>

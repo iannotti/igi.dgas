@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urf:UsageRecord xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/computerecord car_v0.7.xsd ">
+  <urf:RecordIdentity urf:createTime="2001-12-31T12:00:00" urf:recordId="token"/>
+  <urf:JobIdentity>
+    <urf:GlobalJobId>urf:GlobalJobId</urf:GlobalJobId>
+    <urf:LocalJobId>urf:LocalJobId</urf:LocalJobId>
+    <urf:ProcessId>urf:ProcessId</urf:ProcessId>
+  </urf:JobIdentity>
+  <urf:UserIdentity>
+    <urf:LocalUserId>urf:LocalUserId</urf:LocalUserId>
+    <urf:GlobalUserName>UserX509DN</urf:GlobalUserName>
+    <urf:LocalGroup>urf:LocalGroup</urf:LocalGroup>
+    <urf:Group>UserVO</urf:Group>
+    <urf:GroupAttribute urf:type="ProjectName">TheMagicalProject</urf:GroupAttribute>
+    <urf:GroupAttribute urf:type="FQAN">UserFQAN</urf:GroupAttribute>
+    <urf:GroupAttribute urf:type="group">UserFQAN-group</urf:GroupAttribute>
+    <urf:GroupAttribute urf:type="role">UserFQAN-role</urf:GroupAttribute>
+  </urf:UserIdentity>
+  <urf:JobName urf:description="">urf:JobName</urf:JobName>
+  <urf:Charge urf:description="" urf:formula="CpuDuration*KSI2K/3600" urf:unit="H*KIS2K">0.0</urf:Charge>
+  <urf:Status urf:description="">completed</urf:Status>
+  <urf:ExitStatus>0</urf:ExitStatus>
+  <urf:Infrastructure urf:description="PBS" urf:type="grid"/>
+  <urf:WallDuration urf:description="">P1D</urf:WallDuration>
+  <urf:CpuDuration urf:description="" urf:usageType="all">P1D</urf:CpuDuration>
+  <urf:ServiceLevel urf:type="si2k">2600</urf:ServiceLevel>
+  <urf:Memory urf:description="" urf:metric="total" urf:phaseUnit="P1D" urf:storageUnit="B" urf:type="shared">12345</urf:Memory>
+  <urf:Swap urf:description="" urf:metric="total" urf:phaseUnit="P1D" urf:storageUnit="B" urf:type="swap">123456</urf:Swap>
+  <urf:TimeInstant urf:type="Ctime">2001-12-31T12:00:00</urf:TimeInstant>
+  <urf:TimeInstant urf:type="Qtime">2001-12-31T12:00:00</urf:TimeInstant>
+  <urf:TimeInstant urf:type="Etime">2001-12-31T12:00:00</urf:TimeInstant>
+  <urf:NodeCount urf:description="" urf:metric="total">2</urf:NodeCount>
+  <urf:Processors urf:consumptionRate="1.0" urf:description="" urf:metric="max">4</urf:Processors>
+  <urf:EndTime urf:description="">2001-12-31T12:00:00</urf:EndTime>
+  <urf:StartTime urf:description="">2001-12-31T12:00:00</urf:StartTime>
+  <urf:MachineName urf:description="">anHost.aDomain</urf:MachineName>
+  <urf:SubmitHost urf:description="" urf:type="">http://t2-ce-01.to.infn.it:8443/cream-pbs-short</urf:SubmitHost>
+  <urf:Queue urf:description="execution">Short</urf:Queue>
+  <urf:SiteName urf:type="gocdb">INFN-TORINO</urf:SiteName>
+  <urf:ProjectName urf:description="">urf:ProjectName</urf:ProjectName>
+  <urf:Host urf:description="" urf:primary="false">t2-wn-01.to.infn.it</urf:Host>
+  <urf:Host urf:description="" urf:primary="false">t2-wn-05.to.infn.it</urf:Host>
+</urf:UsageRecord>
