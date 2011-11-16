@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.59 2011/11/16 13:51:24 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.60 2011/11/16 13:57:11 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -246,7 +246,7 @@ int upgrade_R_4_0_0(database& DB)
 		if ( check1.errNo != 0 )
 		{
 			cerr << "Error in query upgrading jobTransSummary (CHECK step 1)." << endl;
-			cerr << checkQuery << ":" << int2string(check2.errNo) << endl;
+			cerr << checkQuery << ":" << int2string(check1.errNo) << endl;
 			res = 1;
 		}
 		else
