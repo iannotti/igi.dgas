@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.61 2011/11/17 14:13:26 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.62 2011/11/21 09:58:18 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -201,7 +201,8 @@ int upgrade_R_4_0_0(database& DB)
 	int stepNumber = 1;
 	int percentage = 0;
 	int oldPercentage = 0;
-	long int records = 0;
+	long int realrecords = 0;//real number of records to be processed
+	long int effectiverecords;//effective number of ids (there can be more id than reecords due to fragmentation)
 	long int firstTid = 0;
 	long int lastTid = 0;
 	table jobTransSummary(DB, "jobTransSummary");
@@ -299,18 +300,19 @@ int upgrade_R_4_0_0(database& DB)
 		{
 			firstTid = atoi((((upgrade3.queryResult).front())[0]).c_str());
 			lastTid = atoi((((upgrade3.queryResult).front())[1]).c_str());
-			records = atoi((((upgrade3.queryResult).front())[2]).c_str());
-			if ( records <= 80000 )
+			realrecords = atoi((((upgrade3.queryResult).front())[2]).c_str());
+			effectiverecords = atoi(((upgrade3.queryResult).front())[1]) - atoi(((upgrade3.queryResult).front())[0]);
+			if ( realrecords <= 80000 )
 			{
 				if ( debug ) cout << "Just one iteration is sufficient." << endl;
 				stepNumber = 1;
 			}
 			else
 			{
-				long int iBuff = records/80000;
+				long int iBuff = realrecords/80000;
 				if ( debug )
 				{
-					cout << "Number of records: " << int2string(records) << endl;
+					cout << "Number of records: " << int2string(realrecords) << endl;
 					cout << "First Id: " << firstTid << endl;
 					cout << "Last Id: " << lastTid << endl;
 					cout << "From configuration: " << int2string(stepNumber) << endl;
@@ -323,7 +325,7 @@ int upgrade_R_4_0_0(database& DB)
 		{
 			cout << "Dividing operation in " << int2string(stepNumber) << " steps." << endl;
 		}
-		int step = (records/stepNumber) +1;
+		int step = (effectiverecords/stepNumber) +1;
 		// if (step <= 0 ) step = 1;
 		int x = 0;
 		int barCounter = 0;
