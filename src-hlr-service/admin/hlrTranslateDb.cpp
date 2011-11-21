@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.62 2011/11/21 09:58:18 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.63 2011/11/21 10:26:06 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -301,7 +301,7 @@ int upgrade_R_4_0_0(database& DB)
 			firstTid = atoi((((upgrade3.queryResult).front())[0]).c_str());
 			lastTid = atoi((((upgrade3.queryResult).front())[1]).c_str());
 			realrecords = atoi((((upgrade3.queryResult).front())[2]).c_str());
-			effectiverecords = atoi(((upgrade3.queryResult).front())[1]) - atoi(((upgrade3.queryResult).front())[0]);
+			effectiverecords = atoi((((upgrade3.queryResult).front())[1]).c_str()) - atoi((((upgrade3.queryResult).front())[0]).c_str());
 			if ( realrecords <= 80000 )
 			{
 				if ( debug ) cout << "Just one iteration is sufficient." << endl;
