@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:acar="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord"
+	xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord">
+
+	<import schemaLocation="car_v0.8.xsd"
+		namespace="http://eu-emi.eu/namespaces/2011/11/computerecord"></import>
+	<element name="SummaryRecord" type="acar:SummaryRecordType"></element>
+
+	<complexType name="SummaryRecordType">
+		<sequence>
+			<element name="Site" type="urf:SiteType" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="Month" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="Year" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="UserIdentity" type="acar:UserIdentityAggregateType"></element>
+			<element name="EarliestEndTime" type="dateTime"></element>
+			<element name="LatestEndTime" type="dateTime"></element>
+			<element name="WallDuration" type="duration" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="CpuDuration" type="duration" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="NormalisedWallDuration" type="duration" maxOccurs="1" minOccurs="1"></element>
+			<element name="NormalisedCpuDuration" type="duration" maxOccurs="1" minOccurs="1"></element>
+			<element name="NumberOfJobs" type="integer" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<element name="SummaryRecords" type="acar:SummaryRecordsType"></element>
+
+	<complexType name="SummaryRecordsType">
+		<sequence>
+			<element name="SummaryRecord" type="acar:SummaryRecordType"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+
+	<complexType name="UserIdentityAggregateType">
+		<complexContent>
+			<extension base="urf:UserIdentityBaseType">
+				<sequence>
+					<element name="GlobalUserName" type="string"
+						maxOccurs="1" minOccurs="0">
+					</element>
+					<element name="Group" type="string" maxOccurs="1" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>
