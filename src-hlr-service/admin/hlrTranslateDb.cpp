@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.64 2011/11/25 10:19:29 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.65 2011/11/25 10:33:31 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -376,7 +376,7 @@ int upgrade_R_4_0_0(database& DB)
 			upgradeQuery = "DROP TABLE jobTransSummary";
 			hlrGenericQuery upgrade5(upgradeQuery);
 			upgrade5.query();
-			if ( upgrade4.errNo != 0)
+			if ( upgrade5.errNo != 0)
 			{
 				cerr << "Error in query upgrading jobTransSummary (DEL step 1)." << endl;
 				cerr << upgradeQuery << ":" << int2string(upgrade5.errNo) << endl;
@@ -384,7 +384,7 @@ int upgrade_R_4_0_0(database& DB)
 			}
 			else
 			{
-				upgradeQuery = "RENAME TABLE jts_TMP TO jobTransSummary";
+				upgradeQuery = "RENAME TABLE JTS_tmp TO jobTransSummary";
 				hlrGenericQuery upgrade6(upgradeQuery);
 				upgrade6.query();
 				if ( upgrade6.errNo != 0)
@@ -392,6 +392,18 @@ int upgrade_R_4_0_0(database& DB)
 					cerr << "Error in query upgrading jobTransSummary (RENAME step 1)." << endl;
 					cerr << upgradeQuery << ":" << int2string(upgrade6.errNo) << endl;
 					res = 1;
+				}
+				else
+				{
+					upgradeQuery = "DROP TABLE JTS_tmp";
+					hlrGenericQuery upgrade7(upgradeQuery);
+					upgrade7.query();
+					if ( upgrade7.errNo != 0)
+					{
+						cerr << "Error in query upgrading jobTransSummary (DEL step 1)." << endl;
+						cerr << upgradeQuery << ":" << int2string(upgrade7.errNo) << endl;
+						res = 1;
+					}
 				}
 			}
 		}
