@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.63 2011/11/21 10:26:06 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.64 2011/11/25 10:19:29 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -332,8 +332,6 @@ int upgrade_R_4_0_0(database& DB)
 		time_t time0 = time(NULL);
 		for (int i=0; i<stepNumber; i++)
 		{
-
-
 			percentage = ((i+1)*100)/stepNumber;
 			upgradeQuery = "INSERT INTO JTS_tmp SELECT *,NULL FROM jobTransSummary WHERE id>=" + int2string(firstTid) + " AND id<" + int2string(firstTid+step);
 			if ( debug )
@@ -375,7 +373,27 @@ int upgrade_R_4_0_0(database& DB)
 					time0 = time(NULL);
 				}
 			}
-
+			upgradeQuery = "DROP TABLE jobTransSummary";
+			hlrGenericQuery upgrade5(upgradeQuery);
+			upgrade5.query();
+			if ( upgrade4.errNo != 0)
+			{
+				cerr << "Error in query upgrading jobTransSummary (DEL step 1)." << endl;
+				cerr << upgradeQuery << ":" << int2string(upgrade5.errNo) << endl;
+				res = 1;
+			}
+			else
+			{
+				upgradeQuery = "RENAME TABLE jts_TMP TO jobTransSummary";
+				hlrGenericQuery upgrade6(upgradeQuery);
+				upgrade6.query();
+				if ( upgrade6.errNo != 0)
+				{
+					cerr << "Error in query upgrading jobTransSummary (RENAME step 1)." << endl;
+					cerr << upgradeQuery << ":" << int2string(upgrade6.errNo) << endl;
+					res = 1;
+				}
+			}
 		}
 	}
 	return res;
