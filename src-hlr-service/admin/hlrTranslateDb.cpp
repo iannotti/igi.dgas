@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.68 2011/11/28 13:09:16 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.69 2011/11/28 13:15:31 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -382,17 +382,17 @@ int upgrade_R_4_0_0(database& DB)
 		{
 			cerr << upgradeQuery << endl;
 		}
-		hlrGenericQuery check1(upgradeQuery);
-		check1.query();
-		if ( check1.errNo == 0)
+		hlrGenericQuery recordsCheck1(upgradeQuery);
+		recordsCheck1.query();
+		if ( recordsCheck1.errNo == 0)
 		{
-			fromRecordNum = atoi((((check1.queryResult).front())[1]).c_str());
+			fromRecordNum = atoi((((recordsCheck1.queryResult).front())[1]).c_str());
 		}
-		hlrGenericQuery check2(upgradeQuery);
-		check2.query();
-		if ( check2.errNo == 0)
+		hlrGenericQuery recordsCheck2(upgradeQuery);
+		recordsCheck2.query();
+		if ( recordsCheck2.errNo == 0)
 		{
-			toRecordNum = atoi((((check1.queryResult).front())[1]).c_str());
+			toRecordNum = atoi((((recordsCheck2.queryResult).front())[1]).c_str());
 		}
 		if ( fromRecordNum == toRecordNum )
 		{
