@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.65 2011/11/25 10:33:31 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.66 2011/11/28 10:31:20 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -252,7 +252,7 @@ int upgrade_R_4_0_0(database& DB)
 		}
 		else
 		{
-			if ( check1.errNo == 0 && check1.Rows() == 0)
+			if ( check1.Rows() == 0 )
 			{
 				upgradeQuery = "SELECT min(id),max(id),count(*) from jobTransSummary";
 				if ( debug )
