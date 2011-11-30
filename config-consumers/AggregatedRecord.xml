@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aur:SummaryRecord xmlns:aur="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord" xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord car_aggregated_v0.1.xsd ">
+  <aur:Site urf:type="gocdb">aur:Site</aur:Site>
+  <aur:Month>04</aur:Month>
+  <aur:Year>1975</aur:Year>
+  <aur:UserIdentity>
+    <urf:GlobalUserName>User X509 DN</urf:GlobalUserName>
+    <urf:Group>UserVO</urf:Group>
+    <urf:GroupAttribute urf:type="vo-group">vo-group</urf:GroupAttribute>
+    <urf:GroupAttribute urf:type="vo-role">vo-role</urf:GroupAttribute>
+  </aur:UserIdentity>
+  <aur:EarliestEndTime>2001-12-31T12:00:00</aur:EarliestEndTime>
+  <aur:LatestEndTime>2001-12-31T12:00:00</aur:LatestEndTime>
+  <aur:WallDuration>P1D</aur:WallDuration>
+  <aur:CpuDuration>P1D</aur:CpuDuration>
+  <aur:NormalisedWallDuration normalisationFactor="1" normalisationMetric="HEPSPEC06">P1D</aur:NormalisedWallDuration>
+  <aur:NormalisedCpuDuration normalisationFactor="1" normalisationMetric="HEPSPEC06">P1D</aur:NormalisedCpuDuration>
+  <aur:NumberOfJobs>0</aur:NumberOfJobs>
+</aur:SummaryRecord>

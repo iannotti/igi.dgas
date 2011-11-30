@@ -1,0 +1,12 @@
+2011-11-30  Andrea Guarise  <andrea.guarise@to.infn.it>
+
+	* config-consumers/car_v0.7.xsd: Removed.
+	* config-consumers/AggregatedRecord.xml: New file.
+	* config-consumers/car_aggregated_v0.1.xsd: 
+	
+	* config-consumers/car_v0.8.xsd: 
+	
+	* config-consumers/UrFullSet.xml: 
+	
+	* config-consumers/UrMinimumSet.xml: 
+	

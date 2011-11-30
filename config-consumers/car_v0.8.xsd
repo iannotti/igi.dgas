@@ -441,7 +441,7 @@
 		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:element name="Infrastructure" type="urf:InfrastructureType"></xsd:element>
-	
+
 
 
 
@@ -453,15 +453,15 @@
 			<xsd:element minOccurs="0" maxOccurs="1" name="GlobalUserName"
 				type="xsd:string">
 			</xsd:element>
-			<xsd:element minOccurs="0" maxOccurs="1" name="LocalGroup"
-				type="xsd:string">
-			</xsd:element>
+
 			<xsd:element minOccurs="0" maxOccurs="1" name="Group"
 				type="xsd:string">
 			</xsd:element>
-			<xsd:element minOccurs="0" maxOccurs="unbounded" name="GroupAttribute"
-				type="urf:GroupAttributeType">
-			</xsd:element>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element minOccurs="0" maxOccurs="unbounded" name="GroupAttribute"
+					type="urf:GroupAttributeType">
+				</xsd:element>
+			</xsd:sequence>
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -472,7 +472,10 @@
 			<xsd:extension base="urf:UserIdentityBaseType">
 				<xsd:sequence>
 					<xsd:element name="LocalUserId" type="xsd:string"
-						maxOccurs="1" minOccurs="1"></xsd:element>
+						maxOccurs="1" minOccurs="1">
+					</xsd:element>
+					<xsd:element name="LocalGroup" type="xsd:string"
+						maxOccurs="1" minOccurs="0"></xsd:element>
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
