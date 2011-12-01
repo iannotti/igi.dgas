@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.69 2011/11/28 13:15:31 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.70 2011/12/01 10:38:32 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1195,6 +1195,7 @@ void doOnSecondLevel(string acceptRecordsStartDate, string & rulesFile, database
 int main (int argc, char **argv)
 {
 	options ( argc, argv );
+
 	if (needs_help)
 	{
 		help(argv[0]);
