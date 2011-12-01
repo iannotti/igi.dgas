@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.70 2011/12/01 10:38:32 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.71 2011/12/01 13:27:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -1199,7 +1199,7 @@ int main (int argc, char **argv)
 	if (needs_help)
 	{
 		help(argv[0]);
-		Exit(0);
+		exit(0);
 	}
 	map <string,string> confMap;
 	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )
