@@ -186,7 +186,7 @@ pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas/dgas_pushd.log"
 #
 #localUserGroup2VOMap = "/etc/dgas/glite-urcollector_localUserGroup2VOMap.conf"
 
-# The following paremeter specifies in which temporary (dynamic) CE LDIF files
+# The following parameter specifies in which temporary (dynamic) CE LDIF files
 # to look for the total number of CPUs of the resource (GlueCEInfoTotalCPUs)
 #
 gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
