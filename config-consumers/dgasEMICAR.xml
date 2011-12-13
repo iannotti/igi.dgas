@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UsageRecord xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/computerecord car_v1.0.xsd ">
+  <RecordIdentity  urf:createTime="2011-12-05T14:08:45Z">
+  </RecordIdentity>
+  <JobIdentity>
+    <GlobalJobId>https://egee-rb-01.cnaf.infn.it:9000/gridFQAN_abcdef</GlobalJobId>
+    <LocalJobId>9929.t2-ce-01.to.infn.it</LocalJobId>
+  </JobIdentity>
+  <UserIdentity>
+    <LocalUserId>guarise</LocalUserId>
+    <GlobalUserName>/C=IT/O=INFN/OU=Personal Certificate/L=Torino/CN=Andrea Guarise</GlobalUserName>  
+  </UserIdentity>
+  <JobName>STDIN</JobName>
+  <Charge>0</Charge>
+  <Status>completed</Status>
+  <Memory urf:metric="max" urf:storageUnit="KB" urf:type="Physical">256</Memory>
+  <Memory urf:metric="max" urf:storageUnit="KB" urf:type="Virtual">1024</Memory>
+  <TimeInstant urf:type="ctime">2008-05-17T22:57:51Z</TimeInstant>
+  <TimeInstant urf:type="qtime">2008-05-17T22:57:51Z</TimeInstant>
+  <TimeInstant urf:type="etime">2008-05-17T22:57:51Z</TimeInstant>
+  <ServiceLevel urf:type="si2k">1495</ServiceLevel>
+  <ServiceLevel urf:type="sf2k">1268</ServiceLevel>
+  <ServiceLevel urf:type="GlueCEInfoTotalCPUs"/>
+  <WallDuration>PT52563600S</WallDuration>
+  <CpuDuration>PT723600S</CpuDuration>
+  <Processors>1</Processors>
+  <EndTime>2008-05-20T16:25:17Z</EndTime>
+  <StartTime>2008-05-19T10:11:44Z</StartTime>
+  <MachineName>TEST-SITE</MachineName>
+  <Host urf:primary="true" urf:description="Computing Element">testce.to.infn.it</Host>
+  <Host urf:description="WorkerNodeProcessor1">t2-wnU-16.to.infn.it</Host>
+  <Queue>testqueue</Queue>
+  <ProjectName>testvo</ProjectName>
+  <Resource urf:description="LocalGroupId">testunixgroup</Resource>
+  <Resource urf:description="DgasAccountingProcedure">grid</Resource>
+  <Resource urf:description="VomsFqan">/testvo/Role=NULL/Capability=NULL</Resource>
+  <Resource urf:description="ExecCe">testce.to.infn.it:2119/jobmanager-lcgpbs-testqueue</Resource>
+  <Resource urf:description="LrmsServer">t2-ce-01.to.infn.it</Resource>
+  <Resource urf:description="DgasVoOrigin">fqan</Resource>
+</UsageRecord>

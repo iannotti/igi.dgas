@@ -5,7 +5,7 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<xsd:annotation>
 		<xsd:documentation xml:lang="en">EMI Compute Accounting
-			Record Working Group XML Schema definition V0.8</xsd:documentation>
+			Record Working Group XML Schema definition V1.0</xsd:documentation>
 	</xsd:annotation>
 	<xsd:complexType name="UsageRecordType">
 		<xsd:sequence maxOccurs="1" minOccurs="1">

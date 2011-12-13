@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<aur:SummaryRecord xmlns:aur="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord" xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord car_aggregated_v0.1.xsd ">
+<aur:SummaryRecord xmlns:aur="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord" xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord car_aggregated_v1.0.xsd ">
   <aur:Site urf:type="gocdb">aur:Site</aur:Site>
   <aur:Month>04</aur:Month>
   <aur:Year>1975</aur:Year>

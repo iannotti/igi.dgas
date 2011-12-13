@@ -3,7 +3,7 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:aur="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord">
 
-	<import schemaLocation="car_v0.8.xsd"
+	<import schemaLocation="car_v1.0.xsd"
 		namespace="http://eu-emi.eu/namespaces/2011/11/computerecord"></import>
 	<element name="SummaryRecord" type="aur:SummaryRecordType"></element>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urf:UsageRecord xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/computerecord car_v0.8.xsd ">
+	xsi:schemaLocation="http://eu-emi.eu/namespaces/2011/11/computerecord car_v1.0.xsd ">
 	<urf:RecordIdentity urf:createTime="2001-12-31T12:00:00"
 		urf:recordId="token" />
 	<urf:JobIdentity>
