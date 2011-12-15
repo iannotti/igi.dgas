@@ -351,10 +351,10 @@ sub parseConf {
 			my $value = $ENV{$1};
 			s/\$\{$1\}/$value/g;
 		}
-		if (/^pushdLockFileName\s*=\s*\"(.*)\"$/) {
+		if (/^pushdFileInputLockFileName\s*=\s*\"(.*)\"$/) {
 			$configValues{lockFileName} = $1;
 		}
-		if (/^pushdLogFileName\s*=\s*\"(.*)\"$/) {
+		if (/^pushdFileInputLogFileName\s*=\s*\"(.*)\"$/) {
 			$configValues{logFileName} = $1;
 		}
 		if (/^systemLogLevel\s*=\s*\"(.*)\"$/) {
