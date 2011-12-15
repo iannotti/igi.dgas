@@ -372,6 +372,9 @@ sub parseConf {
 		if (/^mainPollInterval\s*=\s*\"(.*)\"$/) {
 			$configValues{mainPollInterval} = $1;
 		}
+		if (/^recordsDir\s*=\s*\"(.*)\"$/) {
+			$configValues{recordsDir} = $1;
+		}
 		if (/^dgasDB\s*=\s*\"(.*)\"$/) { $configValues{dgasDB} = $1; }
 		if (/^success(.*)\s*=\s*\"(.*)\"$/) {
 			my $transportBuff        = $1;
@@ -399,18 +402,6 @@ sub parseConf {
 	}
 }
 
-#sub getCommand {
-#	my $key      = $_[0];
-#	my $composer = $_[1];
-#	my $args     = $_[2];
-#	my $producer = $_[3];
-#	my $command;
-#	$command = "set -o pipefail; $composer $args";
-#	if ( $producer ne "" ) {
-#		$command .= " | $producer";
-#	}
-#	return $command;
-#}
 
 sub execCommand {
 	my $executable  = $_[0];
@@ -460,22 +451,10 @@ sub delCommand {
 }
 
 sub pushToQueue {
-	my $key           = $_[0];
-	my $commandStatus = $_[1];
+	#placeholder
+	my $file           = $_[0];
 	my $status        = 0;
-	&printLog( 5, "Updating status:$key" );
-	eval {
-		my $res =
-		  $dbh->selectall_arrayref(
-			"UPDATE commands SET commandStatus=$commandStatus-1 WHERE key=$key"
-		  );
-		&printLog( 8,
-			"UPDATE commands SET commandStatus=$commandStatus-1 WHERE key=$key"
-		);
-	};
-	if ($@) {
-		&printLog( 4, "Error:$@" );
-	}
+	&printLog( 5, "Updating status:$file" );
 	return $status;
 }
 
