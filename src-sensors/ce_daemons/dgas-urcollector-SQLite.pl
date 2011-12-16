@@ -99,17 +99,16 @@ my %configValues   = (
 "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00,GlueHostApplicationSoftwareRunTimeEnvironment: SI00MeanPerCPU,GlueHostApplicationSoftwareRunTimeEnvironment: SF00MeanPerCPU",
 	ldifDefaultFiles      => "",
 	glueLdifFile          => "ldap://`hostname`:2170",
-	collectorLockFileName => $dgasLocation . "/var/dgas_urcollector.lock",
-	collectorLogFileName  => $dgasLocation
-	  . "/var/log/dgas/dgas_urcollector.log",
-	collectorBufferFileName => $dgasLocation . "/var/dgasCollectorBuffer",
+	collectorLockFileName => "/var/lock/dgas/dgas_urcollector.lock",
+	collectorLogFileName  => "/var/log/dgas/dgas_urcollector.log",
+	collectorBufferFileName => "/var/spool/dgas/dgasCollectorBuffer",
 	mainPollInterval        => "5",
 	timeInterval            => "1",
 	jobPerTimeInterval      => "500",
 	ignoreJobsLoggedBefore  => $DEF_IGNORE_JOBS_LOGGED_BEFORE,
 	maxNumRecords           => $DEF_MAXNUMRECORDS,
 	limiterWaitFor          => $DEF_WAITFOR,
-	dgasDB                  => $dgasLocation . "/var/dgas.sqlite",
+	dgasDB                  => "/var/spool/dgas/dgas.sqlite",
 );
 
 # get command line arguments (if any):

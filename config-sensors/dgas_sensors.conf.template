@@ -242,7 +242,7 @@ gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 # economicAccounting = "no"
 
 # dgasDB specifies the location for the sqlite database used by dgas sensors.
-# dgasDB = "/var/dgas.sqlite"
+# dgasDB = "/var/spool/dgas/dgas.sqlite"
 
 # voToProcess specifies the list (separator = ';') of Virtual Organizations 
 # whose records must be accounted for. If empty all VO are accounted.

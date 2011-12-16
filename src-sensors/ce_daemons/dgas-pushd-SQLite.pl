@@ -38,14 +38,14 @@ if ( !defined($dgasLocation) ||  $dgasLocation eq "" )
 
 my $configFilePath = "/etc/dgas/dgas_sensors.conf"; 
 my %configValues = (
-		    lockFileName      =>  $dgasLocation . "/var/glite-dgas-ce-pushd.lock",
-		    logFileName       =>  $dgasLocation . "/var/log/dgas/dgas_pushd.log",
+		    lockFileName      =>  "/var/lock/dgas/dgas-pushd.lock",
+		    logFileName       =>  "/var/log/dgas/dgas_pushd.log",
 		    mainPollInterval  => "5",
 		    systemLogLevel	      => 7,
 		    maxThreadNumber           => "5",
 		    printAsciiLog => "no",
-		    asciiLogFilePath => $dgasLocation . "/var/log/dgas/pushdAscii.log",
-		    dgasDB 	=> $dgasLocation . "/var/dgas.sqlite",			
+		    asciiLogFilePath => "/var/log/dgas/pushdAscii.log",
+		    dgasDB 	=> "/var/spool/dgas/dgas.sqlite",			
 		    successLegacy 	=> "0;64;65;68;69;70;71;73",			
 		    successTransport1 	=> "0",			
 		    successTransport2 	=> "0",			

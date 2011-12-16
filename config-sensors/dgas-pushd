@@ -24,6 +24,7 @@ fi
 [ -d /var/log ] || mkdir /var/log
 [ -d /var/log/dgas ] || mkdir /var/log/dgas
 [ -d /var/lock/dgas ] || mkdir /var/lock/dgas
+[ -d /var/spool/dgas ] || mkdir /var/spool/dgas
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$ACTIVEMQLIB
 

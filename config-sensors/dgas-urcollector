@@ -22,6 +22,7 @@ PREFIX=$DGAS_LOCATION
 [ -d /var/log ] || mkdir /var/log
 [ -d /var/log/dgas ] || mkdir /var/log/dgas
 [ -d /var/lock/dgas ] || mkdir /var/lock/dgas
+[ -d /var/spool/dgas ] || mkdir /var/spool/dgas
 
 URCOLLECTOR_CONF=/etc/dgas/dgas_sensors.conf
 if [ -e $URCOLLECTOR_CONF ]
