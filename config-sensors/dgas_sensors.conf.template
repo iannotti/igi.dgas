@@ -91,8 +91,8 @@ ceJobMapLog = "/var/log/cream/accounting/blahp.log"
 
 
 # the lock files for glite-urcollector.pl and HAD
-collectorLockFileName = "/var/dgas_urcollector.lock"
-collectorHADLockFileName = "/var/dgas_urcollector_HAD.lock"
+collectorLockFileName = "/var/lock/dgas/dgas_urcollector.lock"
+collectorHADLockFileName = "/var/lock/dgas/dgas_urcollector_HAD.lock"
 
 # the log file for glite-urcollector.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
@@ -156,7 +156,7 @@ keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
 glueLdifFile = "ldap://`hostname`:2170"
 
 # lock file for the dgas-pushd daemon
-pushdLockFileName = "/var/dgas_pushd.lock"
+pushdLockFileName = "/var/lock/dgas/dgas_pushd.lock"
 
 # the log file name for glite-dgas-pushd.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
