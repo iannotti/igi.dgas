@@ -268,11 +268,11 @@ gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 
 # This is the location of the directory where glite-dgas-urcollector writes the files
 # with the usage records. 
-dgasURBox = "/var/dgasURBox/"
-dgasErrDir = "/var/dgasURBox/ERR/"
+#dgasURBox = "/var/dgasURBox/"
+#dgasErrDir = "/var/dgasURBox/ERR/"
 
-qMult = "5"
-queuePollInterval = "50"
+#qMult = "5"
+#queuePollInterval = "50"
 
 # garbage clean-up interval in seconds. This affects just old, non-SQLite version
 # of the pushd daemon.
