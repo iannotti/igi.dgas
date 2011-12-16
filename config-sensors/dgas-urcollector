@@ -18,18 +18,25 @@ fi
 
 PREFIX=$DGAS_LOCATION
 
-[ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
-[ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
-[ -d $PREFIX/var/log/dgas ] || mkdir $PREFIX/var/log/dgas
+[ -d /var/ ] || mkdir /var/
+[ -d /var/log ] || mkdir /var/log
+[ -d /var/log/dgas ] || mkdir /var/log/dgas
+[ -d /var/lock/dgas ] || mkdir /var/lock/dgas
 
 URCOLLECTOR_CONF=/etc/dgas/dgas_sensors.conf
 if [ -e $URCOLLECTOR_CONF ]
 then
-	eval URCOLLECTOR_LOCK=`grep collectorLockFileName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`
+    eval URCOLLECTOR_LOCK=`grep collectorLockFileName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`
+	eval SITE_NAME=`grep siteName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`
 	eval HAD_LOCK=`grep collectorHADLockFileName $URCOLLECTOR_CONF | grep "^#" -v | cut -d'"' -f 2`
 else
 	echo "$URCOLLECTOR_CONF not found."
 	exit 1;
+fi
+
+if [ -z ${SITE_NAME} ]
+then
+	echo -n "Warning: siteName not specified in configuration file!"
 fi
 
 if [ -e /etc/rc.d/init.d/dgas-urcollector ]

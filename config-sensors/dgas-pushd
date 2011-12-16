@@ -20,9 +20,10 @@ fi
 # source function library
 . /etc/rc.d/init.d/functions
 
-[ -d $PREFIX/var/ ] || mkdir $PREFIX/var/
-[ -d $PREFIX/var/log ] || mkdir $PREFIX/var/log
-[ -d $PREFIX/var/log/dgas ] || mkdir $PREFIX/var/log/dgas
+[ -d /var/ ] || mkdir /var/
+[ -d /var/log ] || mkdir /var/log
+[ -d /var/log/dgas ] || mkdir /var/log/dgas
+[ -d /var/lock/dgas ] || mkdir /var/lock/dgas
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DGAS_LOCATION/lib/:$ACTIVEMQLIB
 
