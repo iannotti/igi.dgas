@@ -38,7 +38,7 @@ res_acct_bank_id = "hostname:portnumber:X509CertSubject"
 # are not considered (that is, only jobs logged on or after the specified date
 # are considered).
 # IMPORTANT: If not specified, a default value of "2008-01-01", will be used,
-# hence for accounting jobs before 2006 you have to explicity set this
+# hence for accounting jobs before 2006 you have to explicitly set this
 # parameter!
 #
 #ignoreJobsLoggedBefore = "2008-01-01"
@@ -84,26 +84,26 @@ ceJobMapLog = "/var/log/cream/accounting/blahp.log"
 
 # This is used by the SQLite version of the daemons. Ehen the record producer
 # exits with one of the specified exit status. the record is considered 
-# succesfully forwarded and can be expuged from the local record DB.
+# succesfully forwarded and can be expunged from the local record DB.
 # successLegacy = "0;64;65;68;69;70;71;73"
 # successTransport1 = "0"
 # successTransport2 = "0"
 
 
 # the lock files for glite-urcollector.pl and HAD
-collectorLockFileName = "${DGAS_LOCATION}/var/dgas_urcollector.lock"
-collectorHADLockFileName = "${DGAS_LOCATION}/var/dgas_urcollector_HAD.lock"
+collectorLockFileName = "/var/dgas_urcollector.lock"
+collectorHADLockFileName = "/var/dgas_urcollector_HAD.lock"
 
 # the log file for glite-urcollector.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9
-collectorLogFileName = "${DGAS_LOCATION}/var/log/dgas/dgas_urcollector.log"
+collectorLogFileName = "/var/log/dgas/dgas_urcollector.log"
 
 # the buffer file that keeps track of the last processed LRMS job_id and
 # log timestamp for glite-urcollector.pl:
 # (Note: the LRMS type specified in lrmsType will automatically be appended
-#  as suffix, for example: "${DGAS_LOCATION}/var/dgasCollectorBuffer.pbs")
-collectorBufferFileName = "${DGAS_LOCATION}/var/dgasCollectorBuffer"
+#  as suffix, for example: "/var/dgasCollectorBuffer.pbs")
+collectorBufferFileName = "/var/dgasCollectorBuffer"
 
 # UR Box parse interval, that is if all jobs have been processed: 
 # seconds to wait before looking for new jobs in UR Box.
@@ -156,13 +156,13 @@ keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
 glueLdifFile = "ldap://`hostname`:2170"
 
 # lock file for the dgas-pushd daemon
-pushdLockFileName = "${DGAS_LOCATION}/var/dgas_pushd.lock"
+pushdLockFileName = "/var/dgas_pushd.lock"
 
 # the log file name for glite-dgas-pushd.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
 # file name. 'x' being a number in the range 1-9. Logging facility is set
 # accordingly to LOG_LOCAL 1 through 9. 
-pushdLogFileName = "${DGAS_LOCATION}/var/log/dgas/dgas_pushd.log"
+pushdLogFileName = "/var/log/dgas/dgas_pushd.log"
 
 # The following option can be used to specify a configuration file that
 # contains a mapping between local users/groups and VOs in case some local
@@ -220,7 +220,7 @@ gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 # Using this option the HLR account will be determined as
 # "<specifiedHostname>:<LRMSqueue>", e.g. "myCEhostname.org:short".
 # IMPORTANT:
-# 1) Use a fully quallified hostname, including the domain name!
+# 1) Use a fully qualified hostname, including the domain name!
 # 2) If this parameter is specified, localHostNameAsCEHostName will set to "no"
 # 3) For grid jobs as well, the HLR account will be determined as
 #    "<specifiedHostname>:<LRMSqueue>"! This means the specified hostname
@@ -233,7 +233,7 @@ gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 #printAsciiLog = "yes"
 
 #asciiLogFilePath specifies the full path for the asciiLog file.
-#asciiLogFilePath = "${DGAS_LOCATION}/var/log/dgas/pushdAscii.log"
+#asciiLogFilePath = "/var/log/dgas/pushdAscii.log"
 
 
 # resource PA: in the form host:port:X509_certSubject (OPTIONAL)
@@ -242,7 +242,7 @@ gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 # economicAccounting = "no"
 
 # dgasDB specifies the location for the sqlite database used by dgas sensors.
-# dgasDB = "${DGAS_LOCATION}/var/dgas.sqlite"
+# dgasDB = "/var/dgas.sqlite"
 
 # voToProcess specifies the list (separator = ';') of Virtual Organizations 
 # whose records must be accounted for. If empty all VO are accounted.
@@ -267,10 +267,9 @@ gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 # of the daemons
 
 # This is the location of the directory where glite-dgas-urcollector writes the files
-# with the usage records. It must be the same as dgasURDir specified in
-# the dgas_atmClient.conf file 
-dgasURBox = "${DGAS_LOCATION}/var/dgasURBox/"
-dgasErrDir = "${DGAS_LOCATION}/var/dgasURBox/ERR/"
+# with the usage records. 
+dgasURBox = "/var/dgasURBox/"
+dgasErrDir = "/var/dgasURBox/ERR/"
 
 qMult = "5"
 queuePollInterval = "50"
