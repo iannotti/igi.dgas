@@ -225,15 +225,15 @@ my $JobNameTag = $doc->createElement("JobName");
 
 my $Memory1 = $doc->createElement("Memory");
 	$Memory1->appendTextNode($record{"physicalMemory"});
-	$Memory1->setAttribute('urf:metric','total');
+	$Memory1->setAttribute('urf:metric','max');
 	$Memory1->setAttribute('urf:storageUnit','KB');
-	$Memory1->setAttribute('urf:type','shared');
+	$Memory1->setAttribute('urf:type','Physical');
 
 my $Memory2 = $doc->createElement("Memory");
 	$Memory2->appendTextNode($record{"virtualMemory"});
-	$Memory2->setAttribute('urf:metric','total');
+	$Memory2->setAttribute('urf:metric','max');
 	$Memory2->setAttribute('urf:storageUnit','KB');
-	$Memory2->setAttribute('urf:type','swap');
+	$Memory2->setAttribute('urf:type','Shared');
 
 my $NodeCountTag = $doc->createElement("NodeCount");
 	$NodeCountTag->appendTextNode($#nodeNames+1);
