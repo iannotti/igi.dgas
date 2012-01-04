@@ -1,3 +1,7 @@
+2012-01-04  Andrea Guarise  <andrea.guarise@to.infn.it>
+
+	* ChangeLog: Fixed Problem with Wrong Memory rappresentation in dgas-emicarProducer
+
 2011-11-30  Andrea Guarise  <andrea.guarise@to.infn.it>
 
 	* config-consumers/car_v0.7.xsd: Removed.
