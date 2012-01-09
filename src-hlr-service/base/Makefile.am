@@ -17,8 +17,7 @@ DBFLAGS = $(MYSQL_CFLAGS)
 endif
 
 libglite_dgas_dbhelper_la_SOURCES = db.cpp \
-	 dbResult.cpp \
-	 digests.cpp
+	 dbResult.cpp 
 
 libglite_dgas_dbWaitress_la_SOURCES = \
 	dbWaitress.h \
@@ -30,7 +29,8 @@ libdgas_serviceVersion_la_SOURCES = \
 
 libglite_dgas_serviceCommonUtils_la_SOURCES = \
 	serviceCommonUtl.h \
-	serviceCommonUtl.cpp 
+	serviceCommonUtl.cpp \
+	digests.cpp 
 
 libglite_dgas_hlr_la_SOURCES = \
 	hlrAdmin.cpp \
