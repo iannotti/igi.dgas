@@ -260,13 +260,25 @@ for (my $i = 0; $keepGoing && ( $i < $configValues{mainPollInterval} ); $i++)
 }
 my $elapsed = tv_interval ($t0, [gettimeofday]);
 &printLog ( 9,"ELAPSED:$elapsed");
-my $success_min = ($successRecords/$elapsed)*60;
-my $failure_min = ($failRecords/$elapsed)*60;
-my $total_min = (($failRecords+$successRecords)/$elapsed)*60;
+my $success_min;
+my $failure_min;
+my $total_min;
+if ( $elapsed != 0 )
+{
+        $success_min = ($successRecords/$elapsed)*60;
+        $failure_min = ($failRecords/$elapsed)*60;
+        $total_min = (($failRecords+$successRecords)/$elapsed)*60;
+}
+else
+{
+        $success_min = ($successRecords/1)*60;
+        $failure_min = ($failRecords/1)*60;
+        $total_min = (($failRecords+$successRecords)/1)*60;
+}
 my $min_krecords = 0.0;
 if ( $total_min > 0 )
 {
-	$min_krecords = 1000.0/$total_min;
+        $min_krecords = 1000.0/$total_min;
 }
 $success_min = sprintf("%.2f", $success_min);
 $failure_min = sprintf("%.2f", $failure_min);
