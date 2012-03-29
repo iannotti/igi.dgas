@@ -103,7 +103,7 @@ collectorLogFileName = "/var/log/dgas/dgas_urcollector.log"
 # log timestamp for glite-urcollector.pl:
 # (Note: the LRMS type specified in lrmsType will automatically be appended
 #  as suffix, for example: "/var/dgasCollectorBuffer.pbs")
-collectorBufferFileName = "/var/dgasCollectorBuffer"
+collectorBufferFileName = "/var/spool/dgas/dgasCollectorBuffer"
 
 # UR Box parse interval, that is if all jobs have been processed: 
 # seconds to wait before looking for new jobs in UR Box.

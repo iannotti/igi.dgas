@@ -33,14 +33,14 @@ dgas_var_dir = "/usr/var/"
 
 # default log file
 
-hlr_def_log = "/usr/var/log/dgas/hlrd.log"
-hlr_qmgr_def_log = "/usr/var/log/dgas/hlr_qmgrd.log"
+hlr_def_log = "/var/log/dgas/hlrd.log"
+hlr_qmgr_def_log = "/var/log/dgas/hlr_qmgrd.log"
 
 #default lock file
 
-hlr_def_lock = "/usr/var/hlr.lock"
-hlr_qmgr_def_lock ="/usr/var/hlr_qmgrd.lock"
-hlr_had_def_lock ="/usr/var/hlr_had.lock"
+hlr_def_lock = "/var/lock/dgas/hlr.lock"
+hlr_qmgr_def_lock ="/var/lock/dgas/hlr_qmgrd.lock"
+hlr_had_def_lock ="/var/lock/dgas/hlr_had.lock"
 
 #log verbosity:
 # 0      - Critical messages
