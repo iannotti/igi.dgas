@@ -1831,7 +1831,7 @@ sub searchForNumCpus {
 		my ( $input, $ATMDefs ) = @_;
 		open( FILE, $input ) || return 1;
 		while (<FILE>) {
-			if (/^\s*ATM:(.*)\s*$/) {
+			if (/^\s*field:(.*)\s*$/) {
 				&printLog( 7, $1 );
 				push( @$ATMDefs, $1 );
 			}
@@ -2562,6 +2562,15 @@ sub searchForNumCpus {
 								$commitSuccesfull = 0;
 							}
 						}
+						if ( &numRecords() > $maxNumRecords ) 
+						{
+									&printLog( 3,"There are more than $maxNumRecords Records in database, waiting $waitFor seconds.");
+									my $secsWaited = 0;
+									while ( $keepGoing && $secsWaited < $waitFor ) {
+										sleep 1;
+										$secsWaited++;
+									}
+						}
 
 						#update buffer
 						if ( $tmpBuffTstamp != 0 ) {
@@ -2591,6 +2600,18 @@ sub searchForNumCpus {
 					}
 				}
 			}
+			#update buffer
+			&printLog( 8, "BUFFER tmpBuffTstamp=$tmpBuffTstamp" );
+
+			if ( $tmpBuffTstamp != 0 ) {
+				&printLog( 7, "UPDATE BUFFER $tmpBuffTstamp" );
+
+				# in case this is the first run, adjust temporary buffer!
+				$_[6] = $tmpBuffTstamp = $lrmsEventTimestamp;
+
+				&putTmpBuffer( $collectorBufferFileName, $lastJob, $lastTimestamp,
+					$tmpBuffTstamp );
+			}
 		}    # while (<LRMSLOGFILE>) ...
 		     #process trailing
 		if ( $recordsCounter != 0 ) {
@@ -2608,7 +2629,6 @@ sub searchForNumCpus {
 				}
 			}
 
-			#update buffer
 		}
 
 		#update buffer
@@ -3723,7 +3743,7 @@ sub searchForNumCpus {
 		my $recordsNumber = 0;
 		if (@$result) {
 			my $buffer        = pop(@$result);
-			my $recordsNumber = $$buffer[0];
+			$recordsNumber = $$buffer[0];
 		}
 		&printLog( 8, "Records in DB:=$recordsNumber" );
 		return $recordsNumber;
