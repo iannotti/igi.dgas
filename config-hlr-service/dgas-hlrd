@@ -81,7 +81,7 @@ eval urForward_LOCK=`grep urForwardLock $HLRD_CONF | grep "^#" -v | cut -d'"' -f
 startMain()
 {
 	echo -n $"Initializing DGAS HLR...."
-	[ -e $TDB_LOCK ] && ps auxw | grep dgas-hlr-translatedb &> /dev/null
+	[ -e $TDB_LOCK ] && ps auxw | grep dgas-hlr-translatedb | grep -v grep  &> /dev/null
 		if [ "$?" -eq 0 ]
 		then
 			echo -n " Another instance of dgas-hlr-translatedb is already running lock:$TDB_LOCK"

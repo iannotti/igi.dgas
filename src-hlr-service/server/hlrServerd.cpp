@@ -88,6 +88,7 @@ string hlr_user = "";
 string qtransInsertLog = "";
 string authQueryTables = "jobTransSummary";
 
+pthread_mutex_t auth_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 bool restart;
 

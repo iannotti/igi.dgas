@@ -16,7 +16,6 @@
 
 extern ofstream logStream;
 extern pthread_mutex_t auth_mutex;
-extern pthread_mutex_t listen_mutex;
 extern volatile sig_atomic_t keep_going;
 extern int activeThreads;
 extern bool restart;
@@ -185,8 +184,10 @@ void* thrLoop(void *param)
 		hlr_log( logString, &logStream,7);
 		if ( tstruct->a ) (tstruct->a)-> SetTimeout( defConnTimeOut );
 		if ( tstruct->a ) (tstruct->s)->set_auth_timeout( 10*defConnTimeOut );
+		pthread_mutex_lock (&auth_mutex);
         if ( (tstruct->s)->AuthenticateAgent((tstruct->a)) )
 		{
+        	pthread_mutex_unlock (&auth_mutex);
 			connectionInfo.hostName = (tstruct->a)->PeerName();
 			connectionInfo.contactString = (tstruct->a)->CertificateSubject();
 
@@ -211,6 +212,7 @@ void* thrLoop(void *param)
 	                (tstruct->s) -> KillAgent( (tstruct->a) );
 	                (tstruct->a) = NULL;
                    }
+                   pthread_mutex_unlock (&auth_mutex);
 		   logString = "Error while Authenticating agent: " + tNString +":" + (tstruct->s)->getErrMsg();
 		   hlr_log( logString, &logStream,2);
 		   authErrors++;
