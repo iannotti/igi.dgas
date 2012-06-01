@@ -83,8 +83,6 @@ dgas_hlr_listener_LDADD =  \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
 	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbWaitress.la \
 	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
-	$(GLITE_DGAS_PACLIENTS_LIBS) \
-	-lglite_dgas_paClient \
 	-lglite_dgas_localSecurity \
 	-lglite_dgas_tls_gsisocket_pp \
 	-lglite_dgas_hlrGenericQuery \
@@ -110,8 +108,6 @@ dgas_hlr_qmgr_LDADD = \
 	$(GLOBUS_SSL_UTILS_LIBS) \
 	$(GLOBUS_LDAP_THR_LIBS) \
 	$(SERVICE_BASE_LIBS) \
-	$(GLITE_DGAS_PACLIENTS_LIBS) \
-	-lglite_dgas_paClient\
 	-lglite_dgas_tls_gsisocket_pp\
 	$(top_builddir)/src-hlr-service/engines/libglite_dgas_atmResBankClient.la \
 	$(top_builddir)/src-hlr-service/engines/libglite_dgas_atmResBankClient2.la \

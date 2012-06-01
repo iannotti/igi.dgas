@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daemon and protocol engines.
 // 
-// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.13 2011/06/29 11:31:39 aguarise Exp $
+// $Id: hlrQtransMgrd.cpp,v 1.1.2.1.4.14 2012/06/01 09:10:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -40,7 +40,6 @@
 #include "atmResBankClient.h"
 #include "atmResBankClient2.h"
 #include "glite/dgas/hlr-service/engines/engineCmnUtl.h"
-#include "glite/dgas/pa-clients/paClient.h"
 #include "glite/dgas/common/pa/libPA_comm.h"
 #include <setjmp.h>
 #include "../base/serviceVersion.h"
@@ -203,6 +202,7 @@ int computeCostFormula ( string f, cmnLogRecords& l, price& p,int& cost)
 	return 0;
 }
 
+/*
 int computeJobCost(string& logData, qTransaction& t, int& cost)
 {
 	int res =0;
@@ -266,6 +266,7 @@ int computeJobCost(string& logData, qTransaction& t, int& cost)
 	hlr_log( logBuff, &logStream, 4);
 	return 0;
 }
+*/
 
 string retrieveUserCertSubject(string& s)
 {
@@ -337,7 +338,7 @@ void mainLoop( int hlr_qmgr_tPerIter )
 				logBuff += ",accountingProcedure: ";
 				logBuff += t.accountingProcedure;
 				hlr_log (logBuff, &logStream, 6);
-
+				/*
 				if ( computeJobCost(trans.logData, trans, t.amount) != 0)
 				{
 					if ( priceIsMandatory )
@@ -354,6 +355,7 @@ void mainLoop( int hlr_qmgr_tPerIter )
 						continue;
 					}
 				}
+				*/
 				logBuff = "Processing: " + t.id;
 				hlr_log( logBuff, &logStream, 4);
 				alarm(60);
