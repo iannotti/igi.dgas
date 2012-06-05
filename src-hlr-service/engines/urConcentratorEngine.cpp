@@ -795,8 +795,8 @@ int urConcentrator::bulkInsertRecord(db& hlrDb, jobTransSummary& r)
 	queryString += r.accountingProcedure + "','";
 	queryString += r.voOrigin + "','";
 	queryString += r.glueCEInfoTotalCPUs + "','";
-	queryString += r.executingNodes+ "',";
-	queryString += r.numNodes+ ",'";
+	queryString += r.executingNodes + "',";
+	queryString += r.numNodes + ",'";
 	queryString += r.uniqueChecksum + "')";
 	insertValuesBuffer.push_back(queryString);
 	return 0;

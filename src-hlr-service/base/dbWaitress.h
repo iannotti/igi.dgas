@@ -218,9 +218,9 @@ public:
 		tableDef += "hlrTid bigint(20) unsigned, ";//! 3.1.10
 		tableDef += "accountingProcedure varchar(32), ";//! 3.1.10
 		tableDef += "voOrigin varchar(16), ";//! 3.1.10
-		tableDef += "GlueCEInfoTotalCPUs smallint(5) unsigned, ";//! 3.1.10
+		tableDef += "GlueCEInfoTotalCPUs smallint(5) unsigned default 1, ";//! 3.1.10
 		tableDef += "executingNodes varchar(255), ";//! 3.4.0
-		tableDef += "numNodes smallint(5), ";//! 4.0.0
+		tableDef += "numNodes smallint(5) unsigned default 1, ";//! 4.0.0
 		tableDef += "uniqueChecksum char(32), ";//! 3.3.0
 		tableDef += "primary key (dgJobId,uniqueChecksum), key(date), key(endDate), key(userVo), key (id), key(siteName), key(urSourceServer)";
 		if ( !_is2ndLevelHlr )

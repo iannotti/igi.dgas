@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.71 2011/12/01 13:27:05 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.72 2012/06/05 08:03:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -224,7 +224,7 @@ int upgrade_R_4_0_0(database& DB)
 			cerr << upgradeQuery << ":" << int2string(upgrade1.errNo) << endl;
 			res = 1;
 		}
-		upgradeQuery = "ALTER TABLE JTS_tmp ADD numNodes smallint(5)";
+		upgradeQuery = "ALTER TABLE JTS_tmp ADD numNodes smallint(5) unsigned default 1";
 		if ( debug )
 		{
 			cerr << upgradeQuery << endl;
