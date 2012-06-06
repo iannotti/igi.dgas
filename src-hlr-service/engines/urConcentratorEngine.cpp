@@ -328,7 +328,7 @@ int urConcentrator::xmlParser( string& requestType,
 					if ( urBuff.voOrigin == "") urBuff.voOrigin = parseAndReleaseS (urNode, "voOrigin" );
 					if ( urBuff.glueCEInfoTotalCPUs == "") urBuff.glueCEInfoTotalCPUs = parseAndReleaseS (urNode, "glueCEInfoTotalCPUs" );
 					if ( urBuff.executingNodes == "") urBuff.executingNodes = parseAndReleaseS (urNode, "executingNodes" );
-					if ( urBuff.numNodes == "") urBuff.executingNodes = parseAndReleaseS (urNode, "numNodes" );
+					if ( urBuff.numNodes == "") urBuff.numNodes = parseAndReleaseS (urNode, "numNodes" );
 					if ( urBuff.uniqueChecksum == "") urBuff.uniqueChecksum = parseAndReleaseS (urNode, "uniqueChecksum" );
 
 					//go on with records here...
