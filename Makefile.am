@@ -24,11 +24,18 @@ docdir = $(datadir)/doc/@PACKAGE@-@VERSION@
 doc_DATA = LICENSE README
 
 ## Subdirectories list
+##	src-common interface-common\
+#	src-hlr-clients interface-hlr-clients \
+#	config-sensors interface-sensors src-sensors \
+#	src-pa-clients interface-pa-clients \
+#	config-hlr-service src-hlr-service interface-hlr-service \
+#	config-producers src-producers interface-producers \
+#	config-consumers src-consumers interface-consumers
+
 SUBDIRS = \
 	src-common interface-common\
 	src-hlr-clients interface-hlr-clients \
 	config-sensors interface-sensors src-sensors \
-	src-pa-clients interface-pa-clients \
 	config-hlr-service src-hlr-service interface-hlr-service \
 	config-producers src-producers interface-producers \
 	config-consumers src-consumers interface-consumers
@@ -124,25 +131,25 @@ sensors-install-etics: \
  	sensors-src-install\
 	sensors-config-install
 
-pa-clients-src: 
-	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
+#pa-clients-src: 
+#	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
-pa-clients-interface: 
-	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
+#pa-clients-interface: 
+#	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
-pa-clients: common pa-clients-src pa-clients-interface
+#pa-clients: common pa-clients-src pa-clients-interface
 
-pa-clients-src-install: 
-	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
+#pa-clients-src-install: 
+#	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
 
-pa-clients-interface-install: 
-	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install
+#pa-clients-interface-install: 
+#	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install
 
-pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
+#pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
 
 #pa-clients-install-etics: pa-clients-src-install pa-clients-interface-install
 
-pa-clients-install-etics: pa-clients-src-install
+#pa-clients-install-etics: pa-clients-src-install
 
 hlr-service-config:
 	cd ./config-hlr-service ; $(MAKE) $(AM_MAKEFLAGS)
@@ -157,7 +164,6 @@ hlr-service-interface:
 	cd ./interface-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) 
 
 hlr-service: common\
-	pa-clients\
 	hlr-service-src\
 	hlr-service-interface\
 	hlr-service-config
