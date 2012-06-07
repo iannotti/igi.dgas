@@ -883,6 +883,7 @@ sub parseUR_lsf {
 	#$shift2 = $new[23+$shift1]: numExHosts
 	my $shift1 = $new[22];
 	my $shift2 = $new[ 23 + $shift1 ];
+	my $shift3 = $shift1 + $shift2;
 	$urGridInfo{server} = $new[16];
 	if ( $urGridInfo{server} =~ /^([^\.]*)\.(.*)$/ ) {
 
@@ -904,6 +905,7 @@ sub parseUR_lsf {
 	if ( $groupOutput =~ /^$urGridInfo{user} : (.+)$/ ) {
 		$urGridInfo{group} = $1;
 	}
+	#We could add check for conf variable to use LSF fairshare group here. (Se A.Neal mail)
 
 	$urGridInfo{lrmsId}     = $new[3];
 	$urGridInfo{processors} = $new[6];
@@ -913,23 +915,23 @@ sub parseUR_lsf {
 	else {
 		$urGridInfo{walltime} = $new[2] - $new[10];
 	}
-	if ( $new[ 28 + $shift2 ] == -1 )
+	if ( $new[ 28 + $shift3 ] == -1 )
 	{                         # indicates that the value is not available!
-		$new[ 28 + $shift2 ] = 0;
+		$new[ 28 + $shift3 ] = 0;
 	}
-	if ( $new[ 29 + $shift2 ] == -1 )
+	if ( $new[ 29 + $shift3 ] == -1 )
 	{                         # indicates that the value is not available!
-		$new[ 29 + $shift2 ] = 0;
+		$new[ 29 + $shift3 ] = 0;
 	}
 	$urGridInfo{cput} =
-	  int( $new[ 28 + $shift2 ] ) + int( $new[ 29 + $shift2 ] );
-	$urGridInfo{mem}        = $new[ 54 + $shift2 ] . "k";
-	$urGridInfo{vmem}       = $new[ 55 + $shift2 ] . "k";
+	  int( $new[ 28 + $shift3 ] ) + int( $new[ 29 + $shift3 ] );
+	$urGridInfo{mem}        = $new[ 54 + $shift3 ] . "k";
+	$urGridInfo{vmem}       = $new[ 55 + $shift3 ] . "k";
 	$urGridInfo{start}      = $new[10];
 	$urGridInfo{end}        = $new[2];
 	$urGridInfo{ctime}      = $new[7];
-	$urGridInfo{jobName}    = $new[ 26 + $shift2 ];
-	$urGridInfo{exitStatus} = $new[ 49 + $shift2 ];
+	$urGridInfo{jobName}    = $new[ 26 + $shift3 ];
+	$urGridInfo{exitStatus} = $new[ 49 + $shift3 ];
 
 	if ( $shift2 != 0 ) {
 		$urGridInfo{execHost} = "";
