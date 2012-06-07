@@ -1,4 +1,4 @@
-//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.72 2012/06/05 08:03:39 aguarise Exp $
+//$Id: hlrTranslateDb.cpp,v 1.1.2.1.4.73 2012/06/07 14:04:42 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -101,7 +101,6 @@ int help (const char *progname)
 	cerr << setw(30) << left << "-C --Conf"<<"HLR configuration file, if not the default: " << DGAS_DEF_CONF_FILE << endl;
 	cerr << setw(30) << left << "-r --reset"<<"Clean up the query tables and recreates them from raw database info." << endl;
 	cerr << setw(30) << left << "-c --checkDuplicate"<<"Search for duplicate entries and expunge the one with less information." << endl;
-	cerr << setw(30) << left << "-M --masterLock"<<"Put a master lock file. Other instances (e.g. via crond) will not be executed until this instance is running." << endl;
 	cerr << setw(30) << left << "-T --useTranslationRules"<<"Perform database translation rules defined in the rules.conf file" << endl;
 
 	cerr << setw(30) << left << "-h --help"<<"This help" << endl;
@@ -1453,7 +1452,7 @@ int main (int argc, char **argv)
 			Exit(1);
 		}
 	}
-	deleteTransInNULL();
+	if ( !is2ndLevelHlr ) deleteTransInNULL();
 	upgrade_R_3_4_0_23();
 	if ( is2ndLevelHlr )
 	{

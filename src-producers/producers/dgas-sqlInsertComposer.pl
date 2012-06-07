@@ -34,26 +34,25 @@ my %record = (
 	localJobId => $urList{LRMSID} ,
 	localUserId => $urList{USER} ,
 	globalUserName => $usrcert,
-	charge => "0",
 	status => "completed",
 	exitStatus => $urList{exitStatus},
 	queue => $urList{QUEUE},
 	localGroup => $urList{group},
 	jobName => $urList{jobName},
 	ceCertificateSubject => $urList{"ceCertificateSubject"},
-	wallDuration => "PT".$urList{"WALL_TIME"}."S",
-	cpuDuration => "PT".$urList{"CPU_TIME"}."S",
-	endTime => HTTP::Date::time2isoz($urList{"end"}),
-	startTime => HTTP::Date::time2isoz($urList{"start"}),
+	wallTime => $urList{"WALL_TIME"},
+	cpuTime => $urList{"CPU_TIME"},
+	endTime => $urList{"end"},
+	startTime => $urList{"start"},
 	submitHost => $urList{execCe},
 	site => $urList{SiteName},
-	group => $urList{userVo},
+	userVo => $urList{userVo},
 	ceHost => $urList{ceHostName},
 	hosts => $urList{execHost},
 	physicalMemory => $urList{PMEM},
 	virtualMemory => $urList{VMEM},
-	sericeLevelSi2K => $urList{si2k},
-	sericeLevelSf2K => $urList{sf2k},
+	si2k => $urList{si2k},
+	sf2k => $urList{sf2k},
 	serviceLevelGlueCEInfoTotalCPUs => $urList{GlueCEInfoTotalCPUs},
 	timeInstantCTime => HTTP::Date::time2isoz($urList{"ctime"}),
 	timeInstantQTime => HTTP::Date::time2isoz($urList{"qtime"}),
@@ -64,6 +63,7 @@ my %record = (
 	lrmsServer => $urList{lrmsServer},
 	voOrigin => $urList{voOrigin},
 	projectName => $urList{projectName},
+	amount => $urList{amount},
 );
 
 
@@ -95,12 +95,7 @@ $record{"startTime"} =~ s/\s/T/;
 $record{"timeInstantCTime"} =~ s/\s/T/;
 $record{"timeInstantQTime"} =~ s/\s/T/;
 $record{"timeInstantETime"} =~ s/\s/T/;
-($record{"physicalMemory"},$record{"physicalMemoryUnit"}) = ( $record{"physicalMemory"} =~ /^(\d*)(.*)$/ );
-($record{"virtualMemory"},$record{"virtualMemoryUnit"}) = ( $record{"virtualMemory"} =~ /^(\d*)(.*)$/ );
 ($record{"vomsGroup"},$record{"vomsRole"},$record{"vomsCapability"}) = ( $record{"vomsFqan"} =~ /^\/(.*)\/Role=(.*)\/Capability=(.*)$/ );
-
-my $file = 'record.xml';
-my $schemaFile = 'ur_v1.xsd.xml';
 
 
 my $uniqueChecksum = $record{"machineName"} . $record{"localJobId"} . $urList{"start"} . $urList{"WALL_TIME"} . $urList{"CPU_TIME"}; 
@@ -111,11 +106,33 @@ my $queryString;
 $queryString = "INSERT INTO jobTransSummary SET";
 $queryString += "dgJobId=\"$record{dgJobId}\",";
 $queryString += "date=\"$record{date}\",";
-$queryString += "gridResource=\"\",";
-$queryString += "gridUser=\"\",";
-$queryString += "userFqan=\"\",";
-$queryString += "userVo=\"\",";
-
+$queryString += "gridResource=\"$record{execCe}\",";
+$queryString += "gridUser=\"$record{globalUserName}\",";
+$queryString += "userFqan=\"$record{vomsFqan}\",";
+$queryString += "userVo=\"$record{userVo}\",";
+$queryString += "cpuTime=\"$record{cpuTime}\"";
+$queryString += "wallTime=\"$record{walltime}\"";
+$queryString += "pmem=\"$record{physicalMemory}\"";
+$queryString += "vmem=\"$record{virtualMemory}\"";
+$queryString += "amount=\"$record{amount}\"";
+$queryString += "start=\"$record{startTime}\"";
+$queryString += "end=\"$record{endTime}\"";
+$queryString += "iBench=\"$record{si2k}\"";
+$queryString += "iBenchType=\"si2k\"";
+$queryString += "fBench=\"sf2k\"";
+$queryString += "fBenchType=\"sf2k\"";
+$queryString += "lrmsId=\"$record{}\"";
+$queryString += "localUserId=\"$record{}\"";
+$queryString += "localGroup=\"$record{}\"";
+$queryString += "endDate=\"$record{}\"";
+$queryString += "siteName=\"$record{}\"";
+$queryString += "urSourceServer=\"$record{}\"";
+$queryString += "accountingProcedure=\"$record{}\"";
+$queryString += "voOrigin=\"$record{}\"";
+$queryString += "GlueCEInfoTotalCPUs=\"$record{}\"";
+$queryString += "executingNodes=\"$record{}\"";
+$queryString += "numNodes=\"$record{}\"";
+$queryString += "uniqueChecksum=\"$record{}\"";
 print $queryString;
 
 

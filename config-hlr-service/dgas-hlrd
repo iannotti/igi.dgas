@@ -90,7 +90,7 @@ startMain()
 			then
 				rm -f $TDB_LOCK
 			fi 
-			$PREFIX/sbin/dgas-hlr-translatedb -M
+			$PREFIX/sbin/dgas-hlr-translatedb
 		fi
     RETVAL=0
 	echo -n $"Starting $prog:"
