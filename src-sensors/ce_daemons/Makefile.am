@@ -1,8 +1,6 @@
 
 sbin_SCRIPTS= \
-	glite-dgas-pushd.pl\
 	glite-dgas-ceServerd-had.pl\
-	glite-urcollector.pl\
 	dgas-pushd-SQLite.pl \
 	dgas-pushd-fileInput.pl \
 	dgas-urcollector-SQLite.pl	

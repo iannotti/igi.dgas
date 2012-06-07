@@ -256,7 +256,7 @@ while( $keepGoing )
     }
 for (my $i = 0; $keepGoing && ( $i < $configValues{mainPollInterval} ); $i++)
 {
-	usleep(10000);
+	usleep(100000);
 }
 my $elapsed = tv_interval ($t0, [gettimeofday]);
 &printLog ( 9,"ELAPSED:$elapsed");

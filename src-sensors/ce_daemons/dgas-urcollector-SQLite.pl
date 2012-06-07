@@ -473,7 +473,8 @@ MAIN: while ($keepGoing) {
 		);
 		my $secsWaited = 0;
 		while ( $keepGoing && $secsWaited < $waitFor ) {
-			sleep 1;
+			my $randomSleepTime = 0.25 - log(rand()); #0.25 + v.a. exp unilatera, media = 1
+			select(undef, undef, undef, $randomSleepTime); #equivale a sleep per valore float
 			$secsWaited++;
 		}
 		next MAIN;
@@ -518,7 +519,8 @@ MAIN: while ($keepGoing) {
 			eval { $dbh->commit; };
 			if ($@) {
 				&printLog( 3, "DB Locked:$@" );
-				sleep 1;
+				my $randomSleepTime = 0.25 - log(rand()); #0.25 + v.a. exp unilatera, media = 1
+				select(undef, undef, undef, $randomSleepTime); #equivale a sleep per valore float
 			}
 			else {
 				&printLog( 6, "...succesfull" );
