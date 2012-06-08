@@ -13,12 +13,14 @@ lib_LTLIBRARIES  = libdgas_amqProducer.la \
 libexec_PROGRAMS = dgas-amqProducer \
 		dgas-legacyProducer \
 		dgas-legacyStorageComposer \
-	dgas-legacyCpuComposer
+		dgas-legacyCpuComposer
 
 libexec_SCRIPTS = \
 	dgas-ogfurComposer	\
 	dgas-emicarComposer \
-	dgas-record-filter.pl
+	dgas-record-filter.pl \
+	dgas-stompProducer.pl \
+	dgas-sqlInsertComposer.pl
 
 
 libdgas_amqProducer_la_SOURCES = \
