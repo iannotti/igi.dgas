@@ -68,6 +68,7 @@ my %record = (
 
 
 my @executingNodes  = split('\+',$record{hosts});
+my $numNodes = $#executingNodes+1;
 
 if ($urList{exitStatus} != 0 )
 {
@@ -119,20 +120,19 @@ $queryString += "start=\"$record{startTime}\"";
 $queryString += "end=\"$record{endTime}\"";
 $queryString += "iBench=\"$record{si2k}\"";
 $queryString += "iBenchType=\"si2k\"";
-$queryString += "fBench=\"sf2k\"";
+$queryString += "fBench=\"$record{sf2k}\"";
 $queryString += "fBenchType=\"sf2k\"";
-$queryString += "lrmsId=\"$record{}\"";
-$queryString += "localUserId=\"$record{}\"";
-$queryString += "localGroup=\"$record{}\"";
-$queryString += "endDate=\"$record{}\"";
-$queryString += "siteName=\"$record{}\"";
-$queryString += "urSourceServer=\"$record{}\"";
-$queryString += "accountingProcedure=\"$record{}\"";
-$queryString += "voOrigin=\"$record{}\"";
-$queryString += "GlueCEInfoTotalCPUs=\"$record{}\"";
-$queryString += "executingNodes=\"$record{}\"";
-$queryString += "numNodes=\"$record{}\"";
-$queryString += "uniqueChecksum=\"$record{}\"";
+$queryString += "lrmsId=\"$record{localJobId}\"";
+$queryString += "localUserId=\"$record{localUserId}\"";
+$queryString += "localGroup=\"$record{localGroup}\"";
+$queryString += "endDate=\"$record{endTime}\"";
+$queryString += "siteName=\"$record{site}\"";
+$queryString += "accountingProcedure=\"$record{dgasAccountingProcedure}\"";
+$queryString += "voOrigin=\"$record{voOrigin}\"";
+$queryString += "GlueCEInfoTotalCPUs=\"$record{serviceLevelGlueCEInfoTotalCPUs}\"";
+$queryString += "executingNodes=\"$record{hosts}\"";
+$queryString += "numNodes=\"$numNodes\"";
+$queryString += "uniqueChecksum=\"$uniqueChecksum\"";
 print $queryString;
 
 
