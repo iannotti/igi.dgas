@@ -220,9 +220,9 @@ int main ( int argc, char * argv[] )
 	{
 		conf.sendRecordsStartDate = confMap["sendRecordsStartDate"] ;
 	}
-	if ( confMap["sendRecordsEndtDate"] != "" )
+	if ( confMap["sendRecordsEndDate"] != "" )
 	{
-		conf.sendRecordsEndDate = confMap["sendRecordsEndtDate"] ;
+		conf.sendRecordsEndDate = confMap["sendRecordsEndDate"] ;
 	}
 	if ( confMap["recordsPerConnection"] != "" )
 	{
@@ -238,13 +238,13 @@ int main ( int argc, char * argv[] )
 	{
 		forwardInterval = atoi((confMap["forwardPeriod"]).c_str());
 	}
-	logBuff = "Start sending records (acceptRecordsStartDate) from:";
+	logBuff = "Start sending records (sendRecordsStartDate) from:";
 	logBuff += conf.sendRecordsStartDate;
 	hlr_log(logBuff,&logStream,4);
-	logBuff = "Sending until (acceptRecordsEndDate):";
+	logBuff = "Sending until (sendRecordsEndDate):";
 	logBuff += conf.sendRecordsEndDate;
 	hlr_log(logBuff,&logStream,4);
-	logBuff = "Number of record sent per iteration (acceptRecordsStartDate):";
+	logBuff = "Number of record sent per iteration (recordsPerConnection):";
 	logBuff += conf.recordsPerConnection;
 	hlr_log(logBuff,&logStream,4);
 	serviceVersion thisServiceVersion(hlr_sql_server,
