@@ -36,6 +36,8 @@ eval HLR_USER=`grep hlr_user $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval HLHLR=`grep is2ndLevelHlr $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval TDB_LOCK=`grep masterLock $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 
+[ ! -z $DGAS_VAR_DIR ]  || export DGAS_VAR_DIR=/var/
+
 if [ -z $HLHLR ]
 then
 	HLHLR="false"
@@ -50,7 +52,7 @@ fi
 [ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
 [ -d $DGAS_VAR_DIR/lock/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/lock/dgas
 
-# Some functions to make the below more readable
+# Some functions to make code easily readable
 HLRD=$PREFIX/sbin/dgas-hlr-listener
 eval HLRD_LOCK=`grep hlr_def_lock $HLRD_CONF | grep "^#" -v | cut -d'"' -f 2`
 HLRD_OPTIONS="-c $HLRD_CONF"
