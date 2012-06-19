@@ -16,7 +16,7 @@ use Time::HiRes qw(usleep ualarm gettimeofday tv_interval);
 use IO::Handle;
 
 # turn off buffering of STDOUT
-$| = 1;
+#$| = 1;
 
 
 my $sigset = POSIX::SigSet ->new();

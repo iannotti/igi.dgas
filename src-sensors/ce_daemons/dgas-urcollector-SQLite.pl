@@ -30,7 +30,7 @@ use DBI;
 use Time::HiRes qw(usleep ualarm gettimeofday tv_interval);
 
 # turn off buffering of STDOUT
-$| = 1;
+#$| = 1;
 
 # my $MAX_LSF_RECORDLENGTH_FOR_QUOTEWORDS = 4096;
 # this is the maximum LSF record length that we'll parse with
@@ -39,7 +39,6 @@ $| = 1;
 
 START:
 
-#FIXME needs to understand the jobmanager type blah vs lcgpbs and set it up
 
 my $sigset    = POSIX::SigSet->new();
 my $actionHUP =
