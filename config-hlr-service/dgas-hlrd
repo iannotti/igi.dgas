@@ -43,14 +43,26 @@ then
 	HLHLR="false"
 fi
 
+
 [ -d $DGAS_VAR_DIR ] || mkdir $DGAS_VAR_DIR
 [ -d $DGAS_VAR_DIR/log ] || mkdir $DGAS_VAR_DIR/log
 [ -d $DGAS_VAR_DIR/log/dgas ] || mkdir $DGAS_VAR_DIR/log/dgas
 [ -d $DGAS_VAR_DIR/lock ] || mkdir $DGAS_VAR_DIR/lock
 [ -d $DGAS_VAR_DIR/lock/dgas ] || mkdir $DGAS_VAR_DIR/lock/dgas
+[ -d $DGAS_VAR_DIR/spool ] || mkdir $DGAS_VAR_DIR/spool
+[ -d $DGAS_VAR_DIR/spool/dgas ] || mkdir $DGAS_VAR_DIR/spool/dgas
+
+useradd -M -r -s /sbin/nologin -p'!!' $HLR_USER &> /dev/null
 
 [ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
 [ -d $DGAS_VAR_DIR/lock/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/lock/dgas
+[ -d $DGAS_VAR_DIR/spool/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/spool/dgas
+
+cp -a /etc/grid-security/host{cert,key}.pem $DGAS_VAR_DIR/spool/dgas/
+chown dgas:dgas $DGAS_VAR_DIR/spool/dgas/host{cert,key}.pem
+
+export X509_USER_CERT=/var/spool/dgas/hostcert.pem
+export X509_USER_KEY=/var/spool/dgas/hostkey.pem
 
 # Some functions to make code easily readable
 HLRD=$PREFIX/sbin/dgas-hlr-listener
@@ -250,7 +262,7 @@ status()
 		RETVAL=1
 	fi
 
-	
+	export CERT_DN=`openssl x509 -in /etc/grid-security/hostcert.pem -subject -noout | sed -e "s/subject\+=\ //"`
 	if [ $HLHLR == "false" ]; then
 		echo $TRS_MGR_LOCK
 		PID1=`cat $TRS_MGR_LOCK 2> /dev/null`
@@ -260,11 +272,13 @@ status()
 		then
 			echo "The process is running."
   			#Try ping here
+  			export X509_USER_CERT=/etc/grid-security/hostcert.pem
+			export X509_USER_KEY=/etc/grid-security/hostkey.pem
 			GLITE_PING_COMMAND=$PREFIX/bin/dgas-ping
 			if [ -e $GLITE_PING_COMMAND ]
 			then 
 				#Check if ping is successfull
-				RESULT=`${GLITE_PING_COMMAND} -s "${HOSTNAME}" -t 0`
+				RESULT=`${GLITE_PING_COMMAND} -s "${HOSTNAME}:56568:${CERT_DN}" -t 0`
 				if [ $? == 0 ] ; then
 					echo $RESULT
 					echo "listener answers to ping"
