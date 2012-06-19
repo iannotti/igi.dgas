@@ -3,6 +3,9 @@
 # Init file for DGAS HLR database
 #
 
+# source function library
+. /etc/rc.d/init.d/functions
+
 PRIVILEGES="ALL PRIVILEGES"
 PRIV_TABLES="Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Alter_priv,Drop_priv"
 
@@ -48,6 +51,31 @@ if [ ! -f $DBTMPSPECFILE ]; then
     exit $ERROR_FILE
 fi
 
+eval DGAS_VAR_DIR=`grep dgas_var_dir $CONFFILE | grep "^#" -v  | cut -d'"' -f 2`
+eval HLR_USER=`grep hlr_user $CONFFILE | grep "^#" -v  | cut -d'"' -f 2`
+eval HLHLR=`grep is2ndLevelHlr $CONFFILE | grep "^#" -v  | cut -d'"' -f 2`
+eval TDB_LOCK=`grep masterLock $CONFFILE | grep "^#" -v  | cut -d'"' -f 2`
+
+[ ! -z $DGAS_VAR_DIR ]  || export DGAS_VAR_DIR=/var/
+
+if [ -z $HLHLR ]
+then
+	HLHLR="false"
+fi
+
+[ -d $DGAS_VAR_DIR ] || mkdir $DGAS_VAR_DIR
+[ -d $DGAS_VAR_DIR/log ] || mkdir $DGAS_VAR_DIR/log
+[ -d $DGAS_VAR_DIR/log/dgas ] || mkdir $DGAS_VAR_DIR/log/dgas
+[ -d $DGAS_VAR_DIR/lock ] || mkdir $DGAS_VAR_DIR/lock
+[ -d $DGAS_VAR_DIR/lock/dgas ] || mkdir $DGAS_VAR_DIR/lock/dgas
+[ -d $DGAS_VAR_DIR/spool ] || mkdir $DGAS_VAR_DIR/spool
+[ -d $DGAS_VAR_DIR/spool/dgas ] || mkdir $DGAS_VAR_DIR/spool/dgas
+
+useradd -M -r -s /sbin/nologin -p'!!' $HLR_USER &> /dev/null
+
+[ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
+[ -d $DGAS_VAR_DIR/lock/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/lock/dgas
+[ -d $DGAS_VAR_DIR/spool/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/spool/dgas
 
 DB_SERVER=`grep hlr_sql_server $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_server\s*=\s*\"\(.*\)\"/\1/"`
 DB_NAME=`grep hlr_sql_dbname $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_dbname\s*=\s*\"\(.*\)\"/\1/"`
@@ -55,8 +83,6 @@ DB_TMP_NAME=`grep hlr_tmp_sql_dbname $CONFFILE | grep "^#" -v | sed -e "s/hlr_tm
 DB_USER=`grep hlr_sql_user $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_user\s*=\s*\"\(.*\)\"/\1/"`
 DB_PASSWORD=`grep hlr_sql_password $CONFFILE | grep "^#" -v | sed -e "s/hlr_sql_password\s*=\s*\"\(.*\)\"/\1/"`
 
-# source function library
-. /etc/rc.d/init.d/functions
 
 
 # testing root password:
