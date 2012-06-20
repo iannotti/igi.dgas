@@ -349,24 +349,30 @@ sub printLog
 		else
 		{	
 			my $localtime = localtime();
-                        if ( $log ne $lastLog )
-                        {
-                                if ( $logCounter != 0 )
-                                {
-                                        print LOGH "$localtime: Last message repeated $logCounter times.\n";
+                        if ( $log ne $lastLog ) {
+                                if ( $logCounter != 0 ) {
+                                        print LOGH
+                                          "$localtime: Last message repeated $logCounter times.\n";
                                 }
                                 $logCounter = 0;
                                 print LOGH "$localtime: " . $log . "\n";
-                        }
-                        else
-                        {
-                                $logCounter++;
-                                if ( $logCounter == 20 )
+                                if ( $_[2] )
                                 {
-                                        print LOGH "$localtime: Last message repeated 20 times.\n";
-					$logCounter = 0;
+                                        select(LOGH);
+                                        $|++;
                                 }
                         }
+                        else {
+                                $logCounter++;
+                                if ( $logCounter == 20 ) {
+                                        print LOGH "$localtime: Last message repeated 20 times.\n";
+                                        select(LOGH);
+                                        $|++;
+                                        $logCounter = 0;
+                                }
+                        }
+                        select(LOGH);
+                        $|=0;
                         $lastLog = $log;
 		}
 

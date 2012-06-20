@@ -468,7 +468,7 @@ MAIN: while ($keepGoing) {
 
 	if ( &numRecords() > $maxNumRecords ) {
 		&printLog( 3,
-"There are more than $maxNumRecords in database, waiting $waitFor seconds."
+"There are more than $maxNumRecords records in database, waiting $waitFor seconds."
 		);
 		my $secsWaited = 0;
 		while ( $keepGoing && $secsWaited < $waitFor ) {
@@ -2567,7 +2567,7 @@ sub searchForNumCpus {
 						}
 						if ( &numRecords() > $maxNumRecords ) 
 						{
-									&printLog( 3,"There are more than $maxNumRecords Records in database, waiting $waitFor seconds.");
+									&printLog( 3,"There are more than $maxNumRecords records in database, waiting $waitFor seconds.",1);
 									my $secsWaited = 0;
 									while ( $keepGoing && $secsWaited < $waitFor ) {
 										sleep 1;
