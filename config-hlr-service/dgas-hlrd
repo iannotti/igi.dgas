@@ -283,8 +283,15 @@ status()
 					echo $RESULT
 					echo "listener answers to ping"
 	  			else
-					echo "listener seems'to be frozen"
-					RETVAL=2
+					echo "listener could be frozen, trying again..."
+					sleep 2
+					RESULT=`${GLITE_PING_COMMAND} -s "${HOSTNAME}:56568:${CERT_DN}" -t 0`
+					if [ $? == 0 ] ; then
+						echo "listener answers to ping"
+					else
+						echo "listener seems to be frozen."
+						RETVAL=2
+					fi
 				fi
 			fi
 		  	# end ping
