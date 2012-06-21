@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Server Daeomn and protocol engines.
 // 
-// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.5 2011/06/28 15:28:56 aguarise Exp $
+// $Id: atmResourceEngine.cpp,v 1.1.2.1.4.6 2012/06/21 08:46:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -579,6 +579,7 @@ int ATMResourceEngine( string &input, connInfo &connectionInfo, string *output )
 			//DN check here
 			if ( !authorize(connectionInfo.contactString) )
 			{
+				hlr_log ("ATM Engine: Operation not allowed, sensors certificate DN isn't associated to a valid resource in DB", &logStream,3);
 				success = false;
 				code = atoi(ATM_E_AUTH);
 			}
