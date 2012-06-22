@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.13 2012/06/22 08:36:29 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.14 2012/06/22 08:54:21 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -550,13 +550,15 @@ int AMQConsumer (consumerParms& parms)
     // Note in the code above that this causes createTopic or
     // createQueue to be used in the consumer.
     //============================================================
-    bool useTopics = _useTopics;
+    bool useTopics = false;
+    if ( parms.useTopics = "true" || parms.useTopics = "yes" )  useTopics = true;
 
     //============================================================
     // set to true if you want the consumer to use client ack mode
     // instead of the default auto ack mode.
     //============================================================
-    bool clientAck = parms.clientAck;
+    bool clientAck = false;
+    if ( parms.clientAck = "true" || parms.clientAck = "yes" )  clientAck = true;
 
     // Create the consumer
     SimpleAsyncConsumer consumer( brokerURI, destURI, useTopics, clientAck );
