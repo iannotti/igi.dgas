@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.18 2012/06/22 12:38:39 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.19 2012/06/22 12:59:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -93,6 +93,7 @@ private:
 	Session* session;
 	Destination* destination;
 	MessageConsumer* consumer;
+	Topic* topic;
 	bool useTopic;
 	bool clientAck;
 	std::string brokerURI;
@@ -178,21 +179,26 @@ public:
 			// Create the destination (Topic or Queue)
 			if( useTopic ) 
 			{
-				destination = session->createTopic( destURI );
+
+				if ( !durable )
+				{
+						destination = session->createTopic( destURI );
+						consumer = session->createConsumer( destination );
+				}
+				else
+				{
+						topic  = session->createTopic( destURI );
+						consumer = session->createDurableConsumer(topic,name,selector,noLocal);
+				}
+
 			} 
 			else 
 			{
 				destination = session->createQueue( destURI );
-			}
-			// Create a MessageConsumer from the Session to the Topic or Queue
-			if ( !durable )
-			{
 				consumer = session->createConsumer( destination );
 			}
-			else
-			{
-				consumer = session->createDurableConsumer(destination,name,selector,noLocal);
-			}
+			// Create a MessageConsumer from the Session to the Topic or Queue
+
 			consumer->setMessageListener( this );
 
 		}
