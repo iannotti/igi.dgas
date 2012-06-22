@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.6 2012/06/22 09:36:44 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.7 2012/06/22 09:42:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -338,7 +338,7 @@ private:
 
 };
 
-int dgasHlrRecordProducer (consumerParms& parms)
+int dgasHlrRecordProducer (producerParms& parms)
 {
 	int returncode = 0;
 	string output_message;
