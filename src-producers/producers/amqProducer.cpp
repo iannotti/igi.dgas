@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.7 2012/06/22 09:42:59 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.8 2012/06/22 09:49:06 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -76,6 +76,9 @@ private:
     unsigned int numMessages;
     std::string brokerURI;
     std::string destURI;
+    std::string username;
+    std::string password;
+
 
 public:
 
@@ -85,7 +88,9 @@ public:
                     unsigned int numMessages,
                     const std::string& destURI,
                     bool useTopic = false,
-                    bool clientAck = false ){
+                    bool clientAck = false,
+                    std::string username = "",
+                    std::string password = ""){
 
         this->connection = NULL;
         this->session = NULL;
@@ -96,6 +101,9 @@ public:
         this->brokerURI = brokerURI;
         this->destURI = destURI;
         this->clientAck = clientAck;
+        this->username = username;
+        this->password = password;
+
 	this->returnCode =0;
     }
 
@@ -177,7 +185,14 @@ public:
 
             // Create a Connection
             try{
-                connection = connectionFactory->createConnection();
+                if ( username != "" )
+                			{
+                				connection = connectionFactory->createConnection();
+                			}
+                			else
+                			{
+                				connection = connectionFactory->createConnection(username, password);
+                			}
                 connection->start();
             } catch( CMSException& e ) {
                 e.printStackTrace();
