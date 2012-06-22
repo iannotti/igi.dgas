@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.5 2011/02/01 14:38:00 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.6 2012/06/22 09:36:44 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -338,7 +338,7 @@ private:
 
 };
 
-int dgasHlrRecordProducer (string& confFileName, string amqBrokerUri, string amqTopic, string amqOptions)
+int dgasHlrRecordProducer (consumerParms& parms)
 {
 	int returncode = 0;
 	string output_message;
@@ -356,22 +356,7 @@ endl;
 		
 	}
 
-	if ( amqOptions == "" )
-	{
-		if ( confMap["amqOptions"] != "" )
-		{
-			amqOptions = confMap["amqOptions"];
-		}
-		else
-		{
-			amqOptions = "wireFormat=openwire"
-				"&connection.useAsyncSend=true"
-				"&transport.commandTracingEnabled=true"
-				//"&transport.tcpTracingEnabled=true"
-				"&wireFormat.tightEncodingEnabled=true";
-		}
-	}
-	if ( amqBrokerUri == "" )
+	if ( parms.amqBrokerUri == "" )
 	{
 		if ( confMap["amqBrokerUri"] != "" )
 		{
@@ -383,7 +368,7 @@ endl;
 			return E_BROKER_URI;
 		}
 	}
-	if ( amqTopic == "" )
+	if ( parms.dgasAMQTopic == "" )
 	{
 		if ( confMap["dgasAMQTopic"] != "" )
 		{
@@ -395,25 +380,54 @@ endl;
 			return E_BROKER_URI;
 		}
 	}
-
+	if ( parms.useTopics == "" )
+			{
+				if ( confMap["useTopics"] != "" )
+				{
+					parms.useTopics = confMap["useTopics"];
+				}
+			}
+		if ( parms.clientAck == "" )
+				{
+					if ( confMap["clientAck"] != "" )
+					{
+						parms.clientAck = confMap["clientAck"];
+					}
+				}
+		if ( parms.amqUsername == "" )
+				{
+					if ( confMap["amqUsername"] != "" )
+					{
+						parms.amqUsername = confMap["amqUsername"];
+					}
+				}
+		if ( parms.amqPassword == "" )
+				{
+					if ( confMap["amqPassword"] != "" )
+					{
+						parms.amqPassword = confMap["amqPassword"];
+					}
+				}
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	string textLine;
 	while ( getline (cin, textLine, '\n'))
 	{
 		output_message += textLine += "\n";
 	}	
-	std::string brokerURI =
-		""+ amqBrokerUri +
-		//"failover:(tcp://hlr-test-29.to.infn.it:61616"
-		"?" + amqOptions 
-		//"wireFormat=openwire"
-		//"&connection.useAsyncSend=true"
-		//"&transport.commandTracingEnabled=true"
-		//"&transport.tcpTracingEnabled=true"
-		//"&wireFormat.tightEncodingEnabled=true"
-		+ "";
+	std::string brokerURI = parms.amqBrokerUri;
 	std::string destURI = amqTopic;
 	bool useTopics = false;
+	    if ( (parms.useTopics == "true" ) || ( parms.useTopics == "yes") )  useTopics = true;
+
+	    //============================================================
+	    // set to true if you want the consumer to use client ack mode
+	    // instead of the default auto ack mode.
+	    //============================================================
+	bool clientAck = false;
+	if ( (parms.clientAck == "true" ) || ( parms.clientAck == "yes") )  clientAck = true;
+
+	std::string username = parms.amqUsername;
+	std::string password = parms.amqPassword;
 	unsigned int numMessages = 1;
 	
 	SimpleProducer producer( brokerURI, numMessages, destURI, useTopics );
