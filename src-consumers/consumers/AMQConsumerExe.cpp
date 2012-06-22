@@ -9,7 +9,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
-#define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:N"
+#define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:ND"
 
 using namespace std;
 
@@ -26,6 +26,7 @@ string password = "";
 string name = "";
 string selector = "";
 string noLocal = "";
+string durable = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
 void help(string progname)
@@ -48,6 +49,7 @@ void help(string progname)
         cerr<< "-T  --useTopic  Use Topic" << endl;
         cerr<< "-Q  --useQueue  Use Queue" << endl;
         cerr<< "-A  --clientAck  Enable consumer client ack mode" << endl;
+        cerr<< "-D  --durable  Enable consumer as durable" << endl;
         cerr<< "-h  --help               Print this help message." << endl;
 }
 
@@ -69,6 +71,7 @@ int options ( int argc, char **argv )
 		{"useTopic",0,0,'T'},
 		{"useQueue",0,0,'Q'},
 		{"clientAck",0,0,'A'},
+		{"durable",0,0,'D'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
 	};
@@ -88,6 +91,7 @@ int options ( int argc, char **argv )
 			case 'T': useTopics ="true"; break;
 			case 'Q': useTopics ="false"; break;
 			case 'A': clientAck ="true"; break;
+			case 'D': durable ="true"; break;
 			case 'h': needs_help =true; break;		  
 			default : break;
 		}
@@ -113,6 +117,7 @@ int main (int argc, char *argv[])
 	parms.noLocal = noLocal;
 	parms.selector = selector;
 	parms.name = name;
+	parms.durable = durable;
 	int res = AMQConsumer(parms);
 	if ( verbosity > 0 )
 	{

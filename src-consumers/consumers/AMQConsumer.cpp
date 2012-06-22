@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.17 2012/06/22 12:31:29 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.18 2012/06/22 12:38:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -102,6 +102,7 @@ private:
 	std::string name;
 	std::string selector;
 	bool noLocal;
+	bool durable;
 
 public:
 	SimpleAsyncConsumer( const std::string& brokerURI,
@@ -111,6 +112,7 @@ public:
 		std::string name = "",
 		std::string selector ="",
 		bool nolocal = false,
+		bool durable = false,
 		std::string username = "",
 		std::string password = "")
 	{
@@ -127,6 +129,7 @@ public:
 		this->name = name;
 		this->selector = selector;
 		this->noLocal = noLocal;
+		this->durable = durable;
 	}
 	
 	virtual ~SimpleAsyncConsumer()
@@ -182,7 +185,7 @@ public:
 				destination = session->createQueue( destURI );
 			}
 			// Create a MessageConsumer from the Session to the Topic or Queue
-			if ( !durableConnection )
+			if ( !durable )
 			{
 				consumer = session->createConsumer( destination );
 			}
@@ -440,6 +443,34 @@ int AMQConsumer (consumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
+	if ( parms.durable == "" )
+			{
+				if ( confMap["durable"] != "" )
+				{
+					parms.durable = confMap["durable"];
+				}
+			}
+	if ( parms.noLocal == "" )
+				{
+					if ( confMap["noLocal"] != "" )
+					{
+						parms.noLocal = confMap["noLocal"];
+					}
+				}
+	if ( parms.name == "" )
+				{
+					if ( confMap["name"] != "" )
+					{
+						parms.name = confMap["name"];
+					}
+				}
+	if ( parms.selector == "" )
+					{
+						if ( confMap["selector"] != "" )
+						{
+							parms.selector = confMap["selector"];
+						}
+					}
 	if ( parms.useTopics == "" )
 		{
 			if ( confMap["useTopics"] != "" )
@@ -605,8 +636,11 @@ int AMQConsumer (consumerParms& parms)
     bool noLocal = false;
         if ( (parms.noLocal == "true" ) || ( parms.noLocal == "yes") )  noLocal = true;
 
-        std::string name = parms.name;
-        std::string selector = parms.selector;
+    bool durable = false;
+        if ( (parms.durable == "true" ) || ( parms.durable == "yes") )  durable = true;
+
+    std::string name = parms.name;
+    std::string selector = parms.selector;
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
 
@@ -618,6 +652,7 @@ int AMQConsumer (consumerParms& parms)
     		name,
     		selector,
     		noLocal,
+    		durable,
     		username,
     		password );
 
