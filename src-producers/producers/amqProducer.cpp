@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.9 2012/06/22 11:51:21 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.10 2012/06/22 11:55:14 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -363,9 +363,9 @@ int dgasHlrRecordProducer (producerParms& parms)
 		cerr << "WARNING: Could not read conf file: " << confFileName << 
 endl;
 		cerr << "There can be problems processing the transaction" << endl;
-		if ( ( parms.amqBrokerUri == "" ) || ( parms.amqTopic == "" ) )
+		if ( ( parms.amqBrokerUri == "" ) || ( parms.dgasAMQTopic == "" ) )
 		{
-			cerr << "Please specify amqBrokerUri and amqTopic." << endl;
+			cerr << "Please specify amqBrokerUri and dgasAMQTopic." << endl;
 			return E_CONFIG;
 		}
 		
@@ -429,7 +429,7 @@ endl;
 		output_message += textLine += "\n";
 	}	
 	std::string brokerURI = parms.amqBrokerUri;
-	std::string destURI = parms.amqTopic;
+	std::string destURI = parms.dgasAMQTopic;
 	bool useTopics = false;
 	    if ( (parms.useTopics == "true" ) || ( parms.useTopics == "yes") )  useTopics = true;
 
