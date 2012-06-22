@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.14 2012/06/22 08:54:21 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.15 2012/06/22 09:11:08 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -97,12 +97,16 @@ private:
 	bool clientAck;
 	std::string brokerURI;
 	std::string destURI;	
+	std::string username;
+	std::string password;
 
 public:
 	SimpleAsyncConsumer( const std::string& brokerURI,
 		const std::string& destURI,
 		bool useTopic = false,
-		bool clientAck = false ) 
+		bool clientAck = false,
+		std::string username = "",
+		std::string password = "")
 	{
 		this->connection = NULL;
 		this->session = NULL;
@@ -112,6 +116,8 @@ public:
 		this->brokerURI = brokerURI;
 		this->destURI = destURI;
 		this->clientAck = clientAck;
+		this->username = username;
+		this->password = password;
 	}
 	
 	virtual ~SimpleAsyncConsumer()
@@ -132,7 +138,14 @@ public:
 			ActiveMQConnectionFactory* connectionFactory =
                			new ActiveMQConnectionFactory( brokerURI );
 			// Create a Connection
-			connection = connectionFactory->createConnection();
+			if ( username != "" )
+			{
+				connection = connectionFactory->createConnection();
+			}
+			else
+			{
+				connection = connectionFactory->createConnection(username, password);
+			}
 			delete connectionFactory;
 			ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
 			if( amqConnection != NULL ) 
@@ -425,7 +438,20 @@ int AMQConsumer (consumerParms& parms)
 					parms.clientAck = confMap["clientAck"];
 				}
 			}
-	
+	if ( parms.amqUsername == "" )
+			{
+				if ( confMap["amqUsername"] != "" )
+				{
+					parms.amqUsername = confMap["amqUsername"];
+				}
+			}
+	if ( parms.amqPassword == "" )
+			{
+				if ( confMap["amqPassword"] != "" )
+				{
+					parms.amqPassword = confMap["amqPassword"];
+				}
+			}
 	if ( parms.hlrSqlTmpDBName == "" )
 	{
 		if ( confMap["hlr_tmp_sql_dbname"] != "" )
@@ -551,17 +577,20 @@ int AMQConsumer (consumerParms& parms)
     // createQueue to be used in the consumer.
     //============================================================
     bool useTopics = false;
-    if ( parms.useTopics = "true" || parms.useTopics = "yes" )  useTopics = true;
+    if ( (parms.useTopics == "true" ) || ( parms.useTopics == "yes") )  useTopics = true;
 
     //============================================================
     // set to true if you want the consumer to use client ack mode
     // instead of the default auto ack mode.
     //============================================================
     bool clientAck = false;
-    if ( parms.clientAck = "true" || parms.clientAck = "yes" )  clientAck = true;
+    if ( (parms.clientAck == "true" ) || ( parms.clientAck == "yes") )  clientAck = true;
+
+    std::string username = parms.amqUsername;
+    std::string username = parms.amqPassword;
 
     // Create the consumer
-    SimpleAsyncConsumer consumer( brokerURI, destURI, useTopics, clientAck );
+    SimpleAsyncConsumer consumer( brokerURI, destURI, useTopics, clientAck, username, password );
 
     // Start it up and it will listen forever.
     consumer.runConsumer();

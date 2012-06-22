@@ -9,7 +9,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
-#define OPTION_STRING "3hv:B:t:c:TQA"
+#define OPTION_STRING "3hv:B:t:c:TQAu:p:"
 
 using namespace std;
 
@@ -21,6 +21,8 @@ string topic = "";
 string configFile = "";
 string useTopics = "";
 string clientAck ="";
+string username = "";
+string password = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
 void help(string progname)
@@ -35,6 +37,8 @@ void help(string progname)
         cerr<< "-B  --brokerUri <URI>    The URI specifying the listening AMQ Broker. " << endl;
         cerr<< "-t  --topic <dgas topic> Specifies the queue to poll for incoming messages." << endl;
         cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
+        cerr<< "-u  --username <amq username>  AMQ user if needed for authentication" << endl;
+        cerr<< "-p  --password <amq password>  AMQ password for user 'user' if needed for authentication" << endl;
         cerr<< "-T  --useTopic  Use Topic" << endl;
         cerr<< "-Q  --useQueue  Use Queue" << endl;
         cerr<< "-A  --clientAck  Enable consumer client ack mode" << endl;
@@ -51,6 +55,8 @@ int options ( int argc, char **argv )
 		{"brokerUri",1,0,'B'},
 		{"topic",1,0,'t'},
 		{"config",1,0,'c'},
+		{"username",1,0,'u'},
+		{"password",1,0,'p'},
 		{"useTopic",0,0,'T'},
 		{"useQueue",0,0,'Q'},
 		{"clientAck",0,0,'A'},
@@ -65,6 +71,8 @@ int options ( int argc, char **argv )
 			case 'B': brokerUri=optarg; break;
 			case 't': topic=optarg; break;
 			case 'c': configFile=optarg; break;
+			case 'u': username=optarg; break;
+			case 'p': password=optarg; break;
 			case 'T': useTopics ="true"; break;
 			case 'Q': useTopics ="false"; break;
 			case 'A': clientAck ="true"; break;
@@ -88,6 +96,8 @@ int main (int argc, char *argv[])
 	parms.confFileName = configFile;
 	parms.useTopics = useTopics;
 	parms.clientAck = clientAck;
+	parms.amqUsername = username;
+	parms.amqPassword = password;
 	int res = AMQConsumer(parms);
 	if ( verbosity > 0 )
 	{
