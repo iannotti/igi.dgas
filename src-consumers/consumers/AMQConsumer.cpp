@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.12 2011/05/27 12:28:00 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.13 2012/06/22 08:36:29 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -411,6 +411,20 @@ int AMQConsumer (consumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
+	if ( parms.useTopics == "" )
+		{
+			if ( confMap["useTopics"] != "" )
+			{
+				parms.useTopics = confMap["useTopics"];
+			}
+		}
+	if ( parms.clientAck == "" )
+			{
+				if ( confMap["clientAck"] != "" )
+				{
+					parms.clientAck = confMap["clientAck"];
+				}
+			}
 	
 	if ( parms.hlrSqlTmpDBName == "" )
 	{
@@ -528,15 +542,7 @@ int AMQConsumer (consumerParms& parms)
 	}
 
 	activemq::library::ActiveMQCPP::initializeLibrary();
-	std::string brokerURI =
-        //"failover:(tcp://127.0.0.1:61616"
-        "failover:(" + parms.amqBrokerUri +
-//        "?wireFormat=openwire"
-//        "&connection.useAsyncSend=true"
-//        "&transport.commandTracingEnabled=true"
-//        "&transport.tcpTracingEnabled=true"
-//        "&wireFormat.tightEncodingEnabled=true"
-        ")";
+	std::string brokerURI = parms.amqBrokerUri;
 	
 	std::string destURI = parms.dgasAMQTopic;
 	//============================================================
@@ -544,13 +550,13 @@ int AMQConsumer (consumerParms& parms)
     // Note in the code above that this causes createTopic or
     // createQueue to be used in the consumer.
     //============================================================
-    bool useTopics = false;
+    bool useTopics = _useTopics;
 
     //============================================================
     // set to true if you want the consumer to use client ack mode
     // instead of the default auto ack mode.
     //============================================================
-    bool clientAck = false;
+    bool clientAck = parms.clientAck;
 
     // Create the consumer
     SimpleAsyncConsumer consumer( brokerURI, destURI, useTopics, clientAck );

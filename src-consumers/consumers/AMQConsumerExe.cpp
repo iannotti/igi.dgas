@@ -9,7 +9,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
-#define OPTION_STRING "3hv:B:t:c:"
+#define OPTION_STRING "3hv:B:t:c:TQA"
 
 using namespace std;
 
@@ -19,6 +19,8 @@ int verbosity = 3;
 string brokerUri = "";
 string topic = "";
 string configFile = "";
+string useTopics = "";
+string clientAck ="";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
 void help(string progname)
@@ -30,9 +32,12 @@ void help(string progname)
         cerr<< endl << "Usage: " << endl;
         cerr<< progname << " [OPTIONS]" << endl << endl;;
         cerr<< "OPTIONS:" <<endl;
-        cerr<< "-b  --brokerUri <URI>    The URI specifying the listening AMQ Broker. " << endl;
+        cerr<< "-B  --brokerUri <URI>    The URI specifying the listening AMQ Broker. " << endl;
         cerr<< "-t  --topic <dgas topic> Specifies the queue to poll for incoming messages." << endl;
         cerr<< "-c  --config <confFile>  HLR configuration file name, if different" << endl;
+        cerr<< "-T  --useTopic  Use Topic" << endl;
+        cerr<< "-Q  --useQueue  Use Queue" << endl;
+        cerr<< "-A  --clientAck  Enable consumer client ack mode" << endl;
         cerr<< "-h  --help               Print this help message." << endl;
 }
 
@@ -46,6 +51,9 @@ int options ( int argc, char **argv )
 		{"brokerUri",1,0,'B'},
 		{"topic",1,0,'t'},
 		{"config",1,0,'c'},
+		{"useTopic",0,0,'T'},
+		{"useQueue",0,0,'Q'},
+		{"clientAck",0,0,'A'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
 	};
@@ -57,6 +65,9 @@ int options ( int argc, char **argv )
 			case 'B': brokerUri=optarg; break;
 			case 't': topic=optarg; break;
 			case 'c': configFile=optarg; break;
+			case 'T': useTopics ="true"; break;
+			case 'Q': useTopics ="false"; break;
+			case 'A': clientAck ="true"; break;
 			case 'h': needs_help =true; break;		  
 			default : break;
 		}
@@ -75,6 +86,8 @@ int main (int argc, char *argv[])
 	parms.amqBrokerUri = brokerUri;
 	parms.dgasAMQTopic = topic;
 	parms.confFileName = configFile;
+	parms.useTopics = useTopics;
+	parms.clientAck = clientAck;
 	int res = AMQConsumer(parms);
 	if ( verbosity > 0 )
 	{
