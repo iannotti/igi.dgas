@@ -55,7 +55,7 @@ int options ( int argc, char **argv )
 	{
 		{"verbosity",1,0,'v'},
 		{"brokerUri",1,0,'B'},
-		{"amqTopic",1,0,'T'},
+		{"amqTopic",1,0,'t'},
 		{"config",1,0,'c'},
 		{"username",1,0,'u'},
 		{"password",1,0,'p'},
@@ -71,7 +71,7 @@ int options ( int argc, char **argv )
 		{
 			case 'v': verbosity=atoi(optarg); break;
 			case 'B': brokerUri=optarg; break;
-			case 'T': amqTopic=optarg; break;
+			case 't': amqTopic=optarg; break;
 			case 'c': configFile=optarg; break;
 			case 'u': username=optarg; break;
 			case 'p': password=optarg; break;
@@ -92,9 +92,9 @@ int main (int argc, char *argv[])
 		help();
 		return 0;
 	}
-	consumerParms parms;
+	producerParms parms;
 		parms.amqBrokerUri = brokerUri;
-		parms.dgasAMQTopic = topic;
+		parms.dgasAMQTopic = amqTopic;
 		parms.confFileName = configFile;
 		parms.useTopics = useTopics;
 		parms.clientAck = clientAck;
