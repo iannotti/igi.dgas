@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.8 2012/06/22 09:49:06 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.9 2012/06/22 11:51:21 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -358,12 +358,12 @@ int dgasHlrRecordProducer (producerParms& parms)
 	int returncode = 0;
 	string output_message;
 	map <string,string> confMap;
-	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )	
+	if ( dgas_conf_read ( parms.confFileName, &confMap ) != 0 )
 	{
 		cerr << "WARNING: Could not read conf file: " << confFileName << 
 endl;
 		cerr << "There can be problems processing the transaction" << endl;
-		if ( ( amqBrokerUri == "" ) || ( amqTopic == "" ) )
+		if ( ( parms.amqBrokerUri == "" ) || ( parms.amqTopic == "" ) )
 		{
 			cerr << "Please specify amqBrokerUri and amqTopic." << endl;
 			return E_CONFIG;
@@ -375,11 +375,11 @@ endl;
 	{
 		if ( confMap["amqBrokerUri"] != "" )
 		{
-			amqBrokerUri= confMap["amqBrokerUri"];
+			parms.amqBrokerUri= confMap["amqBrokerUri"];
 		}
 		else
 		{
-		 	cerr << "WARNING: Error reading conf file: " << confFileName << endl;
+		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
 			return E_BROKER_URI;
 		}
 	}
@@ -387,11 +387,10 @@ endl;
 	{
 		if ( confMap["dgasAMQTopic"] != "" )
 		{
-			amqTopic= confMap["dgasAMQTopic"];
 		}
 		else
 		{
-		 	cerr << "WARNING: Error reading conf file: " << confFileName << endl;
+		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
 			return E_BROKER_URI;
 		}
 	}
@@ -430,7 +429,7 @@ endl;
 		output_message += textLine += "\n";
 	}	
 	std::string brokerURI = parms.amqBrokerUri;
-	std::string destURI = amqTopic;
+	std::string destURI = parms.amqTopic;
 	bool useTopics = false;
 	    if ( (parms.useTopics == "true" ) || ( parms.useTopics == "yes") )  useTopics = true;
 
