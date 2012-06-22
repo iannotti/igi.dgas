@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.16 2012/06/22 09:19:41 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.17 2012/06/22 12:31:29 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -99,12 +99,18 @@ private:
 	std::string destURI;	
 	std::string username;
 	std::string password;
+	std::string name;
+	std::string selector;
+	bool noLocal;
 
 public:
 	SimpleAsyncConsumer( const std::string& brokerURI,
 		const std::string& destURI,
 		bool useTopic = false,
 		bool clientAck = false,
+		std::string name = "",
+		std::string selector ="",
+		bool nolocal = false,
 		std::string username = "",
 		std::string password = "")
 	{
@@ -118,6 +124,9 @@ public:
 		this->clientAck = clientAck;
 		this->username = username;
 		this->password = password;
+		this->name = name;
+		this->selector = selector;
+		this->noLocal = noLocal;
 	}
 	
 	virtual ~SimpleAsyncConsumer()
@@ -173,7 +182,14 @@ public:
 				destination = session->createQueue( destURI );
 			}
 			// Create a MessageConsumer from the Session to the Topic or Queue
-			consumer = session->createConsumer( destination );
+			if ( !durableConnection )
+			{
+				consumer = session->createConsumer( destination );
+			}
+			else
+			{
+				consumer = session->createDurableConsumer(destination,name,selector,noLocal);
+			}
 			consumer->setMessageListener( this );
 
 		}
@@ -586,11 +602,24 @@ int AMQConsumer (consumerParms& parms)
     bool clientAck = false;
     if ( (parms.clientAck == "true" ) || ( parms.clientAck == "yes") )  clientAck = true;
 
+    bool noLocal = false;
+        if ( (parms.noLocal == "true" ) || ( parms.noLocal == "yes") )  noLocal = true;
+
+        std::string name = parms.name;
+        std::string selector = parms.selector;
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
 
     // Create the consumer
-    SimpleAsyncConsumer consumer( brokerURI, destURI, useTopics, clientAck, username, password );
+    SimpleAsyncConsumer consumer( brokerURI,
+    		destURI,
+    		useTopics,
+    		clientAck,
+    		name,
+    		selector,
+    		noLocal,
+    		username,
+    		password );
 
     // Start it up and it will listen forever.
     consumer.runConsumer();
