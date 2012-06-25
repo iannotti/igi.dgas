@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.21 2012/06/25 09:28:07 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.22 2012/06/25 09:31:18 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -508,7 +508,7 @@ int AMQConsumer (consumerParms& parms)
 					parms.amqPassword = confMap["amqPassword"];
 				}
 			}
-	if ( parms.amqClientID == "" )
+	if ( parms.amqClientId == "" )
 				{
 					if ( confMap["amqClientId"] != "" )
 					{
