@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.29 2012/06/25 14:28:03 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.30 2012/06/25 14:37:31 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -154,15 +154,12 @@ public:
 			ActiveMQConnectionFactory* connectionFactory =
                			new ActiveMQConnectionFactory( brokerURI );
 			// Create a Connection
-			//if ( clientId == "" && username == "" )			{
-//				connection = connectionFactory->createConnection();
-//			}
-//			if ( clientId != "" || username != "" )
-//			{
 				connection = connectionFactory->createConnection(username, password );
-//			}
 			delete connectionFactory;
-			connection->setClientID(clientId);
+			if ( clientId != "" )
+			{
+				connection->setClientID(clientId);
+			}
 			ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
 			if( amqConnection != NULL ) 
 			{
@@ -192,7 +189,7 @@ public:
 				else
 				{
 						topic  = session->createTopic( destURI );
-						consumer = session->createDurableConsumer(topic,clientId,selector,noLocal);
+						consumer = session->createDurableConsumer(topic,name,selector,noLocal);
 				}
 
 			} 
