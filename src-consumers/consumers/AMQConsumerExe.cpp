@@ -118,7 +118,7 @@ int main (int argc, char *argv[])
 	parms.clientAck = clientAck;
 	parms.amqUsername = username;
 	parms.amqPassword = password;
-	parms.amq.ClientId = clientId;
+	parms.amqClientId = clientId;
 	parms.noLocal = noLocal;
 	parms.selector = selector;
 	parms.name = name;
