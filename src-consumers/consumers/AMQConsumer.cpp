@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.19 2012/06/22 12:59:00 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.20 2012/06/25 08:49:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -100,6 +100,7 @@ private:
 	std::string destURI;	
 	std::string username;
 	std::string password;
+	std::string clientId;
 	std::string name;
 	std::string selector;
 	bool noLocal;
@@ -115,7 +116,8 @@ public:
 		bool nolocal = false,
 		bool durable = false,
 		std::string username = "",
-		std::string password = "")
+		std::string password = "",
+				std::string clientId = "")
 	{
 		this->connection = NULL;
 		this->session = NULL;
@@ -127,6 +129,7 @@ public:
 		this->clientAck = clientAck;
 		this->username = username;
 		this->password = password;
+		this->clientId = clientId;
 		this->name = name;
 		this->selector = selector;
 		this->noLocal = noLocal;
@@ -151,13 +154,17 @@ public:
 			ActiveMQConnectionFactory* connectionFactory =
                			new ActiveMQConnectionFactory( brokerURI );
 			// Create a Connection
-			if ( username != "" )
+			if ( username == "" && clientId == "" )
 			{
 				connection = connectionFactory->createConnection();
 			}
-			else
+			if ( username != "" && clientId == "" )
 			{
 				connection = connectionFactory->createConnection(username, password);
+			}
+			if ( username != "" && clientId != "" )
+			{
+				connection = connectionFactory->createConnection(username, password, clientId);
 			}
 			delete connectionFactory;
 			ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
@@ -505,6 +512,13 @@ int AMQConsumer (consumerParms& parms)
 					parms.amqPassword = confMap["amqPassword"];
 				}
 			}
+	if ( parms.amqClientID == "" )
+				{
+					if ( confMap["amqClientId"] != "" )
+					{
+						parms.amqClientId = confMap["amqClientId"];
+					}
+				}
 	if ( parms.hlrSqlTmpDBName == "" )
 	{
 		if ( confMap["hlr_tmp_sql_dbname"] != "" )
@@ -649,6 +663,7 @@ int AMQConsumer (consumerParms& parms)
     std::string selector = parms.selector;
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
+    std::string clientId = parms.amqClientId;
 
     // Create the consumer
     SimpleAsyncConsumer consumer( brokerURI,
@@ -660,7 +675,8 @@ int AMQConsumer (consumerParms& parms)
     		noLocal,
     		durable,
     		username,
-    		password );
+    		password,
+    		clientId);
 
     // Start it up and it will listen forever.
     consumer.runConsumer();
