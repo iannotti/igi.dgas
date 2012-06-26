@@ -2565,14 +2565,23 @@ sub searchForNumCpus {
 								$commitSuccesfull = 0;
 							}
 						}
-						if ( &numRecords() > $maxNumRecords ) 
+						my $shouldWaitFor = 1;
+						while ( $shouldWaitFor )
 						{
-									&printLog( 3,"There are more than $maxNumRecords records in database, waiting $waitFor seconds.",1);
+							if ( &numRecords() > $maxNumRecords ) 
+							{
+									&printLog( 3,"There are more than $maxNumRecords records in database, waiting $waitFor seconds..",1);
 									my $secsWaited = 0;
 									while ( $keepGoing && $secsWaited < $waitFor ) {
-										sleep 1;
+										my $randomSleepTime = 0.25 - log(rand()); #0.25 + v.a. exp unilatera, media = 1
+										select(undef, undef, undef, $randomSleepTime); #equivale a sleep per valore float
 										$secsWaited++;
 									}
+							}
+							else
+							{
+								$shouldWaitFor = 0;
+							}
 						}
 
 						#update buffer
