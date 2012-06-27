@@ -1,4 +1,4 @@
-// $Id: hlrTransIn.cpp,v 1.1.2.1.4.4 2011/01/30 13:01:27 aguarise Exp $
+// $Id: hlrTransIn.cpp,v 1.1.2.1.4.5 2012/06/27 07:34:17 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -273,7 +273,7 @@ bool hlrTransIn::exists()
 		if ( accountingProcedure != "" ) queryStr += "AND accountingProcedure='" + accountingProcedure + "'";
 		dbResult result = hlrDb.query(queryStr);
 		string logBuff = "TransIn:exists(), Query:" + queryStr;
-		 hlr_log (logBuff, &logStream,3);
+		 hlr_log (logBuff, &logStream,8);
 		if ( hlrDb.errNo == 0)
 		{
 			if ( result.numRows() == 1 )
