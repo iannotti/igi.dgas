@@ -439,7 +439,6 @@ if ( !$have_less ) {
 my $mainRecordsCounter = 0;
 my $firstRun = 0; #assume this isn't the first run.
 MAIN: while ($keepGoing) {
-
 	# first get info on last job processed:
 	my $startJob       = "";
 	my $startTimestamp = 0;
@@ -2034,6 +2033,7 @@ sub searchForNumCpus {
 #print "".localtime().": Writing info on last processed job in buffer $buffName.";
 			open( OUT, "> $buffName" ) || return 2;
 			print OUT "$_[1]:$_[2]";
+			&printLog(9,"in Buffer $_[1]:$_[2]",1);
 			close(OUT);
 
 			my $tmpBuffer = "${buffName}_tmp";
@@ -2135,7 +2135,7 @@ sub searchForNumCpus {
 			# timestamp
 			my @sortedLrmsLogFiles =
 			  ( sort { $logFMod{$a} <=> $logFMod{$b} } keys %logFMod );
-
+			
 			# we process these LRMS log files from the last, until we find the
 			# last job previously considered.
 			while ( $keepGoing && $continueProcessing && @sortedLrmsLogFiles ) {
@@ -2144,13 +2144,6 @@ sub searchForNumCpus {
 				&printLog( 8,
 					"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}"
 				);
-
-			   # if this is not the first (newest) log file we read in this
-			   # iteration ($currLogTimestamp != 0), make sure we will read only
-			   # a log file that contains entries up to the current timestamp!
-				next
-				  if ( $currLogTimestamp != 0
-					&& $logFMod{$thisLogFile} > $currLogTimestamp );
 
 				# if a log file with this inode has already been processed in
 				# this iteration ...
@@ -2178,13 +2171,13 @@ sub searchForNumCpus {
 					# last modified (appended) _before_ the job we have already
 					# processed (or: should be ignored because logged to early)
 					# hence we stop here!
-					$continueProcessing = 0;
+					&printLog(7,"skipping file because too early",1);
+					next;
 				}
 				else {
-					&printLog( 8,
-"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}"
+					&printLog( 8,	"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}"
 					);
-
+						
 					&processLrmsLogFile(
 						$thisLogFile,      $newestFile,
 						$_[0],             $_[1],
@@ -2265,6 +2258,7 @@ sub searchForNumCpus {
 			# just use cat:
 			$cmd = $cmd . " $lrmsLogDir/$filename";
 		}
+		&printLog(9,"Opening with $cmd",1);
 		if ( !open( LRMSLOGFILE, "$cmd |" ) ) {
 			&printLog( 6, "Warning: Couldn't open the log file ... skipping!" );
 			return 1;
@@ -2288,7 +2282,6 @@ sub searchForNumCpus {
 					"Current line not completed by LRMS, skipping: $line" );
 				next;
 			}
-
 			# not more than a bunch of jobs at a time!
 			if ( $jobsThisStep == $jobPerTimeInterval ) {
 
@@ -2356,10 +2349,10 @@ sub searchForNumCpus {
 				$_[10] = $allProcessed = 1;
 				return 0;
 			}
-			elsif ( $lrmsEventTimestamp < $ignoreJobsLoggedBefore ) {
+			elsif ( $lrmsEventTimestamp < ( $ignoreJobsLoggedBefore - 864000 ) ) {
 
 				&printLog( 4,
-"Warning: Log event time $lrmsEventTimeString (=$lrmsEventTimestamp) of job $targetJobId BEFORE $ignoreJobsLoggedBefore!\n(Mmay happen if ignoreJobsLoggedBefore is set and the buffer contained earlier timestamp)\nStopping iteration!"
+"Warning: Log event time $lrmsEventTimeString (=$lrmsEventTimestamp) of job $targetJobId BEFORE $ignoreJobsLoggedBefore! (May happen if ignoreJobsLoggedBefore is set and the buffer contained earlier timestamp)\nStopping iteration!"
 				);
 				close LRMSLOGFILE;
 				$_[9] = $allProcessed  = 1;
@@ -2489,6 +2482,8 @@ sub searchForNumCpus {
 							}
 							else {
 								&printLog( 6, "...succesfull" );
+								#commit buffer also.
+								&putBuffer( $collectorBufferFileName, $targetJobId, $lrmsEventTimestamp );
 								$commitSuccesfull = 0;
 							}
 						}
@@ -3622,3 +3617,5 @@ sub searchForNumCpus {
 		&printLog( 8, "Records in DB:=$recordsNumber" );
 		return $recordsNumber;
 	}
+
+
