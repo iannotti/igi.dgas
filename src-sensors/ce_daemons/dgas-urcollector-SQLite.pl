@@ -437,6 +437,7 @@ if ( !$have_less ) {
 #}
 
 my $mainRecordsCounter = 0;
+my $firstRun = 0; #assume this isn't the first run.
 MAIN: while ($keepGoing) {
 
 	# first get info on last job processed:
@@ -444,26 +445,13 @@ MAIN: while ($keepGoing) {
 	my $startTimestamp = 0;
 	my $lastJob        = "";
 	my $lastTimestamp  = 0;
-	my $tmpBuffTstamp  = 0;
 	if ( &readBuffer( $collectorBufferFileName, $startJob, $startTimestamp ) !=
 		0 )
 	{
 
-		# we have no regular buffer containing the start Job
-		# look for a temporary containing the last jobt + temporary timestamp!
-		if (
-			&readTmpBuffer(
-				$collectorBufferFileName, $lastJob,
-				$lastTimestamp,           $tmpBuffTstamp
-			) != 0
-		  )
-		{
-
+		   # we have no regular buffer containing the start Job
 		   # this is the very first run, not even a temporary buffer is written:
-			$tmpBuffTstamp =
-			  -1;    # will later be set to first log event timestamp
-			         # encountered!
-		}
+			$firstRun = 1;
 	}
 
 	if ( &numRecords() > $maxNumRecords ) {
@@ -497,14 +485,13 @@ MAIN: while ($keepGoing) {
 	if ( $lrmsType ne "condor" ) {
 
 		# process LRMS log from last file to startJob
-		&processLrmsLogs( $startJob, $startTimestamp, $lastJob, $lastTimestamp,
-			$tmpBuffTstamp, $ignoreJobsLoggedBefore );
+		&processLrmsLogs( $startJob, $startTimestamp, $lastJob, $lastTimestamp, $ignoreJobsLoggedBefore );
 	}
 	else {
 
 		# process Condor history starting from startJob
 		&processCondorJobHistory( $startJob, $startTimestamp, $lastJob,
-			$lastTimestamp, $tmpBuffTstamp, $ignoreJobsLoggedBefore );
+			$lastTimestamp, $ignoreJobsLoggedBefore );
 	}
 
 	# write buffer (lastJob and lastTimestamp), if necessary!
@@ -531,7 +518,6 @@ MAIN: while ($keepGoing) {
 		);
 
 		&putBuffer( $collectorBufferFileName, $lastJob, $lastTimestamp );
-		$tmpBuffTstamp  = 0;
 		$startJob       = $lastJob;
 		$startTimestamp = $lastTimestamp;
 	}
@@ -2077,40 +2063,7 @@ sub searchForNumCpus {
 		return 0;
 	}
 
-	sub putTmpBuffer {
 
-		# arguments are: 0 = buffer name
-		#                1 = last LRMS job id (to go into
-		#                2 = last LRMS job timestamp (log time)
-		#                3 = temporary LRMS job timestamp (log time)
-		my $buffName = $_[0] . "_tmp";
-		open( OUT, "> $buffName" ) || return 2;
-		print OUT "$_[1]:$_[2]:$_[3]";
-		close(OUT);
-		&printLog( 6, "Writing tmp buffer $buffName with '$_[1]:$_[2]:$_[3]'" );
-		return 0;
-	}
-
-	sub readTmpBuffer {
-		my $buffname = $_[0] . "_tmp";
-		open( IN, "< $buffname" ) || return 2;
-		my $tstamp;
-		my $startJobId     = "";
-		my $startJobTstamp = 0;
-		my $tmpJobTstamp   = 0;
-		while (<IN>) {
-			( $startJobId, $startJobTstamp, $tmpJobTstamp ) = split(':');
-			chomp($tmpJobTstamp);    # remove eventual newline
-		}
-		close(IN);
-		&printLog( 6,
-"Reading TEMPORARY buffer $buffname (service stopped before completing the first run). First job to analyse: id=$startJobId; log timestamp=$startJobTstamp. So far processed backwards from there to timestamp: $tmpJobTstamp"
-		);
-		$_[1] = $startJobId;
-		$_[2] = $startJobTstamp;
-		$_[3] = $tmpJobTstamp;
-		return 0;
-	}
 
 ##--------> process the LRMS log and process the jobs <-------##
 
@@ -2122,8 +2075,7 @@ sub searchForNumCpus {
 		my $startTimestamp         = $_[1];
 		my $lastJob                = $_[2];
 		my $lastTimestamp          = $_[3];
-		my $tmpBuffTstamp          = $_[4];
-		my $ignoreJobsLoggedBefore = $_[5];
+		my $ignoreJobsLoggedBefore = $_[4];
 
 		my $currLogTimestamp   = 0;
 		my $continueProcessing = 1;
@@ -2182,7 +2134,7 @@ sub searchForNumCpus {
 			# now we sort the LRMS log files according to their modification
 			# timestamp
 			my @sortedLrmsLogFiles =
-			  ( sort { $logFMod{$b} <=> $logFMod{$a} } keys %logFMod );
+			  ( sort { $logFMod{$a} <=> $logFMod{$b} } keys %logFMod );
 
 			# we process these LRMS log files from the last, until we find the
 			# last job previously considered.
@@ -2237,7 +2189,7 @@ sub searchForNumCpus {
 						$thisLogFile,      $newestFile,
 						$_[0],             $_[1],
 						$_[2],             $_[3],
-						$_[4],             $ignoreJobsLoggedBefore,
+			            $ignoreJobsLoggedBefore,
 						$currLogTimestamp, $nothingProcessed,
 						$allProcessed
 					);
@@ -2284,13 +2236,12 @@ sub searchForNumCpus {
 		my $lastJob       = $_[4];
 		my $lastTimestamp = $_[5];
 
-		my $tmpBuffTstamp          = $_[6];
-		my $ignoreJobsLoggedBefore = $_[7];
+		my $ignoreJobsLoggedBefore = $_[6];
 
-		my $currLogTimestamp = $_[8];
+		my $currLogTimestamp = $_[7];
 
-		my $nothingProcessed = $_[9];
-		my $allProcessed     = $_[10];
+		my $nothingProcessed = $_[8];
+		my $allProcessed     = $_[9];
 		my $recordsCounter   = 0;
 
 		# for each job to process: check the CE accounting log dir (ordered by
@@ -2301,17 +2252,17 @@ sub searchForNumCpus {
 		# if not: route 3 (local job)
 
 		# building command to open the log file
-		my $cmd = $tac_cmd;
+		my $cmd = $cat_cmd;
 
 		# decide whether to decompress using 'less':
 		if ( $filename =~ /(\.gz)$/ ) {
 
-			# decompress and pipe into tac:
+			# decompress and pipe into cat:
 			$cmd = "$less_cmd $lrmsLogDir/$filename | " . $cmd;
 		}
 		else {
 
-			# just use tac:
+			# just use cat:
 			$cmd = $cmd . " $lrmsLogDir/$filename";
 		}
 		if ( !open( LRMSLOGFILE, "$cmd |" ) ) {
@@ -2384,11 +2335,9 @@ sub searchForNumCpus {
 				return 1;
 			}
 
-			$_[8] = $currLogTimestamp = $lrmsEventTimestamp;
+			$_[7] = $currLogTimestamp = $lrmsEventTimestamp;
 
 			if (
-				$tmpBuffTstamp == 0
-				&&    # do this only if we have a regular buffer!
 				( $targetJobId eq $startJob )
 				&& ( $startJob ne "" )
 				&& ( $lrmsEventTimestamp eq $startTimestamp )
@@ -2413,29 +2362,19 @@ sub searchForNumCpus {
 "Warning: Log event time $lrmsEventTimeString (=$lrmsEventTimestamp) of job $targetJobId BEFORE $ignoreJobsLoggedBefore!\n(Mmay happen if ignoreJobsLoggedBefore is set and the buffer contained earlier timestamp)\nStopping iteration!"
 				);
 				close LRMSLOGFILE;
-				$_[6]  = $tmpBuffTstamp = 0;
-				$_[10] = $allProcessed  = 1;
+				$_[9] = $allProcessed  = 1;
 				return 0;
 			}
 			else {
 
 				# need to process the job:
-				if ( $tmpBuffTstamp < 0 ) {
+				if ( $firstRun ) {
 
 					# this is the very first run, we don't even have a temporary
 					# buffer; make sure we start writing temporary buffers until
 					# the first iteration is completed:
-					&printLog( 7,
-"Very first record. Writing tmp buffer, backward processing until completing first iteration."
-					);
-					$tmpBuffTstamp = $lrmsEventTimestamp;
+					&printLog( 7, "Very first record. " );
 
-				}
-				elsif ( $tmpBuffTstamp > 0 ) {
-
-				 # we have a temporary buffer ... process that before creating a
-				 # new buffer!
-					$firstJobId = 0;
 				}
 
 				# new buffer information should be taken only if we started from
@@ -2449,25 +2388,13 @@ sub searchForNumCpus {
 					$firstJobId = 0;
 					$_[1] = 0;   # $newestF; next file (if any) isn't the newest
 
-					&printLog( 6,
-"Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)"
-					);
+					&printLog( 6, "Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)" );
 				}
 
-				if (   $tmpBuffTstamp > 0
-					&& $lrmsEventTimestamp > $tmpBuffTstamp )
-				{
-					&printLog( 6,
-"Skipping $targetJobId (event timestamp $lrmsEventTimestamp is after $tmpBuffTstamp in temporary buffer)"
-					);
-					next;
-				}
 
-				&printLog( 6,
-"Processing job: $targetJobId with LRMS log event time(local):$lrmsEventTimeString(=$lrmsEventTimestamp); LRMS creation time: $job_ctime"
-				);
+				&printLog( 6, "Processing job: $targetJobId with LRMS log event time(local):$lrmsEventTimeString(=$lrmsEventTimestamp); LRMS creation time: $job_ctime" );
 
-				$_[9] = $nothingProcessed = 0;    # processing something!
+				$_[8] = $nothingProcessed = 0;    # processing something!
 
 				my $gianduiottoHeader;
 				if ($useCElog) {
@@ -2585,14 +2512,7 @@ sub searchForNumCpus {
 						}
 
 						#update buffer
-						if ( $tmpBuffTstamp != 0 ) {
-
-					   # in case this is the first run, adjust temporary buffer!
-							$_[6] = $tmpBuffTstamp = $lrmsEventTimestamp;
-
-							&putTmpBuffer( $collectorBufferFileName, $lastJob,
-								$lastTimestamp, $tmpBuffTstamp );
-						}
+						
 						my $elapsed = tv_interval( $t1, [gettimeofday] );
 						my $jobs_min = ( $mainRecordsCounter / $elapsed ) * 60;
 						my $min_krecords = 0.0;
@@ -2611,18 +2531,6 @@ sub searchForNumCpus {
 						$recordsCounter = 0;
 					}
 				}
-			}
-			#update buffer
-			&printLog( 8, "BUFFER tmpBuffTstamp=$tmpBuffTstamp" );
-
-			if ( $tmpBuffTstamp != 0 ) {
-				&printLog( 7, "UPDATE BUFFER $tmpBuffTstamp" );
-
-				# in case this is the first run, adjust temporary buffer!
-				$_[6] = $tmpBuffTstamp = $lrmsEventTimestamp;
-
-				&putTmpBuffer( $collectorBufferFileName, $lastJob, $lastTimestamp,
-					$tmpBuffTstamp );
 			}
 		}    # while (<LRMSLOGFILE>) ...
 		     #process trailing
@@ -2643,18 +2551,7 @@ sub searchForNumCpus {
 
 		}
 
-		#update buffer
-		&printLog( 2, "UPDATE BUFFER" );
-
-		#update buffer
-		if ( $tmpBuffTstamp != 0 ) {
-
-			# in case this is the first run, adjust temporary buffer!
-			$_[6] = $tmpBuffTstamp = $lrmsEventTimestamp;
-
-			&putTmpBuffer( $collectorBufferFileName, $lastJob, $lastTimestamp,
-				$tmpBuffTstamp );
-		}
+		
 		close(LRMSLOGFILE);
 		if ( $keepGoing == 0 ) {
 			&printLog( 6, "Processed trailing and exit." );
@@ -2756,8 +2653,7 @@ sub searchForNumCpus {
 		my $startTimestamp = $_[1];
 		my $lastJob        = $_[2];  # we will set these for each processed job!
 		my $lastTimestamp  = $_[3];
-		my $tmpBuffTstamp  = $_[4];
-		my $ignoreJobsLoggedBefore = $_[5];
+		my $ignoreJobsLoggedBefore = $_[4];
 
 		# determine timestamp at which to stop, either because of configuration
 		# or because of last processed job:
@@ -2916,8 +2812,7 @@ sub searchForNumCpus {
 					# continuing with the next classad.
 
 					if (
-						$tmpBuffTstamp == 0    # do if we have a regular buffer!
-						&& $jhClusterId eq $startJob && $startJob ne ""
+						$jhClusterId eq $startJob && $startJob ne ""
 					  )
 					{
 
@@ -2929,8 +2824,7 @@ sub searchForNumCpus {
 							|| ( $_[3] ne $startTimestamp ) )
 						{
 							&printLog(
-								6, "Found already processed job with ClusterId
-=$jhClusterId. Stopping iteration ...\n"
+								6, "Found already processed job with ClusterId =$jhClusterId. Stopping iteration ...\n"
 							);
 						}
 
@@ -2938,23 +2832,6 @@ sub searchForNumCpus {
 					}
 					else {
 
-						if ( $tmpBuffTstamp < 0 ) {
-
-							# this is the very first run, we don't even have a
-							# temporary buffer; make sure we start writing
-							# temporary buffers until the first iteration is
-							# completed:
-							&printLog( 7,
-"Very first job to process. Writing temporary buffer for backward processing until completing first iteration!\n"
-							);
-							$tmpBuffTstamp = $jhCompletionDate;
-						}
-						elsif ( $tmpBuffTstamp > 0 ) {
-
-							# we have a temporary buffer ... process that
-							# before creating a new buffer!
-							$firstJobId = 0;
-						}
 
 						if ($firstJobId) {
 
@@ -2969,14 +2846,7 @@ sub searchForNumCpus {
 							);
 						}
 
-						if (   $tmpBuffTstamp > 0
-							&& $jhCompletionDate > $tmpBuffTstamp )
-						{
-							&printLog( 6,
-"Skipping job $jhClusterId (since CompletionDate $jhCompletionDate after $tmpBuffTstamp of temporary buffer).\n"
-							);
-							next;
-						}
+				
 						&printLog( 6,
 "Processing job: $jhClusterId with CompletionDate: $jhCompletionDate (="
 							  . localtime($jhCompletionDate)
@@ -2991,15 +2861,7 @@ sub searchForNumCpus {
 						  )
 						{
 
-							if ( $tmpBuffTstamp != 0 ) {
-
-								# in case this is the first run,
-								# adjust temporary buffer!
-								$_[4] = $tmpBuffTstamp = $jhCompletionDate;
-
-								&putTmpBuffer( $collectorBufferFileName,
-									$lastJob, $lastTimestamp, $tmpBuffTstamp );
-							}
+							
 						}
 
 						#else {
