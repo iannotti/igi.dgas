@@ -282,7 +282,7 @@ my $ceJobMapLogDir = "";
 if ( $useCEJobMap ne "yes" && $useCEJobMap ne "YES" ) {
 	$useCElog = 0;    # don't use it, treat all jobs as local
 	&printLog( 3,
-"Warning: Not using the CE's job map log file for retrieving grid-related\ninformation. All jobs treated as local jobs!"
+"Warning: Not using the CE's job map log file for retrieving grid-related information. All jobs treated as local jobs!"
 	);
 
 	# must be set if processing _only_ grid jobs or _only_ local jobs
