@@ -2566,7 +2566,7 @@ sub searchForNumCpus {
 							}
 						}
 						my $shouldWaitFor = 1;
-						while ( $shouldWaitFor )
+						while ( $shouldWaitFor && $keepGoing )
 						{
 							if ( &numRecords() > $maxNumRecords ) 
 							{
