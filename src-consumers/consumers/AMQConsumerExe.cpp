@@ -31,7 +31,7 @@ string durable = "";
 string foreground = "";
 string messageNumber = "";
 string outputType = "";
-atring outputDir = "";
+string outputDir = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
 void help(string progname)
