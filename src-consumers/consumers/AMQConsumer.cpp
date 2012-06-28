@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.31 2012/06/28 12:38:11 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.32 2012/06/28 13:41:28 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -86,14 +86,18 @@ volatile sig_atomic_t goOn = 1;
 
 class SimpleAsyncConsumer : public ExceptionListener,
 			public MessageListener,
+			public Runnable,
 			public DefaultTransportListener 
 {
 private:
+	CountDownLatch latch;
+	CountDownLatch doneLatch;
 	Connection* connection;
 	Session* session;
 	Destination* destination;
 	MessageConsumer* consumer;
 	Topic* topic;
+	long waitMillis;
 	bool useTopic;
 	bool clientAck;
 	std::string brokerURI;
@@ -109,7 +113,7 @@ private:
 
 public:
 	long int consumedMessages;
-	long int upToMessages;
+	long int numMessages;
 	SimpleAsyncConsumer( const std::string& brokerURI,
 		const std::string& destURI,
 		bool useTopic = false,
@@ -120,7 +124,9 @@ public:
 		bool durable = false,
 		std::string username = "",
 		std::string password = "",
-				std::string clientId = "")
+				std::string clientId = "",
+				long waitMillis = 30000)
+		:latch(1), doneLatch(numMessages)
 	{
 		this->connection = NULL;
 		this->session = NULL;
@@ -138,6 +144,8 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->consumedMessages = 0;
+		this->waitMillis = waitMillis;
+
 	}
 	
 	virtual ~SimpleAsyncConsumer()
@@ -150,7 +158,11 @@ public:
 		this->cleanup();
 	}
 
-	void runConsumer() 
+	void waitUntilReady() {
+	        latch.await();
+	    }
+
+	void run()
 	{
 		try 
 		{
@@ -206,9 +218,13 @@ public:
 
 			consumer->setMessageListener( this );
 
+			latch.countDown();
+			doneLatch.await( waitMillis );
+
 		}
 		catch (CMSException& e) 
 		{
+			latch.countDown();
 			e.printStackTrace();
 		}
 	}	
@@ -261,11 +277,13 @@ public:
 				}
 			}
 			consumedMessages++;
+			cout << "consumedMessages" + int2string(consumer.consumedMessages) << endl;
 		}
 		catch (CMSException& e) 
 		{
 			e.printStackTrace();
 		}
+		doneLatch.countDown();
 	}
 
 	// If something bad happens you see it here as this class is also been
@@ -681,20 +699,28 @@ int AMQConsumer (consumerParms& parms)
     		clientId);
 
     // Start it up and it will listen forever.
-    consumer.runConsumer();
+    consumer.numMessages = 1;
+    Thread consumerThread( &consumer );
+    consumerThread.start();
+    consumer.waitUntilReady();
+    consumer.run();
 
     signal (SIGTERM, exit_signal);
     signal (SIGINT, exit_signal);
     // Wait to exit.
+
+    /*
     while( goOn )
     {
     	cout << "consumedMessages" + int2string(consumer.consumedMessages) << endl;
     	sleep(1);
     };
+    */
+    consumerThread.join();
 
     // All CMS resources should be closed before the library is shutdown.
-    consumer.close();
-    activemq::library::ActiveMQCPP::shutdownLibrary();
+    //consumer.close();
+    //activemq::library::ActiveMQCPP::shutdownLibrary();
 	if (parms.foreground != "true") removeLock(parms.lockFileName);
 	string logBuff = "Removing:" + parms.lockFileName;
 	hlr_log(logBuff, &logStream, 1);
