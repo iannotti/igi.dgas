@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.35 2012/06/28 14:37:19 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.36 2012/06/28 14:49:32 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -219,6 +219,9 @@ public:
 			// Create a MessageConsumer from the Session to the Topic or Queue
 
 			consumer->setMessageListener( this );
+
+			std::cout.flush();
+			std::cerr.flush();
 
 			latch.countDown();
 			doneLatch.await( waitMillis );
@@ -706,7 +709,7 @@ int AMQConsumer (consumerParms& parms)
     Thread consumerThread( &consumer );
     consumerThread.start();
     consumer.waitUntilReady();
-    consumer.run();
+    //consumer.run();
 
     //signal (SIGTERM, exit_signal);
     //signal (SIGINT, exit_signal);
