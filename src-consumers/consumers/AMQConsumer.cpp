@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.38 2012/06/28 15:10:51 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.39 2012/06/28 15:18:54 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -224,7 +224,8 @@ public:
 			std::cerr.flush();
 
 			latch.countDown();
-			doneLatch.await( waitMillis );
+			//doneLatch.await( waitMillis );
+			doneLatch.await();
 
 		}
 		catch (CMSException& e) 
