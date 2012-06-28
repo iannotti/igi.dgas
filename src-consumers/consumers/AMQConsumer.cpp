@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.34 2012/06/28 14:33:15 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.35 2012/06/28 14:37:19 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -179,10 +179,10 @@ public:
 				connection->setClientID(clientId);
 			}
 			//ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
-			if( amqConnection != NULL ) 
-			{
-				amqConnection->addTransportListener( this );
-			}
+			//if( amqConnection != NULL )
+			//{
+			//	amqConnection->addTransportListener( this );
+			//}
 			connection->start();
 
 			connection->setExceptionListener(this);
