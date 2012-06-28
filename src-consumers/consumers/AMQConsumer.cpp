@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.33 2012/06/28 14:08:07 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.34 2012/06/28 14:33:15 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -90,14 +90,14 @@ class SimpleAsyncConsumer : public ExceptionListener,
 			public DefaultTransportListener 
 {
 private:
-	CountDownLatch latch;
-	CountDownLatch doneLatch;
-	Connection* connection;
-	Session* session;
-	Destination* destination;
+	CountDownLatch 	latch;
+	CountDownLatch 	doneLatch;
+	Connection* 	connection;
+	Session* 		session;
+	Destination* 	destination;
 	MessageConsumer* consumer;
-	Topic* topic;
-	long waitMillis;
+	Topic* 			topic;
+	long 			waitMillis;
 	bool useTopic;
 	bool clientAck;
 	std::string brokerURI;
@@ -167,16 +167,18 @@ public:
 		try 
 		{
 			// Create a ConnectionFactory
-			ActiveMQConnectionFactory* connectionFactory =
-               			new ActiveMQConnectionFactory( brokerURI );
+			//ActiveMQConnectionFactory* connectionFactory =
+              // 			new ActiveMQConnectionFactory( brokerURI );
+			auto_ptr<ConnectionFactory> connectionFactory(
+			                ConnectionFactory::createCMSConnectionFactory( brokerURI ) );
 			// Create a Connection
 				connection = connectionFactory->createConnection(username, password );
-			delete connectionFactory;
+			//delete connectionFactory;
 			if ( clientId != "" )
 			{
 				connection->setClientID(clientId);
 			}
-			ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
+			//ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
 			if( amqConnection != NULL ) 
 			{
 				amqConnection->addTransportListener( this );
@@ -242,6 +244,7 @@ public:
 			if( textMessage != NULL ) 
 			{
 				text = textMessage->getText();
+				cout << text << endl;
 			} 
 			else 
 			{
@@ -705,8 +708,8 @@ int AMQConsumer (consumerParms& parms)
     consumer.waitUntilReady();
     consumer.run();
 
-    signal (SIGTERM, exit_signal);
-    signal (SIGINT, exit_signal);
+    //signal (SIGTERM, exit_signal);
+    //signal (SIGINT, exit_signal);
     // Wait to exit.
 
     /*
