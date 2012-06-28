@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.39 2012/06/28 15:18:54 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.40 2012/06/28 15:36:07 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -84,6 +84,13 @@ const char * hlr_sql_dbname;
 
 volatile sig_atomic_t goOn = 1;
 
+bool is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
 class SimpleAsyncConsumer : public ExceptionListener,
 			public MessageListener,
 			public Runnable,
@@ -98,6 +105,7 @@ private:
 	MessageConsumer* consumer;
 	Topic* 			topic;
 	long 			waitMillis;
+	long int numMessages;
 	bool useTopic;
 	bool clientAck;
 	std::string brokerURI;
@@ -113,7 +121,7 @@ private:
 
 public:
 	long int consumedMessages;
-	long int numMessages;
+
 	SimpleAsyncConsumer( const std::string& brokerURI,
 		const std::string& destURI,
 		bool useTopic = false,
@@ -125,7 +133,7 @@ public:
 		std::string username = "",
 		std::string password = "",
 				std::string clientId = "",
-				long waitMillis = 30000)
+				long int numMessages = 1)
 		:latch(1), doneLatch(numMessages)
 	{
 		this->connection = NULL;
@@ -144,7 +152,7 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->consumedMessages = 0;
-		this->waitMillis = waitMillis;
+		this->numMessages = numMessages;
 
 	}
 	
@@ -691,6 +699,11 @@ int AMQConsumer (consumerParms& parms)
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
     std::string clientId = parms.amqClientId;
+    long int numMessages = 1;
+    if ( parms.messageNumber != "" && is_number(parms.messageNumber) )
+    {
+    	numMessages = atol((parms.messageNumber).c_str());
+    }
 
     // Create the consumer
     SimpleAsyncConsumer consumer( brokerURI,
@@ -703,10 +716,10 @@ int AMQConsumer (consumerParms& parms)
     		durable,
     		username,
     		password,
-    		clientId);
+    		clientId,
+    		numMessages);
 
     // Start it up and it will listen forever.
-    consumer.numMessages = 1;
     Thread consumerThread( &consumer );
     consumerThread.start();
     consumer.waitUntilReady();
