@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.30 2012/06/25 14:37:31 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.31 2012/06/28 12:38:11 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -106,7 +106,10 @@ private:
 	bool noLocal;
 	bool durable;
 
+
 public:
+	long int consumedMessages;
+	long int upToMessages;
 	SimpleAsyncConsumer( const std::string& brokerURI,
 		const std::string& destURI,
 		bool useTopic = false,
@@ -134,6 +137,7 @@ public:
 		this->selector = selector;
 		this->noLocal = noLocal;
 		this->durable = durable;
+		this->consumedMessages = 0;
 	}
 	
 	virtual ~SimpleAsyncConsumer()
@@ -256,6 +260,7 @@ public:
 					message->acknowledge();
 				}
 			}
+			consumedMessages++;
 		}
 		catch (CMSException& e) 
 		{
@@ -421,10 +426,13 @@ int AMQConsumer (consumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
-	if ( putLock(parms.lockFileName) != 0 )
+	if ( parms.foreground != "true" )
 	{
-		hlr_log("hlr_qMgr: Startup failed, Error creating the lock file.", &logStream, 1);
-		exit(1);
+		if ( putLock(parms.lockFileName) != 0 )
+		{
+			hlr_log("hlr_qMgr: Startup failed, Error creating the lock file.", &logStream, 1);
+			exit(1);
+		}
 	}
 	if ( parms.amqBrokerUri == "" )
 	{
@@ -678,12 +686,16 @@ int AMQConsumer (consumerParms& parms)
     signal (SIGTERM, exit_signal);
     signal (SIGINT, exit_signal);
     // Wait to exit.
-    while( goOn ) { sleep(1);};
+    while( goOn )
+    {
+    	cout << "consumedMessages" + int2string(consumer.consumedMessages) << endl;
+    	sleep(1);
+    };
 
     // All CMS resources should be closed before the library is shutdown.
     consumer.close();
     activemq::library::ActiveMQCPP::shutdownLibrary();
-	removeLock(parms.lockFileName);
+	if (parms.foreground != "true") removeLock(parms.lockFileName);
 	string logBuff = "Removing:" + parms.lockFileName;
 	hlr_log(logBuff, &logStream, 1);
 	return returncode;

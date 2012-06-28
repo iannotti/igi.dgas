@@ -9,7 +9,7 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
-#define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:ND"
+#define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:"
 
 using namespace std;
 
@@ -28,6 +28,10 @@ string name = "";
 string selector = "";
 string noLocal = "";
 string durable = "";
+string foreground = "";
+string messageNumber = "";
+string outputType = "";
+atring outputDir = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
 void help(string progname)
@@ -52,6 +56,10 @@ void help(string progname)
         cerr<< "-Q  --useQueue  Use Queue" << endl;
         cerr<< "-A  --clientAck  Enable consumer client ack mode" << endl;
         cerr<< "-D  --durable  Enable consumer as durable" << endl;
+        cerr<< "-F  --foreground  Do not run as deamon, consume up to -m --messages number of messages and exit." << endl;
+        cerr<< "-m  --messageNumber <number> If called with -F --foreground, consume up to -m --messages number of messages and exit." << endl;
+        cerr<< "-o  --outputType <db or stdout or file>  put the message in the database or output it on stdout or in file" << endl;
+        cerr<< "-d  --outputDir <directory> Output messages in file, one per message within the specified directory, to be used with -o file" << endl;
         cerr<< "-h  --help               Print this help message." << endl;
 }
 
@@ -75,6 +83,10 @@ int options ( int argc, char **argv )
 		{"useQueue",0,0,'Q'},
 		{"clientAck",0,0,'A'},
 		{"durable",0,0,'D'},
+		{"foreground",0,0,'F'},
+		{"messageNumber",1,0,'m'},
+		{"outputType",1,0,'o'},
+		{"outputDir",1,0,'d'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
 	};
@@ -91,11 +103,15 @@ int options ( int argc, char **argv )
 			case 'i': clientId=optarg; break;
 			case 'n': name=optarg; break;
 			case 's': selector=optarg; break;
+			case 'm': messageNumber=optarg; break;
+			case 'o': outputType=optarg; break;
+			case 'd': outputDir=optarg; break;
 			case 'N': noLocal ="true"; break;
 			case 'T': useTopics ="true"; break;
 			case 'Q': useTopics ="false"; break;
 			case 'A': clientAck ="true"; break;
 			case 'D': durable ="true"; break;
+			case 'F': foreground ="true"; break;
 			case 'h': needs_help =true; break;		  
 			default : break;
 		}
@@ -123,6 +139,10 @@ int main (int argc, char *argv[])
 	parms.selector = selector;
 	parms.name = name;
 	parms.durable = durable;
+	parms.foreground = foreground;
+	parms.outputType = outputType;
+	parms.outputDir = outputDir;
+	parms.messageNumber = messageNumber;
 	int res = AMQConsumer(parms);
 	if ( verbosity > 0 )
 	{
