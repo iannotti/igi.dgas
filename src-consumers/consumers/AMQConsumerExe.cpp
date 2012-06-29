@@ -156,6 +156,6 @@ int main (int argc, char *argv[])
 			cerr << e.error[int2string(res)] << endl;
 		}
 	}
-	return res;
+	exit(res);
 }
 
