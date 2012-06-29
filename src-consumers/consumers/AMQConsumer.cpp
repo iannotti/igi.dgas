@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.44 2012/06/29 11:50:27 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.45 2012/06/29 12:36:02 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -132,9 +132,9 @@ public:
 		bool durable = false,
 		std::string username = "",
 		std::string password = "",
-				std::string clientId = "",
-				long int numMessages = 1)
-		:latch(1), doneLatch(numMessages)
+		std::string clientId = "",
+		long int numMessages = 1)
+			:latch(1), doneLatch(numMessages)
 	{
 		this->connection = NULL;
 		this->session = NULL;
@@ -727,8 +727,11 @@ int AMQConsumer (consumerParms& parms)
     signal (SIGTERM, exit_signal);
     signal (SIGINT, exit_signal);
     // Wait for consumerThread to exit.
-
-    consumerThread.join();
+    while ( goOn )
+    {
+    	sleep(1);
+    }
+    //consumerThread.join();
 
     // All CMS resources should be closed before the library is shutdown.
     //consumer.close();
