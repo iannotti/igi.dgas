@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.49 2012/06/29 13:49:24 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.50 2012/06/29 14:51:58 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -108,6 +108,7 @@ private:
 	long int numMessages;
 	bool useTopic;
 	bool clientAck;
+	std::string outputType;
 	std::string brokerURI;
 	std::string destURI;	
 	std::string username;
@@ -120,7 +121,6 @@ private:
 
 
 public:
-	long int consumedMessages;
 
 	SimpleAsyncConsumer( const std::string& brokerURI,
 		const std::string& destURI,
@@ -130,6 +130,7 @@ public:
 		std::string selector ="",
 		bool nolocal = false,
 		bool durable = false,
+		string outputType = "cout",
 		std::string username = "",
 		std::string password = "",
 		std::string clientId = "",
@@ -153,6 +154,7 @@ public:
 		this->durable = durable;
 		this->consumedMessages = 0;
 		this->numMessages = numMessages;
+		this->outputType = outputType;
 
 	}
 	
@@ -222,7 +224,6 @@ public:
 
 			std::cout.flush();
 			std::cerr.flush();
-			cout << "waiting countDownLatch" << endl;
 			latch.countDown();//latch goes to 0 and waitUntilReady can return.
 			//doneLatch.await( waitMillis );//to be used if the consumer shoud not survive more thana given amount of time.
 			while ( goOn && doneLatch.getCount() != 0)
@@ -242,7 +243,6 @@ public:
 		static long int count = 0;
 		try
 		{
-			cout << "onMessage:Listening for message" << endl;
 			count++;
 			const TextMessage* textMessage =
 				dynamic_cast< const TextMessage* >( message );
@@ -250,43 +250,50 @@ public:
 			if( textMessage != NULL ) 
 			{
 				text = textMessage->getText();
-				cout << text << endl;
 			} 
 			else 
 			{
 				text = "NOT A TEXTMESSAGE!";
 			}
 			
-			//FIXME WRITE MESSAGE in DATABASE
-			db hlrDb ( hlr_sql_server,
-				hlr_sql_user,
-				hlr_sql_password,
-				hlr_tmp_sql_dbname	
-			);
-			if ( hlrDb.errNo != 0 )
+			//case: mysql
+			if (outputType == "mysql")
 			{
-				hlr_log("Error connecting to SQL database",&logStream,2);
-				exit(1);
-			}
-			string messageQuery = "INSERT INTO messages SET ";
-			messageQuery += "message=";
-			messageQuery += "\'" + hlrDb.escape_string(text) + "\'";
-			hlrDb.query(messageQuery);
-			if ( hlrDb.errNo != 0 )
-			{
-				hlr_log("Error Inserting message",&logStream,1);
-			}
-			else
-			{
-				string logBuff = "Message written in DB.";
-				hlr_log(logBuff, &logStream, 7);
-				if( clientAck ) 
+				db hlrDb(hlr_sql_server, hlr_sql_user, hlr_sql_password,
+						hlr_tmp_sql_dbname);
+				if (hlrDb.errNo != 0)
 				{
-					message->acknowledge();
+					hlr_log("Error connecting to SQL database", &logStream, 2);
+					exit(1);
+				}
+				string messageQuery = "INSERT INTO messages SET ";
+				messageQuery += "message=";
+				messageQuery += "\'" + hlrDb.escape_string(text) + "\'";
+				hlrDb.query(messageQuery);
+				if (hlrDb.errNo != 0)
+				{
+					hlr_log("Error Inserting message", &logStream, 1);
+				}
+				else
+				{
+					string logBuff = "Message written in DB.";
+					hlr_log(logBuff, &logStream, 7);
+					if (clientAck)
+					{
+						message->acknowledge();
+					}
 				}
 			}
-			consumedMessages++;
-			cout << "consumedMessages: " + int2string(consumedMessages) << endl;
+			//case: file
+			if ( outputType == "file" )
+			{
+
+			}
+			if ( outputType == "cout" )
+			{
+				cout << text << endl;
+			}
+			//default: cout
 		}
 		catch (CMSException& e) 
 		{
@@ -695,6 +702,7 @@ int AMQConsumer (consumerParms& parms)
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
     std::string clientId = parms.amqClientId;
+    std:;string outputType = parms.outputType;
     long int numMessages = -1;
     if ( parms.messageNumber != "" && is_number(parms.messageNumber) )
     {
@@ -710,6 +718,7 @@ int AMQConsumer (consumerParms& parms)
     		selector,
     		noLocal,
     		durable,
+    		outputType,
     		username,
     		password,
     		clientId,
