@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.41 2012/06/29 07:34:26 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.42 2012/06/29 08:17:01 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -223,7 +223,7 @@ public:
 			std::cout.flush();
 			std::cerr.flush();
 
-			latch.countDown();
+			latch.countDown();//latch goes to 0 and waitUntilReady can return.
 			//doneLatch.await( waitMillis );//to be used if the consumer shoud not survive more thana given amount of time.
 			doneLatch.await();//wait for the countdown latch to reach zero.
 
@@ -290,7 +290,15 @@ public:
 		{
 			e.printStackTrace();
 		}
-		doneLatch.countDown();
+		if ( goOn )
+		{
+			doneLatch.countDown();
+		}
+		else
+		{
+			doneLatch = 1;
+			doneLatch.countDown();
+		}
 	}
 
 	// If something bad happens you see it here as this class is also been
@@ -716,9 +724,9 @@ int AMQConsumer (consumerParms& parms)
     consumerThread.start();
     consumer.waitUntilReady();
 
-    //signal (SIGTERM, exit_signal);
-    //signal (SIGINT, exit_signal);
-    // Wait to exit.
+    signal (SIGTERM, exit_signal);
+    signal (SIGINT, exit_signal);
+    // Wait for consumerThread to exit.
 
     consumerThread.join();
 
