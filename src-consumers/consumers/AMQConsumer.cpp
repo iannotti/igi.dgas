@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.50 2012/06/29 14:51:58 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.51 2012/06/29 14:55:19 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -152,7 +152,6 @@ public:
 		this->selector = selector;
 		this->noLocal = noLocal;
 		this->durable = durable;
-		this->consumedMessages = 0;
 		this->numMessages = numMessages;
 		this->outputType = outputType;
 
