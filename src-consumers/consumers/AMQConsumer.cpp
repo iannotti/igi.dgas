@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.43 2012/06/29 09:43:05 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.44 2012/06/29 11:50:27 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -222,7 +222,7 @@ public:
 
 			std::cout.flush();
 			std::cerr.flush();
-
+			cout << "waiting countDownLatch" << endl;
 			latch.countDown();//latch goes to 0 and waitUntilReady can return.
 			//doneLatch.await( waitMillis );//to be used if the consumer shoud not survive more thana given amount of time.
 			doneLatch.await();//wait for the countdown latch to reach zero.
@@ -241,6 +241,7 @@ public:
 		static long int count = 0;
 		try
 		{
+			cout << "onMessage:Listening for message" << endl;
 			count++;
 			const TextMessage* textMessage =
 				dynamic_cast< const TextMessage* >( message );
