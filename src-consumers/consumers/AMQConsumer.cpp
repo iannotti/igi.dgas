@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.40 2012/06/28 15:36:07 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.41 2012/06/29 07:34:26 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -175,22 +175,14 @@ public:
 		try 
 		{
 			// Create a ConnectionFactory
-			//ActiveMQConnectionFactory* connectionFactory =
-              // 			new ActiveMQConnectionFactory( brokerURI );
 			auto_ptr<ConnectionFactory> connectionFactory(
 			                ConnectionFactory::createCMSConnectionFactory( brokerURI ) );
 			// Create a Connection
 				connection = connectionFactory->createConnection(username, password );
-			//delete connectionFactory;
 			if ( clientId != "" )
 			{
 				connection->setClientID(clientId);
 			}
-			//ActiveMQConnection* amqConnection = dynamic_cast<ActiveMQConnection*>( connection );
-			//if( amqConnection != NULL )
-			//{
-			//	amqConnection->addTransportListener( this );
-			//}
 			connection->start();
 
 			connection->setExceptionListener(this);
@@ -232,8 +224,8 @@ public:
 			std::cerr.flush();
 
 			latch.countDown();
-			//doneLatch.await( waitMillis );
-			doneLatch.await();
+			//doneLatch.await( waitMillis );//to be used if the consumer shoud not survive more thana given amount of time.
+			doneLatch.await();//wait for the countdown latch to reach zero.
 
 		}
 		catch (CMSException& e) 
@@ -292,7 +284,7 @@ public:
 				}
 			}
 			consumedMessages++;
-			cout << "consumedMessages" + int2string(consumedMessages) << endl;
+			cout << "consumedMessages: " + int2string(consumedMessages) << endl;
 		}
 		catch (CMSException& e) 
 		{
@@ -699,7 +691,7 @@ int AMQConsumer (consumerParms& parms)
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
     std::string clientId = parms.amqClientId;
-    long int numMessages = 1;
+    long int numMessages = -1;
     if ( parms.messageNumber != "" && is_number(parms.messageNumber) )
     {
     	numMessages = atol((parms.messageNumber).c_str());
@@ -723,19 +715,11 @@ int AMQConsumer (consumerParms& parms)
     Thread consumerThread( &consumer );
     consumerThread.start();
     consumer.waitUntilReady();
-    //consumer.run();
 
     //signal (SIGTERM, exit_signal);
     //signal (SIGINT, exit_signal);
     // Wait to exit.
 
-    /*
-    while( goOn )
-    {
-    	cout << "consumedMessages" + int2string(consumer.consumedMessages) << endl;
-    	sleep(1);
-    };
-    */
     consumerThread.join();
 
     // All CMS resources should be closed before the library is shutdown.
