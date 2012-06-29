@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.45 2012/06/29 12:36:02 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.46 2012/06/29 13:01:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -372,6 +372,7 @@ void exit_signal (int sig)
 {
 	goOn = 0;
 	signal (sig, exit_signal); 
+	cerr << "Got sigint" << endl;
 }
 
 int putLock(string lockFile)
