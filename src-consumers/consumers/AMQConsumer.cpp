@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.47 2012/06/29 13:19:27 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.48 2012/06/29 13:44:50 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -225,7 +225,8 @@ public:
 			cout << "waiting countDownLatch" << endl;
 			latch.countDown();//latch goes to 0 and waitUntilReady can return.
 			//doneLatch.await( waitMillis );//to be used if the consumer shoud not survive more thana given amount of time.
-			doneLatch.await();//wait for the countdown latch to reach zero.
+			while ( goOn )
+				doneLatch.await(1000);//wait for the countdown latch to reach zero.
 
 		}
 		catch (CMSException& e) 
@@ -728,12 +729,12 @@ int AMQConsumer (consumerParms& parms)
     signal (SIGTERM, exit_signal);
     signal (SIGINT, exit_signal);
     // Wait for consumerThread to exit.
-    while ( goOn )
+    /*while ( goOn )
     {
     	cerr << "here I am" << endl;
     	sleep(1);
-    }
-    //consumerThread.join();
+    }*/
+    consumerThread.join();
 
     // All CMS resources should be closed before the library is shutdown.
     //consumer.close();
