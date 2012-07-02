@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.53 2012/07/02 08:42:15 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.54 2012/07/02 08:49:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -206,7 +206,7 @@ public:
 	{
 			if ( (mkdir (dir.c_str(), 0777 )) != 0)
 				{
-					string logBuff = "Error creating UR dirctory:" + parms.recordsDir;
+					string logBuff = "Error creating UR dirctory:" + dir;
 					cerr << logBuff << endl;
 					hlr_log(logBuff, &logStream, 1);
 					return false;
