@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.51 2012/06/29 14:55:19 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.52 2012/07/02 08:26:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -118,6 +118,7 @@ private:
 	std::string selector;
 	bool noLocal;
 	bool durable;
+	std::string dir;
 
 
 public:
@@ -171,10 +172,58 @@ public:
 	        latch.await();
 	    }
 
+	string fileName(string messageNumber)
+		{
+			//DGAS log
+	                time_t curtime;
+	                struct tm *timeLog;
+	                curtime = time(NULL);
+	                timeLog = localtime(&curtime);
+	                char timeBuff[16];
+	                strftime(timeBuff,sizeof(timeBuff),"%Y%m%d%H%M%S",timeLog);
+	               	string buffer = "M_" + (string)timeBuff + "_" + messageNumber;
+			return buffer;
+		}
+
+	void setDir(std::string& dir)
+	{
+		this->dir =dir;
+	}
+
+	bool checkDir()
+	{
+		//check if parms.recordDir exists. Create it otherwise.
+			struct stat st;
+			if( stat(dir.c_str(),&st) != 0)
+			{
+				return false;
+			}
+			return true;
+	}
+
+
+	bool createDir()
+	{
+			if ( (mkdir ((parms.recordsDir).c_str(), 0777 )) != 0)
+				{
+					string logBuff = "Error creating UR dirctory:" + parms.recordsDir;
+					cerr << logBuff << endl;
+					hlr_log(logBuff, &logStream, 1);
+					return false;
+				}
+			return true;
+	}
+
 	void run()
 	{
 		try 
 		{
+			//if oututType == file create message directory if it doesn't exists/
+			if ( outputType == "file" )
+			{
+				if ( !checkDir() )  createDir();
+			}
+
 			// Create a ConnectionFactory
 			auto_ptr<ConnectionFactory> connectionFactory(
 			                ConnectionFactory::createCMSConnectionFactory( brokerURI ) );
@@ -286,7 +335,19 @@ public:
 			//case: file
 			if ( outputType == "file" )
 			{
-
+				std::ofstream fileS;
+				std::string fname = dir + "/"+ fileName(int2string(count));
+				fileS.open( fname.c_str() , ios::app);
+				if ( !fileS)
+				{
+					std::string logBuff = "Error Inserting message in file: " + fname;
+					hlr_log(logBuff, &logStream, 1);
+				}
+				else
+				{
+					fileS << text << endl;
+					fileS.close();
+				}
 			}
 			if ( outputType == "cout" )
 			{
@@ -298,8 +359,7 @@ public:
 		{
 			e.printStackTrace();
 		}
-			doneLatch.countDown();
-
+		doneLatch.countDown();
 	}
 
 	// If something bad happens you see it here as this class is also been
@@ -701,7 +761,7 @@ int AMQConsumer (consumerParms& parms)
     std::string username = parms.amqUsername;
     std::string password = parms.amqPassword;
     std::string clientId = parms.amqClientId;
-    std:;string outputType = parms.outputType;
+    std::string outputType = parms.outputType;
     long int numMessages = -1;
     if ( parms.messageNumber != "" && is_number(parms.messageNumber) )
     {
@@ -723,7 +783,15 @@ int AMQConsumer (consumerParms& parms)
     		clientId,
     		numMessages);
 
+    if ( outputType == "file" )
+    {
+    	consumer.setDir(parms.outputDir);
+    	std::string logBuff = "Messages will be written inside directory: " + parms.outputDir;
+    	hlrLog(logBuff, &logStream, 6);
+    }
+
     // Start it up and it will listen forever.
+
     Thread consumerThread( &consumer );
     consumerThread.start();
     consumer.waitUntilReady();
@@ -731,16 +799,11 @@ int AMQConsumer (consumerParms& parms)
     signal (SIGTERM, exit_signal);
     signal (SIGINT, exit_signal);
     // Wait for consumerThread to exit.
-    /*while ( goOn )
-    {
-    	cerr << "here I am" << endl;
-    	sleep(1);
-    }*/
-    consumerThread.join();
+    Thread.join();
 
     // All CMS resources should be closed before the library is shutdown.
-    //consumer.close();
-    //activemq::library::ActiveMQCPP::shutdownLibrary();
+    consumer.close();
+    activemq::library::ActiveMQCPP::shutdownLibrary();
 	if (parms.foreground != "true") removeLock(parms.lockFileName);
 	string logBuff = "Removing:" + parms.lockFileName;
 	hlr_log(logBuff, &logStream, 1);
