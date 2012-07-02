@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.52 2012/07/02 08:26:05 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.53 2012/07/02 08:42:15 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -204,7 +204,7 @@ public:
 
 	bool createDir()
 	{
-			if ( (mkdir ((parms.recordsDir).c_str(), 0777 )) != 0)
+			if ( (mkdir (dir.c_str(), 0777 )) != 0)
 				{
 					string logBuff = "Error creating UR dirctory:" + parms.recordsDir;
 					cerr << logBuff << endl;
@@ -787,7 +787,7 @@ int AMQConsumer (consumerParms& parms)
     {
     	consumer.setDir(parms.outputDir);
     	std::string logBuff = "Messages will be written inside directory: " + parms.outputDir;
-    	hlrLog(logBuff, &logStream, 6);
+    	hlr_log(logBuff, &logStream, 6);
     }
 
     // Start it up and it will listen forever.
@@ -799,10 +799,9 @@ int AMQConsumer (consumerParms& parms)
     signal (SIGTERM, exit_signal);
     signal (SIGINT, exit_signal);
     // Wait for consumerThread to exit.
-    Thread.join();
+    consumerThread.join();
 
     // All CMS resources should be closed before the library is shutdown.
-    consumer.close();
     activemq::library::ActiveMQCPP::shutdownLibrary();
 	if (parms.foreground != "true") removeLock(parms.lockFileName);
 	string logBuff = "Removing:" + parms.lockFileName;
