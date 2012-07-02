@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.54 2012/07/02 08:49:34 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.55 2012/07/02 09:39:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -802,7 +802,6 @@ int AMQConsumer (consumerParms& parms)
     consumerThread.join();
 
     // All CMS resources should be closed before the library is shutdown.
-    activemq::library::ActiveMQCPP::shutdownLibrary();
 	if (parms.foreground != "true") removeLock(parms.lockFileName);
 	string logBuff = "Removing:" + parms.lockFileName;
 	hlr_log(logBuff, &logStream, 1);

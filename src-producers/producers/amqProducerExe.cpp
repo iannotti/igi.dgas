@@ -17,7 +17,7 @@
 using namespace std;
 
 bool needs_help = 0;
-int verbosity = 3;
+int verbosity = 1;
 string brokerUri = "";
 string amqTopic = "";
 string useTopics = "";
@@ -100,6 +100,7 @@ int main (int argc, char *argv[])
 		parms.clientAck = clientAck;
 		parms.amqUsername = username;
 		parms.amqPassword = password;
+		parms.verbosity = verbosity;
 	int res = dgasHlrRecordProducer(parms);
 	if ( verbosity > 0 )
 	{

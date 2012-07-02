@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.11 2012/06/22 11:58:45 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.12 2012/07/02 09:39:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -360,9 +360,12 @@ int dgasHlrRecordProducer (producerParms& parms)
 	map <string,string> confMap;
 	if ( dgas_conf_read ( parms.confFileName, &confMap ) != 0 )
 	{
-		cerr << "WARNING: Could not read conf file: " << parms.confFileName <<
+		if( verbosity > 1 )
+		{
+			cerr << "WARNING: Could not read conf file: " << parms.confFileName <<
 endl;
-		cerr << "There can be problems processing the transaction" << endl;
+			cerr << "There can be problems processing the transaction" << endl;
+		}
 		if ( ( parms.amqBrokerUri == "" ) || ( parms.dgasAMQTopic == "" ) )
 		{
 			cerr << "Please specify amqBrokerUri and dgasAMQTopic." << endl;
@@ -379,7 +382,7 @@ endl;
 		}
 		else
 		{
-		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+		 	cerr << "ERROR: Broker uri not specified: " << parms.confFileName << endl;
 			return E_BROKER_URI;
 		}
 	}
@@ -390,7 +393,7 @@ endl;
 		}
 		else
 		{
-		 	cerr << "WARNING: Error reading conf file: " << parms.confFileName << endl;
+		 	cerr << "ERROR: Broker message queue/topic not specified: " << parms.confFileName << endl;
 			return E_BROKER_URI;
 		}
 	}
