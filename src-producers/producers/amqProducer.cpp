@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.12 2012/07/02 09:39:59 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.13 2012/07/04 09:06:31 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -360,7 +360,7 @@ int dgasHlrRecordProducer (producerParms& parms)
 	map <string,string> confMap;
 	if ( dgas_conf_read ( parms.confFileName, &confMap ) != 0 )
 	{
-		if( verbosity > 1 )
+		if( parms.verbosity > 1 )
 		{
 			cerr << "WARNING: Could not read conf file: " << parms.confFileName <<
 endl;
