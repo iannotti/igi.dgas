@@ -94,7 +94,6 @@ int main (int argc, char *argv[])
 		return 0;
 	}
 	AmqProducer amqProducer(
-		configFile,
 		brokerUri,
 		username,
 		password,
@@ -105,7 +104,7 @@ int main (int argc, char *argv[])
 		);
 	if ( configFile != "noconf" )
 	{
-		amqProducer.readConf();
+		amqProducer.readConf(configFile);
 	}
 	if ( outputMessage == "" )
 	{
