@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.18 2012/07/06 13:55:51 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.19 2012/07/06 14:13:15 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -240,27 +240,23 @@ public:
 
 			// Create a MessageProducer from the Session to the Topic or Queue
 			producer = session->createProducer(destination);
-			//producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
-			producer->setDeliveryMode(DeliveryMode::PERSISTENT);
+			if (persistentDelivery)
+			{
+				producer->setDeliveryMode(DeliveryMode::PERSISTENT);
+			}
+			else
+			{
+				producer->setDeliveryMode(DeliveryMode::NON_PERSISTENT);
+			}
 
 			// Create the Thread Id String
 			string threadIdStr = Long::toString(Thread::getId());
 
-			// Create a messages
+			TextMessage* message = session->createTextMessage(text);
 
-			for (unsigned int ix = 0; ix < numMessages; ++ix)
-			{
-				TextMessage* message = session->createTextMessage(text);
+			producer->send(message);
 
-				message->setIntProperty("Integer", ix);
-
-				// Tell the producer to send the message
-				printf("Sent message #%d from thread %s\n", ix + 1,
-						threadIdStr.c_str());
-				producer->send(message);
-
-				delete message;
-			}
+			delete message;
 
 		} catch (CMSException& e)
 		{
@@ -269,78 +265,6 @@ public:
 			e.printStackTrace();
 		}
 	}
-/*
-	virtual void run()
-	{
-		try
-		{
-
-			// Create a ConnectionFactory
-			auto_ptr < ActiveMQConnectionFactory > connectionFactory(
-					new ActiveMQConnectionFactory(brokerURI));
-
-			// Create a Connection
-			try
-			{
-				connection = connectionFactory->createConnection();
-				connection->start();
-			} catch (CMSException& e)
-			{
-				e.printStackTrace();
-				throw e;
-			}
-
-			// Create a Session
-			if (clientAck)
-			{
-				session
-						= connection->createSession(Session::CLIENT_ACKNOWLEDGE);
-			}
-			else
-			{
-				session = connection->createSession(Session::AUTO_ACKNOWLEDGE);
-			}
-
-			// Create the destination (Topic or Queue)
-			if (useTopic)
-			{
-				destination = session->createTopic(destURI);
-			}
-			else
-			{
-				destination = session->createQueue(destURI);
-			}
-
-			// Create a MessageProducer from the Session to the Topic or Queue
-			producer = session->createProducer(destination);
-			producer->setDeliveryMode(DeliveryMode::NON_PERSISTENT);
-
-			// Create the Thread Id String
-			string threadIdStr = Long::toString(Thread::getId());
-
-			// Create a messages
-			string text = (string) "Hello world! from thread " + threadIdStr;
-
-			for (unsigned int ix = 0; ix < numMessages; ++ix)
-			{
-				TextMessage* message = session->createTextMessage(text);
-
-				message->setIntProperty("Integer", ix);
-
-				// Tell the producer to send the message
-				printf("Sent message #%d from thread %s\n", ix + 1,
-						threadIdStr.c_str());
-				producer->send(message);
-
-				delete message;
-			}
-
-		} catch (CMSException& e)
-		{
-			e.printStackTrace();
-		}
-	}
-	*/
 
 private:
 
@@ -460,6 +384,12 @@ int AmqProducer::readConf(string& confFileName)
 	if ((confMap["clientAck"] == "yes") || (confMap["clientAck"] == "true"))
 	{
 		clientAck = true;
+	}
+
+	if ((confMap["persistentDelivery"] == "yes")
+			|| (confMap["persistentDelivery"] == "true"))
+	{
+		persistentDelivery = true;
 	}
 
 	if (amqUsername == "")

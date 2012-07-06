@@ -10,7 +10,7 @@
 #include "glite/dgas/common/base/dgas_config.h"
 #include "glite/dgas/dgas-producers/producers/amqProducer.h"
 
-#define OPTION_STRING "3hv:B:c:t:TQAu:p:"
+#define OPTION_STRING "3hv:B:c:t:TQAPu:p:"
 
 #define GLITE_DGAS_DEF_CONF "/etc/dgas/dgas_sensors.conf"
 
@@ -22,6 +22,7 @@ string brokerUri = "";
 string amqTopic = "";
 bool useTopics = false;
 bool clientAck = false;
+bool persistentDelivery = false;
 string username = "";
 string password = "";
 string configFile = GLITE_DGAS_DEF_CONF;
@@ -43,6 +44,7 @@ void help()
         cerr<< "-p  --password <amq password>  AMQ password for user 'user' if needed for authentication" << endl;
         cerr<< "-T  --useTopic  Use Topic" << endl;
         cerr<< "-Q  --useQueue  Use Queue" << endl;
+        cerr<< "-P  --usePersistent  Sets the message delivery to Persistent" << endl;
         cerr<< "-A  --clientAck  Enable consumer client ack mode" << endl;
         cerr << "-c  --config <file>  config file name." << endl;
         cerr << endl;
@@ -63,6 +65,7 @@ int options ( int argc, char **argv )
 		{"useTopic",0,0,'T'},
 		{"useQueue",0,0,'Q'},
 		{"clientAck",0,0,'A'},
+		{"usePersistent",0,0,'P'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
 	};
@@ -79,6 +82,7 @@ int options ( int argc, char **argv )
 			case 'T': useTopics =true; break;
 			case 'Q': useTopics =false; break;
 			case 'A': clientAck =true; break;
+			case 'A': usePersistent =true; break;
 			case 'h': needs_help =1; break;		  
 			default : break;
 		}
@@ -100,6 +104,7 @@ int main (int argc, char *argv[])
 		amqTopic,
 		useTopics,
 		clientAck,
+		persistentDelivery,
 		verbosity
 		);
 	if ( configFile != "noconf" )
