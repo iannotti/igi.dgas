@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.h,v 1.1.2.11 2012/07/06 12:38:54 aguarise Exp $
+// $Id: amqProducer.h,v 1.1.2.12 2012/07/06 12:46:51 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -50,7 +50,6 @@ public:
 			std::string amqTopic, bool useTopics = false, bool clientAck = false,
 			int verbosity = 0)
 	{
-		this->confFileName = confFileName;
 		this->amqBrokerUri = amqBrokerUri;
 		this->amqUsername = amqUsername;
 		this->amqPassword = amqPassword;
@@ -61,7 +60,7 @@ public:
 	}
 
 	void setOutputMessage(string outputMessage);
-	int readConf(string confFileName);
+	int readConf(string& confFileName);
 	int run();
 };
 
