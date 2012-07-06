@@ -20,8 +20,8 @@ bool needs_help = 0;
 int verbosity = 1;
 string brokerUri = "";
 string amqTopic = "";
-string useTopics = "";
-string clientAck ="";
+bool useTopics = false;
+bool clientAck = false;
 string username = "";
 string password = "";
 string configFile = GLITE_DGAS_DEF_CONF;
@@ -76,9 +76,9 @@ int options ( int argc, char **argv )
 			case 'c': configFile=optarg; break;
 			case 'u': username=optarg; break;
 			case 'p': password=optarg; break;
-			case 'T': useTopics ="true"; break;
-			case 'Q': useTopics ="false"; break;
-			case 'A': clientAck ="true"; break;
+			case 'T': useTopics =true; break;
+			case 'Q': useTopics =false; break;
+			case 'A': clientAck =true; break;
 			case 'h': needs_help =1; break;		  
 			default : break;
 		}
