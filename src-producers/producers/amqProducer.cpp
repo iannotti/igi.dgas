@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.13 2012/07/04 09:06:31 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.14 2012/07/06 12:05:43 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -353,102 +353,107 @@ private:
 
 };
 
-int dgasHlrRecordProducer (producerParms& parms)
+int AmqProducer::readConf ()
+{
+	map <string,string> confMap;
+		if ( dgas_conf_read ( parms.confFileName, &confMap ) != 0 )
+		{
+			if( verbosity > 1 )
+			{
+				cerr << "WARNING: Could not read conf file: " << confFileName <<
+	endl;
+				cerr << "There can be problems processing the transaction" << endl;
+			}
+			if ( ( amqBrokerUri == "" ) || ( amqTopic == "" ) )
+			{
+				cerr << "Please specify amqBrokerUri and dgasAMQTopic." << endl;
+				return E_CONFIG;
+			}
+
+		}
+
+		if ( amqBrokerUri == "" )
+		{
+			if ( confMap["amqBrokerUri"] != "" )
+			{
+				amqBrokerUri= confMap["amqBrokerUri"];
+			}
+			else
+			{
+			 	cerr << "ERROR: Broker uri not specified: " << confFileName << endl;
+				return E_BROKER_URI;
+			}
+		}
+		if ( amqTopic == "" )
+		{
+			if ( confMap["amqTopic"] != "" )
+			{
+			}
+			else
+			{
+			 	cerr << "ERROR: Broker message queue/topic not specified: " << confFileName << endl;
+				return E_BROKER_URI;
+			}
+		}
+		if ( useTopics == "" )
+				{
+					if ( confMap["useTopics"] != "" )
+					{
+						useTopics = confMap["useTopics"];
+					}
+				}
+			if ( clientAck == "" )
+					{
+						if ( confMap["clientAck"] != "" )
+						{
+							clientAck = confMap["clientAck"];
+						}
+					}
+			if ( amqUsername == "" )
+					{
+						if ( confMap["amqUsername"] != "" )
+						{
+							amqUsername = confMap["amqUsername"];
+						}
+					}
+			if ( amqPassword == "" )
+					{
+						if ( confMap["amqPassword"] != "" )
+						{
+							amqPassword = confMap["amqPassword"];
+						}
+					}
+			return 0;
+}
+
+int AmqProducer::run ()
 {
 	int returncode = 0;
-	string output_message;
-	map <string,string> confMap;
-	if ( dgas_conf_read ( parms.confFileName, &confMap ) != 0 )
-	{
-		if( parms.verbosity > 1 )
-		{
-			cerr << "WARNING: Could not read conf file: " << parms.confFileName <<
-endl;
-			cerr << "There can be problems processing the transaction" << endl;
-		}
-		if ( ( parms.amqBrokerUri == "" ) || ( parms.dgasAMQTopic == "" ) )
-		{
-			cerr << "Please specify amqBrokerUri and dgasAMQTopic." << endl;
-			return E_CONFIG;
-		}
-		
-	}
 
-	if ( parms.amqBrokerUri == "" )
-	{
-		if ( confMap["amqBrokerUri"] != "" )
-		{
-			parms.amqBrokerUri= confMap["amqBrokerUri"];
-		}
-		else
-		{
-		 	cerr << "ERROR: Broker uri not specified: " << parms.confFileName << endl;
-			return E_BROKER_URI;
-		}
-	}
-	if ( parms.dgasAMQTopic == "" )
-	{
-		if ( confMap["dgasAMQTopic"] != "" )
-		{
-		}
-		else
-		{
-		 	cerr << "ERROR: Broker message queue/topic not specified: " << parms.confFileName << endl;
-			return E_BROKER_URI;
-		}
-	}
-	if ( parms.useTopics == "" )
-			{
-				if ( confMap["useTopics"] != "" )
-				{
-					parms.useTopics = confMap["useTopics"];
-				}
-			}
-		if ( parms.clientAck == "" )
-				{
-					if ( confMap["clientAck"] != "" )
-					{
-						parms.clientAck = confMap["clientAck"];
-					}
-				}
-		if ( parms.amqUsername == "" )
-				{
-					if ( confMap["amqUsername"] != "" )
-					{
-						parms.amqUsername = confMap["amqUsername"];
-					}
-				}
-		if ( parms.amqPassword == "" )
-				{
-					if ( confMap["amqPassword"] != "" )
-					{
-						parms.amqPassword = confMap["amqPassword"];
-					}
-				}
 	activemq::library::ActiveMQCPP::initializeLibrary();
-	string textLine;
-	while ( getline (cin, textLine, '\n'))
+	//if data member outputMessage isn't set, read message from stdin by default.
+	if ( outputMessage = "" )
 	{
-		output_message += textLine += "\n";
-	}	
-	std::string brokerURI = parms.amqBrokerUri;
-	std::string destURI = parms.dgasAMQTopic;
+		string textLine;
+		while ( getline (cin, textLine, '\n'))
+		{
+			outputMessage += textLine += "\n";
+		}
+	}
 	bool useTopics = false;
-	    if ( (parms.useTopics == "true" ) || ( parms.useTopics == "yes") )  useTopics = true;
+	    if ( (useTopics == "true" ) || ( useTopics == "yes") )  useTopics = true;
 
 	    //============================================================
 	    // set to true if you want the consumer to use client ack mode
 	    // instead of the default auto ack mode.
 	    //============================================================
 	bool clientAck = false;
-	if ( (parms.clientAck == "true" ) || ( parms.clientAck == "yes") )  clientAck = true;
+	if ( (clientAck == "true" ) || ( clientAck == "yes") )  clientAck = true;
 
-	std::string username = parms.amqUsername;
-	std::string password = parms.amqPassword;
 	unsigned int numMessages = 1;
 	
-	SimpleProducer producer( brokerURI, numMessages, destURI, useTopics );
-	producer.run(output_message);
+	SimpleProducer producer( amqBrokerUri, numMessages, amqTopic, useTopics, clientAck, amqUsername, amqPassword );
+	producer.run(outputMessage);
 	producer.close();
 	returncode = producer.returnCode; 
 	activemq::library::ActiveMQCPP::shutdownLibrary();

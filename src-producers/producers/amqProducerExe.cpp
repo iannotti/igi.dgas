@@ -25,6 +25,7 @@ string clientAck ="";
 string username = "";
 string password = "";
 string configFile = GLITE_DGAS_DEF_CONF;
+string outputMessage;
 
 void help()
 {
@@ -92,16 +93,30 @@ int main (int argc, char *argv[])
 		help();
 		return 0;
 	}
-	producerParms parms;
-		parms.amqBrokerUri = brokerUri;
-		parms.dgasAMQTopic = amqTopic;
-		parms.confFileName = configFile;
-		parms.useTopics = useTopics;
-		parms.clientAck = clientAck;
-		parms.amqUsername = username;
-		parms.amqPassword = password;
-		parms.verbosity = verbosity;
-	int res = dgasHlrRecordProducer(parms);
+	AmqProducer amqProducer(
+		configFile,
+		brokerUri,
+		username,
+		password,
+		amqTopic,
+		useTopics,
+		clientAck,
+		verbosity
+		);
+	if ( configFile != "noconf" )
+	{
+		amqProducer.readConf();
+	}
+	if ( outputMessage == "" )
+	{
+		string textLine;
+		while ( getline (cin, textLine, '\n'))
+		{
+			outputMessage += textLine += "\n";
+		}
+	}
+	amqProducer.setOutputMessage(outputMessage);
+	int res = amqProducer.run();
 	if ( verbosity > 0 )
 	{
 		cout << "Return code:" << res << endl;
