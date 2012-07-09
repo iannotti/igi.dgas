@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.10 2012/07/09 13:27:15 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.11 2012/07/09 14:07:20 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -32,7 +32,7 @@ using namespace std;
 
 class recordConsumerParms {
 	public:
-		string confFileName;
+		string configFile;
 		string amqBrokerUri;
 		string amqUsername;
 		string amqPassword;
@@ -81,7 +81,7 @@ public:
 
 
 
-	void AMQConsumer(
+	AMQConsumer(
 			std::string amqBrokerUri,
 			std::string amqUsername = "",
 			std::string amqPassword = "",

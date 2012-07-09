@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.56 2012/07/09 13:27:15 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.57 2012/07/09 14:07:20 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -487,13 +487,13 @@ int removeLock(string lockFile)
 	}
 }
 
-int AMQConsumer::readConf(std::string& configFileName)
+int AMQConsumer::readConf(std::string& configFile)
 {
 	int returncode = 0;
 	map < string, string > confMap;
-	if (dgas_conf_read(configFileName, &confMap) != 0)
+	if (dgas_conf_read(configFile, &confMap) != 0)
 	{
-		cerr << "WARNING: Error reading conf file: " << confFileName << endl;
+		cerr << "WARNING: Error reading conf file: " << configFile << endl;
 		cerr << "There can be problems processing the transaction" << endl;
 		return E_CONFIG;
 
@@ -524,7 +524,7 @@ int AMQConsumer::readConf(std::string& configFileName)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << confFileName
+			cerr << "WARNING: Error reading conf file: " << configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -537,7 +537,7 @@ int AMQConsumer::readConf(std::string& configFileName)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << confFileName
+			cerr << "WARNING: Error reading conf file: " << configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -622,9 +622,9 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 {
 	int returncode = 0;
 	map < string, string > confMap;
-	if (dgas_conf_read(parms.confFileName, &confMap) != 0)
+	if (dgas_conf_read(parms.configFile, &confMap) != 0)
 	{
-		cerr << "WARNING: Error reading conf file: " << parms.confFileName
+		cerr << "WARNING: Error reading conf file: " << parms.configFile
 				<< endl;
 		cerr << "There can be problems processing the transaction" << endl;
 		return E_CONFIG;
@@ -644,7 +644,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -658,7 +658,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -680,7 +680,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -694,7 +694,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -708,7 +708,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -722,7 +722,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -736,7 +736,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.confFileName
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
 					<< endl;
 			return E_BROKER_URI;
 		}
@@ -755,7 +755,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	thisServiceVersion.setService("dgas-AMQConsumer");
 	thisServiceVersion.setVersion(VERSION);
 	thisServiceVersion.setHost("localhost");
-	thisServiceVersion.setConfFile(parms.confFileName);
+	thisServiceVersion.setConfFile(parms.configFile);
 	thisServiceVersion.setLockFile(parms.lockFileName);
 	thisServiceVersion.setLogFile(parms.logFileName);
 	thisServiceVersion.write();
