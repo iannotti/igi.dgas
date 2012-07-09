@@ -85,7 +85,7 @@ int options ( int argc, char **argv )
 			case 'T': useTopics =true; break;
 			case 'Q': useTopics =false; break;
 			case 'A': clientAck =true; break;
-			case 'P': usePersistent =true; break;
+			case 'P': persistentDelivery = true; break;
 			case 'R': requestReply =true; break;
 			case 'h': needs_help =1; break;		  
 			default : break;
