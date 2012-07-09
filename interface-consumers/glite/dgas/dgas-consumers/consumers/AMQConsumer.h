@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.9 2012/06/28 12:38:28 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.10 2012/07/09 13:27:15 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -29,7 +29,8 @@
 
 using namespace std;
 
-class consumerParms {
+
+class recordConsumerParms {
 	public:
 		string confFileName;
 		string amqBrokerUri;
@@ -56,6 +57,82 @@ class consumerParms {
 		string messageNumber;
 };
 
-int AMQConsumer(consumerParms& parms);
+
+class AMQConsumer {
+
+private:
+	std::string inputMessage;
+
+public:
+	std::string logFileName;
+	std::string amqBrokerUri;
+	std::string amqUsername;
+	std::string amqPassword;
+	std::string amqClientId;
+	std::string amqTopic;
+	bool useTopics;
+	bool clientAck;
+	std::string name;
+	std::string selector;
+	bool noLocal;
+	bool durable;
+	bool foreground;
+	long int messageNumber;
+
+
+
+	void AMQConsumer(
+			std::string amqBrokerUri,
+			std::string amqUsername = "",
+			std::string amqPassword = "",
+			std::string amqTopic = "")
+	{
+		this->amqBrokerUri = amqBrokerUri;
+		this->amqUsername = amqUsername;
+		this->amqPassword = amqPassword;
+		this->amqTopic = amqTopic;
+		this->clientAck = false;
+		this->useTopics = false;
+		this->durable = false;
+		this->noLocal = false;
+		this->foreground = false;
+	}
+	int readConf(string& confFileName);
+	void run();
+	std::string getInputMessage() const;
+	int writeMessage();
+
+};
+
+std::string AMQConsumer::getInputMessage() const
+{
+    return inputMessage;
+}
+
+/*
+class messageFactory {
+
+private:
+	std::string messageString;
+
+public:
+
+	void messageFactory (std::string messageString)
+	{
+		this->messageString = messageString;
+	}
+	int toDatabase(
+				std::string hlrSqlDBName,
+				std::string hlrSqlDBName,
+				std::string hlrSqlServer,
+				std::string hlrSqlUser,
+				std::string hlrSqlPassword,
+			);
+	//int toDatabase(dbhandler); FIXME
+	int toFile(std::string fileName);
+	int toDir(std::string outputDir);
+	int toStdout();
+};
+*/
 
 

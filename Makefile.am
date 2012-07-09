@@ -23,15 +23,6 @@ EXTRA_DIST = LICENSE README
 docdir = $(datadir)/doc/@PACKAGE@-@VERSION@
 doc_DATA = LICENSE README
 
-## Subdirectories list
-##	src-common interface-common\
-#	src-hlr-clients interface-hlr-clients \
-#	config-sensors interface-sensors src-sensors \
-#	src-pa-clients interface-pa-clients \
-#	config-hlr-service src-hlr-service interface-hlr-service \
-#	config-producers src-producers interface-producers \
-#	config-consumers src-consumers interface-consumers
-
 SUBDIRS = \
 	src-common interface-common\
 	src-hlr-clients interface-hlr-clients \
@@ -60,12 +51,7 @@ common-interface-install: common-interface
 
 common-install: common-src-install common-interface-install
 
-#common-install-etics: common-src-install common-interface-install
-
 common-install-etics: common-src-install
-
-#hlr-clients-config:
-#	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS)
 
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
@@ -74,9 +60,6 @@ hlr-clients-interface:
 	cd ./interface-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
 hlr-clients: common hlr-clients-src hlr-clients-interface
-
-#hlr-clients-config-install:
-#	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install
 
 hlr-clients-src-install: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
@@ -87,11 +70,6 @@ hlr-clients-interface-install:
 hlr-clients-install: common-install\
 	hlr-clients-src-install\
 	hlr-clients-interface-install
-
-#hlr-clients-install-etics: \
-#	common \
-#	hlr-clients-src-install\
-#	hlr-clients-interface-install
 
 hlr-clients-install-etics: \
 	common \
@@ -122,34 +100,10 @@ sensors-install: common-install\
 	sensors-interface-install \
 	sensors-config-install
 
-#sensors-install-etics: \
-#	sensors-src-install\
-#	sensors-interface-install \
-#	sensors-config-install
 
 sensors-install-etics: \
  	sensors-src-install\
 	sensors-config-install
-
-#pa-clients-src: 
-#	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
-
-#pa-clients-interface: 
-#	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
-
-#pa-clients: common pa-clients-src pa-clients-interface
-
-#pa-clients-src-install: 
-#	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
-
-#pa-clients-interface-install: 
-#	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install
-
-#pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
-
-#pa-clients-install-etics: pa-clients-src-install pa-clients-interface-install
-
-#pa-clients-install-etics: pa-clients-src-install
 
 hlr-service-config:
 	cd ./config-hlr-service ; $(MAKE) $(AM_MAKEFLAGS)
@@ -174,21 +128,10 @@ hlr-service-src-install:
 hlr-service-interface-install: 
 	cd ./interface-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) install
 
-#hlr-service-install: common-install\
-#	pa-clients-install\
-#	hlr-service-src-install\
-#	hlr-service-interface-install\
-#	hlr-service-config-install
-
 hlr-service-install: common-install\
 	pa-clients-install\
 	hlr-service-src-install\
 	hlr-service-config-install
-
-#hlr-service-install-etics: \
-#	hlr-service-src-install\
-#	hlr-service-interface-install\
-#	hlr-service-config-install
 
 hlr-service-install-etics: \
 	hlr-service-src-install\
@@ -221,11 +164,6 @@ producers-install: common-install\
 	producers-src-install\
 	producers-interface-install\
 	producers-config-install
-
-#producers-install-etics: \
-#	producers-src-install\
-#	producers-interface-install\
-#	producers-config-install
 
 producers-install-etics: \
 	producers-src-install\
@@ -260,11 +198,6 @@ consumers-install: common-install\
 	consumers-src-install\
 	consumers-interface-install\
 	consumers-config-install
-
-#consumers-install-etics: \
-#	consumers-src-install\
-#	consumers-interface-install\
-#	consumers-config-install
 
 consumers-install-etics: \
 	consumers-src-install\
