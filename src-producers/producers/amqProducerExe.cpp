@@ -10,7 +10,7 @@
 #include "glite/dgas/common/base/dgas_config.h"
 #include "glite/dgas/dgas-producers/producers/amqProducer.h"
 
-#define OPTION_STRING "3hv:B:c:t:TQAPu:p:"
+#define OPTION_STRING "3hv:B:c:t:TQAPRu:p:"
 
 #define GLITE_DGAS_DEF_CONF "/etc/dgas/dgas_sensors.conf"
 
@@ -23,6 +23,7 @@ string amqTopic = "";
 bool useTopics = false;
 bool clientAck = false;
 bool persistentDelivery = false;
+bool requestReply = false;
 string username = "";
 string password = "";
 string configFile = GLITE_DGAS_DEF_CONF;
@@ -40,12 +41,13 @@ void help()
         cerr << "-v  --verbosity <verbosity>      (0-3) default 3 maximum verbosity" << endl;
         cerr << "-B  --brokerUri <URI>  The complete URI for the AMQ broker." << endl;
         cerr << "-t  --topic <AMQ Topic>  topic for the messages." << endl;
-        cerr<< "-u  --username <amq username>  AMQ user if needed for authentication" << endl;
-        cerr<< "-p  --password <amq password>  AMQ password for user 'user' if needed for authentication" << endl;
-        cerr<< "-T  --useTopic  Use Topic" << endl;
-        cerr<< "-Q  --useQueue  Use Queue" << endl;
-        cerr<< "-P  --usePersistent  Sets the message delivery to Persistent" << endl;
-        cerr<< "-A  --clientAck  Enable consumer client ack mode" << endl;
+        cerr << "-u  --username <amq username>  AMQ user if needed for authentication" << endl;
+        cerr << "-p  --password <amq password>  AMQ password for user 'user' if needed for authentication" << endl;
+        cerr << "-T  --useTopic  Use Topic" << endl;
+        cerr << "-Q  --useQueue  Use Queue" << endl;
+        cerr << "-P  --usePersistent  Sets the message delivery to Persistent" << endl;
+        cerr << "-A  --clientAck  Enable consumer client ack mode" << endl;
+        //cerr << "-R  --requestReply Enable request-reply messaging scenario." << endl;
         cerr << "-c  --config <file>  config file name." << endl;
         cerr << endl;
 }
@@ -66,6 +68,7 @@ int options ( int argc, char **argv )
 		{"useQueue",0,0,'Q'},
 		{"clientAck",0,0,'A'},
 		{"usePersistent",0,0,'P'},
+		{"requestReply",0,0,'R'},
 		{"help",0,0,'h'},
 		{0,0,0,0}
 	};
@@ -82,7 +85,8 @@ int options ( int argc, char **argv )
 			case 'T': useTopics =true; break;
 			case 'Q': useTopics =false; break;
 			case 'A': clientAck =true; break;
-			case 'A': usePersistent =true; break;
+			case 'P': usePersistent =true; break;
+			case 'R': requestReply =true; break;
 			case 'h': needs_help =1; break;		  
 			default : break;
 		}

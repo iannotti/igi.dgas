@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.19 2012/07/06 14:13:15 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.20 2012/07/09 09:00:21 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -73,6 +73,7 @@ private:
 	MessageProducer* producer;
 	bool useTopic;
 	bool clientAck;
+	bool persistentDelivery;
 	unsigned int numMessages;
 	std::string brokerURI;
 	std::string destURI;
@@ -85,7 +86,7 @@ public:
 
 	SimpleProducer(const std::string& brokerURI, unsigned int numMessages,
 			const std::string& destURI, bool useTopic = false,
-			bool clientAck = false, std::string username = "",
+			bool clientAck = false, bool persistentDelivery = false, std::string username = "",
 			std::string password = "")
 	{
 
@@ -98,6 +99,7 @@ public:
 		this->brokerURI = brokerURI;
 		this->destURI = destURI;
 		this->clientAck = clientAck;
+		this->persistentDelivery = persistentDelivery;
 		this->username = username;
 		this->password = password;
 
@@ -427,7 +429,7 @@ int AmqProducer::run()
 	unsigned int numMessages = 1;
 
 	SimpleProducer producer(amqBrokerUri, numMessages, amqTopic, useTopics,
-			clientAck, amqUsername, amqPassword);
+			clientAck, persistentDelivery, amqUsername, amqPassword);
 	producer.run(outputMessage);
 	producer.close();
 	returncode = producer.returnCode;
