@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.57 2012/07/09 14:07:20 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.58 2012/07/09 14:22:25 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -125,7 +125,7 @@ public:
 			const std::string& destURI, bool useTopic = false,
 			bool clientAck = false, std::string name = "",
 			std::string selector = "", bool nolocal = false,
-			bool durable = false, string outputType = "cout",
+			bool durable = false,
 			std::string username = "", std::string password = "",
 			std::string clientId = "", long int numMessages = 1) :
 		latch(1), doneLatch(numMessages)
@@ -146,8 +146,6 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
-		this->outputType = outputType;
-
 	}
 
 	virtual ~SimpleAsyncConsumer()
@@ -346,10 +344,9 @@ public:
 				}
 			}
 			*/
-			if (outputType == "cout")
-			{
+
 				cout << text << endl;
-			}
+
 			//default: cout
 		} catch (CMSException& e)
 		{
@@ -602,9 +599,9 @@ void AMQConsumer::run()
 	int returncode = 0;
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	// Create the consumer
-	SimpleAsyncConsumer consumer(brokerURI, destURI, useTopics, clientAck,
-			name, selector, noLocal, durable, outputType, username, password,
-			clientId, numMessages);
+	SimpleAsyncConsumer consumer(amqBrokerUri, amqTopic, useTopics, clientAck,
+			name, selector, noLocal, durable, amqUsername, amqPassword,
+			amqClientId, messageNumber);
 	// Start it up and it will listen forever.
 
 	Thread consumerThread(&consumer);
