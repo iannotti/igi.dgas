@@ -18,6 +18,7 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
+#include "../../src-hlr-service/base/serviceVersion.h"
 
 #define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:"
 #define E_CONFIG 10
