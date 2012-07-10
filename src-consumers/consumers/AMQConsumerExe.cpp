@@ -9,6 +9,16 @@
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 
+#include "glite/dgas/hlr-service/base/db.h"
+#include "glite/dgas/common/base/comm_struct.h"
+#include "glite/dgas/common/hlr/hlr_prot_errcode.h"
+#include "glite/dgas/common/base/dgas_config.h"
+#include "glite/dgas/common/base/dgas_lock.h"
+#include "glite/dgas/common/base/libdgas_log.h"
+#include "glite/dgas/common/base/int2string.h"
+#include "glite/dgas/common/base/stringSplit.h"
+#include "glite/dgas/common/base/xmlUtil.h"
+
 #define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:"
 
 using namespace std;
