@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.67 2012/07/10 09:42:25 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.68 2012/07/10 12:11:54 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -69,23 +69,9 @@ using namespace std;
 */
 
 ofstream logStream;
-/*
-const char * hlr_sql_server;
-const char * hlr_sql_user;
-const char * hlr_sql_password;
-const char * hlr_tmp_sql_dbname;
-const char * hlr_sql_dbname;
-*/
 
-/*
-bool is_number(const std::string& s)
-{
-	std::string::const_iterator it = s.begin();
-	while (it != s.end() && std::isdigit(*it))
-		++it;
-	return !s.empty() && it == s.end();
-}
-*/
+
+
 
 void exit_signal(int sig)
 {
@@ -209,17 +195,22 @@ void AMQConsumer::run()
 	int returncode = 0;
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	// Create the consumer
+	std::cerr << "A" << std::endl;
 	SimpleAsyncConsumer consumer(amqBrokerUri, amqTopic, useTopics, clientAck,
 			name, selector, noLocal, durable, amqUsername, amqPassword,
 			amqClientId, messageNumber);
 	// Start it up and it will listen forever.
-
+	std::cerr << "B" << std::endl;
 	Thread consumerThread(&consumer);
+	std::cerr << "C" << std::endl;
 	consumerThread.start();
+	std::cerr << "D" << std::endl;
 	consumer.waitUntilReady();
+	std::cerr << "E" << std::endl;
 
 	signal(SIGTERM, exit_signal);
 	signal(SIGINT, exit_signal);
+	std::cerr << "F" << std::endl;
 	// Wait for consumerThread to exit.
 	consumerThread.join();
 	return;
