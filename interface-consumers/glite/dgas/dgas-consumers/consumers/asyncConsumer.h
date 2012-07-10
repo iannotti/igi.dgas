@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.4 2012/07/10 08:53:31 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.3 2012/07/10 08:51:49 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -45,15 +45,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-
-using namespace activemq;
-using namespace activemq::core;
-using namespace activemq::transport;
-using namespace decaf::lang;
-using namespace decaf::util;
-using namespace decaf::util::concurrent;
-using namespace cms;
-using namespace std;
 
 class SimpleAsyncConsumer: public ExceptionListener,
 		public MessageListener,

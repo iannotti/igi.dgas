@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.5 2012/07/10 08:56:36 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.4 2012/07/10 08:55:34 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -128,7 +128,7 @@ ofstream logStream;
 	}
 
 	// Called from the consumer since this class is a registered MessageListener.
-	void SimpleAsyncConsumer::onMessage(const Message* message)
+	virtual void SimpleAsyncConsumer::onMessage(const Message* message)
 	{
 		static long int count = 0;
 		try
@@ -155,19 +155,19 @@ ofstream logStream;
 
 	// If something bad happens you see it here as this class is also been
 	// registered as an ExceptionListener with the connection.
-	void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
+	virtual void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
 	{
 		hlr_log("CMS Exception occurred.  Shutting down client.", &logStream, 1);
 		exit(1);
 	}
 
-	void SimpleAsyncConsumer::transportInterrupted()
+	virtual void SimpleAsyncConsumer::transportInterrupted()
 	{
 		hlr_log("The Connection's Transport has been Interrupted.", &logStream,
 				3);
 	}
 
-	void SimpleAsyncConsumer::transportResumed()
+	virtual void SimpleAsyncConsumer::transportResumed()
 	{
 		hlr_log("The Connection's Transport has been Restored.", &logStream, 3);
 	}
