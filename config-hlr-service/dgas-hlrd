@@ -52,14 +52,14 @@ fi
 [ -d $DGAS_VAR_DIR/spool ] || mkdir $DGAS_VAR_DIR/spool
 [ -d $DGAS_VAR_DIR/spool/dgas ] || mkdir $DGAS_VAR_DIR/spool/dgas
 
-useradd -M -r -s /sbin/nologin -p'!!' $HLR_USER &> /dev/null
+useradd -M -r -n -s /sbin/nologin -p'!!' $HLR_USER &> /dev/null
 
 [ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
 [ -d $DGAS_VAR_DIR/lock/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/lock/dgas
 [ -d $DGAS_VAR_DIR/spool/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/spool/dgas
 
 cp -a /etc/grid-security/host{cert,key}.pem $DGAS_VAR_DIR/spool/dgas/
-chown dgas:dgas $DGAS_VAR_DIR/spool/dgas/host{cert,key}.pem
+chown $HLR_USER:$HLR_USER $DGAS_VAR_DIR/spool/dgas/host{cert,key}.pem
 
 export X509_USER_CERT=/var/spool/dgas/hostcert.pem
 export X509_USER_KEY=/var/spool/dgas/hostkey.pem
