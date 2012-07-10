@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.1 2012/07/10 08:38:09 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.2 2012/07/10 08:49:08 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -170,56 +170,7 @@ ofstream logStream;
 			{
 				text = "NOT A TEXTMESSAGE!";
 			}
-/*
-			//case: mysql
-			if (outputType == "mysql")
-			{
-				db hlrDb(hlr_sql_server, hlr_sql_user, hlr_sql_password,
-						hlr_tmp_sql_dbname);
-				if (hlrDb.errNo != 0)
-				{
-					hlr_log("Error connecting to SQL database", &logStream, 2);
-					exit(1);
-				}
-				string messageQuery = "INSERT INTO messages SET ";
-				messageQuery += "message=";
-				messageQuery += "\'" + hlrDb.escape_string(text) + "\'";
-				hlrDb.query(messageQuery);
-				if (hlrDb.errNo != 0)
-				{
-					hlr_log("Error Inserting message", &logStream, 1);
-				}
-				else
-				{
-					string logBuff = "Message written in DB.";
-					hlr_log(logBuff, &logStream, 7);
-					if (clientAck)
-					{
-						message->acknowledge();
-					}
-				}
-			}
-			//case: file
-			if (outputType == "file")
-			{
-				std::ofstream fileS;
-				std::string fname = dir + "/" + fileName(int2string(count));
-				fileS.open(fname.c_str(), ios::app);
-				if (!fileS)
-				{
-					std::string logBuff = "Error Inserting message in file: "
-							+ fname;
-					hlr_log(logBuff, &logStream, 1);
-				}
-				else
-				{
-					fileS << text << endl;
-					fileS.close();
-				}
-			}
-			*/
-
-			//default: cout
+			useMessage(text);
 		} catch (CMSException& e)
 		{
 			e.printStackTrace();
