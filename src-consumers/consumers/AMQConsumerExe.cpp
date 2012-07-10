@@ -447,7 +447,7 @@ int main (int argc, char *argv[])
 	parms.outputType = outputType;
 	parms.outputDir = outputDir;
 	parms.messageNumber = messageNumber;
-	int res = AMQConsumer(parms);
+	int res = AMQRecordConsumer(parms);
 	if ( verbosity > 0 )
 	{
 		cout << "Return code:" << res << endl;
