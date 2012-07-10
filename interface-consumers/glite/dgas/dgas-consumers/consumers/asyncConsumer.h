@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.3 2012/07/10 08:51:49 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.5 2012/07/10 08:59:32 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -45,6 +45,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+
+using namespace activemq;
+using namespace activemq::core;
+using namespace activemq::transport;
+using namespace decaf::lang;
+using namespace decaf::util;
+using namespace decaf::util::concurrent;
+using namespace cms;
+using namespace std;
+
+//this must be used by the caller to set a flag trapping a SIGINT signal on exit.
+extern volatile sig_atomic_t goOn = 1;
 
 class SimpleAsyncConsumer: public ExceptionListener,
 		public MessageListener,
