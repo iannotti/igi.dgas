@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.61 2012/07/10 09:12:11 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.62 2012/07/10 09:22:27 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -93,14 +93,13 @@ bool is_number(const std::string& s)
 	return !s.empty() && it == s.end();
 }
 */
-/*
+
 void exit_signal(int sig)
 {
 	goOn = 0;
 	signal(sig, exit_signal);
-	cerr << "Got sigint" << endl;
 }
-*/
+
 
 /*
 int putLock(string lockFile)

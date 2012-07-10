@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.14 2012/07/10 09:14:42 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.15 2012/07/10 09:22:27 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -33,7 +33,7 @@
 using namespace std;
 
 //this must be used by the caller to set a flag trapping a SIGINT signal on exit.
-extern volatile sig_atomic_t goOn;
+volatile sig_atomic_t goOn = 1;
 
 /*
 class recordConsumerParms {
