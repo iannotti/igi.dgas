@@ -23,6 +23,34 @@
 
 using namespace std;
 
+
+class recordConsumerParms {
+	public:
+		string configFile;
+		string amqBrokerUri;
+		string amqUsername;
+		string amqPassword;
+		string amqClientId;
+		string lockFileName;
+		string logFileName;
+		string dgasAMQTopic;
+		string useTopics;
+		string clientAck;
+		string hlrSqlTmpDBName;
+		string hlrSqlDBName;
+		string hlrSqlServer;
+		string hlrSqlUser;
+		string hlrSqlPassword;
+		string name;
+		string selector;
+		string noLocal;
+		string durable;
+		string foreground;
+		string outputType;
+		string outputDir;
+		string messageNumber;
+};
+
 int system_log_level = 9; 
 bool needs_help = 0;
 int verbosity = 3;

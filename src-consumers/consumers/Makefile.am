@@ -6,8 +6,6 @@
 ## *
 ## *********************************************************************
 
-#lib_LTLIBRARIES  = libglite_dgas_AMQConsumer.la \
-#		libglite_dgas_legacyRecordManager.la 
 
 lib_LTLIBRARIES  = libglite_dgas_asyncConsumer.la \
 		libglite_dgas_AMQConsumer.la \
@@ -35,18 +33,19 @@ libglite_dgas_asyncConsumer_la_SOURCES = \
 libglite_dgas_AMQConsumer_la_SOURCES = \
 	AMQConsumer.cpp
 
-#dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
-#dgas_AMQConsumer_LDADD   = \
-#	./libglite_dgas_AMQConsumer.la \
-#	$(ACTIVEMQ_CPP_LIBS) \
-#	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
-#	$(GLITE_DGAS_COMMON_LOG_LIBS) \
-#	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
-#	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
-#	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
-#	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
-#	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
-#	$(DBLIBS) 
+dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
+dgas_AMQConsumer_LDADD   = \
+	./libglite_dgas_asyncConsumer.la \
+	./libglite_dgas_AMQConsumer.la \
+	$(ACTIVEMQ_CPP_LIBS) \
+	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
+	$(GLITE_DGAS_COMMON_LOG_LIBS) \
+	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
+	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
+	$(top_builddir)/src-hlr-service/base/libglite_dgas_dbhelper.la \
+	$(top_builddir)/src-hlr-service/base/libdgas_serviceVersion.la \
+	$(GLITE_DGAS_COMMON_DBHELPER_LIBS) \
+	$(DBLIBS) 
 
 libglite_dgas_legacyRecordManager_la_SOURCES = \
 	legacyRecordManager.cpp 
