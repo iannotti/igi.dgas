@@ -39,7 +39,7 @@ using namespace std;
 
 class recordConsumerParms {
 	public:
-		string configFile;
+		string confFileName;
 		string amqBrokerUri;
 		string amqUsername;
 		string amqPassword;
