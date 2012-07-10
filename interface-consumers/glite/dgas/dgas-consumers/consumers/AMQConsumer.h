@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.12 2012/07/10 08:38:09 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.13 2012/07/10 09:12:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -27,9 +27,13 @@
 
 #define AMQ_CONSUMER_VERSION "protoA"
 
+
 using namespace std;
 
+//this must be used by the caller to set a flag trapping a SIGINT signal on exit.
+extern volatile sig_atomic_t goOn = 1;
 
+/*
 class recordConsumerParms {
 	public:
 		string configFile;
@@ -56,12 +60,9 @@ class recordConsumerParms {
 		string outputDir;
 		string messageNumber;
 };
+*/
 
-
-class AMQConsumer {
-
-private:
-	std::string inputMessage;
+class AMQConsumer: public SimpleAsyncConsumer {
 
 public:
 	std::string logFileName;
@@ -99,15 +100,13 @@ public:
 	}
 	int readConf(string& confFileName);
 	void run();
-	std::string getInputMessage() const;
-	virtual int useMessage();
+	//overrides AsyncConsumer useMessage() method
+	virtual void useMessage(std::string messageString)
+	{
+		std::cout << "AH AH AH" << std::endl;
+	}
 
 };
-
-std::string AMQConsumer::getInputMessage() const
-{
-    return inputMessage;
-}
 
 /*
 class messageFactory {

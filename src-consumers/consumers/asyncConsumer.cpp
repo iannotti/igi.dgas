@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.4 2012/07/10 08:55:34 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.6 2012/07/10 09:14:43 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -39,7 +39,6 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
-#include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 #include "glite/dgas/dgas-consumers/consumers/asyncConsumer.h"
 #include "../../src-hlr-service/base/serviceVersion.h"
 
@@ -128,7 +127,7 @@ ofstream logStream;
 	}
 
 	// Called from the consumer since this class is a registered MessageListener.
-	virtual void SimpleAsyncConsumer::onMessage(const Message* message)
+	void SimpleAsyncConsumer::onMessage(const Message* message)
 	{
 		static long int count = 0;
 		try
@@ -155,19 +154,19 @@ ofstream logStream;
 
 	// If something bad happens you see it here as this class is also been
 	// registered as an ExceptionListener with the connection.
-	virtual void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
+	void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
 	{
 		hlr_log("CMS Exception occurred.  Shutting down client.", &logStream, 1);
 		exit(1);
 	}
 
-	virtual void SimpleAsyncConsumer::transportInterrupted()
+	void SimpleAsyncConsumer::transportInterrupted()
 	{
 		hlr_log("The Connection's Transport has been Interrupted.", &logStream,
 				3);
 	}
 
-	virtual void SimpleAsyncConsumer::transportResumed()
+	void SimpleAsyncConsumer::transportResumed()
 	{
 		hlr_log("The Connection's Transport has been Restored.", &logStream, 3);
 	}

@@ -10,6 +10,7 @@
 #		libglite_dgas_legacyRecordManager.la 
 
 lib_LTLIBRARIES  = libglite_dgas_asyncConsumer.la \
+		libglite_dgas_AMQConsumer.la \
 		libglite_dgas_legacyRecordManager.la 
 
 libexec_PROGRAMS = dgas-AMQConsumer \
@@ -26,12 +27,13 @@ DBFLAGS = $(MYSQL_CFLAGS)
 DBLIBS = $(MYSQL_LIBS)
 endif
 
-#libglite_dgas_AMQConsumer_la_SOURCES = \
-#	asyncConsumer.cpp \
-#	AMQConsumer.cpp
+
 	
 libglite_dgas_asyncConsumer_la_SOURCES = \
 	asyncConsumer.cpp
+
+libglite_dgas_AMQConsumer_la_SOURCES = \
+	AMQConsumer.cpp
 
 #dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
 #dgas_AMQConsumer_LDADD   = \
