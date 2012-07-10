@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.30 2012/07/10 14:56:33 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.31 2012/07/10 14:58:13 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -62,6 +62,7 @@ public:
 				this->noLocal = noLocal;
 				this->durable = durable;
 				this->numMessages = numMessages;
+				std::cerr << "AMQConsumerStdOut(params)" << std::endl;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
