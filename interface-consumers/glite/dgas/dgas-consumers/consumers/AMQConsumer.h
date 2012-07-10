@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.21 2012/07/10 12:43:01 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.22 2012/07/10 12:51:51 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -58,22 +58,31 @@ public:
 
 
 
-	AMQConsumerStdOut(
-			std::string amqBrokerUri,
-			std::string amqUsername = "",
-			std::string amqPassword = "",
-			std::string amqTopic = "")
+	AMQConsumerStdOut(const std::string& brokerURI,
+				const std::string& destURI, bool useTopic = false,
+				bool clientAck = false, std::string name = "",
+				std::string selector = "", bool nolocal = false,
+				bool durable = false,
+				std::string username = "", std::string password = "",
+				std::string clientId = "", long int numMessages = 1) :
+			latch(1), doneLatch(numMessages)
 	{
-		this->amqBrokerUri = amqBrokerUri;
-		this->amqUsername = amqUsername;
-		this->amqPassword = amqPassword;
-		this->amqTopic = amqTopic;
-		this->clientAck = false;
-		this->useTopics = false;
-		this->durable = false;
-		this->noLocal = false;
-		this->foreground = false;
-		this->messageNumber = 1;//Default: consume one message and exit. Set to -1 to go on forever.
+		this->connection = NULL;
+				this->session = NULL;
+				this->destination = NULL;
+				this->consumer = NULL;
+				this->useTopic = useTopic;
+				this->brokerURI = brokerURI;
+				this->destURI = destURI;
+				this->clientAck = clientAck;
+				this->username = username;
+				this->password = password;
+				this->clientId = clientId;
+				this->name = name;
+				this->selector = selector;
+				this->noLocal = noLocal;
+				this->durable = durable;
+				this->numMessages = numMessages;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	virtual void useMessage(std::string messageString)
