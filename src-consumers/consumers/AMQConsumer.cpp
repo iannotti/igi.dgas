@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.68 2012/07/10 12:11:54 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.69 2012/07/10 12:18:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -57,16 +57,6 @@
 #define E_BROKER_URI 11
 #define E_CONFIG 10
 
-/*
-using namespace activemq;
-using namespace activemq::core;
-using namespace activemq::transport;
-using namespace decaf::lang;
-using namespace decaf::util;
-using namespace decaf::util::concurrent;
-using namespace cms;
-using namespace std;
-*/
 
 ofstream logStream;
 

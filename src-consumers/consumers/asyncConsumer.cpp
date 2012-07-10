@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.6 2012/07/10 09:14:43 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.7 2012/07/10 12:18:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -115,7 +115,8 @@ ofstream logStream;
 			std::cout.flush();
 			std::cerr.flush();
 			latch.countDown();//latch goes to 0 and waitUntilReady can return.
-			//doneLatch.await( waitMillis );//to be used if the consumer shoud not survive more thana given amount of time.
+			//doneLatch.await( waitMillis );//to be used if the consumer should not survive more than a given amount of time.
+			std::cerr <<  doneLatch.getCount() << std::endl;
 			while (goOn && doneLatch.getCount() != 0)
 				doneLatch.await(1000);//wait for the countdown latch to reach zero.
 
