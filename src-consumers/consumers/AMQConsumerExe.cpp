@@ -39,7 +39,7 @@ using namespace std;
 
 class recordConsumerParms {
 	public:
-		string confFileName;
+		string configFile;
 		string amqBrokerUri;
 		string amqUsername;
 		string amqPassword;
@@ -433,7 +433,7 @@ int main (int argc, char *argv[])
 	recordConsumerParms parms;
 	parms.amqBrokerUri = brokerUri;
 	parms.dgasAMQTopic = topic;
-	parms.confFileName = configFile;
+	parms.configFile = configFile;
 	parms.useTopics = useTopics;
 	parms.clientAck = clientAck;
 	parms.amqUsername = username;
