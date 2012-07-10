@@ -165,7 +165,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			return E_BROKER_URI;
 		}
 	}
-	if (parms.foreground != "true")
+	if (! parms.foreground )
 	{
 		if (putLock(parms.lockFileName) != 0)
 		{
