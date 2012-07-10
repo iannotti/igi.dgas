@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.25 2012/07/10 13:02:23 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.26 2012/07/10 13:14:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -41,10 +41,6 @@ volatile sig_atomic_t goOn = 1;
 class AMQConsumerStdOut: public SimpleAsyncConsumer {
 
 public:
-	bool foreground;
-	long int messageNumber;
-
-
 
 	AMQConsumerStdOut(const std::string& brokerURI,
 				const std::string& destURI, bool useTopic = false,
@@ -68,9 +64,9 @@ public:
 				this->numMessages = numMessages;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
-	virtual void useMessage(std::string messageString)
+	void useMessage(std::string messageString)
 	{
-		std::cout << "AH AH AH" << std::endl;
+		std::cout << "AH AH AH:"<< messageString << std::endl;
 	}
 
 };
@@ -95,7 +91,6 @@ public:
 	long int messageNumber;
 
 
-
 	AMQConsumer(
 			std::string amqBrokerUri,
 			std::string amqUsername = "",
@@ -117,30 +112,6 @@ public:
 	void main();
 
 };
-/*
-class messageFactory {
 
-private:
-	std::string messageString;
-
-public:
-
-	void messageFactory (std::string messageString)
-	{
-		this->messageString = messageString;
-	}
-	int toDatabase(
-				std::string hlrSqlDBName,
-				std::string hlrSqlDBName,
-				std::string hlrSqlServer,
-				std::string hlrSqlUser,
-				std::string hlrSqlPassword,
-			);
-	//int toDatabase(dbhandler); FIXME
-	int toFile(std::string fileName);
-	int toDir(std::string outputDir);
-	int toStdout();
-};
-*/
 
 
