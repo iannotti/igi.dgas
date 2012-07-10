@@ -1,13 +1,13 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.13 2012/07/10 12:56:33 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.14 2012/07/10 13:02:23 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   :
  *  copyright : 
@@ -71,8 +71,11 @@ private:
 	Session* session;
 	Destination* destination;
 	MessageConsumer* consumer;
-	Topic* topic;
 	long waitMillis;
+
+protected:
+
+	Topic* topic;
 	long int numMessages;
 	bool useTopic;
 	bool clientAck;
@@ -87,15 +90,19 @@ private:
 	bool durable;
 
 public:
-	SimpleAsyncConsumer() : latch(1), doneLatch(1){};
+	SimpleAsyncConsumer() :
+		latch(1), doneLatch(1)
+	{
+	}
+	;
 
 	SimpleAsyncConsumer(const std::string& brokerURI,
 			const std::string& destURI, bool useTopic = false,
 			bool clientAck = false, std::string name = "",
 			std::string selector = "", bool nolocal = false,
-			bool durable = false,
-			std::string username = "", std::string password = "",
-			std::string clientId = "", long int numMessages = 1) :
+			bool durable = false, std::string username = "",
+			std::string password = "", std::string clientId = "",
+			long int numMessages = 1) :
 		latch(1), doneLatch(numMessages)
 	{
 		this->connection = NULL;
@@ -156,7 +163,4 @@ private:
 	void cleanup();
 
 };
-
-
-
 
