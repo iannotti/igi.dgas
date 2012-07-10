@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.15 2012/07/10 14:44:08 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.16 2012/07/10 14:49:18 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -66,7 +66,6 @@ class SimpleAsyncConsumer: public ExceptionListener,
 {
 private:
 	CountDownLatch latch;
-	CountDownLatch doneLatch;
 	Connection* connection;
 	Session* session;
 	Destination* destination;
@@ -76,6 +75,7 @@ private:
 protected:
 
 	Topic* topic;
+	CountDownLatch doneLatch;
 	long int numMessages;
 	bool useTopic;
 	bool clientAck;
