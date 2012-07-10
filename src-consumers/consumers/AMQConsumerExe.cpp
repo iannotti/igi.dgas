@@ -340,7 +340,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			parms.amqPassword,
 			parms.amqClientId,
 			numMessages);
-	consumer.main(consumerOutImpl);
+	consumer.registerConsumer(consumerOutImpl);
 
 	// All CMS resources should be closed before the library is shutdown.
 	if (!parms.foreground)
