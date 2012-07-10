@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.59 2012/07/09 14:37:29 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.60 2012/07/10 08:38:09 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -613,6 +613,11 @@ void AMQConsumer::run()
 	// Wait for consumerThread to exit.
 	consumerThread.join();
 	return;
+}
+
+int AMQConsumer::useMessage()
+{
+
 }
 
 int AMQRecordConsumer(recordConsumerParms& parms)

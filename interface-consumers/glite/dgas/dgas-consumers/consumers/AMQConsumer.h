@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.11 2012/07/09 14:07:20 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.12 2012/07/10 08:38:09 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -100,7 +100,7 @@ public:
 	int readConf(string& confFileName);
 	void run();
 	std::string getInputMessage() const;
-	int writeMessage();
+	virtual int useMessage();
 
 };
 
