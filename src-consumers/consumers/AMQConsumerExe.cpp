@@ -25,6 +25,14 @@
 
 ofstream logStream;
 
+
+const char * hlr_sql_server;
+const char * hlr_sql_user;
+const char * hlr_sql_password;
+const char * hlr_tmp_sql_dbname;
+const char * hlr_sql_dbname;
+
+
 using namespace std;
 
 
