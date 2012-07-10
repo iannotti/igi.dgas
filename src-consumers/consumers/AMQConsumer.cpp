@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.74 2012/07/10 14:21:14 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.75 2012/07/10 14:23:59 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -178,13 +178,11 @@ int AMQConsumer::readConf(std::string& configFile)
 }
 
 
-void AMQConsumer::main()
+void AMQConsumer::registerConsumer(AMQConsumerStdOut* consumer)
 {
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	// Create the consumer
-	AMQConsumerStdOut* consumer = new AMQConsumerStdOut(amqBrokerUri, amqTopic, useTopics, clientAck,
-			name, selector, noLocal, durable, amqUsername, amqPassword,
-			amqClientId, messageNumber);
+
 
 	//AMQConsumerStdOut consumer(amqBrokerUri, amqTopic, useTopics, clientAck,
 	//		name, selector, noLocal, durable, amqUsername, amqPassword,
