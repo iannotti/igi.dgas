@@ -21,6 +21,9 @@
 
 #define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:"
 #define E_CONFIG 10
+#define E_BROKER_URI 11
+
+ofstream logStream;
 
 using namespace std;
 
