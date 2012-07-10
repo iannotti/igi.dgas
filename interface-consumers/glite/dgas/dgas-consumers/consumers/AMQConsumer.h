@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.17 2012/07/10 09:32:43 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.18 2012/07/10 09:36:32 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -36,34 +36,7 @@ using namespace std;
 //this must be used by the caller to set a flag trapping a SIGINT signal on exit.
 volatile sig_atomic_t goOn = 1;
 
-/*
-class recordConsumerParms {
-	public:
-		string configFile;
-		string amqBrokerUri;
-		string amqUsername;
-		string amqPassword;
-		string amqClientId;
-		string lockFileName;
-		string logFileName; 
-		string dgasAMQTopic;
-		string useTopics;
-		string clientAck;
-		string hlrSqlTmpDBName;
-		string hlrSqlDBName;
-		string hlrSqlServer;
-		string hlrSqlUser;
-		string hlrSqlPassword;
-		string name;
-		string selector;
-		string noLocal;
-		string durable;
-		string foreground;
-		string outputType;
-		string outputDir;
-		string messageNumber;
-};
-*/
+
 
 class AMQConsumer: public SimpleAsyncConsumer {
 

@@ -20,6 +20,7 @@
 #include "glite/dgas/common/base/xmlUtil.h"
 
 #define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:"
+#define E_CONFIG 10
 
 using namespace std;
 
@@ -34,8 +35,8 @@ class recordConsumerParms {
 		string lockFileName;
 		string logFileName;
 		string dgasAMQTopic;
-		string useTopics;
-		string clientAck;
+		bool useTopics;
+		bool clientAck;
 		string hlrSqlTmpDBName;
 		string hlrSqlDBName;
 		string hlrSqlServer;
@@ -43,30 +44,30 @@ class recordConsumerParms {
 		string hlrSqlPassword;
 		string name;
 		string selector;
-		string noLocal;
-		string durable;
-		string foreground;
+		bool noLocal;
+		bool durable;
+		bool foreground;
 		string outputType;
 		string outputDir;
 		string messageNumber;
 };
 
 int system_log_level = 9; 
-bool needs_help = 0;
+bool needs_help = false;
 int verbosity = 3;
 string brokerUri = "";
 string topic = "";
 string configFile = "";
-string useTopics = "";
-string clientAck ="";
+bool useTopics = false;
+bool clientAck = false;
 string username = "";
 string password = "";
 string clientId = "";
 string name = "";
 string selector = "";
-string noLocal = "";
-string durable = "";
-string foreground = "";
+bool noLocal = false;
+bool durable = false;
+bool foreground = false;
 string messageNumber = "";
 string outputType = "";
 string outputDir = "";

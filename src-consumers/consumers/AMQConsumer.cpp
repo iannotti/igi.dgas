@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.65 2012/07/10 09:35:34 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.66 2012/07/10 09:40:53 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -53,7 +53,7 @@
 #include "glite/dgas/dgas-consumers/consumers/AMQConsumer.h"
 #include "../../src-hlr-service/base/serviceVersion.h"
 
-#define E_CONFIG 10
+
 #define E_BROKER_URI 11
 
 /*
