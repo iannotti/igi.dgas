@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.70 2012/07/10 12:43:01 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.71 2012/07/10 12:51:51 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -183,12 +183,9 @@ void AMQConsumer::main()
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	// Create the consumer
 	std::cerr << "A" << std::endl;
-	//SimpleAsyncConsumer consumer(amqBrokerUri, amqTopic, useTopics, clientAck,
-	//		name, selector, noLocal, durable, amqUsername, amqPassword,
-	//		amqClientId, messageNumber);
-	AMQConsumerStdOut consumer(amqBrokerUri,amqUsername,amqPassword, amqTopic);
-		//		name, selector, noLocal, durable, amqUsername, amqPassword,
-		//		amqClientId, messageNumber);
+	AMQConsumerStdOut consumer(amqBrokerUri, amqTopic, useTopics, clientAck,
+			name, selector, noLocal, durable, amqUsername, amqPassword,
+			amqClientId, messageNumber);
 	// Start it up and it will listen forever.
 	std::cerr << "B" << std::endl;
 	Thread consumerThread(&consumer);
