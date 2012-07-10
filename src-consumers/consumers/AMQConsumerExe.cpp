@@ -327,10 +327,10 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	//}
 	AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
 			parms.amqPassword, parms.dgasAMQTopic);
-	AMQConsumerStdOut* consumer = new AMQConsumerStdOut(amqBrokerUri, amqTopic, useTopics, clientAck,
+	AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(amqBrokerUri, amqTopic, useTopics, clientAck,
 				name, selector, noLocal, durable, amqUsername, amqPassword,
 				amqClientId, messageNumber);
-	consumer.main(consumer);
+	consumer.main(consumerOutImpl);
 
 	// All CMS resources should be closed before the library is shutdown.
 	if (!parms.foreground)
