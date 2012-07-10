@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.3 2012/07/10 08:51:49 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.5 2012/07/10 08:56:36 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -63,12 +63,6 @@ ofstream logStream;
 	{
 		try
 		{
-			//if oututType == file create message directory if it doesn't exists/
-			if (outputType == "file")
-			{
-				if (!checkDir())
-					createDir();
-			}
 
 			// Create a ConnectionFactory
 			auto_ptr < ConnectionFactory > connectionFactory(
@@ -134,7 +128,7 @@ ofstream logStream;
 	}
 
 	// Called from the consumer since this class is a registered MessageListener.
-	virtual void SimpleAsyncConsumer::onMessage(const Message* message)
+	void SimpleAsyncConsumer::onMessage(const Message* message)
 	{
 		static long int count = 0;
 		try
@@ -161,19 +155,19 @@ ofstream logStream;
 
 	// If something bad happens you see it here as this class is also been
 	// registered as an ExceptionListener with the connection.
-	virtual void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
+	void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
 	{
 		hlr_log("CMS Exception occurred.  Shutting down client.", &logStream, 1);
 		exit(1);
 	}
 
-	virtual void SimpleAsyncConsumer::transportInterrupted()
+	void SimpleAsyncConsumer::transportInterrupted()
 	{
 		hlr_log("The Connection's Transport has been Interrupted.", &logStream,
 				3);
 	}
 
-	virtual void SimpleAsyncConsumer::transportResumed()
+	void SimpleAsyncConsumer::transportResumed()
 	{
 		hlr_log("The Connection's Transport has been Restored.", &logStream, 3);
 	}

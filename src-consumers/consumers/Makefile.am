@@ -31,7 +31,7 @@ endif
 #	AMQConsumer.cpp
 	
 libglite_dgas_asyncConsumer_la_SOURCES = \
-	asyncConsumer.cpp \
+	asyncConsumer.cpp
 
 #dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
 #dgas_AMQConsumer_LDADD   = \
