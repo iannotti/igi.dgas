@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.9 2012/07/10 09:32:43 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.10 2012/07/10 12:29:08 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -148,10 +148,10 @@ public:
 
 	//this method is called within the onMessage method and is used to do something with the message received.
 	//should be overridden by the caller class.
-	virtual void useMessage(std::string messageString)
-	{
-		std::cout << messageString << std::endl;
-	}
+	virtual void useMessage(std::string messageString) = 0
+	//{
+	//	std::cout << messageString << std::endl;
+	//}
 
 private:
 	void cleanup();
