@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.1 2012/07/10 08:38:09 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.2 2012/07/10 08:49:08 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -51,7 +51,6 @@ private:
 	std::string selector;
 	bool noLocal;
 	bool durable;
-	std::string messageString;
 
 public:
 
@@ -97,9 +96,10 @@ public:
 		latch.await();
 	}
 
+	//this is the method executed as a thread by the caller.
 	void run();
 
-	// Called from the consumer since this class is a registered MessageListener.
+	// Called from the running thread when receiving a message since this class is a registered MessageListener.
 	virtual void onMessage(const Message* message);
 
 	// If something bad happens you see it here as this class is also been
@@ -110,12 +110,15 @@ public:
 
 	virtual void transportResumed();
 
-private:
-	virtual void useMessage()
+	//this method is called within the onMessage method and is used to do something with the message received.
+	//should be overridden by the caller class.
+	virtual void useMessage(std::string messageString)
 	{
 		std::cout << messageString << std::endl;
 	}
-	void cleanup()
+
+private:
+	void cleanup();
 
 };
 
