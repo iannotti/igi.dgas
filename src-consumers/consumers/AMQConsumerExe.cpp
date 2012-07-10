@@ -34,6 +34,249 @@ string outputType = "";
 string outputDir = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
+
+int putLock(string lockFile)
+{
+	dgasLock Lock(lockFile);
+	if (Lock.exists())
+	{
+		return 1;
+	}
+	else
+	{
+		if (Lock.put() != 0)
+		{
+			return 2;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+}
+
+int removeLock(string lockFile)
+{
+	dgasLock Lock(lockFile);
+	if (Lock.exists())
+	{
+		if (Lock.remove() != 0)
+		{
+			//hlr_log("Error removing the lock file", &logStream, 1);
+			return 2;
+		}
+		else
+		{
+			//hlr_log("lock file removed", &logStream, 4);
+			return 0;
+		}
+	}
+	else
+	{
+		//hlr_log("lock file doesn't exists", &logStream, 1);
+		return 1;
+	}
+}
+
+int AMQRecordConsumer(recordConsumerParms& parms)
+{
+	int returncode = 0;
+	map < string, string > confMap;
+	if (dgas_conf_read(parms.configFile, &confMap) != 0)
+	{
+		cerr << "WARNING: Error reading conf file: " << parms.configFile
+				<< endl;
+		cerr << "There can be problems processing the transaction" << endl;
+		return E_CONFIG;
+
+	}
+	if (parms.logFileName == "")
+	{
+		if (confMap["consumerLogFileName"] != "")
+		{
+			parms.logFileName = confMap["consumerLogFileName"];
+			if (bootstrapLog(parms.logFileName, &logStream) != 0)
+			{
+				cerr << "Error bootstrapping Log file " << endl;
+				cerr << parms.logFileName << endl;
+				exit(1);
+			}
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+
+	}
+	if (parms.lockFileName == "")
+	{
+		if (confMap["consumerLockFileName"] != "")
+		{
+			parms.lockFileName = confMap["consumerLockFileName"];
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+	}
+	if (parms.foreground != "true")
+	{
+		if (putLock(parms.lockFileName) != 0)
+		{
+			hlr_log("hlr_qMgr: Startup failed, Error creating the lock file.",
+					&logStream, 1);
+			exit(1);
+		}
+	}
+	if (parms.hlrSqlTmpDBName == "")
+	{
+		if (confMap["hlr_tmp_sql_dbname"] != "")
+		{
+			parms.hlrSqlTmpDBName = confMap["hlr_tmp_sql_dbname"];
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+	}
+
+	if (parms.hlrSqlDBName == "")
+	{
+		if (confMap["hlr_sql_dbname"] != "")
+		{
+			parms.hlrSqlDBName = confMap["hlr_sql_dbname"];
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+	}
+
+	if (parms.hlrSqlServer == "")
+	{
+		if (confMap["hlr_sql_server"] != "")
+		{
+			parms.hlrSqlServer = confMap["hlr_sql_server"];
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+	}
+
+	if (parms.hlrSqlUser == "")
+	{
+		if (confMap["hlr_sql_user"] != "")
+		{
+			parms.hlrSqlUser = confMap["hlr_sql_user"];
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+	}
+
+	if (parms.hlrSqlPassword == "")
+	{
+		if (confMap["hlr_sql_password"] != "")
+		{
+			parms.hlrSqlPassword = confMap["hlr_sql_password"];
+		}
+		else
+		{
+			cerr << "WARNING: Error reading conf file: " << parms.configFile
+					<< endl;
+			return E_BROKER_URI;
+		}
+	}
+	hlr_sql_server = (parms.hlrSqlServer).c_str();
+	hlr_sql_user = (parms.hlrSqlUser).c_str();
+	hlr_sql_password = (parms.hlrSqlPassword).c_str();
+	hlr_tmp_sql_dbname = (parms.hlrSqlTmpDBName).c_str();
+	hlr_sql_dbname = (parms.hlrSqlDBName).c_str();
+	serviceVersion thisServiceVersion(hlr_sql_server, hlr_sql_user,
+			hlr_sql_password, hlr_sql_dbname);
+	if (!thisServiceVersion.tableExists())
+	{
+		thisServiceVersion.tableCreate();
+	}
+	thisServiceVersion.setService("dgas-AMQConsumer");
+	thisServiceVersion.setVersion(VERSION);
+	thisServiceVersion.setHost("localhost");
+	thisServiceVersion.setConfFile(parms.configFile);
+	thisServiceVersion.setLockFile(parms.lockFileName);
+	thisServiceVersion.setLogFile(parms.logFileName);
+	thisServiceVersion.write();
+	thisServiceVersion.updateStartup();
+	//check if Database  exists. Create it otherwise.
+	db
+			hlrDb(hlr_sql_server, hlr_sql_user, hlr_sql_password,
+					hlr_tmp_sql_dbname);
+	if (hlrDb.errNo != 0)
+	{
+		hlr_log("Error connecting to SQL database", &logStream, 2);
+		exit(1);
+	}
+	string queryString = "DESCRIBE messages";
+	dbResult queryResult = hlrDb.query(queryString);
+	if (hlrDb.errNo != 0)
+	{
+		hlr_log("Table messages doesn't exists, creating it.", &logStream, 5);
+		queryString = "CREATE TABLE messages";
+		queryString += " (";
+		queryString += " id bigint(20) unsigned auto_increment, ";
+		queryString += " status int DEFAULT '0', ";
+		queryString += " message blob, ";
+		queryString += " primary key (id) , key(status))";
+		hlrDb.query(queryString);
+		if (hlrDb.errNo != 0)
+		{
+			hlr_log("Error creating table messages.", &logStream, 2);
+			exit(1);
+		}
+	}
+
+	//move to AMQConsumer.run() from here.
+
+
+	std::string outputType = parms.outputType;
+	long int numMessages = -1;
+	if (parms.messageNumber != "" && is_number(parms.messageNumber))
+	{
+		numMessages = atol((parms.messageNumber).c_str());
+	}
+
+	//if (outputType == "file")
+	//{
+	//	consumer.setDir(parms.outputDir);
+	//	std::string logBuff = "Messages will be written inside directory: "
+	//			+ parms.outputDir;
+	//	hlr_log(logBuff, &logStream, 6);
+	//}
+	AMQConsumer consumer();
+	consumer.run();
+
+	// All CMS resources should be closed before the library is shutdown.
+	if (parms.foreground != "true")
+		removeLock(parms.lockFileName);
+	string logBuff = "Removing:" + parms.lockFileName;
+	hlr_log(logBuff, &logStream, 1);
+	return returncode;
+}
+
+
 void help(string progname)
 {
 	cerr<< endl;
