@@ -451,7 +451,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
-		consumerDirImpl->setDirectory(parms.outputDir);
+		consumerDirImpl->setDir(parms.outputDir);
 		consumer.registerConsumer(consumerDirImpl);
 		delete consumerDirImpl;
 	}
