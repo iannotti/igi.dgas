@@ -512,7 +512,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
-		consumerOutImpl.readConf(parms.configFile);
+		consumerOutImpl->readConf(parms.configFile);
 		consumer.registerConsumer(consumerOutImpl);
 		delete consumerOutImpl;
 	}
