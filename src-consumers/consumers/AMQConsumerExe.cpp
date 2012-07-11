@@ -423,11 +423,11 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	{
 		numMessages = atol((parms.messageNumber).c_str());
 	}
-
+	AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
+					parms.amqPassword, parms.dgasAMQTopic);
 	if (outputType == "database")
 	{
-		AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
-				parms.amqPassword, parms.dgasAMQTopic);
+
 		AMQConsumerDataBase* consumerDataBaseImpl = new AMQConsumerDataBase(
 				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
@@ -443,9 +443,8 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			std::string logBuff = "Messages will be written inside directory: " + parms.outputDir;
 			hlr_log(logBuff, &logStream, 6);
 
-			AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
-					parms.amqPassword, parms.dgasAMQTopic);
-			AMQConsumerStdOut* consumerDirImpl = new AMQConsumerDir(
+
+			AMQConsumerDir* consumerDirImpl = new AMQConsumerDir(
 					parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
 					parms.clientAck, parms.name, parms.selector, parms.noLocal,
 					parms.durable, parms.amqUsername, parms.amqPassword,
@@ -456,8 +455,6 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		}
 	if (outputType == "stdout")
 		{
-			AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
-					parms.amqPassword, parms.dgasAMQTopic);
 			AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
 					parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
 					parms.clientAck, parms.name, parms.selector, parms.noLocal,
