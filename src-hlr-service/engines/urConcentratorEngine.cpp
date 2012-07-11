@@ -363,7 +363,7 @@ int urConcentrator::errorComposeXml(int errorCode)
 	*output += int2string(errorCode);
 	*output +="</STATUS>\n";
 	*output += "<errMsg>";
-	*output += "Server encountered an error! (Sorry will specify better in future releases!, You'll net to look for the exit status.)";
+	*output += "Server encountered an error! (Sorry will specify better in future releases!, You'll need to look for the exit status.)";
 	*output += "</errMsg>";
 	*output += "</BODY>\n</HLR>\n";
 	return 0;

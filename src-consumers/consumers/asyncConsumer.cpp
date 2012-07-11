@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.9 2012/07/11 08:50:19 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.10 2012/07/11 09:29:55 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -26,7 +26,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
-#include <sys/stat.h>
+
 
 
 

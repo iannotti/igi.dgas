@@ -285,9 +285,9 @@ public:
 
 	bool createDirectory()
 	{
-		if ((mkdir(dir.c_str(), 0777)) != 0)
+		if ((mkdir(directory.c_str(), 0777)) != 0)
 		{
-			string logBuff = "Error creating UR dirctory:" + dir;
+			string logBuff = "Error creating UR dirctory:" + directory;
 			cerr << logBuff << endl;
 			hlr_log(logBuff, &logStream, 1);
 			return false;
