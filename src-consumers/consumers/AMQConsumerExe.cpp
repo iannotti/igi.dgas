@@ -170,12 +170,12 @@ public:
 
 };
 
-class AMQConsumerDatabase: public SimpleAsyncConsumer
+class AMQConsumerDataBase: public SimpleAsyncConsumer
 {
 
 public:
 
-	AMQConsumerDatabase(const std::string& brokerURI,
+	AMQConsumerDataBase(const std::string& brokerURI,
 			const std::string& destURI, bool useTopic = false,
 			bool clientAck = false, std::string name = "",
 			std::string selector = "", bool nolocal = false,
