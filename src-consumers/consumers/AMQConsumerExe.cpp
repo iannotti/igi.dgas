@@ -175,6 +175,60 @@ class AMQConsumerDataBase: public SimpleAsyncConsumer
 
 public:
 
+	std::string sqlServer;
+	std::string sqlUser;
+	std::string sqlPassword;
+	std::string sqlDbname;
+	db* hlrDb;
+
+	void setSqlDbname(std::string sqlDbname)
+	{
+		this->sqlDbname = sqlDbname;
+	}
+	void setSqlPassword(std::string sqlPassword)
+	{
+		this->sqlPassword = sqlPassword;
+	}
+	void setSqlServer(std::string sqlServer)
+	{
+		this->sqlServer = sqlServer;
+	}
+	void setSqlUser(std::string sqlUser)
+	{
+		this->sqlUser = sqlUser;
+	}
+
+	int prepareDb()
+	{
+		//check if Database  exists. Create it otherwise.
+		hlrDb = new db(sqlServer, sqlUser, sqlPassword,
+				sqlDbname);
+		if (hlrDb->errNo != 0)
+		{
+			hlr_log("Error connecting to SQL database", &logStream, 2);
+			return(1);
+		}
+		string queryString = "DESCRIBE messages";
+		dbResult queryResult = hlrDb->query(queryString);
+		if (hlrDb->errNo != 0)
+		{
+			hlr_log("Table messages doesn't exists, creating it.", &logStream,
+					5);
+			queryString = "CREATE TABLE messages";
+			queryString += " (";
+			queryString += " id bigint(20) unsigned auto_increment, ";
+			queryString += " status int DEFAULT '0', ";
+			queryString += " message blob, ";
+			queryString += " primary key (id) , key(status))";
+			hlrDb->query(queryString);
+			if (hlrDb->errNo != 0)
+			{
+				hlr_log("Error creating table messages.", &logStream, 2);
+				return(1);
+			}
+		}
+	}
+
 	AMQConsumerDataBase(const std::string& brokerURI,
 			const std::string& destURI, bool useTopic = false,
 			bool clientAck = false, std::string name = "",
@@ -196,6 +250,11 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
+	}
+
+	~AMQConsumerDataBase()
+	{
+		delete hlrDb;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
@@ -441,33 +500,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		thisServiceVersion.setLogFile(parms.logFileName);
 		thisServiceVersion.write();
 		thisServiceVersion.updateStartup();
-		//check if Database  exists. Create it otherwise.
-		db hlrDb(hlr_sql_server, hlr_sql_user, hlr_sql_password,
-				hlr_tmp_sql_dbname);
-		if (hlrDb.errNo != 0)
-		{
-			hlr_log("Error connecting to SQL database", &logStream, 2);
-			exit(1);
-		}
-		string queryString = "DESCRIBE messages";
-		dbResult queryResult = hlrDb.query(queryString);
-		if (hlrDb.errNo != 0)
-		{
-			hlr_log("Table messages doesn't exists, creating it.", &logStream,
-					5);
-			queryString = "CREATE TABLE messages";
-			queryString += " (";
-			queryString += " id bigint(20) unsigned auto_increment, ";
-			queryString += " status int DEFAULT '0', ";
-			queryString += " message blob, ";
-			queryString += " primary key (id) , key(status))";
-			hlrDb.query(queryString);
-			if (hlrDb.errNo != 0)
-			{
-				hlr_log("Error creating table messages.", &logStream, 2);
-				exit(1);
-			}
-		}
+
 	}
 
 	std::string outputType = parms.outputType;
@@ -476,8 +509,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	{
 		numMessages = atol((parms.messageNumber).c_str());
 	}
-	AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
-			parms.amqPassword, parms.dgasAMQTopic);
+	AMQConsumer consumer();
 	if (outputType == "database")
 	{
 
@@ -501,7 +533,8 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerDirImpl->setDirectory(parms.outputDir);
-		if ( !consumerDirImpl->checkDirectory() )  consumerDirImpl->createDirectory();
+		if (!consumerDirImpl->checkDirectory())
+			consumerDirImpl->createDirectory();
 		consumer.registerConsumer(consumerDirImpl);
 		delete consumerDirImpl;
 	}
@@ -696,7 +729,34 @@ int main(int argc, char *argv[])
 	parms.outputType = outputType;
 	parms.outputDir = outputDir;
 	parms.messageNumber = messageNumber;
-	int res = AMQRecordConsumer(parms);
+	int
+
+	std::string AMQConsumerDataBase::getSqlDbname() const
+	{
+		return sqlDbname;
+	}
+
+	void AMQConsumerDataBase::setSqlDbname(std::string sqlDbname)
+	{
+		this->sqlDbname = sqlDbname;
+	}
+
+	void AMQConsumerDataBase::setSqlPassword(std::string sqlPassword)
+	{
+		this->sqlPassword = sqlPassword;
+	}
+
+	void AMQConsumerDataBase::setSqlServer(std::string sqlServer)
+	{
+		this->sqlServer = sqlServer;
+	}
+
+	void AMQConsumerDataBase::setSqlUser(std::string sqlUser)
+	{
+		this->sqlUser = sqlUser;
+	}
+
+	res = AMQRecordConsumer(parms);
 	if (verbosity > 0)
 	{
 		cout << "Return code:" << res << endl;
@@ -709,6 +769,6 @@ int main(int argc, char *argv[])
 			cerr << e.error[int2string(res)] << endl;
 		}
 	}
-	exit(res);
+	exit( res);
 }
 
