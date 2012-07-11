@@ -201,12 +201,11 @@ public:
 	int prepareDb()
 	{
 		//check if Database  exists. Create it otherwise.
-		hlrDb = new db(sqlServer, sqlUser, sqlPassword,
-				sqlDbname);
+		hlrDb = new db(sqlServer, sqlUser, sqlPassword, sqlDbname);
 		if (hlrDb->errNo != 0)
 		{
 			hlr_log("Error connecting to SQL database", &logStream, 2);
-			return(1);
+			return (1);
 		}
 		string queryString = "DESCRIBE messages";
 		dbResult queryResult = hlrDb->query(queryString);
@@ -224,7 +223,7 @@ public:
 			if (hlrDb->errNo != 0)
 			{
 				hlr_log("Error creating table messages.", &logStream, 2);
-				return(1);
+				return (1);
 			}
 		}
 	}
@@ -259,7 +258,17 @@ public:
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
-		std::cout << "Database:" << messageString << std::endl;
+		std::cout << "Insert in Database:" << messageString << std::endl;
+		string messageQuery = "INSERT INTO messages SET ";
+		messageQuery += "message=";
+		messageQuery += "\'" + hlrDb.escape_string(messageString) + "\'";
+		hlrDb->query(messageQuery);
+		if (hlrDb->errNo != 0)
+		{
+			hlr_log("Error Inserting message", &logStream, 1);
+		}
+		//FIXME should throw here
+		return;
 	}
 
 };
@@ -518,6 +527,16 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
+		consumerDataBaseImpl->setSqlDbname(parms.hlrSqlTmpDBName);
+		consumerDataBaseImpl->setSqlServer(parms.hlrSqlServer);
+		consumerDataBaseImpl->setSqlUser(parms.hlrSqlUser);
+		consumerDataBaseImpl->setSqlPassword(parms.hlrSqlPassword);
+		if (consumerDataBaseImpl->prepareDb() != 0)
+		{
+			//error
+			delete consumerDataBaseImpl;
+			return 1;
+		}
 		consumer.registerConsumer(consumerDataBaseImpl);
 		delete consumerDataBaseImpl;
 	}
@@ -729,34 +748,7 @@ int main(int argc, char *argv[])
 	parms.outputType = outputType;
 	parms.outputDir = outputDir;
 	parms.messageNumber = messageNumber;
-	int
-
-	std::string AMQConsumerDataBase::getSqlDbname() const
-	{
-		return sqlDbname;
-	}
-
-	void AMQConsumerDataBase::setSqlDbname(std::string sqlDbname)
-	{
-		this->sqlDbname = sqlDbname;
-	}
-
-	void AMQConsumerDataBase::setSqlPassword(std::string sqlPassword)
-	{
-		this->sqlPassword = sqlPassword;
-	}
-
-	void AMQConsumerDataBase::setSqlServer(std::string sqlServer)
-	{
-		this->sqlServer = sqlServer;
-	}
-
-	void AMQConsumerDataBase::setSqlUser(std::string sqlUser)
-	{
-		this->sqlUser = sqlUser;
-	}
-
-	res = AMQRecordConsumer(parms);
+	int res = AMQRecordConsumer(parms);
 	if (verbosity > 0)
 	{
 		cout << "Return code:" << res << endl;
@@ -769,6 +761,6 @@ int main(int argc, char *argv[])
 			cerr << e.error[int2string(res)] << endl;
 		}
 	}
-	exit( res);
+	exit(res);
 }
 
