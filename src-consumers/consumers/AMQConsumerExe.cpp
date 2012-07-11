@@ -233,7 +233,6 @@ public:
 		this->durable = durable;
 		this->numMessages = numMessages;
 		this->count = 0;
-		if ( !checkDirectory() )  createDirectory();
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
@@ -287,7 +286,7 @@ public:
 	{
 		if ((mkdir(directory.c_str(), 0777)) != 0)
 		{
-			string logBuff = "Error creating UR dirctory:" + dir;
+			string logBuff = "Error creating UR directory:" + directory;
 			cerr << logBuff << endl;
 			hlr_log(logBuff, &logStream, 1);
 			return false;
@@ -502,6 +501,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerDirImpl->setDirectory(parms.outputDir);
+		if ( !consumerDirImpl->checkDirectory() )  consumerDirImpl->createDirectory();
 		consumer.registerConsumer(consumerDirImpl);
 		delete consumerDirImpl;
 	}
