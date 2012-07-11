@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.11 2012/07/11 11:57:16 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.12 2012/07/11 11:58:48 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -56,7 +56,7 @@ using namespace std;
 
 ofstream logStream;
 
-	int SimpleConsumer::readConf(std::string configFile)
+	int SimpleAsyncConsumer::readConf(std::string configFile)
 	{
 		int returncode = 0;
 			map < string, string > confMap;

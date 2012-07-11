@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.36 2012/07/11 08:59:10 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.37 2012/07/11 11:57:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -113,7 +113,6 @@ public:
 		this->foreground = false;
 		this->messageNumber = 1;//Default: consume one message and exit. Set to -1 to go on forever.
 	}
-	int readConf(string& confFileName);
 	//void registerConsumer(AMQConsumerStdOut* consumer);
 	void registerConsumer(SimpleAsyncConsumer* consumer);
 

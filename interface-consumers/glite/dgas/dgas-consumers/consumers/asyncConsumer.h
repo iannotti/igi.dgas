@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.24 2012/07/11 08:59:10 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.25 2012/07/11 11:57:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -140,6 +140,8 @@ public:
 	{
 		latch.await();
 	}
+
+	virtual int readConf(string& confFile);
 
 	//this is the method executed as a thread by the caller.
 	void run();

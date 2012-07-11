@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.77 2012/07/10 14:42:57 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.78 2012/07/11 11:57:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -64,117 +64,6 @@ void exit_signal(int sig)
 {
 	goOn = 0;
 	signal(sig, exit_signal);
-}
-
-
-int AMQConsumer::readConf(std::string& configFile)
-{
-	int returncode = 0;
-	map < string, string > confMap;
-	if (dgas_conf_read(configFile, &confMap) != 0)
-	{
-		cerr << "WARNING: Error reading conf file: " << configFile << endl;
-		cerr << "There can be problems processing the transaction" << endl;
-		return E_CONFIG;
-
-	}
-	if (logFileName == "")
-	{
-		if (confMap["consumerLogFileName"] != "")
-		{
-			logFileName = confMap["consumerLogFileName"];
-			if (bootstrapLog(logFileName, &logStream) != 0)
-			{
-				cerr << "Error bootstrapping Log file " << endl;
-				cerr << logFileName << endl;
-				exit(1);
-			}
-		}
-		else
-		{
-			//nolog file
-		}
-
-	}
-	if (amqBrokerUri == "")
-	{
-		if (confMap["amqBrokerUri"] != "")
-		{
-			amqBrokerUri = confMap["amqBrokerUri"];
-		}
-		else
-		{
-			cerr << "WARNING: Error reading conf file: " << configFile
-					<< endl;
-			return E_BROKER_URI;
-		}
-	}
-	if (amqTopic == "")
-	{
-		if (confMap["amqTopic"] != "")
-		{
-			amqTopic = confMap["amqTopic"];
-		}
-		else
-		{
-			cerr << "WARNING: Error reading conf file: " << configFile
-					<< endl;
-			return E_BROKER_URI;
-		}
-	}
-	if ((confMap["durableSubscription"] == "yes")
-			|| (confMap["durableSubscription"] == "true"))
-	{
-		durable = true;
-	}
-	if ((confMap["noLocal"] == "yes") || (confMap["noLocal"] == "true"))
-	{
-		noLocal = true;
-	}
-	if ((confMap["useTopics"] == "yes") || (confMap["useTopics"] == "true"))
-	{
-		useTopics = true;
-	}
-	if ((confMap["clientAck"] == "yes") || (confMap["clientAck"] == "true"))
-	{
-		clientAck = true;
-	}
-	if (name == "")
-	{
-		if (confMap["name"] != "")
-		{
-			name = confMap["name"];
-		}
-	}
-	if (selector == "")
-	{
-		if (confMap["selector"] != "")
-		{
-			selector = confMap["selector"];
-		}
-	}
-	if (amqUsername == "")
-	{
-		if (confMap["amqUsername"] != "")
-		{
-			amqUsername = confMap["amqUsername"];
-		}
-	}
-	if (amqPassword == "")
-	{
-		if (confMap["amqPassword"] != "")
-		{
-			amqPassword = confMap["amqPassword"];
-		}
-	}
-	if (amqClientId == "")
-	{
-		if (confMap["amqClientId"] != "")
-		{
-			amqClientId = confMap["amqClientId"];
-		}
-	}
-	return 0;
 }
 
 
