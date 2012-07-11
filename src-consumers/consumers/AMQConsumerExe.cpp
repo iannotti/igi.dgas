@@ -261,13 +261,13 @@ public:
 		std::cout << "Insert in Database:" << messageString << std::endl;
 		string messageQuery = "INSERT INTO messages SET ";
 		messageQuery += "message=";
-		messageQuery += "\'" + hlrDb.escape_string(messageString) + "\'";
+		messageQuery += "\'" + hlrDb->escape_string(messageString) + "\'";
 		hlrDb->query(messageQuery);
 		if (hlrDb->errNo != 0)
 		{
 			hlr_log("Error Inserting message", &logStream, 1);
+			//FIXME should throw here
 		}
-		//FIXME should throw here
 		return;
 	}
 
