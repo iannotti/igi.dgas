@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.34 2012/07/11 08:14:29 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.35 2012/07/11 08:33:08 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -33,11 +33,12 @@
 
 using namespace std;
 
-//this must be used by the caller to set a flag trapping a SIGINT signal on exit.
+//this sets a flag trapping a SIGINT signal on exit.
 volatile sig_atomic_t goOn = 1;
 
 
-
+/*This is an example of a class overriding the useMessage method of the asyncConsumer parent class.
+ *
 class AMQConsumerStdOut: public SimpleAsyncConsumer {
 
 public:
@@ -68,11 +69,12 @@ public:
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
-		std::cout << "AH AH AH:"<< doneLatch->getCount() << std::endl;
-		std::cout << "AH AH AH:"<< messageString << std::endl;
+		std::cout << "Remaining messages:"<< doneLatch->getCount() << std::endl;
+		std::cout << "Message:"<< messageString << std::endl;
 	}
 
 };
+*/
 
 
 class AMQConsumer {

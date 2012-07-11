@@ -135,6 +135,112 @@ int removeLock(string lockFile)
 	}
 }
 
+class AMQConsumerStdOut: public SimpleAsyncConsumer
+{
+
+public:
+
+	AMQConsumerStdOut(const std::string& brokerURI, const std::string& destURI,
+			bool useTopic = false, bool clientAck = false,
+			std::string name = "", std::string selector = "",
+			bool nolocal = false, bool durable = false,
+			std::string username = "", std::string password = "",
+			std::string clientId = "", long int numMessages = 1)
+	{
+		doneLatch = new CountDownLatch(numMessages);
+		this->useTopic = useTopic;
+		this->brokerURI = brokerURI;
+		this->destURI = destURI;
+		this->clientAck = clientAck;
+		this->username = username;
+		this->password = password;
+		this->clientId = clientId;
+		this->name = name;
+		this->selector = selector;
+		this->noLocal = noLocal;
+		this->durable = durable;
+		this->numMessages = numMessages;
+		std::cerr << "AMQConsumerStdOut(params)" << std::endl;
+	}
+	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
+	void useMessage(std::string messageString)
+	{
+		std::cout << messageString << std::endl;
+	}
+
+};
+
+class AMQConsumerDatabase: public SimpleAsyncConsumer
+{
+
+public:
+
+	AMQConsumerDatabase(const std::string& brokerURI,
+			const std::string& destURI, bool useTopic = false,
+			bool clientAck = false, std::string name = "",
+			std::string selector = "", bool nolocal = false,
+			bool durable = false, std::string username = "",
+			std::string password = "", std::string clientId = "",
+			long int numMessages = 1)
+	{
+		doneLatch = new CountDownLatch(numMessages);
+		this->useTopic = useTopic;
+		this->brokerURI = brokerURI;
+		this->destURI = destURI;
+		this->clientAck = clientAck;
+		this->username = username;
+		this->password = password;
+		this->clientId = clientId;
+		this->name = name;
+		this->selector = selector;
+		this->noLocal = noLocal;
+		this->durable = durable;
+		this->numMessages = numMessages;
+		std::cerr << "AMQConsumerStdOut(params)" << std::endl;
+	}
+	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
+	void useMessage(std::string messageString)
+	{
+		std::cout << "Database:" << messageString << std::endl;
+	}
+
+};
+
+class AMQConsumerDir: public SimpleAsyncConsumer
+{
+
+public:
+
+	AMQConsumerDir(const std::string& brokerURI, const std::string& destURI,
+			bool useTopic = false, bool clientAck = false,
+			std::string name = "", std::string selector = "",
+			bool nolocal = false, bool durable = false,
+			std::string username = "", std::string password = "",
+			std::string clientId = "", long int numMessages = 1)
+	{
+		doneLatch = new CountDownLatch(numMessages);
+		this->useTopic = useTopic;
+		this->brokerURI = brokerURI;
+		this->destURI = destURI;
+		this->clientAck = clientAck;
+		this->username = username;
+		this->password = password;
+		this->clientId = clientId;
+		this->name = name;
+		this->selector = selector;
+		this->noLocal = noLocal;
+		this->durable = durable;
+		this->numMessages = numMessages;
+		std::cerr << "AMQConsumerStdOut(params)" << std::endl;
+	}
+	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
+	void useMessage(std::string messageString)
+	{
+		std::cout << "Dir:" << messageString << std::endl;
+	}
+
+};
+
 int AMQRecordConsumer(recordConsumerParms& parms)
 {
 	int returncode = 0;
@@ -318,30 +424,49 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		numMessages = atol((parms.messageNumber).c_str());
 	}
 
-	//if (outputType == "file")
-	//{
-	//	consumer.setDir(parms.outputDir);
-	//	std::string logBuff = "Messages will be written inside directory: "
-	//			+ parms.outputDir;
-	//	hlr_log(logBuff, &logStream, 6);
-	//}
-	AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
-			parms.amqPassword, parms.dgasAMQTopic);
-	AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
-			parms.amqBrokerUri,
-			parms.dgasAMQTopic,
-			parms.useTopics,
-			parms.clientAck,
-			parms.name,
-			parms.selector,
-			parms.noLocal,
-			parms.durable,
-			parms.amqUsername,
-			parms.amqPassword,
-			parms.amqClientId,
-			numMessages);
-	consumer.registerConsumer(consumerOutImpl);
-	delete consumerOutImpl;
+	if (outputType == "database")
+	{
+		AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
+				parms.amqPassword, parms.dgasAMQTopic);
+		AMQConsumerDataBase* consumerDataBaseImpl = new AMQConsumerDataBase(
+				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.durable, parms.amqUsername, parms.amqPassword,
+				parms.amqClientId, numMessages);
+		consumer.registerConsumer(consumerDataBaseImpl);
+		delete consumerDataBaseImpl;
+	}
+	if (outputType == "file")
+		{
+
+
+			std::string logBuff = "Messages will be written inside directory: " + parms.outputDir;
+			hlr_log(logBuff, &logStream, 6);
+
+			AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
+					parms.amqPassword, parms.dgasAMQTopic);
+			AMQConsumerStdOut* consumerDirImpl = new AMQConsumerDir(
+					parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+					parms.clientAck, parms.name, parms.selector, parms.noLocal,
+					parms.durable, parms.amqUsername, parms.amqPassword,
+					parms.amqClientId, numMessages);
+			consumerDirImpl.setDir(parms.outputDir);
+			consumer.registerConsumer(consumerDirImpl);
+			delete consumerDirImpl;
+		}
+	if (outputType == "stdout")
+		{
+			AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
+					parms.amqPassword, parms.dgasAMQTopic);
+			AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
+					parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+					parms.clientAck, parms.name, parms.selector, parms.noLocal,
+					parms.durable, parms.amqUsername, parms.amqPassword,
+					parms.amqClientId, numMessages);
+			consumer.registerConsumer(consumerOutImpl);
+			delete consumerOutImpl;
+		}
+
 	// All CMS resources should be closed before the library is shutdown.
 	if (!parms.foreground)
 		removeLock(parms.lockFileName);
