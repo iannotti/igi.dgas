@@ -175,7 +175,6 @@ class AMQConsumerDataBase: public SimpleAsyncConsumer
 
 public:
 	std::string directory;
-	void setDirectory(std::string directory);
 
 	AMQConsumerDataBase(const std::string& brokerURI,
 			const std::string& destURI, bool useTopic = false,
