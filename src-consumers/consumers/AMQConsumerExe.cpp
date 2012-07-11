@@ -174,7 +174,6 @@ class AMQConsumerDataBase: public SimpleAsyncConsumer
 {
 
 public:
-	std::string directory;
 
 	AMQConsumerDataBase(const std::string& brokerURI,
 			const std::string& destURI, bool useTopic = false,
@@ -205,10 +204,6 @@ public:
 		std::cout << "Database:" << messageString << std::endl;
 	}
 
-	void setDirectory(std::string directory)
-	{
-		this->directory = directory;
-	}
 
 };
 
@@ -216,6 +211,7 @@ class AMQConsumerDir: public SimpleAsyncConsumer
 {
 
 public:
+	std::string directory;
 
 	AMQConsumerDir(const std::string& brokerURI, const std::string& destURI,
 			bool useTopic = false, bool clientAck = false,
@@ -243,6 +239,12 @@ public:
 	void useMessage(std::string messageString)
 	{
 		std::cout << "Dir:" << messageString << std::endl;
+	}
+
+
+	void setDirectory(std::string directory)
+	{
+		this->directory = directory;
 	}
 
 };
@@ -451,7 +453,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
-		consumerDirImpl->setDir(parms.outputDir);
+		consumerDirImpl->setDirectory(parms.outputDir);
 		consumer.registerConsumer(consumerDirImpl);
 		delete consumerDirImpl;
 	}

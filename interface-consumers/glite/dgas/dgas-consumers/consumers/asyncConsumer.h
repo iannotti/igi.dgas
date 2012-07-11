@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.23 2012/07/11 08:50:19 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.24 2012/07/11 08:59:10 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -123,7 +123,6 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
-		std::cerr << "SimpleAsyncConsumer(params)" << std::endl;
 	}
 
 	virtual ~SimpleAsyncConsumer()
