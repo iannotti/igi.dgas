@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.32 2012/07/11 07:57:21 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.33 2012/07/11 08:09:37 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -48,7 +48,7 @@ public:
 				std::string selector = "", bool nolocal = false,
 				bool durable = false,
 				std::string username = "", std::string password = "",
-				std::string clientId = "", long int numMessages = 1): doneLatch(numMessages)
+				std::string clientId = "", long int numMessages = 1)
 	{
 				this->useTopic = useTopic;
 				this->brokerURI = brokerURI;
