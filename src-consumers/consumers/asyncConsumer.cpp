@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.13 2012/07/11 12:26:25 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.14 2012/07/11 12:29:20 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -142,25 +142,25 @@ ofstream logStream;
 					selector = confMap["selector"];
 				}
 			}
-			if (amqUsername == "")
+			if (username == "")
 			{
 				if (confMap["amqUsername"] != "")
 				{
-					amqUsername = confMap["amqUsername"];
+					username = confMap["amqUsername"];
 				}
 			}
-			if (amqPassword == "")
+			if (password == "")
 			{
 				if (confMap["amqPassword"] != "")
 				{
-					amqPassword = confMap["amqPassword"];
+					password = confMap["amqPassword"];
 				}
 			}
-			if (amqClientId == "")
+			if (clientId == "")
 			{
 				if (confMap["amqClientId"] != "")
 				{
-					amqClientId = confMap["amqClientId"];
+					clientId = confMap["amqClientId"];
 				}
 			}
 			return 0;
