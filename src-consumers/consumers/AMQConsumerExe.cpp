@@ -287,7 +287,7 @@ public:
 	{
 		if ((mkdir(directory.c_str(), 0777)) != 0)
 		{
-			string logBuff = "Error creating UR dirctory:" + directory;
+			string logBuff = "Error creating UR dirctory:" + dir;
 			cerr << logBuff << endl;
 			hlr_log(logBuff, &logStream, 1);
 			return false;
