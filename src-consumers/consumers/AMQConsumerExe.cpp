@@ -2,6 +2,7 @@
 #include <iostream>
 #include <getopt.h>
 #include <vector>
+#include <sys/stat.h>
 
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
@@ -247,7 +248,7 @@ public:
 		}
 		else
 		{
-			fileS << text << endl;
+			fileS << messageString << endl;
 			fileS.close();
 		}
 		count++;
