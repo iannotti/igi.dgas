@@ -151,7 +151,7 @@ public:
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
 		this->brokerURI = brokerURI;
-		this->destURI = destURI;
+		this->topicName = destURI;
 		this->clientAck = clientAck;
 		this->username = username;
 		this->password = password;
@@ -186,7 +186,7 @@ public:
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
 		this->brokerURI = brokerURI;
-		this->destURI = destURI;
+		this->topicName = destURI;
 		this->clientAck = clientAck;
 		this->username = username;
 		this->password = password;
@@ -222,7 +222,7 @@ public:
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
 		this->brokerURI = brokerURI;
-		this->destURI = destURI;
+		this->topicName = destURI;
 		this->clientAck = clientAck;
 		this->username = username;
 		this->password = password;

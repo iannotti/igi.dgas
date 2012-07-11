@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.12 2012/07/11 11:58:48 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.15 2012/07/11 12:30:41 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -56,7 +56,7 @@ using namespace std;
 
 ofstream logStream;
 
-	int SimpleAsyncConsumer::readConf(std::string configFile)
+	int SimpleAsyncConsumer::readConf(std::string& configFile)
 	{
 		int returncode = 0;
 			map < string, string > confMap;
@@ -85,11 +85,11 @@ ofstream logStream;
 				}
 
 			}
-			if (amqBrokerUri == "")
+			if (brokerUri == "")
 			{
 				if (confMap["amqBrokerUri"] != "")
 				{
-					amqBrokerUri = confMap["amqBrokerUri"];
+					brokerUri = confMap["amqBrokerUri"];
 				}
 				else
 				{
@@ -98,11 +98,11 @@ ofstream logStream;
 					return E_BROKER_URI;
 				}
 			}
-			if (amqTopic == "")
+			if (topicName == "")
 			{
 				if (confMap["amqTopic"] != "")
 				{
-					amqTopic = confMap["amqTopic"];
+					topicName = confMap["amqTopic"];
 				}
 				else
 				{
@@ -122,7 +122,7 @@ ofstream logStream;
 			}
 			if ((confMap["useTopics"] == "yes") || (confMap["useTopics"] == "true"))
 			{
-				useTopics = true;
+				useTopic = true;
 			}
 			if ((confMap["clientAck"] == "yes") || (confMap["clientAck"] == "true"))
 			{
@@ -142,25 +142,25 @@ ofstream logStream;
 					selector = confMap["selector"];
 				}
 			}
-			if (amqUsername == "")
+			if (username == "")
 			{
 				if (confMap["amqUsername"] != "")
 				{
-					amqUsername = confMap["amqUsername"];
+					username = confMap["amqUsername"];
 				}
 			}
-			if (amqPassword == "")
+			if (password == "")
 			{
 				if (confMap["amqPassword"] != "")
 				{
-					amqPassword = confMap["amqPassword"];
+					password = confMap["amqPassword"];
 				}
 			}
-			if (amqClientId == "")
+			if (clientId == "")
 			{
 				if (confMap["amqClientId"] != "")
 				{
-					amqClientId = confMap["amqClientId"];
+					clientId = confMap["amqClientId"];
 				}
 			}
 			return 0;
@@ -200,12 +200,12 @@ ofstream logStream;
 
 				if (!durable)
 				{
-					destination = session->createTopic(destURI);
+					destination = session->createTopic(topicName);
 					consumer = session->createConsumer(destination);
 				}
 				else
 				{
-					topic = session->createTopic(destURI);
+					topic = session->createTopic(topicName);
 					consumer = session->createDurableConsumer(topic, name,
 							selector, noLocal);
 				}
@@ -213,7 +213,7 @@ ofstream logStream;
 			}
 			else
 			{
-				destination = session->createQueue(destURI);
+				destination = session->createQueue(topicName);
 				consumer = session->createConsumer(destination);
 			}
 			// Create a MessageConsumer from the Session to the Topic or Queue

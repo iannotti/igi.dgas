@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.25 2012/07/11 11:57:16 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.26 2012/07/11 12:26:25 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -80,7 +80,7 @@ protected:
 	bool useTopic;
 	bool clientAck;
 	std::string brokerURI;
-	std::string destURI;
+	std::string topicName;
 	std::string username;
 	std::string password;
 	std::string clientId;
@@ -88,6 +88,11 @@ protected:
 	std::string selector;
 	bool noLocal;
 	bool durable;
+
+	//for readConf
+
+	std::string logFileName;
+
 
 public:
 	SimpleAsyncConsumer() :
@@ -113,7 +118,7 @@ public:
 		this->consumer = NULL;
 		this->useTopic = useTopic;
 		this->brokerURI = brokerURI;
-		this->destURI = destURI;
+		this->topicName = destURI;
 		this->clientAck = clientAck;
 		this->username = username;
 		this->password = password;
