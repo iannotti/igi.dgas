@@ -451,7 +451,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
-		consumerDirImpl.setDir(parms.outputDir);
+		consumerDirImpl->setDirectory(parms.outputDir);
 		consumer.registerConsumer(consumerDirImpl);
 		delete consumerDirImpl;
 	}
@@ -653,17 +653,6 @@ int main(int argc, char *argv[])
 	if (res != 0)
 	{
 		if (verbosity > 1)
-
-			std::string AMQConsumerDataBase::getDirectory() const
-			{
-				return directory;
-			}
-
-		void AMQConsumerDataBase::setDirectory(std::string directory)
-		{
-			this->directory = directory;
-		}
-
 		{
 			hlrError e;
 			cerr << e.error[int2string(res)] << endl;
