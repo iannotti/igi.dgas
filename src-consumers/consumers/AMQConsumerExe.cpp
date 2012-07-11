@@ -160,7 +160,6 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
-		std::cerr << "AMQConsumerStdOut(params)" << std::endl;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
@@ -196,14 +195,12 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
-		std::cerr << "AMQConsumerStdOut(params)" << std::endl;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
 		std::cout << "Database:" << messageString << std::endl;
 	}
-
 
 };
 
@@ -212,6 +209,7 @@ class AMQConsumerDir: public SimpleAsyncConsumer
 
 public:
 	std::string directory;
+	long int count;
 
 	AMQConsumerDir(const std::string& brokerURI, const std::string& destURI,
 			bool useTopic = false, bool clientAck = false,
@@ -233,18 +231,67 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
-		std::cerr << "AMQConsumerStdOut(params)" << std::endl;
+		this->count = 0;
+		if ( !checkDirectory() )  createDirectory();
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
-		std::cout << "Dir:" << messageString << std::endl;
+		std::ofstream fileS;
+		std::string fname = directory + "/" + fileName(int2string(count));
+		fileS.open(fname.c_str(), ios::app);
+		if (!fileS)
+		{
+			std::string logBuff = "Error Inserting message in file: " + fname;
+			hlr_log(logBuff, &logStream, 1);
+		}
+		else
+		{
+			fileS << text << endl;
+			fileS.close();
+		}
+		count++;
 	}
-
 
 	void setDirectory(std::string directory)
 	{
 		this->directory = directory;
+	}
+
+	string fileName(string messageNumber)
+	{
+		//DGAS log
+		time_t curtime;
+		struct tm *timeLog;
+		curtime = time(NULL);
+		timeLog = localtime(&curtime);
+		char timeBuff[16];
+		strftime(timeBuff, sizeof(timeBuff), "%Y%m%d%H%M%S", timeLog);
+		string buffer = "M_" + (string) timeBuff + "_" + messageNumber;
+		return buffer;
+	}
+
+	bool checkDirectory()
+	{
+		//check if parms.recordDir exists. Create it otherwise.
+		struct stat st;
+		if (stat(directory.c_str(), &st) != 0)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	bool createDirectory()
+	{
+		if ((mkdir(dir.c_str(), 0777)) != 0)
+		{
+			string logBuff = "Error creating UR dirctory:" + dir;
+			cerr << logBuff << endl;
+			hlr_log(logBuff, &logStream, 1);
+			return false;
+		}
+		return true;
 	}
 
 };
@@ -521,7 +568,7 @@ void help(string progname)
 			<< "-m  --messageNumber <number> If called with -F --foreground, consume up to -m --messages number of messages and exit."
 			<< endl;
 	cerr
-			<< "-o  --outputType <db or stdout or file>  put the message in the database or output it on stdout or in file"
+			<< "-o  --outputType <database or stdout or file>  put the message in the database or output it on stdout or in file"
 			<< endl;
 	cerr
 			<< "-d  --outputDir <directory> Output messages in file, one per message within the specified directory, to be used with -o file"
