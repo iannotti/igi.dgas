@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.37 2012/07/11 11:57:16 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.38 2012/07/11 13:20:16 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -80,39 +80,7 @@ public:
 class AMQConsumer {
 
 public:
-	std::string logFileName;
-	std::string amqBrokerUri;
-	std::string amqUsername;
-	std::string amqPassword;
-	std::string amqClientId;
-	std::string amqTopic;
-	bool useTopics;
-	bool clientAck;
-	std::string name;
-	std::string selector;
-	bool noLocal;
-	bool durable;
-	bool foreground;
-	long int messageNumber;
-
-
-	AMQConsumer(
-			std::string amqBrokerUri,
-			std::string amqUsername = "",
-			std::string amqPassword = "",
-			std::string amqTopic = "")
-	{
-		this->amqBrokerUri = amqBrokerUri;
-		this->amqUsername = amqUsername;
-		this->amqPassword = amqPassword;
-		this->amqTopic = amqTopic;
-		this->clientAck = false;
-		this->useTopics = false;
-		this->durable = false;
-		this->noLocal = false;
-		this->foreground = false;
-		this->messageNumber = 1;//Default: consume one message and exit. Set to -1 to go on forever.
-	}
+	AMQConsumer(){};
 	//void registerConsumer(AMQConsumerStdOut* consumer);
 	void registerConsumer(SimpleAsyncConsumer* consumer);
 
