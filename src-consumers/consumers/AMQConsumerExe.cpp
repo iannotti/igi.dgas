@@ -174,6 +174,8 @@ class AMQConsumerDataBase: public SimpleAsyncConsumer
 {
 
 public:
+	std::string directory;
+	void setDirectory(std::string directory);
 
 	AMQConsumerDataBase(const std::string& brokerURI,
 			const std::string& destURI, bool useTopic = false,
@@ -202,6 +204,11 @@ public:
 	void useMessage(std::string messageString)
 	{
 		std::cout << "Database:" << messageString << std::endl;
+	}
+
+	void setDirectory(std::string directory)
+	{
+		this->directory = directory;
 	}
 
 };
@@ -414,8 +421,6 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 		}
 	}
-	//move to AMQConsumer.run() from here.
-
 
 	std::string outputType = parms.outputType;
 	long int numMessages = -1;
@@ -424,7 +429,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		numMessages = atol((parms.messageNumber).c_str());
 	}
 	AMQConsumer consumer(parms.amqBrokerUri, parms.amqUsername,
-					parms.amqPassword, parms.dgasAMQTopic);
+			parms.amqPassword, parms.dgasAMQTopic);
 	if (outputType == "database")
 	{
 
@@ -437,32 +442,30 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		delete consumerDataBaseImpl;
 	}
 	if (outputType == "file")
-		{
+	{
+		std::string logBuff = "Messages will be written inside directory: "
+				+ parms.outputDir;
+		hlr_log(logBuff, &logStream, 6);
 
-
-			std::string logBuff = "Messages will be written inside directory: " + parms.outputDir;
-			hlr_log(logBuff, &logStream, 6);
-
-
-			AMQConsumerDir* consumerDirImpl = new AMQConsumerDir(
-					parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
-					parms.clientAck, parms.name, parms.selector, parms.noLocal,
-					parms.durable, parms.amqUsername, parms.amqPassword,
-					parms.amqClientId, numMessages);
-			consumerDirImpl.setDir(parms.outputDir);
-			consumer.registerConsumer(consumerDirImpl);
-			delete consumerDirImpl;
-		}
+		AMQConsumerDir* consumerDirImpl = new AMQConsumerDir(
+				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.durable, parms.amqUsername, parms.amqPassword,
+				parms.amqClientId, numMessages);
+		consumerDirImpl.setDir(parms.outputDir);
+		consumer.registerConsumer(consumerDirImpl);
+		delete consumerDirImpl;
+	}
 	if (outputType == "stdout")
-		{
-			AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
-					parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
-					parms.clientAck, parms.name, parms.selector, parms.noLocal,
-					parms.durable, parms.amqUsername, parms.amqPassword,
-					parms.amqClientId, numMessages);
-			consumer.registerConsumer(consumerOutImpl);
-			delete consumerOutImpl;
-		}
+	{
+		AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
+				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.durable, parms.amqUsername, parms.amqPassword,
+				parms.amqClientId, numMessages);
+		consumer.registerConsumer(consumerOutImpl);
+		delete consumerOutImpl;
+	}
 
 	// All CMS resources should be closed before the library is shutdown.
 	if (!parms.foreground)
@@ -651,6 +654,17 @@ int main(int argc, char *argv[])
 	if (res != 0)
 	{
 		if (verbosity > 1)
+
+			std::string AMQConsumerDataBase::getDirectory() const
+			{
+				return directory;
+			}
+
+		void AMQConsumerDataBase::setDirectory(std::string directory)
+		{
+			this->directory = directory;
+		}
+
 		{
 			hlrError e;
 			cerr << e.error[int2string(res)] << endl;
