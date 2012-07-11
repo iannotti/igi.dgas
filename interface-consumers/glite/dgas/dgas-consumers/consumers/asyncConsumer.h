@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.h,v 1.1.2.20 2012/07/11 07:57:21 aguarise Exp $
+// $Id: asyncConsumer.h,v 1.1.2.21 2012/07/11 08:04:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -75,7 +75,7 @@ private:
 protected:
 
 	Topic* topic;
-	CountDownLatch doneLatch;
+	CountDownLatch* doneLatch;
 	long int numMessages;
 	bool useTopic;
 	bool clientAck;
@@ -91,9 +91,10 @@ protected:
 
 public:
 	SimpleAsyncConsumer() :
-		latch(1), doneLatch(numMessages)
+		latch(1)
 	{
 		std::cerr << "SimpleAsyncConsumer(empty)" << std::endl;
+		doneLatch = new CountDownLatch(10);
 	}
 	;
 
@@ -104,7 +105,7 @@ public:
 			bool durable = false, std::string username = "",
 			std::string password = "", std::string clientId = "",
 			long int numMessages = 1) :
-		latch(1), doneLatch(numMessages)
+		latch(1)
 	{
 		this->connection = NULL;
 		this->session = NULL;
@@ -127,6 +128,7 @@ public:
 
 	virtual ~SimpleAsyncConsumer()
 	{
+		delete doneLatch;
 		this->cleanup();
 	}
 
