@@ -729,7 +729,34 @@ int main(int argc, char *argv[])
 	parms.outputType = outputType;
 	parms.outputDir = outputDir;
 	parms.messageNumber = messageNumber;
-	int res = AMQRecordConsumer(parms);
+	int
+
+	std::string AMQConsumerDataBase::getSqlDbname() const
+	{
+		return sqlDbname;
+	}
+
+	void AMQConsumerDataBase::setSqlDbname(std::string sqlDbname)
+	{
+		this->sqlDbname = sqlDbname;
+	}
+
+	void AMQConsumerDataBase::setSqlPassword(std::string sqlPassword)
+	{
+		this->sqlPassword = sqlPassword;
+	}
+
+	void AMQConsumerDataBase::setSqlServer(std::string sqlServer)
+	{
+		this->sqlServer = sqlServer;
+	}
+
+	void AMQConsumerDataBase::setSqlUser(std::string sqlUser)
+	{
+		this->sqlUser = sqlUser;
+	}
+
+	res = AMQRecordConsumer(parms);
 	if (verbosity > 0)
 	{
 		cout << "Return code:" << res << endl;
