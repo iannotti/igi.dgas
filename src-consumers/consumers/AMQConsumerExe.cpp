@@ -191,7 +191,7 @@ public:
 
 	int pipeTo (string& inputMessage, string& outputMessage)
 	{
-		command = "echo -n \'" + inputMessage + "\' |" + pipeCommand;
+		string command = "echo -n \'" + inputMessage + "\' |" + pipeCommand;
 		FILE *output;
 		output = popen (command.c_str(),"r");
 		if ( !output )
