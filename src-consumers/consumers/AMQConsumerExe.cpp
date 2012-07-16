@@ -45,7 +45,7 @@ public:
 	string amqClientId;
 	string lockFileName;
 	string logFileName;
-	string dgasAMQTopic;
+	string amqTopic;
 	bool useTopics;
 	bool clientAck;
 	string hlrSqlTmpDBName;
@@ -62,6 +62,8 @@ public:
 	string outputDir;
 	string messageNumber;
 	string pipeTo;
+	int verbosity;
+	bool needsHelp;
 };
 
 //string configFile = GLITE_DGAS_DEF_CONF;
@@ -541,14 +543,13 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 
 	}
 
-	std::string outputType = parms.outputType;
 	long int numMessages = -1;
 	if (parms.messageNumber != "" && is_number(parms.messageNumber))
 	{
 		numMessages = atol((parms.messageNumber).c_str());
 	}
 	AMQConsumer consumer;
-	if (outputType == "database")
+	if (parms.outputType == "database")
 	{
 
 		AMQConsumerDataBase* consumerDataBaseImpl = new AMQConsumerDataBase(
@@ -569,7 +570,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		consumer.registerConsumer(consumerDataBaseImpl);
 		delete consumerDataBaseImpl;
 	}
-	if (outputType == "file")
+	if (parms.outputType == "file")
 	{
 		std::string logBuff = "Messages will be written inside directory: "
 				+ parms.outputDir;
@@ -586,7 +587,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		consumer.registerConsumer(consumerDirImpl);
 		delete consumerDirImpl;
 	}
-	if (outputType == "stdout")
+	if (parms.outputType == "stdout")
 	{
 		AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
 				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
@@ -594,7 +595,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerOutImpl->readConf(parms.configFile);
-		if ( pipeTo != "" )
+		if ( parms.pipeTo != "" )
 		{
 			consumerOutImpl->setPipeCommand(pipeTo);
 		}
@@ -665,10 +666,12 @@ void help(string progname)
 	cerr << "-h  --help               Print this help message." << endl;
 }
 
-int options(int argc, char **argv)
+int options(int argc, char **argv, recordConsumerParms& parms)
 {
 	int option_char;
 	int option_index = 0;
+	parms.needsHelp = false;
+	parms.useTopics = false;
 	static struct option long_options[] =
 	{
 	{ "verbosity", 1, 0, 'v' },
@@ -697,64 +700,64 @@ int options(int argc, char **argv)
 		switch (option_char)
 		{
 		case 'v':
-			verbosity = atoi(optarg);
+			parms.verbosity = atoi(optarg);
 			break;
 		case 'B':
-			brokerUri = optarg;
+			parms.amqBrokerUri = optarg;
 			break;
 		case 't':
-			topic = optarg;
+			parms.amqTopic = optarg;
 			break;
 		case 'c':
-			configFile = optarg;
+			parms.configFile = optarg;
 			break;
 		case 'u':
-			username = optarg;
+			parms.amqUsername = optarg;
 			break;
 		case 'p':
-			password = optarg;
+			parms.amqPassword = optarg;
 			break;
 		case 'i':
-			clientId = optarg;
+			parms.amqClientId = optarg;
 			break;
 		case 'n':
-			name = optarg;
+			parms.name = optarg;
 			break;
 		case 's':
-			selector = optarg;
+			parms.selector = optarg;
 			break;
 		case 'm':
-			messageNumber = optarg;
+			parms.messageNumber = optarg;
 			break;
 		case 'o':
-			outputType = optarg;
+			parms.outputType = optarg;
 			break;
 		case 'd':
-			outputDir = optarg;
+			parms.outputDir = optarg;
 			break;
 		case 'P':
-					pipeTo = optarg;
+					parms.pipeTo = optarg;
 					break;
 		case 'N':
-			noLocal = "true";
+			parms.noLocal = true;
 			break;
 		case 'T':
-			useTopics = "true";
+			parms.useTopics = true;
 			break;
 		case 'Q':
-			useTopics = "false";
+			parms.useTopics = false;
 			break;
 		case 'A':
-			clientAck = "true";
+			parms.clientAck = true;
 			break;
 		case 'D':
-			durable = "true";
+			parms.durable = true;
 			break;
 		case 'F':
-			foreground = "true";
+			parms.foreground = true;
 			break;
 		case 'h':
-			needs_help = true;
+			parms.needsHelp = true;
 			break;
 		default:
 			break;
@@ -764,29 +767,13 @@ int options(int argc, char **argv)
 
 int main(int argc, char *argv[])
 {
-	options(argc, argv);
-	if (needs_help)
+	recordConsumerParms parms;
+	options(argc, argv, parms);
+	if (parms.needsHelp)
 	{
 		help(argv[0]);
 		return 0;
 	}
-	recordConsumerParms parms;
-	parms.amqBrokerUri = brokerUri;
-	parms.dgasAMQTopic = topic;
-	parms.configFile = configFile;
-	parms.useTopics = useTopics;
-	parms.clientAck = clientAck;
-	parms.amqUsername = username;
-	parms.amqPassword = password;
-	parms.amqClientId = clientId;
-	parms.noLocal = noLocal;
-	parms.selector = selector;
-	parms.name = name;
-	parms.durable = durable;
-	parms.foreground = foreground;
-	parms.outputType = outputType;
-	parms.outputDir = outputDir;
-	parms.messageNumber = messageNumber;
 	int res = AMQRecordConsumer(parms);
 	if (verbosity > 0)
 	{
