@@ -64,28 +64,7 @@ public:
 	string pipeTo;
 };
 
-int system_log_level = 9;
-bool needs_help = false;
-int verbosity = 3;
-string brokerUri = "";
-string topic = "";
-string configFile = "";
-bool useTopics = false;
-bool clientAck = false;
-string username = "";
-string password = "";
-string clientId = "";
-string name = "";
-string selector = "";
-bool noLocal = false;
-bool durable = false;
-bool foreground = false;
-string messageNumber = "";
-string outputType = "";
-string outputDir = "";
-string pipeTo = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
-
 
 bool is_number(const std::string& s)
 {
