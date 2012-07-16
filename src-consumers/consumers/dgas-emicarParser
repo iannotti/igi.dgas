@@ -65,7 +65,7 @@ if ( $dgasLocation eq "" )
         $dgasLocation = "/usr/";
 }
 
-my $schemaFile = '/etc/dgas/car_v1.0.xsd.xml';
+my $schemaFile = '/etc/dgas/car_v1.0.xsd';
 
 GetOptions (
         'file=s' => \$file,
