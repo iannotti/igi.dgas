@@ -21,7 +21,7 @@
 #include "glite/dgas/common/base/xmlUtil.h"
 #include "../../src-hlr-service/base/serviceVersion.h"
 
-#define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:"
+#define OPTION_STRING "3hv:B:t:c:TQAu:p:n:s:i:NDFm:o:d:P:"
 #define E_CONFIG 10
 #define E_BROKER_URI 11
 
@@ -61,6 +61,7 @@ public:
 	string outputType;
 	string outputDir;
 	string messageNumber;
+	string pipeTo;
 };
 
 int system_log_level = 9;
@@ -82,6 +83,7 @@ bool foreground = false;
 string messageNumber = "";
 string outputType = "";
 string outputDir = "";
+string pipeTo = "";
 //string configFile = GLITE_DGAS_DEF_CONF;
 
 
@@ -141,6 +143,15 @@ class AMQConsumerStdOut: public SimpleAsyncConsumer
 
 public:
 
+	std::string pipeCommand;
+	bool doPipe;
+
+	void setPipeCommand(std::string pipeCommand)
+	{
+			this->pipeCommand = pipeCommand;
+			doPipe =true;
+	}
+
 	AMQConsumerStdOut(const std::string& brokerURI, const std::string& destURI,
 			bool useTopic = false, bool clientAck = false,
 			std::string name = "", std::string selector = "",
@@ -161,11 +172,50 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
+		doPipe = false;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
-		std::cout << messageString << std::endl;
+		if ( doPipe )
+		{
+			std::string outputbuffer = "";
+			pipeTo(messageString,outputbuffer);
+			std::cout << outputbuffer<< std::endl;
+		}
+		else
+		{
+			std::cout << messageString << std::endl;
+		}
+	}
+
+	int pipeTo (string& inputMessage, string& outputMessage)
+	{
+		command = "echo -n \'" + inputMessage + "\' |" + pipeCommand;
+		FILE *output;
+		output = popen (command.c_str(),"r");
+		if ( !output )
+		{
+			return 1;
+		}
+		ssize_t bytes_read = 0;
+		size_t nbytes = 4096;
+		char *buffString;
+		while ( bytes_read != -1 )
+		{
+			buffString = (char *) malloc (nbytes+1);
+			bytes_read = getline (&buffString, &nbytes, output);
+			if ( bytes_read != -1 )
+			{
+				outputMessage += buffString;
+			}
+			free(buffString);
+		}
+		//read
+		if ( pclose(output) != 0 )
+		{
+			return 3;
+		}
 	}
 
 };
@@ -565,6 +615,10 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerOutImpl->readConf(parms.configFile);
+		if ( pipeTo != "" )
+		{
+			consumerOutImpl->setPipeCommand(pipeTo);
+		}
 		consumer.registerConsumer(consumerOutImpl);
 		delete consumerOutImpl;
 	}
@@ -610,6 +664,8 @@ void help(string progname)
 			<< endl;
 	cerr << "-s  --selector <selector>  pass a selector string to the consumer"
 			<< endl;
+	cerr << "-P  --pipe <command>  pipe received message to 'command'. Active just on 'stdout' outputType."
+				<< endl;
 	cerr << "-N  --nolocal  set CMS noLocal flag" << endl;
 	cerr << "-T  --useTopic  Use Topic" << endl;
 	cerr << "-Q  --useQueue  Use Queue" << endl;
@@ -654,6 +710,7 @@ int options(int argc, char **argv)
 	{ "messageNumber", 1, 0, 'm' },
 	{ "outputType", 1, 0, 'o' },
 	{ "outputDir", 1, 0, 'd' },
+	{ "pipe", 1, 0, 'P' },
 	{ "help", 0, 0, 'h' },
 	{ 0, 0, 0, 0 } };
 	while ((option_char = getopt_long(argc, argv, OPTION_STRING, long_options,
@@ -696,6 +753,9 @@ int options(int argc, char **argv)
 		case 'd':
 			outputDir = optarg;
 			break;
+		case 'P':
+					pipeTo = optarg;
+					break;
 		case 'N':
 			noLocal = "true";
 			break;
