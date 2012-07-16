@@ -553,7 +553,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	{
 
 		AMQConsumerDataBase* consumerDataBaseImpl = new AMQConsumerDataBase(
-				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
@@ -577,7 +577,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		hlr_log(logBuff, &logStream, 6);
 
 		AMQConsumerDir* consumerDirImpl = new AMQConsumerDir(
-				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
@@ -590,14 +590,14 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	if (parms.outputType == "stdout")
 	{
 		AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
-				parms.amqBrokerUri, parms.dgasAMQTopic, parms.useTopics,
+				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
 				parms.clientAck, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerOutImpl->readConf(parms.configFile);
 		if ( parms.pipeTo != "" )
 		{
-			consumerOutImpl->setPipeCommand(pipeTo);
+			consumerOutImpl->setPipeCommand(parms.pipeTo);
 		}
 		consumer.registerConsumer(consumerOutImpl);
 		delete consumerOutImpl;
@@ -775,13 +775,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	int res = AMQRecordConsumer(parms);
-	if (verbosity > 0)
+	if (parms.verbosity > 0)
 	{
 		cout << "Return code:" << res << endl;
 	}
 	if (res != 0)
 	{
-		if (verbosity > 1)
+		if (parms.verbosity > 1)
 		{
 			hlrError e;
 			cerr << e.error[int2string(res)] << endl;
