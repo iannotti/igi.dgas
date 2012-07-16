@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.17 2012/07/11 14:17:02 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.18 2012/07/16 12:02:28 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -30,12 +30,9 @@
 
 
 
-#include "glite/dgas/hlr-service/base/db.h"
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
 #include "glite/dgas/common/base/dgas_config.h"
-#include "glite/dgas/common/base/dgas_lock.h"
-#include "glite/dgas/common/base/libdgas_log.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
@@ -54,8 +51,6 @@ using namespace decaf::util::concurrent;
 using namespace cms;
 using namespace std;
 
-ofstream logStream;
-
 	int SimpleAsyncConsumer::readConf(std::string& configFile)
 	{
 		int returncode = 0;
@@ -65,24 +60,6 @@ ofstream logStream;
 				cerr << "WARNING: Error reading conf file: " << configFile << endl;
 				cerr << "There can be problems processing the transaction" << endl;
 				return E_CONFIG;
-
-			}
-			if (logFileName == "")
-			{
-				if (confMap["consumerLogFileName"] != "")
-				{
-					logFileName = confMap["consumerLogFileName"];
-					if (bootstrapLog(logFileName, &logStream) != 0)
-					{
-						cerr << "Error bootstrapping Log file " << endl;
-						cerr << logFileName << endl;
-						exit(1);
-					}
-				}
-				else
-				{
-					//nolog file
-				}
 
 			}
 			if (brokerURI == "")
@@ -263,19 +240,19 @@ ofstream logStream;
 	// registered as an ExceptionListener with the connection.
 	void SimpleAsyncConsumer::onException( const CMSException& ex AMQCPP_UNUSED )
 	{
-		hlr_log("CMS Exception occurred.  Shutting down client.", &logStream, 1);
+		//hlr_log("CMS Exception occurred.  Shutting down client.", &logStream, 1);
 		exit(1);
 	}
 
 	void SimpleAsyncConsumer::transportInterrupted()
 	{
-		hlr_log("The Connection's Transport has been Interrupted.", &logStream,
-				3);
+		//hlr_log("The Connection's Transport has been Interrupted.", &logStream,
+		//		3);
 	}
 
 	void SimpleAsyncConsumer::transportResumed()
 	{
-		hlr_log("The Connection's Transport has been Restored.", &logStream, 3);
+		//hlr_log("The Connection's Transport has been Restored.", &logStream, 3);
 	}
 
 

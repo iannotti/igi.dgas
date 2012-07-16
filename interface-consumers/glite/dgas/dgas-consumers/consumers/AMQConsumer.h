@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.h,v 1.1.2.38 2012/07/11 13:20:16 aguarise Exp $
+// $Id: AMQConsumer.h,v 1.1.2.39 2012/07/16 12:02:28 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -74,6 +74,28 @@ public:
 	}
 
 };
+
+As an examlple fo code using this class:
+
+//Instantiate an object of the AMQConsumer class;
+AMQConsumer consumer;
+
+//Instatinate a pointer to an object of the derived AMQConsumerStdOut class (declared as in the above example with
+//at least an useMessage method). See the definition of AMQConsumer for the meaning of the constructor params.
+AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
+				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
+				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.durable, parms.amqUsername, parms.amqPassword,
+				parms.amqClientId, numMessages);
+
+//call method registerConsumer. This will initiate the needed libraries and run an AMQ message listener thread.
+//upon receiving a message the AMQConsumerStdOut::onMessage(std::string ) method will be executed.
+
+consumer.registerConsumer(consumerOutImpl);
+
+//free resources.
+delete consumerOutImpl;
+
 */
 
 

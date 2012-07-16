@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: AMQConsumer.cpp,v 1.1.2.78 2012/07/11 11:57:16 aguarise Exp $
+// $Id: AMQConsumer.cpp,v 1.1.2.79 2012/07/16 12:02:28 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -57,8 +57,6 @@
 #define E_BROKER_URI 11
 #define E_CONFIG 10
 
-
-ofstream logStream;
 
 void exit_signal(int sig)
 {
