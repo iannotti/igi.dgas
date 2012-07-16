@@ -26,6 +26,7 @@
 #define E_BROKER_URI 11
 
 ofstream logStream;
+int system_log_level = 9 ;
 
 const char * hlr_sql_server;
 const char * hlr_sql_user;
