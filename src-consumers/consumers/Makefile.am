@@ -15,7 +15,8 @@ libexec_PROGRAMS = dgas-AMQConsumer \
 		dgas-legacyRecordManager 
 
 libexec_SCRIPTS = \
-		dgas-ogfurParser	
+		dgas-ogfurParser \
+		dgas-emicarParser	
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
