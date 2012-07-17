@@ -188,7 +188,7 @@ foreach my $aRecord (@records) {
 	$record{startTime} = HTTP::Date::str2time($aRecord->find('urf:StartTime'));
 	$record{endTime} = HTTP::Date::str2time($aRecord->find('urf:EndTime'));
 	$record{queue} = $aRecord->findvalue('urf:Queue');
-	#$record{ceCertificateSubject} = $aRecord->find('urf:RecordIdentity/ds:KeyInfo/ds:X509Data/ds:X509SubjectName');
+	$record{ceCertificateSubject} = $aRecord->find('urf:Site[@urf:type="X509DN"]');
 	$record{timeInstantETime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="etime"]'));
 	$record{timeInstantCTime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="ctime"]'));
 	$record{timeInstantQTime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="qtime"]'));
@@ -199,9 +199,9 @@ foreach my $aRecord (@records) {
 	$record{group} = $aRecord->findvalue('urf:Resource[@urf:description="LocalGroupId"]');
 	$record{vomsFqan} = $aRecord->findvalue('urf:Resource[@urf:description="VomsFqan"]');
 	$record{lrmsServer} = $aRecord->findvalue('urf:Resource[@urf:description="LrmsServer"]');
-	$record{execCe} = $aRecord->findvalue('urf:Resource[@urf:description="ExecCe"]');
+	$record{execCe} = $aRecord->findvalue('urf:SubmitHost[@urf:type="CE-ID"]');
 	$record{voOrigin} = $aRecord->findvalue('urf:Resource[@urf:description="DgasVoOrigin"]');
-	$record{ceHost} = $aRecord->findvalue('urf:Host[@urf:primary="true"]');
+	$record{ceHost} = $aRecord->findvalue('urf:MachineName');
 	my @hosts = $aRecord->getElementsByTagName('urf:Host');
 	my $count = 0;
 	foreach my $host ( @hosts )
