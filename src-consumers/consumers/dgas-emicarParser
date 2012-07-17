@@ -170,6 +170,8 @@ foreach my $aRecord (@records) {
 	$record{localJobId} = $aRecord->find('urf:JobIdentity/urf:LocalJobId');
 	$record{localUserId} = $aRecord->find('urf:UserIdentity/urf:LocalUserId');
 	$record{globalUserName} = $aRecord->find('urf:UserIdentity/urf:GlobalUserName');
+	$record{vomsFqan} = $aRecord->findvalue('urf:UserIdentity/urf:GroupAttribute[@urf:type="FQAN"]');
+	$record{group} = $aRecord->find('urf:UserIdentity/urf:LocalGroup');
 	$record{jobName} = $aRecord->find('urf:JobName');
 	$record{wallDuration} = &iso8601Duration2Time($aRecord->find('urf:WallDuration'));
 	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('urf:CpuDuration'));
@@ -196,8 +198,8 @@ foreach my $aRecord (@records) {
 	$record{serviceLevelSi2K} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="si2k"]');
 	$record{serviceLevelGlueCEInfoTotalCPUs} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="GlueCEInfoTotalCPUs"]');
 	$record{dgasAccountingProcedure} = $aRecord->findvalue('urf:Resource[@urf:description="DgasAccountingProcedure"]');
-	$record{group} = $aRecord->findvalue('urf:Resource[@urf:description="LocalGroupId"]');
-	$record{vomsFqan} = $aRecord->findvalue('urf:Resource[@urf:description="VomsFqan"]');
+	
+	
 	$record{lrmsServer} = $aRecord->findvalue('urf:Resource[@urf:description="LrmsServer"]');
 	$record{execCe} = $aRecord->findvalue('urf:SubmitHost[@urf:type="CE-ID"]');
 	$record{voOrigin} = $aRecord->findvalue('urf:Resource[@urf:description="DgasVoOrigin"]');
