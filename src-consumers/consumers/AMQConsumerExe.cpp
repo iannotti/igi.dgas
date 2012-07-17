@@ -516,26 +516,6 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 				return E_BROKER_URI;
 			}
 		}
-		hlr_sql_server = (parms.hlrSqlServer).c_str();
-		hlr_sql_user = (parms.hlrSqlUser).c_str();
-		hlr_sql_password = (parms.hlrSqlPassword).c_str();
-		hlr_tmp_sql_dbname = (parms.hlrSqlTmpDBName).c_str();
-		hlr_sql_dbname = (parms.hlrSqlDBName).c_str();
-		serviceVersion thisServiceVersion(hlr_sql_server, hlr_sql_user,
-				hlr_sql_password, hlr_sql_dbname);
-		if (!thisServiceVersion.tableExists())
-		{
-			thisServiceVersion.tableCreate();
-		}
-		thisServiceVersion.setService("dgas-AMQConsumer");
-		thisServiceVersion.setVersion(VERSION);
-		thisServiceVersion.setHost("localhost");
-		thisServiceVersion.setConfFile(parms.configFile);
-		thisServiceVersion.setLockFile(parms.lockFileName);
-		thisServiceVersion.setLogFile(parms.logFileName);
-		thisServiceVersion.write();
-		thisServiceVersion.updateStartup();
-
 	}
 
 	long int numMessages = -1;
