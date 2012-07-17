@@ -178,7 +178,7 @@ foreach my $aRecord (@records) {
 	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('urf:CpuDuration'));
 	
 	$record{machineName} = $aRecord->find('urf:MachineName');
-	my $statusBuff = $aRecord->find('urf:Status');
+	my $statusBuff = $aRecord->findvalue('urf:Status');
 	if ( $statusBuff eq "completed" )
 	{
 		$record{status} = 0;
