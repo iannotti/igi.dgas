@@ -163,19 +163,19 @@ else
 
 foreach my $aRecord (@records) {
 # my $xc = XML::LibXML::XPathContext->new($aRecord);	
-	$record{recordID} = $aRecord->findvalue('RecordIdentity/@urf:recordId');
-	$record{createTime} = HTTP::Date::str2time($aRecord->findvalue('RecordIdentity/@urf:createTime'));
+	$record{recordID} = $aRecord->findvalue('urf:RecordIdentity/@urf:recordId');
+	$record{createTime} = HTTP::Date::str2time($aRecord->findvalue('urf:RecordIdentity/@urf:createTime'));
 		$record{createTime} =time2str("%a %b %e %T %Y", $record{createTime} ); 
-	$record{globalJobId} = $aRecord->findvalue('JobIdentity/GlobalJobId');
-	$record{localJobId} = $aRecord->find('JobIdentity/LocalJobId');
-	$record{localUserId} = $aRecord->find('UserIdentity/LocalUserId');
-	$record{globalUserName} = $aRecord->find('UserIdentity/GlobalUserName');
-	$record{jobName} = $aRecord->find('JobName');
-	$record{wallDuration} = &iso8601Duration2Time($aRecord->find('WallDuration'));
-	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('CpuDuration'));
-	$record{projectName} = $aRecord->find('ProjectName');
-	$record{machineName} = $aRecord->find('MachineName');
-	$record{status} = $aRecord->findvalue('Status');
+	$record{globalJobId} = $aRecord->findvalue('urf:JobIdentity/urf:GlobalJobId');
+	$record{localJobId} = $aRecord->find('urf:JobIdentity/urf:LocalJobId');
+	$record{localUserId} = $aRecord->find('urf:UserIdentity/urf:LocalUserId');
+	$record{globalUserName} = $aRecord->find('urf:UserIdentity/urf:GlobalUserName');
+	$record{jobName} = $aRecord->find('urf:JobName');
+	$record{wallDuration} = &iso8601Duration2Time($aRecord->find('urf:WallDuration'));
+	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('urf:CpuDuration'));
+	$record{projectName} = $aRecord->find('urf:ProjectName');
+	$record{machineName} = $aRecord->find('urf:MachineName');
+	$record{status} = $aRecord->findvalue('urf:Status');
 	if ( $record{status} eq "completed" )
 	{
 		$record{status} = 0;
@@ -184,25 +184,25 @@ foreach my $aRecord (@records) {
 	{
 		$record{status} = 1;
 	}
-	$record{charge} = $aRecord->find('Charge');
-	$record{startTime} = HTTP::Date::str2time($aRecord->find('StartTime'));
-	$record{endTime} = HTTP::Date::str2time($aRecord->find('EndTime'));
-	$record{queue} = $aRecord->findvalue('Queue');
+	$record{charge} = $aRecord->find('urf:Charge');
+	$record{startTime} = HTTP::Date::str2time($aRecord->find('urf:StartTime'));
+	$record{endTime} = HTTP::Date::str2time($aRecord->find('urf:EndTime'));
+	$record{queue} = $aRecord->findvalue('urf:Queue');
 	#$record{ceCertificateSubject} = $aRecord->find('urf:RecordIdentity/ds:KeyInfo/ds:X509Data/ds:X509SubjectName');
-	$record{timeInstantETime} = HTTP::Date::str2time($aRecord->findvalue('TimeInstant[@urf:type="etime"]'));
-	$record{timeInstantCTime} = HTTP::Date::str2time($aRecord->findvalue('TimeInstant[@urf:type="ctime"]'));
-	$record{timeInstantQTime} = HTTP::Date::str2time($aRecord->findvalue('TimeInstant[@urf:type="qtime"]'));
-	$record{serviceLevelSf2K} = $aRecord->findvalue('ServiceLevel[@urf:type="sf2k"]');
-	$record{serviceLevelSi2K} = $aRecord->findvalue('ServiceLevel[@urf:type="si2k"]');
-	$record{serviceLevelGlueCEInfoTotalCPUs} = $aRecord->findvalue('ServiceLevel[@urf:type="GlueCEInfoTotalCPUs"]');
-	$record{dgasAccountingProcedure} = $aRecord->findvalue('Resource[@urf:description="DgasAccountingProcedure"]');
-	$record{group} = $aRecord->findvalue('Resource[@urf:description="LocalGroupId"]');
-	$record{vomsFqan} = $aRecord->findvalue('Resource[@urf:description="VomsFqan"]');
-	$record{lrmsServer} = $aRecord->findvalue('Resource[@urf:description="LrmsServer"]');
-	$record{execCe} = $aRecord->findvalue('Resource[@urf:description="ExecCe"]');
-	$record{voOrigin} = $aRecord->findvalue('Resource[@urf:description="DgasVoOrigin"]');
-	$record{ceHost} = $aRecord->findvalue('Host[@urf:primary="true"]');
-	my @hosts = $aRecord->getElementsByTagName('Host');
+	$record{timeInstantETime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="etime"]'));
+	$record{timeInstantCTime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="ctime"]'));
+	$record{timeInstantQTime} = HTTP::Date::str2time($aRecord->findvalue('urf:TimeInstant[@urf:type="qtime"]'));
+	$record{serviceLevelSf2K} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="sf2k"]');
+	$record{serviceLevelSi2K} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="si2k"]');
+	$record{serviceLevelGlueCEInfoTotalCPUs} = $aRecord->findvalue('urf:ServiceLevel[@urf:type="GlueCEInfoTotalCPUs"]');
+	$record{dgasAccountingProcedure} = $aRecord->findvalue('urf:Resource[@urf:description="DgasAccountingProcedure"]');
+	$record{group} = $aRecord->findvalue('urf:Resource[@urf:description="LocalGroupId"]');
+	$record{vomsFqan} = $aRecord->findvalue('urf:Resource[@urf:description="VomsFqan"]');
+	$record{lrmsServer} = $aRecord->findvalue('urf:Resource[@urf:description="LrmsServer"]');
+	$record{execCe} = $aRecord->findvalue('urf:Resource[@urf:description="ExecCe"]');
+	$record{voOrigin} = $aRecord->findvalue('urf:Resource[@urf:description="DgasVoOrigin"]');
+	$record{ceHost} = $aRecord->findvalue('urf:Host[@urf:primary="true"]');
+	my @hosts = $aRecord->getElementsByTagName('urf:Host');
 	my $count = 0;
 	foreach my $host ( @hosts )
 	{
@@ -219,11 +219,11 @@ foreach my $aRecord (@records) {
 			$count++;	
 		}
 	}
-	$record{physicalMemory} = $aRecord->find('Memory[@urf:type="Physical"]');
-		$record{physicalMemory} .= $aRecord->findvalue('Memory[@urf:type="Physical"]/@urf:storageUnit');
+	$record{physicalMemory} = $aRecord->find('urf:Memory[@urf:type="Physical"]');
+		$record{physicalMemory} .= $aRecord->findvalue('urf:Memory[@urf:type="Physical"]/@urf:storageUnit');
 		$record{physicalMemory} = &ogfurMem2KB($record{physicalMemory}) . "kb";
-	$record{virtualMemory} = $aRecord->find('Memory[@urf:type="Virtual"]');
-		$record{virtualMemory} .= $aRecord->findvalue('Memory[@urf:type="Virtual"]/@urf:storageUnit');
+	$record{virtualMemory} = $aRecord->find('urf:Memory[@urf:type="Virtual"]');
+		$record{virtualMemory} .= $aRecord->findvalue('urf:Memory[@urf:type="Virtual"]/@urf:storageUnit');
 		$record{virtualMemory} = &ogfurMem2KB($record{virtualMemory}) . "kb";
 }
 

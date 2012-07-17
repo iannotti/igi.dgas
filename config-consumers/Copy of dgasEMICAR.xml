@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UsageRecord xmlns="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+  <RecordIdentity urf:recordId="50d32ae798024123501a2c05387d37d1" urf:createTime="2012-07-16T09:37:36Z"/>
+  <JobIdentity>
+    <GlobalJobId>CREAM205988002</GlobalJobId>
+    <LocalJobId>2000207.t2-ce-01.to.infn.it</LocalJobId>
+  </JobIdentity>
+  <UserIdentity>
+    <GlobalUserName>/C=IT/O=INFN/OU=Personal Certificate/L=Torino/CN=Stefano Bagnasco</GlobalUserName>
+    <Group>alice</Group>
+    <GroupAttribute urf:type="FQAN">/alice/Role=lcgadmin/Capability=NULL;/alice/Role=NULL/Capability=NULL;/alice/lcg1/Role=NULL/Capability=NULL</GroupAttribute>
+    <GroupAttribute urf:type="group">alice/Role=lcgadmin/Capability=NULL;/alice/Role=NULL/Capability=NULL;/alice/lcg1</GroupAttribute>
+    <GroupAttribute urf:type="role">NULL</GroupAttribute>
+    <GroupAttribute urf:type="ProjectName"/>
+    <LocalUserId>sgmalice002</LocalUserId>
+    <LocalGroup>sgmalice</LocalGroup>
+  </UserIdentity>
+  <JobName>cream_205988002</JobName>
+  <Charge>0</Charge>
+  <Status>completed</Status>
+  <ExitStatus>0</ExitStatus>
+  <Infrastructure urf:type="grid"/>
+  <WallDuration>PT136S</WallDuration>
+  <CpuDuration urf:usageType="all">PT1S</CpuDuration>
+  <ServiceLevel urf:type="si2k">2316</ServiceLevel>
+  <ServiceLevel urf:type="sf2k">1436</ServiceLevel>
+  <ServiceLevel urf:type="GlueCEInfoTotalCPUs">316</ServiceLevel>
+  <Memory urf:metric="max" urf:storageUnit="KB" urf:type="Physical">179388</Memory>
+  <Memory urf:metric="max" urf:storageUnit="KB" urf:type="Shared">1180316</Memory>
+  <TimeInstant urf:type="ctime">2012-07-16T05:46:59Z</TimeInstant>
+  <TimeInstant urf:type="qtime">2012-07-16T05:47:00Z</TimeInstant>
+  <TimeInstant urf:type="etime">2012-07-16T05:47:00Z</TimeInstant>
+  <NodeCount>1</NodeCount>
+  <Processors>1</Processors>
+  <EndTime>2012-07-16T05:49:16Z</EndTime>
+  <StartTime>2012-07-16T05:47:00Z</StartTime>
+  <MachineName>t2-ce-01.to.infn.it</MachineName>
+  <SubmitHost urf:type="CE-ID">t2-ce-01.to.infn.it:8443/cream-pbs-alice</SubmitHost>
+  <Queue>alice</Queue>
+  <Site urf:type="GOCDB">INFN-TORINO</Site>
+  <Site urf:type="X509DN">/C=IT/O=INFN/OU=Host/L=Torino/CN=t2-ce-01.to.infn.it</Site>
+  <Host urf:description="WorkerNodeProcessor5">t2-wn-035.to.infn.it</Host>
+  <Resource urf:description="DgasAccountingProcedure">grid</Resource>
+  <Resource urf:description="LrmsServer">t2-ce-01.to.infn.it</Resource>
+  <Resource urf:description="DgasVoOrigin">fqan</Resource>
+</UsageRecord>
