@@ -178,15 +178,7 @@ foreach my $aRecord (@records) {
 	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('urf:CpuDuration'));
 	
 	$record{machineName} = $aRecord->find('urf:MachineName');
-	my $statusBuff = $aRecord->findvalue('urf:Status');
-	if ( $statusBuff eq "completed" )
-	{
-		$record{status} = 0;
-	}
-	else
-	{
-		$record{status} = 1;
-	}
+	$record{status} = $aRecord->findvalue('urf:Status');
 	$record{charge} = $aRecord->find('urf:Charge');
 	$record{startTime} = HTTP::Date::str2time($aRecord->find('urf:StartTime'));
 	$record{endTime} = HTTP::Date::str2time($aRecord->find('urf:EndTime'));
@@ -225,7 +217,7 @@ foreach my $aRecord (@records) {
 	$record{physicalMemory} = $aRecord->find('urf:Memory[@urf:type="Physical"]');
 		$record{physicalMemory} .= $aRecord->findvalue('urf:Memory[@urf:type="Physical"]/@urf:storageUnit');
 		$record{physicalMemory} = &ogfurMem2KB($record{physicalMemory}) . "kb";
-	$record{virtualMemory} = $aRecord->find('urf:Memory[@urf:type="Virtual"]');
+	$record{virtualMemory} = $aRecord->find('urf:Memory[@urf:type="Shared"]');
 		$record{virtualMemory} .= $aRecord->findvalue('urf:Memory[@urf:type="Virtual"]/@urf:storageUnit');
 		$record{virtualMemory} = &ogfurMem2KB($record{virtualMemory}) . "kb";
 }
