@@ -170,12 +170,13 @@ foreach my $aRecord (@records) {
 	$record{localJobId} = $aRecord->find('urf:JobIdentity/urf:LocalJobId');
 	$record{localUserId} = $aRecord->find('urf:UserIdentity/urf:LocalUserId');
 	$record{globalUserName} = $aRecord->find('urf:UserIdentity/urf:GlobalUserName');
+	$record{projectName} = $aRecord->find('urf:UserIdentity/urf:Group');
 	$record{vomsFqan} = $aRecord->findvalue('urf:UserIdentity/urf:GroupAttribute[@urf:type="FQAN"]');
 	$record{group} = $aRecord->find('urf:UserIdentity/urf:LocalGroup');
 	$record{jobName} = $aRecord->find('urf:JobName');
 	$record{wallDuration} = &iso8601Duration2Time($aRecord->find('urf:WallDuration'));
 	$record{cpuDuration} = &iso8601Duration2Time($aRecord->find('urf:CpuDuration'));
-	$record{projectName} = $aRecord->find('urf:ProjectName');
+	
 	$record{machineName} = $aRecord->find('urf:MachineName');
 	$record{status} = $aRecord->findvalue('urf:Status');
 	if ( $record{status} eq "completed" )
