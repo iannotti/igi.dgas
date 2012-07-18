@@ -586,6 +586,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	}
 
 	// All CMS resources should be closed before the library is shutdown.
+	consumer->close();
 	if (!parms.foreground)
 		removeLock(parms.lockFileName);
 	string logBuff = "Removing:" + parms.lockFileName;
