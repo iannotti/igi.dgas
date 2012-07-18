@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.22 2012/07/18 12:47:34 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.23 2012/07/18 14:25:20 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -264,7 +264,7 @@ void SimpleAsyncConsumer::cleanup()
 	// Always close destination, consumers and producers before
 	// you destroy their sessions and connection.
 	//*************************************************
-
+	std::cout << "SimpleAsyncConsumer::cleanup()" << std::endl;
 	// Destroy resources.
 	try
 	{

@@ -583,7 +583,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			consumerOutImpl->setPipeCommand(parms.pipeTo);
 		}
 		consumer.registerConsumer(consumerOutImpl);
-		consumerOutImpl->close();
+		//consumerOutImpl->close();
 		delete consumerOutImpl;
 	}
 
