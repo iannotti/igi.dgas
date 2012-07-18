@@ -150,6 +150,9 @@ public:
 		this->durable = durable;
 		this->numMessages = numMessages;
 		std::cout << "clientAck = " << clientAck << std::endl;
+		std::cout << "useTopic = " << useTopic << std::endl;
+		std::cout << "noLocal = " << noLocal << std::endl;
+		std::cout << "durable = " << durable << std::endl;
 		doPipe = false;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
