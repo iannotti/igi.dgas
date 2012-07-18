@@ -135,6 +135,7 @@ public:
 			std::string username = "", std::string password = "",
 			std::string clientId = "", long int numMessages = 1)
 	{
+		std::cout << "AMQConsumerStdOut(with parms)" << std::endl;
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
 		this->brokerURI = brokerURI;
