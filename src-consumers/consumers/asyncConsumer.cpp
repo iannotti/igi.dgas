@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.20 2012/07/18 11:57:22 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.21 2012/07/18 12:10:23 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -164,11 +164,13 @@ using namespace std;
 			// Create a Session
 			if (clientAck)
 			{
+				std::cout << "SimpleAsyncConsumer::run():CLIENT_ACKNOWLEDGE" << std::endl;
 				session
 						= connection->createSession(Session::CLIENT_ACKNOWLEDGE);
 			}
 			else
 			{
+				std::cout << "SimpleAsyncConsumer::run():AUTO_ACKNOWLEDGE" << std::endl;
 				session = connection->createSession(Session::AUTO_ACKNOWLEDGE);
 			}
 			// Create the destination (Topic or Queue)
