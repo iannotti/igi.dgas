@@ -195,6 +195,13 @@ public:
 		}
 	}
 
+	~AMQConsumerStdOut()
+	{
+		std::cout << "~AMQConsumerStdOut()" << std::endl;
+		delete doneLatch;
+		this->cleanup();
+	}
+
 };
 
 class AMQConsumerDataBase: public SimpleAsyncConsumer
