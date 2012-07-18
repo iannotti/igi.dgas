@@ -199,7 +199,6 @@ public:
 	{
 		std::cout << "~AMQConsumerStdOut()" << std::endl;
 		delete doneLatch;
-		this->cleanup();
 	}
 
 };
