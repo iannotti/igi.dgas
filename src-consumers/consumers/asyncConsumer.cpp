@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.19 2012/07/18 10:23:23 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.20 2012/07/18 11:57:22 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -202,6 +202,7 @@ using namespace std;
 			latch.countDown();//latch goes to 0 and waitUntilReady can return.
 			while (goOn && doneLatch->getCount() != 0)
 				doneLatch->await(1000);//wait for the countdown latch to reach zero.
+
 
 		} catch (CMSException& e)
 		{
