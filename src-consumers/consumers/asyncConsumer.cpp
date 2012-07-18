@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.18 2012/07/16 12:02:28 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.19 2012/07/18 10:23:23 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -147,7 +147,7 @@ using namespace std;
 	{
 		try
 		{
-
+			std::cout << "SimpleAsyncConsumer::run()" << std::endl;
 			// Create a ConnectionFactory
 			auto_ptr < ConnectionFactory > connectionFactory(
 					ConnectionFactory::createCMSConnectionFactory(brokerURI));
