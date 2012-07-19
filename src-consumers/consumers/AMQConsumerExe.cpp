@@ -547,7 +547,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 		consumerDataBaseImpl->setSqlServer(parms.hlrSqlServer);
 		consumerDataBaseImpl->setSqlUser(parms.hlrSqlUser);
 		consumerDataBaseImpl->setSqlPassword(parms.hlrSqlPassword);
-		consumerdataBaseImpl->readConf(parms.configFile);
+		consumerDataBaseImpl->readConf(parms.configFile);
 		if (consumerDataBaseImpl->prepareDb() != 0)
 		{
 			//error
