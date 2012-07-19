@@ -53,23 +53,23 @@ common-install: common-src-install common-interface-install
 
 common-install-etics: common-src-install
 
-common-msg-src: 
+msg-common-src: 
 	cd ./src-msg-common ; $(MAKE) $(AM_MAKEFLAGS) 
 
-common-msg-interface:
+msg-common-interface:
 	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS)
 
-common-msg: common-msg-src common-msg-interface
+msg-common: msg-common-src msg-common-interface
 
-common-msg-src-install: common-msg-src
+msg-common-src-install: msg-common-src
 	cd ./src-msg-common ; $(MAKE) $(AM_MAKEFLAGS) install
 
-common-msg-interface-install: common-msg-interface
+msg-common-interface-install: msg-common-interface
 	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS) install
 
-common-msg-install: common-msg-src-install common-msg-interface-install
+msg-common-install: msg-common-src-install msg-common-interface-install
 
-common-msg-install-etics: common-msg-src-install
+msgc-common-install-etics: msg-common-src-install
 	
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
@@ -200,7 +200,7 @@ consumers-interface:
 	cd ./interface-consumers ; $(MAKE) $(AM_MAKEFLAGS) 
 
 consumers: common\
-	common-msg \
+	msg-common \
 	hlr-service\
 	consumers-src\
 	consumers-interface\
