@@ -64,7 +64,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-consumers \
 	-I$(top_srcdir)/interface-hlr-service \
 	-I$(top_srcdir)/interface-msg-common \
-	-I$(top_srcdir)/src-consumers \
+	-I$(top_srcdir)/src-consumers
 	
 	$(GLITE_CFLAGS) \
 	$(DBFLAGS) \
