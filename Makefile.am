@@ -53,10 +53,23 @@ common-install: common-src-install common-interface-install
 
 common-install-etics: common-src-install
 
+common-msg-src: 
+	cd ./src-msg-common ; $(MAKE) $(AM_MAKEFLAGS) 
+
 common-msg-interface:
 	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS)
 
-common-msg: common-msg-interface
+common-msg: common-msg-src common-msg-interface
+
+common-msg-src-install: common-msg-src
+	cd ./src-msg-common ; $(MAKE) $(AM_MAKEFLAGS) install
+
+common-msg-interface-install: common-msg-interface
+	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS) install
+
+common-msg-install: common-msg-src-install common-msg-interface-install
+
+common-msg-install-etics: common-msg-src-install
 	
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
