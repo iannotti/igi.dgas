@@ -23,7 +23,7 @@ AC_CONFIG_SRCDIR(src-common/base/dgas_config.cpp)
 AC_COPYRIGHT([Copyright (c) 2004 The EU EGEE Project
 See LICENCE file for details
 ])
-AC_REVISION([$Revision: 1.1.2.5.4.31 $])
+AC_REVISION([$Revision: 1.1.2.5.4.32 $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -120,6 +120,7 @@ AC_CONFIG_FILES([src-common/Makefile])
 AC_CONFIG_FILES([src-common/base/Makefile])
 AC_CONFIG_FILES([src-common/tls/Makefile])
 AC_CONFIG_FILES([src-common/tls/socket++/Makefile])
+AC_CONFIG_FILES([interface-msg-common/Makefile])
 AC_CONFIG_FILES([interface-hlr-clients/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/Makefile])
 AC_CONFIG_FILES([src-hlr-clients/ping/Makefile])

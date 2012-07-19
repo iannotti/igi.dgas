@@ -1,5 +1,6 @@
 hlrcldir = $(includedir)
 nobase_hlrcl_HEADERS = \
-	glite/dgas/dgas-consumers/consumers/legacyRecordManager.h
+	dgas/msg-common/AMQConsumer.h \
+	dgas/msg-common/asyncConsumer.h 
 
 MAINTAINERCLEANFILES = Makefile.in

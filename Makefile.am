@@ -53,6 +53,11 @@ common-install: common-src-install common-interface-install
 
 common-install-etics: common-src-install
 
+common-msg-interface:
+	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS)
+
+common-msg: common-msg-interface
+	
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
@@ -182,6 +187,7 @@ consumers-interface:
 	cd ./interface-consumers ; $(MAKE) $(AM_MAKEFLAGS) 
 
 consumers: common\
+	common-msg \
 	hlr-service\
 	consumers-src\
 	consumers-interface\
