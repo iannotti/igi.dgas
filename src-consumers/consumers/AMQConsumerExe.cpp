@@ -26,7 +26,7 @@
 #define E_BROKER_URI 11
 
 ofstream logStream;
-int system_log_level = 9 ;
+int system_log_level = 9;
 
 using namespace std;
 
@@ -42,7 +42,7 @@ public:
 	string logFileName;
 	string amqTopic;
 	bool useTopics;
-	bool clientAck;
+	bool Ack;
 	string hlrSqlTmpDBName;
 	string hlrSqlDBName;
 	string hlrSqlServer;
@@ -124,8 +124,8 @@ public:
 
 	void setPipeCommand(std::string pipeCommand)
 	{
-			this->pipeCommand = pipeCommand;
-			doPipe =true;
+		this->pipeCommand = pipeCommand;
+		doPipe = true;
 	}
 
 	AMQConsumerStdOut(const std::string& brokerURI, const std::string& destURI,
@@ -158,11 +158,11 @@ public:
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
-		if ( doPipe )
+		if (doPipe)
 		{
 			std::string outputbuffer = "";
-			pipeTo(messageString,outputbuffer);
-			std::cout << outputbuffer<< std::endl;
+			pipeTo(messageString, outputbuffer);
+			std::cout << outputbuffer << std::endl;
 		}
 		else
 		{
@@ -170,30 +170,30 @@ public:
 		}
 	}
 
-	int pipeTo (string& inputMessage, string& outputMessage)
+	int pipeTo(string& inputMessage, string& outputMessage)
 	{
 		string command = "echo -n \'" + inputMessage + "\' |" + pipeCommand;
 		FILE *output;
-		output = popen (command.c_str(),"r");
-		if ( !output )
+		output = popen(command.c_str(), "r");
+		if (!output)
 		{
 			return 1;
 		}
 		ssize_t bytes_read = 0;
 		size_t nbytes = 4096;
 		char *buffString;
-		while ( bytes_read != -1 )
+		while (bytes_read != -1)
 		{
-			buffString = (char *) malloc (nbytes+1);
-			bytes_read = getline (&buffString, &nbytes, output);
-			if ( bytes_read != -1 )
+			buffString = (char *) malloc(nbytes + 1);
+			bytes_read = getline(&buffString, &nbytes, output);
+			if (bytes_read != -1)
 			{
 				outputMessage += buffString;
 			}
 			free(buffString);
 		}
 		//read
-		if ( pclose(output) != 0 )
+		if (pclose(output) != 0)
 		{
 			return 3;
 		}
@@ -540,13 +540,14 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 
 		AMQConsumerDataBase* consumerDataBaseImpl = new AMQConsumerDataBase(
 				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
-				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.Ack, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerDataBaseImpl->setSqlDbname(parms.hlrSqlTmpDBName);
 		consumerDataBaseImpl->setSqlServer(parms.hlrSqlServer);
 		consumerDataBaseImpl->setSqlUser(parms.hlrSqlUser);
 		consumerDataBaseImpl->setSqlPassword(parms.hlrSqlPassword);
+		consumerdataBaseImpl->readConf(parms.configFile);
 		if (consumerDataBaseImpl->prepareDb() != 0)
 		{
 			//error
@@ -564,10 +565,11 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 
 		AMQConsumerDir* consumerDirImpl = new AMQConsumerDir(
 				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
-				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.Ack, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerDirImpl->setDirectory(parms.outputDir);
+		consumerDirImpl->readConf(parms.configFile);
 		if (!consumerDirImpl->checkDirectory())
 			consumerDirImpl->createDirectory();
 		consumer.registerConsumer(consumerDirImpl);
@@ -577,16 +579,15 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	{
 		AMQConsumerStdOut* consumerOutImpl = new AMQConsumerStdOut(
 				parms.amqBrokerUri, parms.amqTopic, parms.useTopics,
-				parms.clientAck, parms.name, parms.selector, parms.noLocal,
+				parms.Ack, parms.name, parms.selector, parms.noLocal,
 				parms.durable, parms.amqUsername, parms.amqPassword,
 				parms.amqClientId, numMessages);
 		consumerOutImpl->readConf(parms.configFile);
-		if ( parms.pipeTo != "" )
+		if (parms.pipeTo != "")
 		{
 			consumerOutImpl->setPipeCommand(parms.pipeTo);
 		}
 		consumer.registerConsumer(consumerOutImpl);
-		//consumerOutImpl->close();
 		delete consumerOutImpl;
 	}
 
@@ -632,8 +633,9 @@ void help(string progname)
 			<< endl;
 	cerr << "-s  --selector <selector>  pass a selector string to the consumer"
 			<< endl;
-	cerr << "-P  --pipe <command>  pipe received message to 'command'. Active just on 'stdout' outputType."
-				<< endl;
+	cerr
+			<< "-P  --pipe <command>  pipe received message to 'command'. Active just on 'stdout' outputType."
+			<< endl;
 	cerr << "-N  --nolocal  set CMS noLocal flag" << endl;
 	cerr << "-T  --useTopic  Use Topic" << endl;
 	cerr << "-Q  --useQueue  Use Queue" << endl;
@@ -724,8 +726,8 @@ int options(int argc, char **argv, recordConsumerParms& parms)
 			parms.outputDir = optarg;
 			break;
 		case 'P':
-					parms.pipeTo = optarg;
-					break;
+			parms.pipeTo = optarg;
+			break;
 		case 'N':
 			parms.noLocal = true;
 			break;
@@ -736,7 +738,7 @@ int options(int argc, char **argv, recordConsumerParms& parms)
 			parms.useTopics = false;
 			break;
 		case 'A':
-			parms.clientAck = true;
+			parms.Ack = true;
 			break;
 		case 'D':
 			parms.durable = true;
