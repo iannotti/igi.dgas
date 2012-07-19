@@ -69,7 +69,7 @@ msg-common-interface-install: msg-common-interface
 
 msg-common-install: msg-common-src-install msg-common-interface-install
 
-msgc-common-install-etics: msg-common-src-install
+msg-common-install-etics: msg-common-src-install
 	
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
