@@ -409,7 +409,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	{
 		if (dgas_conf_read(parms.configFile, &confMap) != 0)
 		{
-			cerr << "WARNING: Error reading conf file: " << parms.configFile
+			cerr << "WARNING: Error reading configuration file: " << parms.configFile
 					<< endl;
 			cerr << "There can be problems processing the transaction" << endl;
 			return E_CONFIG;
@@ -662,6 +662,8 @@ int options(int argc, char **argv, recordConsumerParms& parms)
 	int option_index = 0;
 	parms.needsHelp = false;
 	parms.useTopics = false;
+	parms.Ack = false;
+	parms.noLocal = false;
 	static struct option long_options[] =
 	{
 	{ "verbosity", 1, 0, 'v' },
