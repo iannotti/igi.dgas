@@ -11,10 +11,10 @@ lib_LTLIBRARIES  = libdgas_asyncConsumer.la \
 		libdgas_amqConsumer.la \
 		libdgas_amqProducer.la
 	
-libglite_dgas_asyncConsumer_la_SOURCES = \
+libdgas_asyncConsumer_la_SOURCES = \
 	asyncConsumer.cpp
 
-libglite_dgas_amqConsumer_la_SOURCES = \
+libdgas_amqConsumer_la_SOURCES = \
 	amqConsumer.cpp
 	
 libdgas_amqProducer_la_SOURCES = \
