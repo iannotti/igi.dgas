@@ -6,37 +6,42 @@
 ## *
 ## *********************************************************************
 
-lib_LTLIBRARIES  = libglite_dgas_amqProducer.la \
-	libglite_dgas_legacyProducer.la \
-	libglite_dgas_legacyCpuComposer.la
+lib_LTLIBRARIES  = libdgas_amqProducer.la \
+	libdgas_legacyProducer.la \
+	libdgas_legacyCpuComposer.la
 
-libexec_PROGRAMS = glite_dgas_amqProducer \
-		glite_dgas_legacyProducer \
-	glite_dgas_legacyCpuComposer
+libexec_PROGRAMS = dgas-amqProducer \
+		dgas-legacyProducer \
+		dgas-legacyStorageComposer \
+		dgas-legacyCpuComposer
 
 libexec_SCRIPTS = \
-	glite_dgas_ogfurComposer	
+	dgas-ogfurComposer	\
+	dgas-emicarComposer \
+	dgas-record-filter.pl \
+	dgas-stompProducer.pl \
+	dgas-sqlInsertComposer.pl
 
 
-libglite_dgas_amqProducer_la_SOURCES = \
+libdgas_amqProducer_la_SOURCES = \
 	amqProducer.cpp 
 
-libglite_dgas_legacyProducer_la_SOURCES = \
+libdgas_legacyProducer_la_SOURCES = \
 	legacyProducer.cpp 
 
-libglite_dgas_legacyCpuComposer_la_SOURCES = \
+libdgas_legacyCpuComposer_la_SOURCES = \
 	legacyComposer.cpp 
 
-glite_dgas_amqProducer_SOURCES = amqProducerExe.cpp
-glite_dgas_amqProducer_LDADD   = \
-	./libglite_dgas_amqProducer.la \
+dgas_amqProducer_SOURCES = amqProducerExe.cpp
+dgas_amqProducer_LDADD   = \
+	./libdgas_amqProducer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
 
-glite_dgas_legacyProducer_SOURCES = legacyProducerExe.cpp
-glite_dgas_legacyProducer_LDADD   = \
-	./libglite_dgas_legacyProducer.la \
+dgas_legacyProducer_SOURCES = legacyProducerExe.cpp
+dgas_legacyProducer_LDADD   = \
+	./libdgas_legacyProducer.la \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) \
 	$(GLITE_DGAS_COMMON_TLS_LIBS) \
@@ -45,17 +50,24 @@ glite_dgas_legacyProducer_LDADD   = \
         $(GLOBUS_GSS_THR_LIBS)
  
 
-glite_dgas_legacyCpuComposer_SOURCES = legacyComposerExe.cpp
-glite_dgas_legacyCpuComposer_LDADD   = \
-	./libglite_dgas_legacyCpuComposer.la \
+dgas_legacyCpuComposer_SOURCES = legacyComposerExe.cpp
+dgas_legacyCpuComposer_LDADD   = \
+	./libdgas_legacyCpuComposer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
+	
+dgas_legacyStorageComposer_SOURCES = legacyStorageComposerExe.cpp
+dgas_legacyStorageComposer_LDADD   = \
+	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
+	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS)
+
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-producers \
 	-I$(top_srcdir)/interface-common\
 	-I$(top_srcdir)/src-producers \
+	-I$(top_srcdir/interface-msg-common \
 	$(GLITE_CFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
 	$(GLOBUS_THR_CFLAGS) \
