@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.1.2.1 2012/07/20 09:28:52 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.1.2.2 2012/07/20 09:34:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -34,8 +34,9 @@
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
-#include "dgas/msg-common/asyncConsumer.h"
 */
+#include "dgas/msg-common/asyncConsumer.h"
+
 
 #define E_CONFIG 10
 #define E_BROKER_URI 11
