@@ -67,7 +67,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-producers \
 	-I$(top_srcdir)/interface-common\
 	-I$(top_srcdir)/src-producers \
-	-I$(top_srcdir/interface-msg-common \
+	-I$(top_srcdir)/interface-msg-common \
 	$(GLITE_CFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
 	$(GLOBUS_THR_CFLAGS) \
