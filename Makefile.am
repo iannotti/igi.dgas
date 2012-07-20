@@ -168,6 +168,7 @@ producers-interface:
 	cd ./interface-producers ; $(MAKE) $(AM_MAKEFLAGS) 
 
 producers: common\
+	msg-common \
 	producers-src\
 	producers-interface\
 	producers-config
