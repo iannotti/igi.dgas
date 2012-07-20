@@ -6,7 +6,7 @@
 ## *
 ## *********************************************************************
 
-lib_LTLIBRARIES  = libdgas_amqProducer.la \
+lib_LTLIBRARIES  = \
 	libdgas_legacyProducer.la \
 	libdgas_legacyCpuComposer.la
 
@@ -22,9 +22,6 @@ libexec_SCRIPTS = \
 	dgas-stompProducer.pl \
 	dgas-sqlInsertComposer.pl
 
-
-libdgas_amqProducer_la_SOURCES = \
-	amqProducer.cpp 
 
 libdgas_legacyProducer_la_SOURCES = \
 	legacyProducer.cpp 
