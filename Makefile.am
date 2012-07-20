@@ -18,19 +18,18 @@
 ## *********************************************************************
 
 ## Process this file with automake to produce Makefile.in
-EXTRA_DIST = LICENSE
+EXTRA_DIST = LICENSE README
 
 docdir = $(datadir)/doc/@PACKAGE@-@VERSION@
-doc_DATA = LICENSE
+doc_DATA = LICENSE README
 
-## Subdirectories list
 SUBDIRS = \
 	src-common interface-common\
 	src-hlr-clients interface-hlr-clients \
 	config-sensors interface-sensors src-sensors \
-	src-pa-clients interface-pa-clients \
 	config-hlr-service src-hlr-service interface-hlr-service \
-	config-producers src-producers interface-producers
+	config-producers src-producers interface-producers \
+	config-consumers src-consumers interface-consumers
 
 ## Default flags to run aclocal
 ACLOCAL_AMFLAGS = -I project
@@ -52,11 +51,26 @@ common-interface-install: common-interface
 
 common-install: common-src-install common-interface-install
 
-common-install-etics: common-src-install common-interface-install
+common-install-etics: common-src-install
 
-#hlr-clients-config:
-#	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS)
+msg-common-src: 
+	cd ./src-msg-common ; $(MAKE) $(AM_MAKEFLAGS) 
 
+msg-common-interface:
+	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS)
+
+msg-common: msg-common-src msg-common-interface
+
+msg-common-src-install: msg-common-src
+	cd ./src-msg-common ; $(MAKE) $(AM_MAKEFLAGS) install
+
+msg-common-interface-install: msg-common-interface
+	cd ./interface-msg-common ; $(MAKE) $(AM_MAKEFLAGS) install
+
+msg-common-install: msg-common-src-install msg-common-interface-install
+
+msg-common-install-etics: msg-common-src-install msg-common-interface-install
+	
 hlr-clients-src: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
@@ -64,9 +78,6 @@ hlr-clients-interface:
 	cd ./interface-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) 
 
 hlr-clients: common hlr-clients-src hlr-clients-interface
-
-#hlr-clients-config-install:
-#	cd ./config-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install
 
 hlr-clients-src-install: 
 	cd ./src-hlr-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
@@ -79,8 +90,8 @@ hlr-clients-install: common-install\
 	hlr-clients-interface-install
 
 hlr-clients-install-etics: \
- 	hlr-clients-src-install\
-	hlr-clients-interface-install
+	common \
+ 	hlr-clients-src-install
 
 sensors-config:
 	cd ./config-sensors ; $(MAKE) $(AM_MAKEFLAGS)
@@ -107,29 +118,10 @@ sensors-install: common-install\
 	sensors-interface-install \
 	sensors-config-install
 
+
 sensors-install-etics: \
  	sensors-src-install\
-	sensors-interface-install \
 	sensors-config-install
-
-pa-clients-src: 
-	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
-
-pa-clients-interface: 
-	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) 
-
-pa-clients: common pa-clients-src pa-clients-interface
-
-pa-clients-src-install: 
-	cd ./src-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install 
-
-pa-clients-interface-install: 
-	cd ./interface-pa-clients ; $(MAKE) $(AM_MAKEFLAGS) install
-
-pa-clients-install: common-install pa-clients-src-install pa-clients-interface-install
-
-pa-clients-install-etics: pa-clients-src-install pa-clients-interface-install
-
 
 hlr-service-config:
 	cd ./config-hlr-service ; $(MAKE) $(AM_MAKEFLAGS)
@@ -144,7 +136,6 @@ hlr-service-interface:
 	cd ./interface-hlr-service ; $(MAKE) $(AM_MAKEFLAGS) 
 
 hlr-service: common\
-	pa-clients\
 	hlr-service-src\
 	hlr-service-interface\
 	hlr-service-config
@@ -158,13 +149,78 @@ hlr-service-interface-install:
 hlr-service-install: common-install\
 	pa-clients-install\
 	hlr-service-src-install\
-	hlr-service-interface-install\
 	hlr-service-config-install
 
 hlr-service-install-etics: \
 	hlr-service-src-install\
-	hlr-service-interface-install\
 	hlr-service-config-install
+
+producers-config:
+	cd ./config-producers ; $(MAKE) $(AM_MAKEFLAGS)
+
+producers-config-install:
+	cd ./config-producers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+producers-src: 
+	cd ./src-producers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+producers-interface: 
+	cd ./interface-producers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+producers: common\
+	producers-src\
+	producers-interface\
+	producers-config
+
+producers-src-install: 
+	cd ./src-producers ; $(MAKE) $(AM_MAKEFLAGS) install 
+
+producers-interface-install: 
+	cd ./interface-producers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+producers-install: common-install\
+	producers-src-install\
+	producers-interface-install\
+	producers-config-install
+
+producers-install-etics: \
+	producers-src-install\
+	producers-config-install
+
+consumers-config:
+	cd ./config-consumers ; $(MAKE) $(AM_MAKEFLAGS)
+
+consumers-config-install:
+	cd ./config-consumers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+consumers-src: 
+	cd ./src-consumers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+consumers-interface: 
+	cd ./interface-consumers ; $(MAKE) $(AM_MAKEFLAGS) 
+
+consumers: common\
+	msg-common \
+	hlr-service\
+	consumers-src\
+	consumers-interface\
+	consumers-config
+
+consumers-src-install: 
+	cd ./src-consumers ; $(MAKE) $(AM_MAKEFLAGS) install 
+
+consumers-interface-install: 
+	cd ./interface-consumers ; $(MAKE) $(AM_MAKEFLAGS) install
+
+consumers-install: common-install\
+	hlr-service-install\
+	consumers-src-install\
+	consumers-interface-install\
+	consumers-config-install
+
+consumers-install-etics: \
+	consumers-src-install\
+	consumers-config-install
 
 
 stage:
