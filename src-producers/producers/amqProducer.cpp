@@ -1,13 +1,13 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.3 2010/11/05 14:44:35 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.21.2.1 2012/07/20 11:57:12 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
 // -------------------------------------------------------------------------
 // Author: Andrea Guarise <andrea.guarise@to.infn.it>
- /***************************************************************************
+/***************************************************************************
  * Code borrowed from:
  *  authors   :
  *  copyright : 
@@ -43,17 +43,19 @@
 #include <cms/ExceptionListener.h>
 #include <cms/MessageListener.h>
 
+/*
 #include "glite/dgas/common/base/comm_struct.h"
 #include "glite/dgas/common/hlr/hlr_prot_errcode.h"
-#include "glite/dgas/common/base/dgas_config.h"
 #include "glite/dgas/common/base/int2string.h"
 #include "glite/dgas/common/base/stringSplit.h"
 #include "glite/dgas/common/base/xmlUtil.h"
+*/
 #include "glite/dgas/dgas-producers/producers/amqProducer.h"
+
+#include "glite/dgas/common/base/dgas_config.h"
 
 #define E_CONFIG 10
 #define E_BROKER_URI 11
-
 
 using namespace activemq;
 using namespace activemq::core;
@@ -64,357 +66,391 @@ using namespace decaf::util::concurrent;
 using namespace cms;
 using namespace std;
 
-class SimpleProducer : public Runnable {
+class SimpleProducer: public Runnable
+{
 private:
-    
-    Connection* connection;
-    Session* session;
-    Destination* destination;
-    MessageProducer* producer;
-    bool useTopic;
-    bool clientAck;
-    unsigned int numMessages;
-    std::string brokerURI;
-    std::string destURI;
+
+	Connection* connection;
+	Session* session;
+	Destination* destination;
+	MessageProducer* producer;
+	bool useTopic;
+	bool clientAck;
+	bool persistentDelivery;
+	unsigned int numMessages;
+	std::string brokerURI;
+	std::string destURI;
+	std::string username;
+	std::string password;
 
 public:
 
-     int returnCode;
-     
-     SimpleProducer( const std::string& brokerURI,
-                    unsigned int numMessages,
-                    const std::string& destURI,
-                    bool useTopic = false,
-                    bool clientAck = false ){
+	int returnCode;
 
-        this->connection = NULL;
-        this->session = NULL;
-        this->destination = NULL;
-        this->producer = NULL;
-        this->numMessages = numMessages;
-        this->useTopic = useTopic;
-        this->brokerURI = brokerURI;
-        this->destURI = destURI;
-        this->clientAck = clientAck;
-	this->returnCode =0;
-    }
+	SimpleProducer(const std::string& brokerURI, unsigned int numMessages,
+			const std::string& destURI, bool useTopic = false,
+			bool clientAck = false, bool persistentDelivery = false, std::string username = "",
+			std::string password = "")
+	{
 
-    
-    virtual ~SimpleProducer(){
-        cleanup();
-    }
+		this->connection = NULL;
+		this->session = NULL;
+		this->destination = NULL;
+		this->producer = NULL;
+		this->numMessages = numMessages;
+		this->useTopic = useTopic;
+		this->brokerURI = brokerURI;
+		this->destURI = destURI;
+		this->clientAck = clientAck;
+		this->persistentDelivery = persistentDelivery;
+		this->username = username;
+		this->password = password;
 
-    void close() {
-        this->cleanup();
-    }
+		this->returnCode = 0;
+	}
 
-    virtual void run(vector<string>& textV) {
-        try {
+	virtual ~SimpleProducer()
+	{
+		cleanup();
+	}
 
-            // Create a ConnectionFactory
-            auto_ptr<ActiveMQConnectionFactory> connectionFactory(
-                new ActiveMQConnectionFactory( brokerURI ) );
+	void close()
+	{
+		this->cleanup();
+	}
 
-            // Create a Connection
-            try{
-                connection = connectionFactory->createConnection();
-                connection->start();
-            } catch( CMSException& e ) {
-                e.printStackTrace();
-                throw e;
-            }
+	virtual void run(vector<string>& textV)
+	{
+		try
+		{
 
-            // Create a Session
-            if( clientAck ) {
-                session = connection->createSession( Session::CLIENT_ACKNOWLEDGE );
-            } else {
-                session = connection->createSession( Session::AUTO_ACKNOWLEDGE );
-            }
+			// Create a ConnectionFactory
+			auto_ptr < ActiveMQConnectionFactory > connectionFactory(
+					new ActiveMQConnectionFactory(brokerURI));
 
-            // Create the destination (Topic or Queue)
-            if( useTopic ) {
-                destination = session->createTopic( destURI );
-            } else {
-                destination = session->createQueue( destURI );
-            }
+			// Create a Connection
+			try
+			{
+				connection = connectionFactory->createConnection();
+				connection->start();
+			} catch (CMSException& e)
+			{
+				e.printStackTrace();
+				throw e;
+			}
 
-            // Create a MessageProducer from the Session to the Topic or Queue
-            producer = session->createProducer( destination );
-            producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
+			// Create a Session
+			if (clientAck)
+			{
+				session
+						= connection->createSession(Session::CLIENT_ACKNOWLEDGE);
+			}
+			else
+			{
+				session = connection->createSession(Session::AUTO_ACKNOWLEDGE);
+			}
 
-            // Create the Thread Id String
-            string threadIdStr = Long::toString( Thread::getId() );
+			// Create the destination (Topic or Queue)
+			if (useTopic)
+			{
+				destination = session->createTopic(destURI);
+			}
+			else
+			{
+				destination = session->createQueue(destURI);
+			}
 
-            // Create a messages
-            vector<string>::iterator it = textV.begin();
+			// Create a MessageProducer from the Session to the Topic or Queue
+			producer = session->createProducer(destination);
+			producer->setDeliveryMode(DeliveryMode::NON_PERSISTENT);
 
-                unsigned int ix = 0;
-            while ( it != textV.end() ){
-                TextMessage* message = session->createTextMessage( *it );
+			// Create the Thread Id String
+			string threadIdStr = Long::toString(Thread::getId());
 
-                message->setIntProperty( "Integer", ix );
+			// Create a messages
+			vector<string>::iterator it = textV.begin();
 
-                // Tell the producer to send the message
-                printf( "Sent message #%d from thread %s\n", ix+1, threadIdStr.c_str() );
-                producer->send( message );
+			unsigned int ix = 0;
+			while (it != textV.end())
+			{
+				TextMessage* message = session->createTextMessage(*it);
 
-                delete message;
-                it++;
-                ix++;
-            }
+				message->setIntProperty("Integer", ix);
 
-        }catch ( CMSException& e ) {
-            e.printStackTrace();
-        }
-    }
+				// Tell the producer to send the message
+				printf("Sent message #%d from thread %s\n", ix + 1,
+						threadIdStr.c_str());
+				producer->send(message);
 
-    virtual void run(string& text) {
-        try {
+				delete message;
+				it++;
+				ix++;
+			}
 
-            // Create a ConnectionFactory
-            auto_ptr<ActiveMQConnectionFactory> connectionFactory(
-                new ActiveMQConnectionFactory( brokerURI ) );
+		} catch (CMSException& e)
+		{
+			e.printStackTrace();
+		}
+	}
 
-            // Create a Connection
-            try{
-                connection = connectionFactory->createConnection();
-                connection->start();
-            } catch( CMSException& e ) {
-                e.printStackTrace();
-                throw e;
-            }
+	virtual void run(string& text)
+	{
+		try
+		{
 
-            // Create a Session
-            if( clientAck ) {
-                session = connection->createSession( Session::CLIENT_ACKNOWLEDGE );
-            } else {
-                session = connection->createSession( Session::AUTO_ACKNOWLEDGE );
-            }
+			// Create a ConnectionFactory
+			auto_ptr < ActiveMQConnectionFactory > connectionFactory(
+					new ActiveMQConnectionFactory(brokerURI));
 
-            // Create the destination (Topic or Queue)
-            if( useTopic ) {
-                destination = session->createTopic( destURI );
-            } else {
-                destination = session->createQueue( destURI );
-            }
+			// Create a Connection
+			try
+			{
+				if (username != "")
+				{
+					connection = connectionFactory->createConnection();
+				}
+				else
+				{
+					connection = connectionFactory->createConnection(username,
+							password);
+				}
+				connection->start();
+			} catch (CMSException& e)
+			{
+				e.printStackTrace();
+				returnCode = 13;
+				throw e;
+			}
 
-            // Create a MessageProducer from the Session to the Topic or Queue
-            producer = session->createProducer( destination );
-            //producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
-            producer->setDeliveryMode( DeliveryMode::PERSISTENT );
+			// Create a Session
+			if (clientAck)
+			{
+				session
+						= connection->createSession(Session::CLIENT_ACKNOWLEDGE);
+			}
+			else
+			{
+				session = connection->createSession(Session::AUTO_ACKNOWLEDGE);
+			}
 
-            // Create the Thread Id String
-            string threadIdStr = Long::toString( Thread::getId() );
+			// Create the destination (Topic or Queue)
+			if (useTopic)
+			{
+				destination = session->createTopic(destURI);
+			}
+			else
+			{
+				destination = session->createQueue(destURI);
+			}
 
-            // Create a messages
+			// Create a MessageProducer from the Session to the Topic or Queue
+			producer = session->createProducer(destination);
+			if (persistentDelivery)
+			{
+				producer->setDeliveryMode(DeliveryMode::PERSISTENT);
+			}
+			else
+			{
+				producer->setDeliveryMode(DeliveryMode::NON_PERSISTENT);
+			}
 
-            for( unsigned int ix=0; ix<numMessages; ++ix ){
-                TextMessage* message = session->createTextMessage( text );
+			// Create the Thread Id String
+			string threadIdStr = Long::toString(Thread::getId());
 
-                message->setIntProperty( "Integer", ix );
+			TextMessage* message = session->createTextMessage(text);
 
-                // Tell the producer to send the message
-                printf( "Sent message #%d from thread %s\n", ix+1, threadIdStr.c_str() );
-                producer->send( message );
+			producer->send(message);
 
-                delete message;
-            }
+			delete message;
 
-        }catch ( CMSException& e ) {
-            e.printStackTrace();
-        }
-    }
+		} catch (CMSException& e)
+		{
+			if (returnCode == 0)
+				returnCode = 13;
+			e.printStackTrace();
+		}
+	}
 
-    virtual void run() {
-        try {
-
-            // Create a ConnectionFactory
-            auto_ptr<ActiveMQConnectionFactory> connectionFactory(
-                new ActiveMQConnectionFactory( brokerURI ) );
-
-            // Create a Connection
-            try{
-                connection = connectionFactory->createConnection();
-                connection->start();
-            } catch( CMSException& e ) {
-                e.printStackTrace();
-                throw e;
-            }
-
-            // Create a Session
-            if( clientAck ) {
-                session = connection->createSession( Session::CLIENT_ACKNOWLEDGE );
-            } else {
-                session = connection->createSession( Session::AUTO_ACKNOWLEDGE );
-            }
-
-            // Create the destination (Topic or Queue)
-            if( useTopic ) {
-                destination = session->createTopic( destURI );
-            } else {
-                destination = session->createQueue( destURI );
-            }
-
-            // Create a MessageProducer from the Session to the Topic or Queue
-            producer = session->createProducer( destination );
-            producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
-
-            // Create the Thread Id String
-            string threadIdStr = Long::toString( Thread::getId() );
-
-            // Create a messages
-            string text = (string)"Hello world! from thread " + threadIdStr;
-
-            for( unsigned int ix=0; ix<numMessages; ++ix ){
-                TextMessage* message = session->createTextMessage( text );
-
-                message->setIntProperty( "Integer", ix );
-
-                // Tell the producer to send the message
-                printf( "Sent message #%d from thread %s\n", ix+1, threadIdStr.c_str() );
-                producer->send( message );
-
-                delete message;
-            }
-
-        }catch ( CMSException& e ) {
-            e.printStackTrace();
-        }
-    }
+	virtual void run()
+		{
+			try
+			{
+					//just a placeholder
+			} catch (CMSException& e)
+			{
+				if (returnCode == 0)
+					returnCode = 13;
+				e.printStackTrace();
+			}
+		}
 
 private:
 
-    void cleanup(){
+	void cleanup()
+	{
 
-        // Destroy resources.
-        try{
-            if( destination != NULL ) delete destination;
-        }catch ( CMSException& e ) 
-	{ 
-		e.printStackTrace(); 
-		returnCode = 1; 
-	}
-        destination = NULL;
+		// Destroy resources.
+		try
+		{
+			if (destination != NULL)
+				delete destination;
+		} catch (CMSException& e)
+		{
+			e.printStackTrace();
+			returnCode = 1;
+		}
+		destination = NULL;
 
-        try{
-            if( producer != NULL ) delete producer;
-        }catch ( CMSException& e ) 
-	{ 
-		e.printStackTrace(); 
-		returnCode = 2;
-	}
-        producer = NULL;
+		try
+		{
+			if (producer != NULL)
+				delete producer;
+		} catch (CMSException& e)
+		{
+			e.printStackTrace();
+			returnCode = 2;
+		}
+		producer = NULL;
 
-        // Close open resources.
-        try{
-            if( session != NULL ) session->close();
-            if( connection != NULL ) connection->close();
-        }catch ( CMSException& e ) 
-	{ 
-		e.printStackTrace(); 
-		returnCode = 3;
-	}
+		// Close open resources.
+		try
+		{
+			if (session != NULL)
+				session->close();
+			if (connection != NULL)
+				connection->close();
+		} catch (CMSException& e)
+		{
+			e.printStackTrace();
+			returnCode = 3;
+		}
 
-        try{
-            if( session != NULL ) delete session;
-        }catch ( CMSException& e ) 
-	{ 
-		e.printStackTrace(); 
-		returnCode = 4;
-	}
-        session = NULL;
+		try
+		{
+			if (session != NULL)
+				delete session;
+		} catch (CMSException& e)
+		{
+			e.printStackTrace();
+			returnCode = 4;
+		}
+		session = NULL;
 
-        try{
-            if( connection != NULL ) delete connection;
-        }catch ( CMSException& e ) 
-	{ 
-		e.printStackTrace(); 
-		returnCode = 5;
+		try
+		{
+			if (connection != NULL)
+				delete connection;
+		} catch (CMSException& e)
+		{
+			e.printStackTrace();
+			returnCode = 5;
+		}
+		connection = NULL;
 	}
-        connection = NULL;
-    }  
 
 };
 
-int dgasHlrRecordProducer (string& confFileName, string amqBrokerUri,string dgasAMQTopic ,string amqOptions )
+int AmqProducer::readConf(string& confFileName)
+{
+	map < string, string > confMap;
+	if (dgas_conf_read(confFileName, &confMap) != 0)
+	{
+		if (verbosity > 1)
+		{
+			cerr << "WARNING: Could not read conf file: " << confFileName
+					<< endl;
+			cerr << "There can be problems processing the transaction" << endl;
+		}
+		if ((amqBrokerUri == "") || (amqTopic == ""))
+		{
+			cerr << "Please specify amqBrokerUri and dgasAMQTopic." << endl;
+			return E_CONFIG;
+		}
+
+	}
+
+	if (amqBrokerUri == "")
+	{
+		if (confMap["amqBrokerUri"] != "")
+		{
+			amqBrokerUri = confMap["amqBrokerUri"];
+		}
+		else
+		{
+			cerr << "ERROR: Broker uri not specified: " << confFileName << endl;
+			return E_BROKER_URI;
+		}
+	}
+	if (amqTopic == "")
+	{
+		if (confMap["amqTopic"] != "")
+		{
+		}
+		else
+		{
+			cerr << "ERROR: Broker message queue/topic not specified: "
+					<< confFileName << endl;
+			return E_BROKER_URI;
+		}
+	}
+
+	if ((confMap["useTopics"] == "yes") || (confMap["useTopics"] == "true"))
+	{
+		useTopics = true;
+	}
+
+	if ((confMap["clientAck"] == "yes") || (confMap["clientAck"] == "true"))
+	{
+		clientAck = true;
+	}
+
+	if ((confMap["persistentDelivery"] == "yes")
+			|| (confMap["persistentDelivery"] == "true"))
+	{
+		persistentDelivery = true;
+	}
+
+	if (amqUsername == "")
+	{
+		if (confMap["amqUsername"] != "")
+		{
+			amqUsername = confMap["amqUsername"];
+		}
+	}
+	if (amqPassword == "")
+	{
+		if (confMap["amqPassword"] != "")
+		{
+			amqPassword = confMap["amqPassword"];
+		}
+	}
+	return 0;
+}
+
+int AmqProducer::run()
 {
 	int returncode = 0;
-	string output_message;
-	map <string,string> confMap;
-	if ( dgas_conf_read ( confFileName, &confMap ) != 0 )	
-	{
-		cerr << "WARNING: Error reading conf file: " << confFileName << 
-endl;
-		cerr << "There can be problems processing the transaction" << endl;
-		return E_CONFIG;
-		
-	}
-
-	if ( amqOptions == "" )
-	{
-		if ( confMap["amqOptions"] != "" )
-		{
-			amqOptions = confMap["amqOptions"];
-		}
-		else
-		{
-			amqOptions = "wireFormat=openwire"
-				"&connection.useAsyncSend=true"
-				"&transport.commandTracingEnabled=true"
-				//"&transport.tcpTracingEnabled=true"
-				"&wireFormat.tightEncodingEnabled=true";
-		}
-	}
-	if ( amqBrokerUri == "" )
-	{
-		if ( confMap["amqBrokerUri"] != "" )
-		{
-			amqBrokerUri= confMap["amqBrokerUri"];
-		}
-		else
-		{
-		 	cerr << "WARNING: Error reading conf file: " << confFileName << endl;
-			return E_BROKER_URI;
-		}
-	}
-	if ( dgasAMQTopic == "" )
-	{
-		if ( confMap["dgasAMQTopic"] != "" )
-		{
-			dgasAMQTopic= confMap["dgasAMQTopic"];
-		}
-		else
-		{
-		 	cerr << "WARNING: Error reading conf file: " << confFileName << endl;
-			return E_BROKER_URI;
-		}
-	}
 
 	activemq::library::ActiveMQCPP::initializeLibrary();
-	string textLine;
-	while ( getline (cin, textLine, '\n'))
+	//if data member outputMessage isn't set, read message from stdin by default.
+	if (outputMessage == "")
 	{
-		output_message += textLine += "\n";
-	}	
-	std::string brokerURI =
-		"failover:("+ amqBrokerUri +
-		//"failover:(tcp://hlr-test-29.to.infn.it:61616"
-		"?" + amqOptions 
-		//"wireFormat=openwire"
-		//"&connection.useAsyncSend=true"
-		//"&transport.commandTracingEnabled=true"
-		//"&transport.tcpTracingEnabled=true"
-		//"&wireFormat.tightEncodingEnabled=true"
-		+ ")";
-	std::string destURI = dgasAMQTopic;
-	bool useTopics = false;
+		string textLine;
+		while (getline(cin, textLine, '\n'))
+		{
+			outputMessage += textLine += "\n";
+		}
+	}
+
 	unsigned int numMessages = 1;
-	SimpleProducer producer( brokerURI, numMessages, destURI, useTopics );
-	producer.run(output_message);
+
+	SimpleProducer producer(amqBrokerUri, numMessages, amqTopic, useTopics,
+			clientAck, persistentDelivery, amqUsername, amqPassword);
+	producer.run(outputMessage);
 	producer.close();
-	returncode = producer.returnCode; 
+	returncode = producer.returnCode;
 	activemq::library::ActiveMQCPP::shutdownLibrary();
 	return returncode;
-	
+
 }
 
