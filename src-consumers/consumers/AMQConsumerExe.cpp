@@ -534,7 +534,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 	{
 		numMessages = atol((parms.messageNumber).c_str());
 	}
-	AMQConsumer consumer;
+	amqConsumer consumer;
 	if (parms.outputType == "database")
 	{
 

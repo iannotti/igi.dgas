@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqConsumer.h,v 1.1.2.1 2012/07/20 13:52:46 aguarise Exp $
+// $Id: amqConsumer.h,v 1.1.2.2 2012/07/20 14:02:00 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -99,10 +99,10 @@ delete consumerOutImpl;
 */
 
 
-class AMQConsumer {
+class amqConsumer {
 
 public:
-	AMQConsumer(){};
+	amqConsumer(){};
 	//void registerConsumer(AMQConsumerStdOut* consumer);
 	void registerConsumer(SimpleAsyncConsumer* consumer);
 
