@@ -30,7 +30,7 @@ use DBI;
 use Time::HiRes qw(usleep ualarm gettimeofday tv_interval);
 
 # turn off buffering of STDOUT
-$| = 1;
+#$| = 1;
 
 # my $MAX_LSF_RECORDLENGTH_FOR_QUOTEWORDS = 4096;
 # this is the maximum LSF record length that we'll parse with
@@ -3002,7 +3002,7 @@ sub processCondorJobHistory
 #my $command = "$condorHistoryCommand -completedsince '$postgresTimeString'";
 # condor_history -l -backwards -constraint "completiondate > `date -d "$(date+%-m/%-d) 04:00" +%s`" > longlist
 #my $command = "$condorHistoryCommand -l -backwards -constraint \"completiondate > `date -d \"$postgresTimeString\"`\"";
-	my $command = "$condorHistoryCommand -l -backwards";
+	my $command = "$condorHistoryCommand -l ";
 
 	if ( $postgresTimeString ne "" )
 	{
