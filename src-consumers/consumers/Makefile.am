@@ -6,16 +6,14 @@
 ## *
 ## *********************************************************************
 
-
-lib_LTLIBRARIES  = \
+lib_LTLIBRARIES  = libglite_dgas_AMQConsumer.la \
 		libglite_dgas_legacyRecordManager.la 
 
 libexec_PROGRAMS = dgas-AMQConsumer \
 		dgas-legacyRecordManager 
 
 libexec_SCRIPTS = \
-		dgas-ogfurParser \
-		dgas-emicarParser	
+		glite-dgas-ogfurParser	
 
 if UNIXODBC
 DBFLAGS = $(UNIXODBC_CFLAGS) -DWITH_UNIXODBC
@@ -25,11 +23,12 @@ DBFLAGS = $(MYSQL_CFLAGS)
 DBLIBS = $(MYSQL_LIBS)
 endif
 
+libglite_dgas_AMQConsumer_la_SOURCES = \
+	AMQConsumer.cpp 
 
 dgas_AMQConsumer_SOURCES = AMQConsumerExe.cpp
 dgas_AMQConsumer_LDADD   = \
-	$(top_builddir)/src-msg-common/libglite_dgas_asyncConsumer.la \
-	$(top_builddir)/src-msg-common/libglite_dgas_AMQConsumer.la \
+	./libglite_dgas_AMQConsumer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_LOCK_LIBS) \
 	$(GLITE_DGAS_COMMON_LOG_LIBS) \
@@ -63,10 +62,10 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-common \
 	-I$(top_srcdir)/interface-consumers \
 	-I$(top_srcdir)/interface-hlr-service \
-	-I$(top_srcdir)/interface-msg-common \
 	-I$(top_srcdir)/src-consumers \
 	$(GLITE_CFLAGS) \
 	$(DBFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
+	$(APR_CFLAGS) \
 	-DVERSION=\"@VERSION@\"
 MAINTAINERCLEANFILES = Makefile.in 
