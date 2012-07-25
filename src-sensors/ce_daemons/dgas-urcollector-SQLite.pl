@@ -59,8 +59,8 @@ if ( !defined($dgasLocation) || $dgasLocation eq "" )
 }
 
 my %processedLogFileInodes = ();
-my %logFMod    = ();
-my %logFModPreviousRun = ();
+my %logFMod                = ();
+my %logFModPreviousRun     = ();
 
 my $TSTAMP_ACC =
   86400;    # timestamps between CE log and LRMS log can differ for up to a day.
@@ -2353,8 +2353,8 @@ sub processLrmsLogs
 	my $lastTimestamp          = $_[3];
 	my $ignoreJobsLoggedBefore = $_[4];
 
-	my $currLogTimestamp       = 0;
-	my $continueProcessing     = 1;
+	my $currLogTimestamp   = 0;
+	my $continueProcessing = 1;
 
 	while ( $keepGoing && $continueProcessing )
 	{
@@ -2411,6 +2411,7 @@ sub processLrmsLogs
 		my @sortedLrmsLogFiles =
 		  ( sort { $logFMod{$a} <=> $logFMod{$b} } keys %logFMod );
 		my $thisLogFile;
+
 		# we process these LRMS log files from the last, until we find the
 		# last job previously considered.
 		while ( $keepGoing && $continueProcessing && @sortedLrmsLogFiles )
@@ -2420,12 +2421,12 @@ sub processLrmsLogs
 			&printLog( 8,
 				"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}" );
 
-			# if a log file with this inode has already been processed in
-			# this iteration ...
-			#if (
-			#	exists( $processedLogFileInodes{ $logFInodes{$thisLogFile} } ) )
-			#{
-			#	&printLog( 7,
+# if a log file with this inode has already been processed in
+# this iteration ...
+#if (
+#	exists( $processedLogFileInodes{ $logFInodes{$thisLogFile} } ) )
+#{
+#	&printLog( 7,
 #"File $thisLogFile with inode $logFInodes{$thisLogFile} already processed in this iteration, skipping!"
 #			#	);
 #				next;
@@ -2457,10 +2458,14 @@ sub processLrmsLogs
 				&printLog( 8,
 					"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}"
 				);
-				if ( $logFModPreviousRun{$thisLogFile} == $logFMod{$thisLogFile} )
+				if ( $logFModPreviousRun{$thisLogFile} ==
+					$logFMod{$thisLogFile} )
 				{
-					&printLog( 7, "skipping $thisLogFile because not changed since previous run.",
-                                        1 );
+					&printLog(
+						7,
+"skipping $thisLogFile because not changed since previous run.",
+						1
+					);
 					next;
 				}
 
@@ -2648,24 +2653,27 @@ sub processLrmsLogFile
 			$_[8] = $allProcessed = 1;
 			return 0;
 		}
+
 		# The record can be processed:
-		
-			$_[3] = $lastJob =
-			  $targetJobId;    # $lastJob, i.e. newest job processed
-			$_[4] = $lastTimestamp =
-			  $lrmsEventTimestamp;    # $lastTimestamp, i.e. of newest job
-			$firstJobId = 0;
 
-		
-		$_[7] = $nothingProcessed = 0;    # processing something!
+		$_[3] = $lastJob = $targetJobId;   # $lastJob, i.e. newest job processed
+		$_[4] = $lastTimestamp =
+		  $lrmsEventTimestamp;             # $lastTimestamp, i.e. of newest job
+		$firstJobId = 0;
 
-		&printLog( 6, "Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)" );
-		&printLog( 6, "Processing job: $targetJobId with LRMS log event time(local):$lrmsEventTimeString(=$lrmsEventTimestamp); LRMS creation time: $job_ctime"
+		$_[7] = $nothingProcessed = 0;     # processing something!
+
+		&printLog( 6,
+"Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)"
+		);
+		&printLog( 6,
+"Processing job: $targetJobId with LRMS log event time(local):$lrmsEventTimeString(=$lrmsEventTimestamp); LRMS creation time: $job_ctime"
 		);
 
 		my $gianduiottoHeader;
 		if ($useCElog)
 		{
+
 			# get grid-related info from CE job map
 			$gianduiottoHeader =
 			  &parseCeUserMapLog( $targetJobId, $lrmsEventTimestamp,
@@ -2673,6 +2681,7 @@ sub processLrmsLogFile
 		}
 		else
 		{
+
 			# don't use CE job map ... local job!
 			$gianduiottoHeader = "JOB_TYPE=local\n";
 		}
@@ -2700,6 +2709,7 @@ sub processLrmsLogFile
 		# attributes to be correct:
 		if ( $ldifModTimestamp != 0 )
 		{
+
 			#should add this control (record being reprocessed):
 			#if ($job_ctime >= $ldifModTimestamp) {
 			&printLog( 8, "Adding GLUE attributes to UR ..." );
@@ -2732,6 +2742,7 @@ sub processLrmsLogFile
 			&printLog( 3, "Program exiting, termiantion signal received..." );
 			last;
 		}
+
 		# Producing the record to be inserted in the database.
 		if ( &produceRecord( $gianduiottoHeader, $line ) != 0 )
 		{
@@ -2739,83 +2750,86 @@ sub processLrmsLogFile
 "Error: could not create UR for job $targetJobId with LRMS event time: $lrmsEventTimeString!"
 			);
 			next;
-			
+
 		}
-			$mainRecordsCounter++;
-			$recordsCounter++;
-			if ( $recordsCounter == 50 )
+		$mainRecordsCounter++;
+		$recordsCounter++;
+		if ( $recordsCounter == 50 )
+		{
+
+			#commit transaction and write buffer.
+			&printLog( 8, "Commit..." );
+			my $commitSuccesfull = 1;
+			while ( $keepGoing && $commitSuccesfull == 1 )
 			{
-				#commit transaction and write buffer.
-				&printLog( 8, "Commit..." );
-				my $commitSuccesfull = 1;
-				while ( $keepGoing && $commitSuccesfull == 1 )
+				eval { $dbh->commit; };
+				if ($@)
 				{
-					eval { $dbh->commit; };
-					if ($@)
-					{
-						&printLog( 3, "DB Locked:$@" );
-					}
-					else
-					{
-						&printLog( 8, "...succesfull" );
+					&printLog( 3, "DB Locked:$@" );
+				}
+				else
+				{
+					&printLog( 8, "...succesfull" );
 
-						#commit buffer also.
-						&putBuffer( $collectorBufferFileName, $targetJobId,
-							$lrmsEventTimestamp );
-						$commitSuccesfull = 0;
-					}
+					#commit buffer also.
+					&putBuffer( $collectorBufferFileName, $targetJobId,
+						$lrmsEventTimestamp );
+					$commitSuccesfull = 0;
 				}
-				#database size must not grow, so write up to $maxNumRecords, then wait for pushd to consume them.
-				my $shouldWaitFor = 1;
-				while ( $shouldWaitFor && $keepGoing )
-				{
-					if ( &numRecords() > $maxNumRecords )
-					{
-						&printLog(
-							3,
-"There are more than $maxNumRecords records in database, waiting $waitFor seconds..",
-							1
-						);
-						my $secsWaited = 0;
-						while ( $keepGoing && $secsWaited < $waitFor )
-						{
-							my $randomSleepTime =
-							  0.25 - log( rand() )
-							  ;    #0.25 + v.a. exp unilatera, media = 1
-							select( undef, undef, undef, $randomSleepTime )
-							  ;    #equivale a sleep per valore float
-							$secsWaited++;
-						}
-					}
-					else
-					{
-						$shouldWaitFor = 0;
-					}
-				}
-
-				my $elapsed      = tv_interval( $t1, [gettimeofday] );
-				my $jobs_min     = ( $mainRecordsCounter / $elapsed ) * 60;
-				my $min_krecords = 0.0;
-				if ( $jobs_min > 0 )
-				{
-					$min_krecords = 1000.0 / $jobs_min;
-				}
-				$jobs_min     = sprintf( "%.2f", $jobs_min );
-				$min_krecords = sprintf( "%.1f", $min_krecords );
-				&printLog( 4,
-"Processed: $mainRecordsCounter,Elapsed: $elapsed,Records/min:$jobs_min,min/KRec: $min_krecords"
-				);
-				if ( $mainRecordsCounter >= 1000 )
-				{
-					$mainRecordsCounter = 0;
-					$t1                 = [gettimeofday];
-				}
-				#reset record counter for commit step.
-				$recordsCounter = 0;
 			}
 
-	}    # while (<LRMSLOGFILE>) ...
-	#process trailing records still not committed when the log file hits EOF.
+#database size must not grow, so write up to $maxNumRecords, then wait for pushd to consume them.
+			my $shouldWaitFor = 1;
+			while ( $shouldWaitFor && $keepGoing )
+			{
+				if ( &numRecords() > $maxNumRecords )
+				{
+					&printLog(
+						3,
+"There are more than $maxNumRecords records in database, waiting $waitFor seconds..",
+						1
+					);
+					my $secsWaited = 0;
+					while ( $keepGoing && $secsWaited < $waitFor )
+					{
+						my $randomSleepTime =
+						  0.25 - log( rand() )
+						  ;    #0.25 + v.a. exp unilatera, media = 1
+						select( undef, undef, undef, $randomSleepTime )
+						  ;    #equivale a sleep per valore float
+						$secsWaited++;
+					}
+				}
+				else
+				{
+					$shouldWaitFor = 0;
+				}
+			}
+
+			my $elapsed      = tv_interval( $t1, [gettimeofday] );
+			my $jobs_min     = ( $mainRecordsCounter / $elapsed ) * 60;
+			my $min_krecords = 0.0;
+			if ( $jobs_min > 0 )
+			{
+				$min_krecords = 1000.0 / $jobs_min;
+			}
+			$jobs_min     = sprintf( "%.2f", $jobs_min );
+			$min_krecords = sprintf( "%.1f", $min_krecords );
+			&printLog( 4,
+"Processed: $mainRecordsCounter,Elapsed: $elapsed,Records/min:$jobs_min,min/KRec: $min_krecords"
+			);
+			if ( $mainRecordsCounter >= 1000 )
+			{
+				$mainRecordsCounter = 0;
+				$t1                 = [gettimeofday];
+			}
+
+			#reset record counter for commit step.
+			$recordsCounter = 0;
+		}
+
+	}  # while (<LRMSLOGFILE>) ...
+	   #process trailing records still not committed when the log file hits EOF.
 	if ( $recordsCounter != 0 )
 	{
 		my $commitSuccesfull = 1;
@@ -2831,10 +2845,11 @@ sub processLrmsLogFile
 			else
 			{
 				&printLog( 6, "...succesfull" );
+
 				#commit buffer also.
-						&putBuffer( $collectorBufferFileName, $lastJob,
-							$lastTimestamp );
-				
+				&putBuffer( $collectorBufferFileName, $lastJob,
+					$lastTimestamp );
+
 				$commitSuccesfull = 0;
 			}
 		}
@@ -4018,5 +4033,4 @@ sub numRecords
 	&printLog( 8, "Records in DB:=$recordsNumber" );
 	return $recordsNumber;
 }
-
 

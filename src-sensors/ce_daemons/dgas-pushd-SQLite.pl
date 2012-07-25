@@ -125,7 +125,7 @@ foreach my $transport ( keys %successHoA )
 
 while ($keepGoing )
 {
-    my $sth = $dbh->table_info( '', '','commands', '' );
+    my $sth = $dbh->table_info( '%', '%','commands', '' );
     my $table = $sth->fetchall_arrayref;
     $dbh->commit;
     if (@$table) 
