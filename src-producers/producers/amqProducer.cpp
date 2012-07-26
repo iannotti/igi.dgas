@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.11.2.1 2012/07/26 13:33:40 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.11.2.2 2012/07/26 13:42:35 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -166,9 +166,7 @@ public:
 
                 // Tell the producer to send the message
                 producer->send( message );
-                printf( "Sent message\n", threadIdStr.c_str() );
-
-
+                printf( "Sent message\n");
                 delete message;
             }
 
