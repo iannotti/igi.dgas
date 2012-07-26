@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.11.2.1 2012/07/26 13:33:40 aguarise Exp $
+// $Id: Copy\040of\040amqProducer.cpp,v 1.1.2.1 2012/07/26 13:33:40 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -64,7 +64,7 @@ using namespace decaf::util::concurrent;
 using namespace cms;
 using namespace std;
 
-class SimpleProducer {
+class SimpleProducer : public Runnable {
 private:
     
     Connection* connection;
@@ -116,16 +116,75 @@ public:
         this->cleanup();
     }
 
-
-    void run(string& text) {
-
+    virtual void run(vector<string>& textV) {
+        try {
 
             // Create a ConnectionFactory
             auto_ptr<ActiveMQConnectionFactory> connectionFactory(
                 new ActiveMQConnectionFactory( brokerURI ) );
 
             // Create a Connection
+            try{
+                connection = connectionFactory->createConnection();
+                connection->start();
+            } catch( CMSException& e ) {
+                e.printStackTrace();
+                throw e;
+            }
 
+            // Create a Session
+            if( clientAck ) {
+                session = connection->createSession( Session::CLIENT_ACKNOWLEDGE );
+            } else {
+                session = connection->createSession( Session::AUTO_ACKNOWLEDGE );
+            }
+
+            // Create the destination (Topic or Queue)
+            if( useTopic ) {
+                destination = session->createTopic( destURI );
+            } else {
+                destination = session->createQueue( destURI );
+            }
+
+            // Create a MessageProducer from the Session to the Topic or Queue
+            producer = session->createProducer( destination );
+            producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
+
+            // Create the Thread Id String
+            string threadIdStr = Long::toString( Thread::getId() );
+
+            // Create a messages
+            vector<string>::iterator it = textV.begin();
+
+                unsigned int ix = 0;
+            while ( it != textV.end() ){
+                TextMessage* message = session->createTextMessage( *it );
+
+                message->setIntProperty( "Integer", ix );
+
+                // Tell the producer to send the message
+                printf( "Sent message #%d from thread %s\n", ix+1, threadIdStr.c_str() );
+                producer->send( message );
+
+                delete message;
+                it++;
+                ix++;
+            }
+
+        }catch ( CMSException& e ) {
+            e.printStackTrace();
+        }
+    }
+
+    virtual void run(string& text) {
+        try {
+
+            // Create a ConnectionFactory
+            auto_ptr<ActiveMQConnectionFactory> connectionFactory(
+                new ActiveMQConnectionFactory( brokerURI ) );
+
+            // Create a Connection
+            try{
                 if ( username != "" )
                 			{
                 				connection = connectionFactory->createConnection();
@@ -135,7 +194,11 @@ public:
                 				connection = connectionFactory->createConnection(username, password);
                 			}
                 connection->start();
-
+            } catch( CMSException& e ) {
+                e.printStackTrace();
+		returnCode = 13;
+                throw e;
+            }
 
             // Create a Session
             if( clientAck ) {
@@ -156,23 +219,85 @@ public:
             //producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
             producer->setDeliveryMode( DeliveryMode::PERSISTENT );
 
+            // Create the Thread Id String
+            string threadIdStr = Long::toString( Thread::getId() );
 
             // Create a messages
 
-
+            for( unsigned int ix=0; ix<numMessages; ++ix ){
                 TextMessage* message = session->createTextMessage( text );
 
-
+                message->setIntProperty( "Integer", ix );
 
                 // Tell the producer to send the message
+                printf( "Sent message #%d from thread %s\n", ix+1, threadIdStr.c_str() );
                 producer->send( message );
-                printf( "Sent message\n", threadIdStr.c_str() );
-
 
                 delete message;
             }
 
+        }catch ( CMSException& e ) {
+	    if ( returnCode == 0 ) returnCode = 13;
+            e.printStackTrace();
+        }
+    }
 
+    virtual void run() {
+        try {
+
+            // Create a ConnectionFactory
+            auto_ptr<ActiveMQConnectionFactory> connectionFactory(
+                new ActiveMQConnectionFactory( brokerURI ) );
+
+            // Create a Connection
+            try{
+                connection = connectionFactory->createConnection();
+                connection->start();
+            } catch( CMSException& e ) {
+                e.printStackTrace();
+                throw e;
+            }
+
+            // Create a Session
+            if( clientAck ) {
+                session = connection->createSession( Session::CLIENT_ACKNOWLEDGE );
+            } else {
+                session = connection->createSession( Session::AUTO_ACKNOWLEDGE );
+            }
+
+            // Create the destination (Topic or Queue)
+            if( useTopic ) {
+                destination = session->createTopic( destURI );
+            } else {
+                destination = session->createQueue( destURI );
+            }
+
+            // Create a MessageProducer from the Session to the Topic or Queue
+            producer = session->createProducer( destination );
+            producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
+
+            // Create the Thread Id String
+            string threadIdStr = Long::toString( Thread::getId() );
+
+            // Create a messages
+            string text = (string)"Hello world! from thread " + threadIdStr;
+
+            for( unsigned int ix=0; ix<numMessages; ++ix ){
+                TextMessage* message = session->createTextMessage( text );
+
+                message->setIntProperty( "Integer", ix );
+
+                // Tell the producer to send the message
+                printf( "Sent message #%d from thread %s\n", ix+1, threadIdStr.c_str() );
+                producer->send( message );
+
+                delete message;
+            }
+
+        }catch ( CMSException& e ) {
+            e.printStackTrace();
+        }
+    }
 
 private:
 
