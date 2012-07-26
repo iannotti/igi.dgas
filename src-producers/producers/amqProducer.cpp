@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqProducer.cpp,v 1.1.2.11.2.2 2012/07/26 13:42:35 aguarise Exp $
+// $Id: amqProducer.cpp,v 1.1.2.11.2.3 2012/07/26 15:09:05 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -139,8 +139,10 @@ public:
 
             // Create a Session
             if( clientAck ) {
+            	printf( "CLIENT_ACKNOWLEDGE\n");
                 session = connection->createSession( Session::CLIENT_ACKNOWLEDGE );
             } else {
+            	printf("AUTO_ACKNOWLEDGE\n");
                 session = connection->createSession( Session::AUTO_ACKNOWLEDGE );
             }
 
@@ -153,8 +155,8 @@ public:
 
             // Create a MessageProducer from the Session to the Topic or Queue
             producer = session->createProducer( destination );
-            //producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
-            producer->setDeliveryMode( DeliveryMode::PERSISTENT );
+            producer->setDeliveryMode( DeliveryMode::NON_PERSISTENT );
+            //producer->setDeliveryMode( DeliveryMode::PERSISTENT );
 
 
             // Create a messages
