@@ -109,9 +109,12 @@ collectorLogFileName = "/var/log/dgas/dgas_urcollector.log"
 #  as suffix, for example: "/var/dgasCollectorBuffer.pbs")
 collectorBufferFileName = "/var/spool/dgas/dgasCollectorBuffer"
 
-# UR Box parse interval, that is if all jobs have been processed: 
+# record directory parse inrterval, that is if all jobs have been processed: 
 # seconds to wait before looking for new jobs in UR Box.
 mainPollInterval = "60"
+
+# Additional parameter to tune resource consumption on idle cycle.
+collactorPollInterval = "10"
 
 # number of jobs to process at each processing step
 # (several steps per mainPollInterval, depending on the number of jobs found
