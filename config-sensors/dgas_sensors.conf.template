@@ -67,6 +67,10 @@ res_acct_bank_id = "hostname:portnumber:X509CertSubject"
 useCEJobMap = "yes"
 ceJobMapLog = "/var/log/cream/accounting/blahp.log"
 
+# The number of concurrent publisher instantiated by the pushd daemon. Default is '5' 
+# Use '1' for better performances if using the activemq producer. 
+# maxThreadNumber = "5"
+
 # This section configures the composer/producer system that is used to publish 
 # information to the HLR servers. 
 
