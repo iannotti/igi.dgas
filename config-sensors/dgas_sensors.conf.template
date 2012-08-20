@@ -1,93 +1,36 @@
-# This is the configuration file for the dgas_ce_pushd daemon, part of
-# gLite DGAS, DataGrid Accounting System.
+# This is the configuration file for the dgas sensors daemons, part of
+# DGAS, DataGrid Accounting System.
 # Author: A.Guarise -- andrea.guarise@to.infn.it
-# Author: R.M.Piro -- piro@to.infn.it
 # Author: G.Patania -- patania@to.infn.it
+# Author: R.M.Piro 
+# dgas-support@to.infn.it
+# http://www.to.infn.it/dgas
+
 
 #
 #You should modify the following parameters according to your needs.
 #
 
-##GLITE_URCOLLECTOR SECTION##
-
-# This is the location of the directory where gianduia puts the files
-# with the usage records. It must be the same as dgasURDir specified in
-# the dgas_atmClient.conf file 
-dgasURBox = "/opt/glite/var/dgasURBox/"
-
-# the lock files for glite-urcollector.pl and HAD
-collectorLockFileName = "/opt/glite/var/dgas_gianduia_urCollector.lock"
-collectorHADLockFileName = "/opt/glite/var/dgas_gianduia_urCollector_HAD.lock"
-
-# the log file for glite-urcollector.pl
-# it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
-# file name. 'x' being a number in the range 1-9
-collectorLogFileName = "/opt/glite/var/log/dgas_gianduia_urCollector.log"
-
-# the buffer file that keeps track of the last processed LRMS job_id and
-# log timestamp for glite-urcollector.pl:
-# (Note: the LRMS type specified in lrmsType will automatically be appended
-#  as suffix, for example: "/opt/glite/var/dgasCollectorBuffer.pbs")
-collectorBufferFileName = "/opt/glite/var/dgasCollectorBuffer"
-
-# UR Box parse interval, that is if all jobs have been processed: 
-# seconds to wait before looking for new jobs in UR Box.
-mainPollInterval = "60"
-
-# number of jobs to process at each processing step
-# (several steps per mainPollInterval, depending on the number of jobs found
-# in chocolateBox):
-jobPerTimeInterval = "10"
-
-# time in seconds to sleep after each processing step (if there are still
-# jobs to process, otherwise start a new mainPollInterval):
-timeInterval = "5"
-
-# garbage clean-up interval in seconds
-queuePollInterval = "600"
-
 #siteName parameter can be used to assign to the UsageRecord a tag identifying
 # the site. Example: "INFN-TORINO".
 #siteName = ""
 
-#the "systemLogLevel" parameter defines the log verbosity from 0(no logging) to
-# 9(maximum Verbosity)
-#systemLogLevel = "7"
-
-#Following two parameters limit the maximum nmber of records files that can
-#be written into the "dgasURBox" directory. The "maxNumFiles" variable defines the maximum number of files, the "waitFor" variable the number of seconds the daemon must stop writing new records before checking the number of files again.
-#waitFor = "5"
-#maxNumFiles = "10000"    
-
-# This defines whether to use the name of the host on which the sensors run
-# as the host name of the CE (in case of local jobs), default is "no":
-localHostNameAsCEHostName = "no"
-
 # This parameter specifies the LRMS type and _has to be set_. Possible values:
-# "pbs", "lsf".
-lrmsType = ""
+# "pbs", "lsf", "sge", "condor".
+lrmsType = "pbs"
 
 # This is the location of the directory where PBS accounting logs are stored.
 pbsAcctLogDir = "/var/spool/pbs/server_priv/accounting/"
 
 # This is the location of the directory where LSF accounting logs are stored.
-lsfAcctLogDir = "{path_lsf}/mnt/work/{cluster name}/logdir"
+#lsfAcctLogDir = "{path_lsf}/mnt/work/{cluster name}/logdir"
 
 # This is the location of the directory where SGE accounting logs are stored.
-sgeAcctLogDir = ""
+#sgeAcctLogDir = ""
 
-# The following option defines whether urcollector shall consider
-# a) "grid": ONLY grid jobs, recognized by their presence in the CE's job map
-#            log file (this REQUIRES useCEJobMap = "yes" and ceJobMapLog to be
-#            set!)
-# b) "local": ONLY local jobs, recognized by their absence in the CE's job map
-#             log file (this also REQUIRES useCEJobMap = "yes" and ceJobMapLog
-#             to be set!)
-# c) "all": [default] all jobs; grid-related information (apart from the VO)
-#           is determined only if useCEJobMap = "yes" and ceJobMapLog are set!
-#           (and of course only for jobs that have such information in the
-#            CE's log)
-#jobsToProcess = "all"
+# resource HLR: in the form host:port:X509_certSubject it is used for the 
+# legacy producer using the atnClient command (MANDATORY)
+res_acct_bank_id = "hostname:portnumber:X509CertSubject"
 
 # The following option allows to prevent very old jobs from being considered
 # by the urcollector. The argument has to be a date in SQL format (YYYY-MM-DD).
@@ -95,7 +38,7 @@ sgeAcctLogDir = ""
 # are not considered (that is, only jobs logged on or after the specified date
 # are considered).
 # IMPORTANT: If not specified, a default value of "2008-01-01", will be used,
-# hence for accounting jobs before 2006 you have to explicity set this
+# hence for accounting jobs before 2006 you have to explicitly set this
 # parameter!
 #
 #ignoreJobsLoggedBefore = "2008-01-01"
@@ -122,29 +65,111 @@ sgeAcctLogDir = ""
 # information (user DN, user FQAN, grid job ID, etc) will be added
 # (jobs considered to be local jobs).
 useCEJobMap = "yes"
-ceJobMapLog = ""
+ceJobMapLog = "/var/log/cream/accounting/blahp.log"
 
+# The number of concurrent publisher instantiated by the pushd daemon. Default is '5' 
+# Use '1' for better performances if using the activemq producer. 
+# maxThreadNumber = "5"
+
+# This section configures the composer/producer system that is used to publish 
+# information to the HLR servers. 
+
+# transportLayer specifies the transport mechanisms that can be used.
+# the 'legacy' value automatically set up the older, backward compatible 
+# mechanism adopted in earlier versions of DGAS.
+# transportLayer = "Legacy;Transport1;Transport2"
+
+# set of composer/producer commands used by the transport layers.
+# recordComposerTransport1 = "${DGAS_LOCATION}/libexec/dgas-legacyCpuComposer"
+# recordProducerTransport1 = "${DGAS_LOCATION}/libexec/dgas-amqProducer"
+
+# recordComposerTransport2 = "${DGAS_LOCATION}/libexec/dgas-ogfurComposer"
+# recordProducerTransport2 = "${DGAS_LOCATION}/libexec/dgas-legacyProducer"
+
+# This is used by the SQLite version of the daemons. Ehen the record producer
+# exits with one of the specified exit status. the record is considered 
+# succesfully forwarded and can be expunged from the local record DB.
+# successLegacy = "0;64;65;68;69;70;71;73"
+# successTransport1 = "0"
+# successTransport2 = "0"
+
+
+# the lock files for glite-urcollector.pl and HAD
+collectorLockFileName = "/var/lock/dgas/dgas_urcollector.lock"
+collectorHADLockFileName = "/var/lock/dgas/dgas_urcollector_HAD.lock"
+
+# the log file for glite-urcollector.pl
+# it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
+# file name. 'x' being a number in the range 1-9
+collectorLogFileName = "/var/log/dgas/dgas_urcollector.log"
+
+# the buffer file that keeps track of the last processed LRMS job_id and
+# log timestamp for glite-urcollector.pl:
+# (Note: the LRMS type specified in lrmsType will automatically be appended
+#  as suffix, for example: "/var/dgasCollectorBuffer.pbs")
+collectorBufferFileName = "/var/spool/dgas/dgasCollectorBuffer"
+
+# record directory parse inrterval, that is if all jobs have been processed: 
+# seconds to wait before looking for new jobs in UR Box.
+mainPollInterval = "60"
+
+# Additional parameter to tune resource consumption on idle cycle.
+collactorPollInterval = "10"
+
+# number of jobs to process at each processing step
+# (several steps per mainPollInterval, depending on the number of jobs found
+# in chocolateBox):
+jobPerTimeInterval = "10"
+
+# time in seconds to sleep after each processing step (if there are still
+# jobs to process, otherwise start a new mainPollInterval):
+timeInterval = "5"
+
+#the "systemLogLevel" parameter defines the log verbosity from 0(no logging) to
+# 9(maximum Verbosity)
+#systemLogLevel = "7"
+
+# Following two parameters limit the maximum nmber of records produced by 
+# by the collector daemon and notprocessed by pushd. The "maxNumFiles" variable 
+# defines the maximum number of records, the "limiterWaitFor" variable the 
+# number of seconds the daemon must stop writing new records before checking the
+# again.
+#limiterWaitFor = "5"
+#maxNumRecords = "10000"    
+
+# This defines whether to use the name of the host on which the sensors run
+# as the host name of the CE (in case of local jobs), default is "no":
+localHostNameAsCEHostName = "no"
+
+# The following option defines whether urcollector shall consider
+# a) "grid": ONLY grid jobs, recognized by their presence in the CE's job map
+#            log file (this REQUIRES useCEJobMap = "yes" and ceJobMapLog to be
+#            set!)
+# b) "local": ONLY local jobs, recognized by their absence in the CE's job map
+#             log file (this also REQUIRES useCEJobMap = "yes" and ceJobMapLog
+#             to be set!)
+# c) "all": [default] all jobs; grid-related information (apart from the VO)
+#           is determined only if useCEJobMap = "yes" and ceJobMapLog are set!
+#           (and of course only for jobs that have such information in the
+#            CE's log)
+#jobsToProcess = "all"
+
+# This specifies which GLUE records to take in order to fill the Usage Record
+# benchamrk fields.
 keyList = "GlueHostBenchmarkSF00,GlueHostBenchmarkSI00"
 
-glueLdifFile = "/opt/glite/etc/glite-ce-ce-plugin/out.ldif"
+# This specifies the ldif description file where to search fo the records
+# spcified with the keyList configuration parameter.
+glueLdifFile = "ldap://`hostname`:2170"
 
-##
-##GLITE_DGAS_PUSHD SECTION##
-##
-
-#The following parameters are needed by the glite_dgas_ce_pushd daemon.
-#The daemon is recovers the UR of the job and asyncronously comunicates
-#them to the User HLR vie the glite_dgas_atmClient api.
-#
-dgasErrDir = "/opt/glite/var/dgasURBox/ERR/"
-qMult = "5"
-pushdLockFileName = "/opt/glite/var/dgas_ce_pushd.lock"
+# lock file for the dgas-pushd daemon
+pushdLockFileName = "/var/lock/dgas/dgas_pushd.lock"
 
 # the log file name for glite-dgas-pushd.pl
 # it can also be used to use SYSLOG. This is done specifying "SYSLOGx" as the
-# file name. 'x' being a number in the range 1-9 
-pushdLogFileName = "/opt/glite/var/log/dgas_ce_pushd.log"
-queuePollInterval = "50"
+# file name. 'x' being a number in the range 1-9. Logging facility is set
+# accordingly to LOG_LOCAL 1 through 9. 
+pushdLogFileName = "/var/log/dgas/dgas_pushd.log"
 
 # The following option can be used to specify a configuration file that
 # contains a mapping between local users/groups and VOs in case some local
@@ -166,12 +191,12 @@ queuePollInterval = "50"
 # mapping the first one that can be retrieved by the command
 # "groups <local_unix_username>" will be taken.
 #
-#localUserGroup2VOMap = "/opt/glite/etc/glite-urcollector_localUserGroup2VOMap.conf"
+#localUserGroup2VOMap = "/etc/dgas/glite-urcollector_localUserGroup2VOMap.conf"
 
-# The following paremeter specifies in which temporary (dynamic) CE LDIF files
+# The following parameter specifies in which temporary (dynamic) CE LDIF files
 # to look for the total number of CPUs of the resource (GlueCEInfoTotalCPUs)
 #
-#gipDynamicTmpCEFiles = "/opt/lcg/var/gip/tmp/lcg-info-dynamic-ce.ldif*"
+gipDynamicTmpCEFiles = "ldap://`hostname`:2170"
 
 # The following parameter can be used to specify whether the CE uses pool
 # accounts or not. This may be important for determining the VO to which
@@ -192,8 +217,8 @@ queuePollInterval = "50"
 # For CEs that don't use pool accounts it is wise to deactivate step 2 by
 # setting havePoolAccounts = "no".
 #
-#havePoolAccounts = "yes"
-#poolAccountPatternFile = "/opt/glite/etc/glite-dgas-poolAccountPatterns.conf"
+# havePoolAccounts = "yes"
+# poolAccountPatternFile = "/etc/dgas/dgas-poolAccountPatterns.conf"
 
 # This parameter can be used to explicitly specify a host name that has to be
 # used as the CE hostname. This is most useful for assigning out-of-band jobs
@@ -202,21 +227,64 @@ queuePollInterval = "50"
 # Using this option the HLR account will be determined as
 # "<specifiedHostname>:<LRMSqueue>", e.g. "myCEhostname.org:short".
 # IMPORTANT:
-# 1) Use a fully quallified hostname, including the domain name!
+# 1) Use a fully qualified hostname, including the domain name!
 # 2) If this parameter is specified, localHostNameAsCEHostName will set to "no"
 # 3) For grid jobs as well, the HLR account will be determined as
 #    "<specifiedHostname>:<LRMSqueue>"! This means the specified hostname
 #    will be applied to ALL jobs!
 #
-#useCEHostName = ""
+# useCEHostName = ""
 
-##ATM CLIENT SECTION##
+#printAsciiLog enables the creation of a log file containing the composer/producer commands issued
+#by the pushd daemon. This can be useful to republish part of the records.
+#printAsciiLog = "yes"
+
+#asciiLogFilePath specifies the full path for the asciiLog file.
+#asciiLogFilePath = "/var/log/dgas/pushdAscii.log"
+
 
 # resource PA: in the form host:port:X509_certSubject (OPTIONAL)
-res_acct_PA_id = "hostname:portnumber:X509CertSubject"
-# resource HLR: in the form host:port:X509_certSubject (MANDATORY)
-res_acct_bank_id = "hostname:portnumber:X509CertSubject"
-# specify if we need economic accounting or not.
-economicAccounting = "no"
+# res_acct_PA_id = "hostname:portnumber:X509CertSubject"
+# specify if we need economic accounting or not (OPTIONAL).
+# economicAccounting = "no"
+
+# dgasDB specifies the location for the sqlite database used by dgas sensors.
+# dgasDB = "/var/spool/dgas/dgas.sqlite"
+
+# voToProcess specifies the list (separator = ';') of Virtual Organizations 
+# whose records must be accounted for. If empty all VO are accounted.
+# voToProcess = "" 
+
+
+###################  AMQ PRODUCER SECTION    ####################
+
+
+# amqBrokerUri specifies the complete URI for the activeMQ 
+# broker used by the ActiveMQ producer if enabled.
+# amqBrokerUri = "URI of the AMQ broker" 
+
+#dgasAMQTopic specifies the topic (a label) which is used to idetify DGAS records on an AMQ Broker.
+#dgasAMQTopic = "DGAS.TOPIC"
+
+
+
+####################    DEPRECATED PART      ####################
+
+# The following parameters refers to older, pre EMI-1, version
+# of the daemons
+
+# This is the location of the directory where glite-dgas-urcollector writes the files
+# with the usage records. 
+#dgasURBox = "/var/dgasURBox/"
+#dgasErrDir = "/var/dgasURBox/ERR/"
+
+#qMult = "5"
+#queuePollInterval = "50"
+
+# garbage clean-up interval in seconds. This affects just old, non-SQLite version
+# of the pushd daemon.
+#queuePollInterval = "600"
+
+
 
 
