@@ -47,7 +47,7 @@ void help()
         cerr << "-Q  --useQueue  Use Queue" << endl;
         cerr << "-P  --usePersistent  Sets the message delivery to Persistent" << endl;
         cerr << "-A  --clientAck  Enable consumer client ack mode" << endl;
-        //cerr << "-R  --requestReply Enable request-reply messaging scenario." << endl;
+        //cerr << "-R  --requestReply Enable request-reply messaging scenario." << endl;//FIXME should implement
         cerr << "-c  --config <file>  config file name." << endl;
         cerr << endl;
 }

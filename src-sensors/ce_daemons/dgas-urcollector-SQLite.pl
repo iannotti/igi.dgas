@@ -108,6 +108,7 @@ my %configValues   = (
 	collectorLogFileName    => "/var/log/dgas/dgas_urcollector.log",
 	collectorBufferFileName => "/var/spool/dgas/dgasCollectorBuffer",
 	mainPollInterval        => "5",
+	collectorPollInterval   => "5",
 	timeInterval            => "1",
 	jobPerTimeInterval      => "500",
 	ignoreJobsLoggedBefore  => $DEF_IGNORE_JOBS_LOGGED_BEFORE,
@@ -225,6 +226,7 @@ my $glueLdifFile            = $configValues{glueLdifFile};
 my $collectorLockFileName   = $configValues{collectorLockFileName};
 my $collectorBufferFileName = $configValues{collectorBufferFileName};
 my $mainPollInterval        = $configValues{mainPollInterval};
+my $collectorPollInterval   = $configValues{collectorPollInterval};
 my $timeInterval            = $configValues{timeInterval};
 my $jobPerTimeInterval      = $configValues{jobPerTimeInterval};
 my $maxNumRecords           = $configValues{maxNumRecords};
@@ -570,6 +572,13 @@ MAIN: while ($keepGoing)
 # print "".localtime().": Waiting for new jobs to finish. Sleeping for $mainPollInterval seconds.";
 		my $secsWaited = 0;
 		while ( $keepGoing && $secsWaited < $mainPollInterval )
+		{
+			usleep(100000);
+			$secsWaited++;
+		}
+		#additional sleep for fine tuning of resource consumption use collectorPollInterval to set this (this is far to be optimal FIXME)
+	    $secsWaited = 0;
+		while ( $keepGoing && $secsWaited < $collectorPollInterval )
 		{
 			usleep(100000);
 			$secsWaited++;
@@ -2176,6 +2185,10 @@ sub parseConf
 		{
 			$configValues{mainPollInterval} = $1;
 		}
+		if (/^collectorPollInterval\s*=\s*\"(.*)\"$/)
+		{
+			$configValues{collectorPollInterval} = $1;
+		}
 		if (/^timeInterval\s*=\s*\"(.*)\"$/)
 		{
 			$configValues{timeInterval} = $1;
@@ -2457,7 +2470,8 @@ sub processLrmsLogs
 				&printLog( 8,
 					"LRMS log: $thisLogFile; modified: $logFMod{$thisLogFile}"
 				);
-				if ( $logFModPreviousRun{$thisLogFile} == $logFMod{$thisLogFile} )
+				if ( $logFModPreviousRun{$thisLogFile} ==
+					$logFMod{$thisLogFile} )
 				{
 					&printLog( 7, "skipping $thisLogFile because not changed since previous run.",
                                         1 );
@@ -2650,8 +2664,7 @@ sub processLrmsLogFile
 		}
 		# The record can be processed:
 		
-			$_[3] = $lastJob =
-			  $targetJobId;    # $lastJob, i.e. newest job processed
+		$_[3] = $lastJob = $targetJobId;   # $lastJob, i.e. newest job processed
 			$_[4] = $lastTimestamp =
 			  $lrmsEventTimestamp;    # $lastTimestamp, i.e. of newest job
 			$firstJobId = 0;
@@ -2659,8 +2672,11 @@ sub processLrmsLogFile
 		
 		$_[7] = $nothingProcessed = 0;    # processing something!
 
-		&printLog( 6, "Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)" );
-		&printLog( 6, "Processing job: $targetJobId with LRMS log event time(local):$lrmsEventTimeString(=$lrmsEventTimestamp); LRMS creation time: $job_ctime"
+		&printLog( 6,
+"Most recent job to process:$targetJobId; LRMS event time:$lrmsEventTimeString(=$lrmsEventTimestamp)"
+		);
+		&printLog( 6,
+"Processing job: $targetJobId with LRMS log event time(local):$lrmsEventTimeString(=$lrmsEventTimestamp); LRMS creation time: $job_ctime"
 		);
 
 		my $gianduiottoHeader;
@@ -2987,7 +3003,7 @@ sub processCondorJobHistory
 #my $command = "$condorHistoryCommand -completedsince '$postgresTimeString'";
 # condor_history -l -backwards -constraint "completiondate > `date -d "$(date+%-m/%-d) 04:00" +%s`" > longlist
 #my $command = "$condorHistoryCommand -l -backwards -constraint \"completiondate > `date -d \"$postgresTimeString\"`\"";
-	my $command = "$condorHistoryCommand -l -backwards";
+	my $command = "$condorHistoryCommand -l ";
 
 	if ( $postgresTimeString ne "" )
 	{
