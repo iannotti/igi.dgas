@@ -1,0 +1,47 @@
+#dgas_activemq-producer.conf.template
+
+consumerLockFileName = "/var/lock/dgas/dgas-hlr-amq-consumer.lock"
+consumerLogFileName = "/var/log/dgas/dgas-hlr-amq-consumer.log"
+amqBrokerUri = "failover:(tcp://dgas-broker.to.infn.it:61616)"
+
+
+hlr_user = "root"
+
+managerLockFileName = "/var/lock/dgas/dgas-hlr-amq-manager.lock"
+managerLogFileName = "/var/log/dgas/dgas-hlr-amq-manager.log"
+messageParsingCommand = "cat"
+
+#accountCheckPolicy defines the resource authorization policy for the records coming
+#through the AMQ channel. It should be set the very same way as in the dgas_hlr.conf file
+accountCheckPolicy = "lazy"
+
+#dgasAMQTopic: specifies the topic or queue to which consumer subscribes.
+dgasAMQTopic = "DGAS"
+
+# useTopics allows to decide the messaging paradigm to adopt: true for publish/subscribe (uses topics) false for point-to-point (uses queues) 
+useTopics = "true"
+
+# durable: in case of useTopics set to true (publish-subscribe domain), specifiy that we want a durable consumer, that is a consumer that can go offline without loosing messages. 
+durable = "true"
+
+# name: assigns a name to the message consumer
+name = "dgas.test.hlr"
+
+# amqClientId: MUST be used to assign a unique name to the consumer, this identifies the consumer on the broker to allow for durable subscription to properly work.
+amqClientId = "dgasClientId"
+
+#amqUserName: username for the consumer, if required by the broker infrastructure
+#amqPassword: password for this consumer, if required by the broker infrastructure
+
+#the follwing parameters define the MySQL DB connection parameters. These must be the same
+# as in dgas_hlr.conf
+hlr_sql_server = "localhost"
+hlr_sql_user = "root"
+hlr_sql_password = ""
+hlr_sql_dbname = "hlr"
+hlr_tmp_sql_dbname = "hlr_tmp"
+
+
+
+
+
