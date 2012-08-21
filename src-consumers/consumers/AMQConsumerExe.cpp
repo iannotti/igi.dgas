@@ -290,6 +290,7 @@ public:
 
 	~AMQConsumerDataBase() throw()
 	{
+		delete doneLatch;
 		delete hlrDb;
 	}
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
@@ -339,6 +340,12 @@ public:
 		this->numMessages = numMessages;
 		this->count = 0;
 	}
+
+	~AMQConsumerDir() throw()
+		{
+			delete doneLatch;
+		}
+
 	//overrides AsyncConsumer useMessage() method. Can be overridden by parent classes if any.
 	void useMessage(std::string messageString)
 	{
