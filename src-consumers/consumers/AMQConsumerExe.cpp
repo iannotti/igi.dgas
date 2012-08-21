@@ -133,7 +133,7 @@ public:
 			std::string name = "", std::string selector = "",
 			bool nolocal = false, bool durable = false,
 			std::string username = "", std::string password = "",
-			std::string clientId = "", long int numMessages = 1) throw()
+			std::string clientId = "", long int numMessages = 1)
 	{
 		std::cout << "AMQConsumerStdOut(with parms)" << std::endl;
 		doneLatch = new CountDownLatch(numMessages);
@@ -199,7 +199,7 @@ public:
 		}
 	}
 
-	~AMQConsumerStdOut()
+	~AMQConsumerStdOut() throw()
 	{
 		std::cout << "~AMQConsumerStdOut()" << std::endl;
 		delete doneLatch;
@@ -271,7 +271,7 @@ public:
 			std::string selector = "", bool nolocal = false,
 			bool durable = false, std::string username = "",
 			std::string password = "", std::string clientId = "",
-			long int numMessages = 1) throw()
+			long int numMessages = 1)
 	{
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
@@ -288,7 +288,7 @@ public:
 		this->numMessages = numMessages;
 	}
 
-	~AMQConsumerDataBase()
+	~AMQConsumerDataBase() throw()
 	{
 		delete hlrDb;
 	}
@@ -322,7 +322,7 @@ public:
 			std::string name = "", std::string selector = "",
 			bool nolocal = false, bool durable = false,
 			std::string username = "", std::string password = "",
-			std::string clientId = "", long int numMessages = 1) throw()
+			std::string clientId = "", long int numMessages = 1)
 	{
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
