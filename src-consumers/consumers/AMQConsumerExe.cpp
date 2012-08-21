@@ -133,7 +133,7 @@ public:
 			std::string name = "", std::string selector = "",
 			bool nolocal = false, bool durable = false,
 			std::string username = "", std::string password = "",
-			std::string clientId = "", long int numMessages = 1)
+			std::string clientId = "", long int numMessages = 1) throw()
 	{
 		std::cout << "AMQConsumerStdOut(with parms)" << std::endl;
 		doneLatch = new CountDownLatch(numMessages);
@@ -271,7 +271,7 @@ public:
 			std::string selector = "", bool nolocal = false,
 			bool durable = false, std::string username = "",
 			std::string password = "", std::string clientId = "",
-			long int numMessages = 1)
+			long int numMessages = 1) throw()
 	{
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
@@ -322,7 +322,7 @@ public:
 			std::string name = "", std::string selector = "",
 			bool nolocal = false, bool durable = false,
 			std::string username = "", std::string password = "",
-			std::string clientId = "", long int numMessages = 1)
+			std::string clientId = "", long int numMessages = 1) throw()
 	{
 		doneLatch = new CountDownLatch(numMessages);
 		this->useTopic = useTopic;
