@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: amqConsumer.h,v 1.1.2.4 2012/08/20 13:36:13 aguarise Exp $
+// $Id: amqConsumer.h,v 1.1.2.5 2012/08/21 08:03:17 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -75,7 +75,7 @@ public:
 
 };
 
-As an examlple fo code using this class:
+As an example of code using this class:
 
 //Instantiate an object of the AMQConsumer class;
 AMQConsumer consumer;

@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.1.2.3 2012/07/20 09:40:53 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.1.2.4 2012/08/21 08:03:18 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -211,7 +211,7 @@ void SimpleAsyncConsumer::run()
 }
 
 // Called from the consumer since this class is a registered MessageListener.
-void SimpleAsyncConsumer::onMessage(const Message* message)
+void SimpleAsyncConsumer::onMessage(const Message* message) throw()
 {
 	static long int count = 0;
 	try
