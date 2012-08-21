@@ -31,7 +31,7 @@ libdgas_legacyCpuComposer_la_SOURCES = \
 
 dgas_amqProducer_SOURCES = amqProducerExe.cpp
 dgas_amqProducer_LDADD   = \
-	./libdgas_amqProducer.la \
+	$(top_builddir)/src-msg-common/libdgas_amqProducer.la \
 	$(ACTIVEMQ_CPP_LIBS) \
 	$(GLITE_DGAS_COMMON_CONFIG_LIBS) \
 	$(GLITE_DGAS_COMMON_XMLUTIL_LIBS) 
