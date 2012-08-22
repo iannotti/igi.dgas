@@ -25,5 +25,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/interface-msg-common \
 	$(GLITE_CFLAGS) \
 	$(ACTIVEMQ_CPP_CFLAGS) \
+	$(APR_CFLAGS) \
 	-DVERSION=\"@VERSION@\"
 MAINTAINERCLEANFILES = Makefile.in 
