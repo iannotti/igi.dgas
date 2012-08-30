@@ -33,7 +33,7 @@ AC_DEFUN([AC_ACTIVEMQ_CPP_LIB],
     
 dnl
 dnl
-	activemq_cpp_config = "$with_activemq_cpp/activemqcpp-config"
+	activemq_cpp_config="$with_activemq_cpp/activemqcpp-config"
 	if test -x "$activemq_cpp_config"; then
 		AC_MSG_RESULT(["Found activemqcpp-config at: $activemq_cpp_config"])
 		eval activemq_cpp_lib=`activemqcpp-config --libs`
