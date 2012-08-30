@@ -4,32 +4,32 @@ AC_DEFUN([AC_ACTIVEMQ_CPP_LIB],
 	AC_ARG_WITH(activemq_cpp_lib_prefix, 
        [  --with-activemq-cpp-lib-prefix=PFX      prefix where activemq-cpp-lib library is installed.],
        , 
-       with_activemq_cpp_lib_prefix=/usr/include/lib/})
+       with_activemq_cpp_lib_prefix=/usr/include/lib/)
 	
 	AC_ARG_WITH(activemq_cpp_include_prefix, 
        [  --with-activemq-cpp-include-prefix=PFX      prefix where activemq-cpp-lib includes are installed.],
        , 
-       with_activemq_cpp_include_prefix=/usr/local/})
+       with_activemq_cpp_include_prefix=/usr/local/)
 	
 	AC_ARG_WITH(apr_lib_prefix, 
        [  --with-apr-lib-prefix=PFX      prefix where apr library is installed.],
        , 
-       with_apr_lib_prefix=/usr/include/lib/})
+       with_apr_lib_prefix=/usr/include/lib/)
 	
 	AC_ARG_WITH(apr_include_prefix, 
        [  --with-apr-include-prefix=PFX      prefix where apr includes are installed.],
        , 
-       with_apr_include_prefix=/usr/local/})
+       with_apr_include_prefix=/usr/local/)
        
     AC_ARG_WITH(activemq_cpp, 
        [  --with-activemq-cpp=PFX      path to activemqcpp-config],
        , 
-       with_activemq_cpp=/usr/bin/})
+       with_activemq_cpp=/usr/bin/)
        
     AC_ARG_WITH(apr, 
        [  --with-apr=PFX      path to apr-1-config],
        , 
-       with_activemq_cpp=/usr/bin/})
+       with_activemq_cpp=/usr/bin/)
     
 dnl
 dnl
