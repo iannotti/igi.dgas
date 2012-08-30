@@ -29,16 +29,16 @@ AC_DEFUN([AC_ACTIVEMQ_CPP_LIB],
     AC_ARG_WITH(apr, 
        [  --with-apr=PFX      path to apr-1-config],
        , 
-       with_activemq_cpp=/usr/bin/)
+       with_apr=/usr/bin/)
     
 dnl
 dnl
 	activemq_cpp_config="$with_activemq_cpp/activemqcpp-config"
 	if test -x $activemq_cpp_config; then
 		AC_MSG_RESULT(["Found activemqcpp-config at: $activemq_cpp_config"])
-		eval activemq_cpp_lib=`$activemq_cpp_config --libs`
-		eval activemq_cpp_includes=`$activemq_cpp_config --includes`
-		eval activemq_cpp_cflags=`$activemq_cpp_config --cflags`	
+		activemq_cpp_lib=`$activemq_cpp_config --libs`
+		activemq_cpp_includes=`$activemq_cpp_config --includes`
+		activemq_cpp_cflags=`$activemq_cpp_config --cflags`	
 		
 	else
 		AC_MSG_ERROR(["activemqcpp-config not found within: $with_activemq_cpp"])
@@ -47,9 +47,9 @@ dnl
 	apr_1_config="$with_apr/apr-1-config"
 	if test -x $apr_1_config; then
 		AC_MSG_RESULT(["Found apr-1-config at: $apr_1_config"])
-		eval apr_lib=`$apr_1_config --libs`
-		eval apr_includes=`$apr_1_config --includes`
-		eval apr_cflags=`$apr_1_config --cflags`	
+		apr_lib=`$apr_1_config --libs`
+		apr_includes=`$apr_1_config --includes`
+		apr_cflags=`$apr_1_config --cflags`	
 	else
 		AC_MSG_ERROR(["apr-1-config not found within: $with_apr"])
 	fi
