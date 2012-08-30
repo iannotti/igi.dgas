@@ -39,6 +39,7 @@ dnl
 		eval activemq_cpp_lib=`$activemq_cpp_config --libs`
 		eval activemq_cpp_includes=`$activemq_cpp_config --includes`
 		eval activemq_cpp_cflags=`$activemq_cpp_config --cflags`	
+		
 	else
 		AC_MSG_ERROR(["activemqcpp-config not found within: $with_activemq_cpp"])
 	fi
@@ -46,9 +47,9 @@ dnl
 	apr_1_config="$with_apr/apr-1-config"
 	if test -x $apr_1_config; then
 		AC_MSG_RESULT(["Found apr-1-config at: $apr_1_config"])
-		eval activemq_cpp_lib=`$apr_1_config --libs`
-		eval activemq_cpp_includes=`$apr_1_config --includes`
-		eval activemq_cpp_cflags=`$apr_1_config --cflags`	
+		eval apr_lib=`$apr_1_config --libs`
+		eval apr_includes=`$apr_1_config --includes`
+		eval apr_cflags=`$apr_1_config --cflags`	
 	else
 		AC_MSG_ERROR(["apr-1-config not found within: $with_apr"])
 	fi
@@ -93,7 +94,10 @@ dnl
 		APRUTIL_CFLAGS=""
 	fi
 
-
+AC_MSG_RESULT(["USING ACTIVEMQ_CPP_LIBS: $ACTIVEMQ_CPP_LIBS"])
+AC_MSG_RESULT(["USING ACTIVEMQ_CPP_CFLAGS: $ACTIVEMQ_CPP_CFLAGS"])
+AC_MSG_RESULT(["USING APR_CFLAGS: $APR_CFLAGS"])
+AC_MSG_RESULT(["USING APR_LIBS: $APR_LIBS"])
 dnl
 dnl
     AC_SUBST(ACTIVEMQ_CPP_LIBS)
