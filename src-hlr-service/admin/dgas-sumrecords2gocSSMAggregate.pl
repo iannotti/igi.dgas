@@ -578,9 +578,7 @@ sub readConfiguration()
 		else
 		{
 			&printLog(
-				1, " Error
-			: Configuration parameter SITE_LIST_LOCATION pointing to an empty
-			  location, exiting."
+				1, " Error: Configuration parameter SITE_LIST_LOCATION pointing to an empty location, exiting."
 			);
 			Exit(1);
 		}
