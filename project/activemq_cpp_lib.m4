@@ -20,15 +20,39 @@ AC_DEFUN([AC_ACTIVEMQ_CPP_LIB],
        [  --with-apr-include-prefix=PFX      prefix where apr includes are installed.],
        , 
        with_apr_include_prefix=/usr/local/})
+       
+    AC_ARG_WITH(activemq_cpp, 
+       [  --with-activemq-cpp=PFX      path to activemqcpp-config],
+       , 
+       with_activemq_cpp=/usr/bin/})
+       
+    AC_ARG_WITH(apr, 
+       [  --with-apr=PFX      path to apr-1-config],
+       , 
+       with_activemq_cpp=/usr/bin/})
     
 dnl
 dnl
-
-	activemq_cpp_lib="$with_activemq_cpp_lib_prefix/"
-	if test -n "$with_activemq_cpp_lib_prefix" ; then
-        	ACTIVEMQ_CPP_LIBS="-L$activemq_cpp_lib -lactivemq-cpp"
+	activemq_cpp_config = "$with_activemq_cpp/activemqcpp-config"
+	if test -x "$activemq_cpp_config"; then
+		AC_MSG_RESULT(["Found activemqcpp-config at: $activemq_cpp_config"])
+		eval activemq_cpp_lib=`activemqcpp-config --libs`
+		eval activemq_cpp_includes=`activemqcpp-config --includes`
+		eval activemq_cpp_cflags=`activemqcpp-config --cflags`	
 	else
-		ACTIVEMQ_CPP_LIBS=""
+		AC_MSG_ERROR(["activemqcpp-config not found within: $with_activemq_cpp"])
+	fi
+
+	if test -n "$with_activemq_cpp_lib_prefix" ; then
+        ACTIVEMQ_CPP_LIBS="-L$with_activemq_cpp_lib_prefix -lactivemq-cpp"
+	else
+		ACTIVEMQ_CPP_LIBS="$activemq_cpp_lib"
+	fi
+	
+	if test -n "$with_activemq_cpp_include_prefix" ; then
+		ACTIVEMQ_CPP_CFLAGS="-I$with_activemq_cpp_include_prefix/"
+	else
+		ACTIVEMQ_CPP_CFLAGS="$activemq_cpp_cflags $activemq_cpp_includes"
 	fi
 	
 	apr_lib="$with_apr_lib_prefix/"
@@ -45,12 +69,7 @@ dnl
 		APRUTIL_LIBS=""
 	fi
 
-	activemq_cpp_include="$with_activemq_cpp_include_prefix/"
-	if test -n "$with_activemq_cpp_include_prefix" ; then
-		ACTIVEMQ_CPP_CFLAGS="-I$with_activemq_cpp_include_prefix"
-	else
-		ACTIVEMQ_CPP_CFLAGS=""
-	fi
+	
 	
 	apr_include="$with_apr_include_prefix/"
 	if test -n "$with_apr_include_prefix" ; then
@@ -65,6 +84,8 @@ dnl
 	else
 		APRUTIL_CFLAGS=""
 	fi
+
+
 dnl
 dnl
     AC_SUBST(ACTIVEMQ_CPP_LIBS)
