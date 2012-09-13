@@ -85,6 +85,8 @@ $workparameters{"siteListFile"} = "$ENV{GLITE_LOCATION}/etc/siteList.txt";
 $workparameters{"minStartDate"} = "";
 $workparameters{"maxEndDate"} = "";
 $workparameters{"commandTimeOut"} = 600;
+$workparameters{"senderTimeZone"} = "Europe/Rome";
+$workparameters{"receiverTimeZone"}  = "Europe/London";
 
 # read configuration from file:
 &readConfiguration();
@@ -105,14 +107,16 @@ else
 }
 
 &printLog( 4, "Starting writing SSM records messages in $workparameters{SSMOutputDir}" );
+	my $setTZ = "SET time_zone='$workparameters{receiverTimeZone}'";
+	
 	my $queryString = "SELECT siteName,
-		year(endDate),
-		month(endDate),
+		year(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}')) AS year_tz,
+		month(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}')) AS month_tz,
 		userVo,userFqan,
 		gridUser,
 		count(*),
-		UNIX_TIMESTAMP(min(endDate)),
-		UNIX_TIMESTAMP(max(endDate)),
+		UNIX_TIMESTAMP(min(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}'))),
+		UNIX_TIMESTAMP(max(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}'))),
 		sum(wallTime)/3600,
 		sum(cpuTime)/3600,
 		sum(wallTime*iBench)/3600, 
@@ -124,13 +128,15 @@ else
 			#process only grid jobs (voOrigin=[fqan,pool])
 			$queryString .= "AND ( voOrigin=\"fqan\" OR voOrigin=\"pool\" ) ";
 		}
-		$queryString .= "GROUP BY siteName,year(endDate),month(endDate),userVo,userFqan,gridUser";
+		$queryString .= "GROUP BY siteName,year_tz,month_tz,userVo,userFqan,gridUser";
 	
 	my $dsn = "dbi:mysql:$workparameters{hlrDbName}:$workparameters{hlrDbServer}:$workparameters{hlrDbPort}";
 	&printLog(7, "Database: $dsn" );
 	&printLog(7, "Query: $queryString" );
 	my $dbh = DBI->connect($dsn,$workparameters{hlrDbUser}, $workparameters{hlrDbPassword}
 	           ) || die "Could not connect to database: $DBI::errstr";
+	my $sthTZ = $dbh->prepare($setTZ);
+	$sthTZ->execute() || die "Couldn't execute statement: " . $sthTZ->errstr;
 	my $sth = $dbh->prepare($queryString);
 	$sth->execute() || die "Couldn't execute statement: " . $sth->errstr;
 	POSIX::sigaction(&POSIX::SIGHUP, $actionHUP);
@@ -153,7 +159,15 @@ else
 	    my $cpuDuration = sprintf "%.0f", $data[10];
 	    my $normalisedWallDuration = sprintf "%.0f", $data[11]/250; #HEP SPEC = si2k/250
 	    my $normalisedCpuDuration = sprintf "%.0f", $data[12]/250;
-	    
+	    my $VOGroup = "";
+	    my $VORole = "";
+	    my @fqanList = split(';',$userFqan);
+	    if ( @fqanList )
+	    {
+	    my $primaryFqan = $fqanList[0];
+		    ($VOGroup,$VORole) = ($primaryFqan =~ /^(.*)\/Role=(.*)\/(.*)$/);
+		    print "$VOGroup,$VORole\n";
+	    }
 	    my ($vofound, $voItem, $sitefound, $siteItem);
 	    foreach $voItem (@voList)
 	    {
@@ -196,6 +210,8 @@ else
         $apelMessage .= "Year: $year\n";
         $apelMessage .= "GlobalUserName: $gridUser\n";
         $apelMessage .= "Group: $userVo\n";
+        $apelMessage .= "VOGroup: $VOGroup\n";
+        $apelMessage .= "VORole: $VORole\n";
         $apelMessage .= "EarliestEndTime: $earliestEndTime\n";
         $apelMessage .= "LatestEndTime: $latestEndTime\n";
         $apelMessage .= "WallDuration: $wallDuration\n";
@@ -221,6 +237,7 @@ else
     {
     	&writeMessage($apelMessage,$workparameters{SSMOutputDir});
     }
+    $sthTZ->finish();
 	$dbh->disconnect();
 	&printLog( 1, "SSM messages written." );
 &Exit($exitStatus);
@@ -666,7 +683,41 @@ sub readConfiguration()
 		$workparameters{"maxRecordsPerMessage"} = $confparameters{"MAX_RECORDS_PER_MESSAGE"};
 		
 			&printLog(
-				5,"CMax number of records per message set to:$workparameters{maxRecordsPerMessage}"
+				5,"Max number of records per message set to:$workparameters{maxRecordsPerMessage}"
+			);
+		
+	}
+	
+	if ( exists( $confparameters{"SENDER_TIMEZONE"} )
+		 && $confparameters{"SENDER_TIMEZONE"} ne "" )
+	{
+
+		&printLog(
+				5,
+				"Reading configuration parameter SENDER_TIMEZONE: \""
+				  . $confparameters{"SENDER_TIMEZONE"} . "\""
+		);
+		$workparameters{"senderTimeZone"} = $confparameters{"SENDER_TIMEZONE"};
+		
+			&printLog(
+				5,"sender time zone set to:$workparameters{senderTimeZone}"
+			);
+		
+	}
+	
+	if ( exists( $confparameters{"RECEIVER_TIMEZONE"} )
+		 && $confparameters{"RECEIVER_TIMEZONE"} ne "" )
+	{
+
+		&printLog(
+				5,
+				"Reading configuration parameter RECEIVER_TIMEZONE: \""
+				  . $confparameters{"RECEIVER_TIMEZONE"} . "\""
+		);
+		$workparameters{"receiverTimeZone"} = $confparameters{"RECEIVER_TIMEZONE"};
+		
+			&printLog(
+				5,"receiver time zone set to:$workparameters{receiverTimeZone}"
 			);
 		
 	}
