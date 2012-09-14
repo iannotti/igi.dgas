@@ -86,7 +86,7 @@ $workparameters{"minStartDate"} = "";
 $workparameters{"maxEndDate"} = "";
 $workparameters{"commandTimeOut"} = 600;
 $workparameters{"senderTimeZone"} = "Europe/Rome";
-$workparameters{"receiverTimeZone"}  = "Europe/London";
+$workparameters{"receiverTimeZone"}  = "UTC";
 
 # read configuration from file:
 &readConfiguration();
@@ -101,7 +101,7 @@ if ( &putLock($workparameters{lockFile}) != 0 )
 {
     &printLog(1,"Fatal Error: Couldn't open lock file! in $workparameters{lockFile}");
 }
-else
+else/
 {
 	&printLog ( 4, "Lock file succesfully created: $workparameters{lockFile}");
 }
