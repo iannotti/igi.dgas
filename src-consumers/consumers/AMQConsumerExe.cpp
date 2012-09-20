@@ -237,6 +237,7 @@ public:
 
 	int prepareDb()
 	{
+		std::cerr << "prepareDb()" << endl;
 		//check if Database  exists. Create it otherwise.
 		hlrDb = new db(sqlServer, sqlUser, sqlPassword, sqlDbname);
 		if (hlrDb->errNo != 0)
@@ -263,6 +264,7 @@ public:
 				return (1);
 			}
 		}
+		return 0;
 	}
 
 	AMQConsumerDataBase(const std::string& brokerURI,
@@ -286,10 +288,12 @@ public:
 		this->noLocal = noLocal;
 		this->durable = durable;
 		this->numMessages = numMessages;
+		std::cerr << "AMQConsumerDataBase()" << endl;
 	}
 
 	~AMQConsumerDataBase() throw()
 	{
+		std::cerr << "~AMQConsumerDataBase()" << endl;
 		delete doneLatch;
 		delete hlrDb;
 	}
