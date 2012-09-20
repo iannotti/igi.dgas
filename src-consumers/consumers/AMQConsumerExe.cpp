@@ -440,7 +440,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading consumerLogFileName from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}
@@ -454,7 +454,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading consumerLockFileName from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}
@@ -477,7 +477,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading hlr_tmp_sql_dbname from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}
@@ -491,7 +491,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading hlr_sql_dbname from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}
@@ -505,7 +505,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading hlr_sql_server from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}
@@ -519,7 +519,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading hlr_sql_user from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}
@@ -533,7 +533,7 @@ int AMQRecordConsumer(recordConsumerParms& parms)
 			}
 			else
 			{
-				cerr << "WARNING: Error reading conf file: "
+				cerr << "WARNING: Error reading hlr_sql_password from conf file: "
 						<< parms.configFile << endl;
 				return E_BROKER_URI;
 			}

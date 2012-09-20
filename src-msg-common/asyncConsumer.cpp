@@ -1,7 +1,7 @@
 // DGAS (DataGrid Accounting System) 
 // Client APIs.
 // 
-// $Id: asyncConsumer.cpp,v 1.1.2.1.2.4 2012/08/21 08:03:18 aguarise Exp $
+// $Id: asyncConsumer.cpp,v 1.1.2.1.2.5 2012/09/20 12:38:39 aguarise Exp $
 // -------------------------------------------------------------------------
 // Copyright (c) 2001-2002, The DataGrid project, INFN, 
 // All rights reserved. See LICENSE file for details.
@@ -69,7 +69,7 @@ int SimpleAsyncConsumer::readConf(std::string& configFile)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << configFile << endl;
+			cerr << "WARNING: Error reading amqBrokerUri from conf file: " << configFile << endl;
 			return E_BROKER_URI;
 		}
 	}
@@ -81,7 +81,7 @@ int SimpleAsyncConsumer::readConf(std::string& configFile)
 		}
 		else
 		{
-			cerr << "WARNING: Error reading conf file: " << configFile << endl;
+			cerr << "WARNING: Error reading amqTopic from conf file: " << configFile << endl;
 			return E_BROKER_URI;
 		}
 	}
