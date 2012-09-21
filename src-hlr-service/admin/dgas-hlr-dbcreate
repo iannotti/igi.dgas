@@ -71,7 +71,9 @@ fi
 [ -d $DGAS_VAR_DIR/spool ] || mkdir $DGAS_VAR_DIR/spool
 [ -d $DGAS_VAR_DIR/spool/dgas ] || mkdir $DGAS_VAR_DIR/spool/dgas
 
+groupadd $HLR_USER &> /dev/null
 useradd -M -r -s /sbin/nologin -p'!!' $HLR_USER &> /dev/null
+
 
 [ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
 [ -d $DGAS_VAR_DIR/lock/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/lock/dgas

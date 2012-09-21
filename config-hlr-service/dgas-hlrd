@@ -34,7 +34,8 @@ fi
 eval DGAS_VAR_DIR=`grep dgas_var_dir $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval HLR_USER=`grep hlr_user $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
 eval HLHLR=`grep is2ndLevelHlr $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
-eval TDB_LOCK=`grep masterLock $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval TDB_LOCK=`grep jtsCommandLock $HLRD_CONF | grep "^#" -v  | cut -d'"' -f 2`
+eval TMPJTS_LOCK=/tmp/dgas-jobTransSummary.lock
 
 [ ! -z $DGAS_VAR_DIR ]  || export DGAS_VAR_DIR=/var/
 
@@ -52,6 +53,7 @@ fi
 [ -d $DGAS_VAR_DIR/spool ] || mkdir $DGAS_VAR_DIR/spool
 [ -d $DGAS_VAR_DIR/spool/dgas ] || mkdir $DGAS_VAR_DIR/spool/dgas
 
+groupadd $HLR_USER &> /dev/null
 useradd -M -r -n -s /sbin/nologin -p'!!' $HLR_USER &> /dev/null
 
 [ -d $DGAS_VAR_DIR/log/dgas ] && chown -R $HLR_USER:$HLR_USER $DGAS_VAR_DIR/log/dgas
@@ -105,6 +107,16 @@ startMain()
 				rm -f $TDB_LOCK
 			fi 
 			$PREFIX/sbin/dgas-hlr-translatedb
+		fi
+	[ -e $TMPJTS_LOCK ] && ps auxw | grep dgas-hlr-translatedb | grep -v grep  &> /dev/null
+		if [ "$?" -eq 0 ]
+		then
+			echo -n " Another instance of dgas-hlr-translatedb is already running lock:$TMPJTS_LOCK"
+		else
+			if [ -e $TMPJTS_LOCK ] 
+			then
+				rm -f $TMPJTS_LOCK
+			fi 
 		fi
     RETVAL=0
 	echo -n $"Starting $prog:"
