@@ -30,6 +30,8 @@
 		  <element name="UserIdentity"
 		    type="aur:UserIdentityAggregateType">
 		  </element>
+          <element name="SubmitHost" type="anyURI"/>
+          <element name="Infrastructure" type="urf:InfrastructureType"/>
 		  <element name="EarliestEndTime" type="dateTime"></element>
 		  <element name="LatestEndTime" type="dateTime"></element>
 		  <element name="WallDuration" type="duration" maxOccurs="1"
