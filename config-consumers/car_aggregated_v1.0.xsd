@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord"
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:urf="http://eu-emi.eu/namespaces/2011/11/computerecord" xmlns:aur="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord">
+	xmlns:urf="http://eu-emi.eu/namespaces/2012/10/computerecord" xmlns:aur="http://eu-emi.eu/namespaces/2011/11/aggregatedcomputerecord">
 
 	<import schemaLocation="car_v1.0.xsd"
 		namespace="http://eu-emi.eu/namespaces/2011/11/computerecord"></import>
@@ -66,9 +66,23 @@
 	<complexType name="NormalisedDurationType">
 		<simpleContent>
 			<extension base="duration">
-				<attribute name="normalisationFactor" type="int" default="1"></attribute>
+				<attribute name="normalisationFactor" type="float" default="1.0"></attribute>
 				<attribute name="normalisationMetric" type="string" default="HEPSPEC06"></attribute>
 			</extension>
 		</simpleContent>
 	</complexType>
+  
+  <xsd:complexType name="ServiceLevelComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:float">
+        <xsd:attribute use="optional" ref="urf:type">
+          <xsd:annotation></xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute use="optional" ref="urf:description">
+          <xsd:annotation></xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  
 </schema>
