@@ -537,9 +537,8 @@ int urConcentrator::bulkInsertRecords(vector<jobTransSummary>& r)
 	//inserted.
 	if ( insertedRecords == 0 )
 	{
-		logBuff = "Could not insert records.";
+		logBuff = "No records have been inserted this step.";
 		hlr_log(logBuff,&logStream,1);
-		return E_URCONCENTRATOR_INSERT_RECORDS;
 	}
 	return 0;
 }
