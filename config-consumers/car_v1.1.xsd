@@ -117,54 +117,13 @@
       </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
-  <xsd:element name="Memory">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="xsd:positiveInteger">
-          <xsd:attribute ref="urf:description" use="optional" />
-          <xsd:attributeGroup ref="urf:intervallicVolume" />
-          <xsd:attribute default="total" ref="urf:metric"
-            use="optional" />
-          <xsd:attribute ref="urf:type" use="required" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="Memory" type="urf:MemoryComplexType">
   </xsd:element>
-  <xsd:element name="Swap">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="xsd:positiveInteger">
-          <xsd:attribute ref="urf:description" use="optional" />
-          <xsd:attributeGroup ref="urf:intervallicVolume" />
-          <xsd:attribute default="total" ref="urf:metric"
-            use="optional" />
-          <xsd:attribute ref="urf:type" use="optional" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="Swap" type="urf:MemoryComplexType">
   </xsd:element>
-  <xsd:element name="NodeCount">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="xsd:positiveInteger">
-          <xsd:attribute ref="urf:description" use="optional" />
-          <xsd:attribute default="total" ref="urf:metric"
-            use="optional" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="NodeCount" type="urf:NodeCountComplexType">
   </xsd:element>
-  <xsd:element name="Processors">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="xsd:positiveInteger">
-          <xsd:attribute ref="urf:description" use="optional" />
-          <xsd:attribute ref="urf:metric" use="optional" />
-          <xsd:attribute name="consumptionRate" type="xsd:float"
-            use="optional" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="Processors" type="urf:ProcessorsComplexType">
   </xsd:element>
   <xsd:element name="TimeDuration">
     <xsd:complexType>
@@ -240,16 +199,9 @@
       </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
-  <xsd:element name="MachineName">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="urf:domainNameType">
-          <xsd:attribute ref="urf:description" use="optional" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="MachineName" type="urf:MachineNameComplexType">
   </xsd:element>
-  <xsd:element name="SubmitHost" type="xsd:anyURI">
+  <xsd:element name="SubmitHost" type="xsd:string">
 
     <xsd:annotation>
       <xsd:documentation>In grid environment this refers to the CE Host
@@ -257,26 +209,9 @@
         NOT be present for local jobs </xsd:documentation>
     </xsd:annotation>
   </xsd:element>
-  <xsd:element name="Host">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="urf:domainNameType">
-          <xsd:attribute ref="urf:description" use="optional" />
-          <xsd:attribute default="false" name="primary"
-            type="xsd:boolean" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="Host" type="urf:HostComplexType">
   </xsd:element>
-  <xsd:element name="Queue">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="xsd:string">
-          <xsd:attribute ref="urf:description" use="optional"
-            default="execution" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
+  <xsd:element name="Queue" type="urf:QueueComplexType">
   </xsd:element>
   <xsd:element name="JobName">
     <xsd:complexType>
@@ -457,7 +392,7 @@
       <xsd:extension base="xsd:string">
         <xsd:attribute name="name" type="xsd:string" use="required" />
         <xsd:attribute name="version" type="xsd:string"
-          default="2" use="optional" />
+          use="optional" />
         <xsd:attribute name="description" type="xsd:string"
           use="optional" />
       </xsd:extension>
@@ -530,6 +465,71 @@
         <xsd:attribute use="optional" ref="urf:description">
           <xsd:annotation></xsd:annotation>
         </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="MemoryComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:positiveInteger">
+        <xsd:attribute use="optional" ref="urf:description"></xsd:attribute>
+        <xsd:attributeGroup ref="urf:intervallicVolume"></xsd:attributeGroup>
+        <xsd:attribute use="optional" default="total"
+          ref="urf:metric">
+        </xsd:attribute>
+        <xsd:attribute use="required" ref="urf:type"></xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="NodeCountComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:positiveInteger">
+        <xsd:attribute use="optional" ref="urf:description"></xsd:attribute>
+        <xsd:attribute use="optional" default="total"
+          ref="urf:metric">
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProcessorsComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:positiveInteger">
+        <xsd:attribute use="optional" ref="urf:description"></xsd:attribute>
+        <xsd:attribute use="optional" ref="urf:metric"></xsd:attribute>
+        <xsd:attribute use="optional" name="consumptionRate"
+          type="xsd:float">
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="QueueComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute use="optional" default="execution"
+          ref="urf:description">
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="HostComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="urf:HostBaseType">
+        <xsd:attribute default="false" name="primary"
+          type="xsd:boolean">
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="HostBaseType">
+    <xsd:simpleContent>
+      <xsd:extension base="urf:domainNameType">
+        <xsd:attribute use="optional" ref="urf:description"></xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="MachineNameComplexType">
+    <xsd:simpleContent>
+      <xsd:extension base="urf:domainNameType">
+        <xsd:attribute use="optional" ref="urf:description"></xsd:attribute>
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
