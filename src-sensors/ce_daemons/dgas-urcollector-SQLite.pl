@@ -898,7 +898,7 @@ sub parseUR_pbs
 			$_ =~ /(\d*[M.k]b)$/;
 			$urGridInfo{mem} = $1;
 		}
-		if (/^Resource_List.neednodes=(\d*)$/)
+		if (/^Resource_List.ncpus=(\d*)$/)
 		{
 			$urGridInfo{processors} = $1;
 
@@ -1030,7 +1030,7 @@ sub parseUR_lsf
 			$urGridInfo{execHost} = $urGridInfo{execHost} . $new[ 23 + $i ];
 			if ( $i != $shift2 )
 			{
-				$urGridInfo{execHost} = $urGridInfo{execHost} . ";";
+				$urGridInfo{execHost} = $urGridInfo{execHost} . "+";
 			}
 		}
 	}
@@ -1053,7 +1053,7 @@ sub parseUR_sge
 	$urGridInfo{end}        = $URArray[10];
 	$urGridInfo{exitStatus} = $URArray[12];
 	$urGridInfo{walltime}   = $URArray[13];
-	$urGridInfo{proessors}  = $URArray[34];
+	$urGridInfo{processors}  = $URArray[34];
 	$urGridInfo{cput}       = $URArray[36];
 	$urGridInfo{mem}        = $URArray[17] + $URArray[18] + $URArray[19];
 	$urGridInfo{vmem}       = $URArray[42];
@@ -2474,11 +2474,8 @@ sub processLrmsLogs
 				if ( $logFModPreviousRun{$thisLogFile} ==
 					$logFMod{$thisLogFile} )
 				{
-					&printLog(
-						7,
-"skipping $thisLogFile because not changed since previous run.",
-						1
-					);
+					&printLog( 7, "skipping $thisLogFile because not changed since previous run.",
+                                        1 );
 					next;
 				}
 
