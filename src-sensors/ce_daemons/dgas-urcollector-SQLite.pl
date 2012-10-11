@@ -2662,6 +2662,13 @@ sub processLrmsLogFile
 			$_[8] = $allProcessed = 1;
 			return 0;
 		}
+
+		if (  $targetJobId eq $startJob )
+		{
+			&printLog(7,"Found $targetJobId, that mathces with buufer jibId: $startJob. Next job is the good one.");
+			next;		
+		}
+
 		# The record can be processed:
 		
 		$_[3] = $lastJob = $targetJobId;   # $lastJob, i.e. newest job processed
