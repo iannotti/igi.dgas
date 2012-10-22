@@ -31,11 +31,11 @@ my $actionInt=POSIX::SigAction->new("sigINT_handler",$sigset,&POSIX::SA_NODEFER)
 
 if ( !exists( $ENV{GLITE_LOCATION} ) || $ENV{GLITE_LOCATION} eq "" )
 {
-	$ENV{GLITE_LOCATION} = "/opt/glite/";
-	print "Environment variable GLITE_LOCATION not defined! Trying /opt/glite/ ...\n";
+	$ENV{GLITE_LOCATION} = "/usr/";
+	print "Environment variable GLITE_LOCATION not defined! Trying /usr/ ...\n";
 }
 
-my $conffile = "$ENV{GLITE_LOCATION}/etc/glite-dgas-jts2goc.conf";
+my $conffile = "/etc/dgas-sumrecords2goc.conf";
 
 my %workparameters;
 my @voList;
@@ -108,7 +108,7 @@ else
 
 &printLog( 4, "Starting writing SSM records messages in $workparameters{SSMOutputDir}" );
 	my $setTZ = "SET time_zone='$workparameters{receiverTimeZone}'";
-	
+	#In the query below 900000 = 3600*250 is used to roughly convert specInts to HEP specs.
 	my $queryString = "SELECT siteName,
 		year(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}')) AS year_tz,
 		month(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}')) AS month_tz,
@@ -119,8 +119,8 @@ else
 		UNIX_TIMESTAMP(max(CONVERT_TZ(endDate,'$workparameters{senderTimeZone}','$workparameters{receiverTimeZone}'))),
 		sum(wallTime)/3600,
 		sum(cpuTime)/3600,
-		sum(wallTime*iBench)/3600, 
-		sum(cpuTime*iBench)/3600 
+		sum(wallTime*iBench)/900000,     
+		sum(cpuTime*iBench)/900000 
 		FROM $workparameters{hlrDbTable} 
 		WHERE endDate>=\"$workparameters{endTimeStart}\" ";
 		if ( $workparameters{processLocalJobs} == 0 )
@@ -157,8 +157,8 @@ else
 	    my $latestEndTime = $data[8];
 	    my $wallDuration = sprintf "%.0f", $data[9]; #Round half to even
 	    my $cpuDuration = sprintf "%.0f", $data[10];
-	    my $normalisedWallDuration = sprintf "%.0f", $data[11]/250; #HEP SPEC = si2k/250
-	    my $normalisedCpuDuration = sprintf "%.0f", $data[12]/250;
+	    my $normalisedWallDuration = sprintf "%.0f", $data[11]; #HEP SPEC = si2k/250, h hepspec = si2k/(3600*250) = si2k/900000
+	    my $normalisedCpuDuration = sprintf "%.0f", $data[12];
 	    my $VOGroup = "";
 	    my $VORole = "";
 	    my @fqanList = split(';',$userFqan);
@@ -166,7 +166,6 @@ else
 	    {
 	    my $primaryFqan = $fqanList[0];
 		    ($VOGroup,$VORole) = ($primaryFqan =~ /^(.*)\/Role=(.*)\/(.*)$/);
-		    print "$VOGroup,$VORole\n";
 	    }
 	    my ($vofound, $voItem, $sitefound, $siteItem);
 	    foreach $voItem (@voList)
@@ -400,7 +399,7 @@ sub readConfiguration()
 	}
 	else
 	{
-		print "Configuration parameter LOG_FILE missing, using '$workparameters{logFile}'\n";
+		print "Configuration parameter LOG_FILE missing, using " . $workparameters{logFile};
 	}
 	&bootstrapLog($workparameters{logFile});	
 
@@ -412,19 +411,7 @@ sub readConfiguration()
 	{
 		&printLog(
 			5,
-"Configuration parameter LOCK_FILE missing, using '$workparameters{lockFile}'"
-		);
-	}
-
-	if ( exists( $confparameters{"SQLITE_DB_FILE"} ) )
-	{
-		$workparameters{"sqliteDB"} = $confparameters{"SQLITE_DB_FILE"};
-	}
-	else
-	{
-		&printLog(
-			5,
-"Configuration parameter SQLITE_DB_FILE missing, trying '$workparameters{sqliteDB}'"
+"Configuration parameter LOCK_FILE missing, using " . $workparameters{"lockFile"}
 		);
 	}
 
@@ -436,7 +423,7 @@ sub readConfiguration()
 	{
 		&printLog(
 			5,
-"Configuration parameter SSM_OUTPUT_DIR missing, trying '$workparameters{SSMOutputDir}'"
+"Configuration parameter SSM_OUTPUT_DIR missing, trying " . $workparameters{"SSMOutputDir"}
 		);
 	}
 
@@ -450,7 +437,7 @@ sub readConfiguration()
 	{
 		&printLog(
 			5,
-"Configuration parameter HLR_DB_SERVER missing, trying '$workparameters{hlrDbServer}'"
+"Configuration parameter HLR_DB_SERVER missing, trying ". $workparameters{hlrDbServer}
 		);
 	}
 
@@ -460,8 +447,8 @@ sub readConfiguration()
 	}
 	else
 	{
-		&printLog(5, "Configuration parameter HLR_DB_PORT missing, trying '
-			  $confparameters{hlrDbPort}'" );
+		&printLog(5, "Configuration parameter HLR_DB_PORT missing, trying " .
+			  $confparameters{"hlrDbPort"} );
 	}
 
 	if ( exists( $confparameters{"HLR_DB_USER"} ) )
@@ -471,9 +458,8 @@ sub readConfiguration()
 	else
 	{
 		&printLog(5, " Configuration parameter HLR_DB_USER missing,
-			trying '$workparameters{hlrDbUser}'" );
+			trying " . $workparameters{"hlrDbUser"} );
 	}
-
 	if ( exists( $confparameters{"HLR_DB_PASSWORD"} ) )
 	{
 		$workparameters{"hlrDbPassword"} = $confparameters{"HLR_DB_PASSWORD"};
@@ -481,7 +467,7 @@ sub readConfiguration()
 	else
 	{
 		&printLog(5, " Configuration parameter HLR_DB_PASSWORD missing,
-			trying '$workparameters{hlrDbPassword}'" );
+			trying" . $workparameters{hlrDbPassword} );
 	}
 
 	if ( exists( $confparameters{"HLR_DB_NAME"} ) )
@@ -491,7 +477,7 @@ sub readConfiguration()
 	else
 	{
 		&printLog(5, " Configuration parameter HLR_DB_NAME missing,
-			trying '$workparameters{hlrDbName}'" );
+			trying " . $workparameters{hlrDbName} );
 	}
 	
 	if ( exists( $confparameters{"HLR_DB_TABLE"} ) )
@@ -501,7 +487,7 @@ sub readConfiguration()
 	else
 	{
 		&printLog(5, " Configuration parameter HLR_DB_TABLE missing,
-			trying '$workparameters{hlrDbTable}'" );
+			trying ". $workparameters{hlrDbTable} );
 	}
 
 	# get list of accepted VOs if specified:
