@@ -135,7 +135,7 @@ timeInterval = "5"
 # number of seconds the daemon must stop writing new records before checking the
 # again.
 #limiterWaitFor = "5"
-#maxNumRecords = "10000"    
+#maxNumRecords  = "5000"   
 
 # This defines whether to use the name of the host on which the sensors run
 # as the host name of the CE (in case of local jobs), default is "no":
